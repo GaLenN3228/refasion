@@ -15,7 +15,8 @@ class CatalogRepository extends BaseRepository {
       this.catalogResponse = CatalogResponse.fromJson(catalogResponse.data);
 
       finishLoading();
-    } catch (_) {
+    } catch (err) {
+      print(err);
       receivedError();
     }
   }

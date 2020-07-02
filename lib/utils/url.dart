@@ -1,7 +1,6 @@
 class Url {
-
   //Base URLs
-  static const refashionedBaseUrl = 'http://151.248.123.50:8002/v1';
+  static const refashionedBaseUrl = 'https://api.refashioned.ru/v1';
 
   //Catalog
   static const catalogCategories = '$refashionedBaseUrl/catalog/categories/';
