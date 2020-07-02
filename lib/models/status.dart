@@ -1,5 +1,5 @@
 class Status {
-  final String code;
+  final int code;
 
   const Status({this.code});
 
@@ -7,5 +7,5 @@ class Status {
     return Status(code: json['code']);
   }
 
-  String get getCode => code;
+  int get getCode => code;
 }

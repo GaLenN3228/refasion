@@ -16,11 +16,14 @@ class CatalogResponse {
 class Catalog {
   final String id;
   final String name;
+  final List<Catalog> children;
 
-  const Catalog({this.id, this.name});
+  const Catalog({this.id, this.name, this.children});
 
   factory Catalog.fromJson(Map<String, dynamic> json) {
-    return Catalog(id: json['id'], name: json['name']);
+    return Catalog(id: json['id'], name: json['name'], children: [
+      for (final child in json['children']) Catalog.fromJson(child)
+    ]);
   }
 
   String get getId => id;
