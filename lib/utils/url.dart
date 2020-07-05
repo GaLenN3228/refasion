@@ -2,11 +2,13 @@ class Url {
   //Base URLs
   static const refashionedBaseUrl = 'https://api.refashioned.ru/v1';
 
-  //Catalog
-  static const catalogCategories = '$refashionedBaseUrl/catalog/categories/';
-  static const catalogProducts = '$refashionedBaseUrl/catalog/products/';
-  static const catalogProduct = '$refashionedBaseUrl/catalog/products/';
+  //Categories
+  static const categories = '$refashionedBaseUrl/catalog/categories/';
+
+  //Products
+  static const products = '$refashionedBaseUrl/catalog/products/';
+  static const productsCount = '$refashionedBaseUrl/catalog/products/count/';
 
   //Content
-  static const contentCatalogMenu = '$refashionedBaseUrl/content/catalog-menu/';
+  static const catalogMenu = '$refashionedBaseUrl/content/catalog-menu/';
 }

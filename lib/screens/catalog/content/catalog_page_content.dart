@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/catalog/components/catalog_divider.dart';
 import '../../../repositories/catalog.dart';
 import '../components/catalog_tile.dart';
@@ -24,7 +25,7 @@ class CatalogPageContent extends StatelessWidget {
         child: Text("Иной статус"),
       );
 
-    final catalogs = catalogRepository.catalogResponse.catalogs;
+    final catalogs = catalogRepository.catalogResponse.categories;
 
     if (catalogs.isEmpty)
       return Center(
@@ -32,7 +33,7 @@ class CatalogPageContent extends StatelessWidget {
       );
 
     final widgetsList =
-        catalogs.map((catalog) => CatalogTile(catalog: catalog)).toList();
+        catalogs.map((catalog) => CatalogTile(category: catalog)).toList();
 
     return ListView.separated(
       padding: EdgeInsets.only(
