@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_page.dart';
+import 'package:refashioned_app/screens/product/pages/product.dart';
 
 void main() => runApp(ChangeNotifierProvider<CatalogRepository>(
       create: (_) => CatalogRepository(),
@@ -17,7 +18,7 @@ class RefashionApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
-        child: CatalogPage(),
+        child: ProductPage(),
       ),
     );
   }
@@ -29,6 +30,9 @@ ThemeData _materialTheme() {
       textTheme: TextTheme(
         headline1:
             TextStyle(fontSize: 16, fontFamily: "SF UI", color: Colors.grey),
+        bodyText1:TextStyle(
+            fontSize: 12,
+            fontFamily: "SF UI", ),
         headline2: TextStyle(
             fontSize: 12,
             fontFamily: "SF UI",
