@@ -46,6 +46,12 @@ ThemeData _materialTheme() {
             fontFamily: "SF UI",
             color: primaryColor,
             fontWeight: FontWeight.normal,
+            height: 1.5),
+        bodyText2: TextStyle(
+            fontSize: 12,
+            fontFamily: "SF UI",
+            color: darkGrayColor,
+            fontWeight: FontWeight.normal,
             height: 1.2),
         subtitle1: TextStyle(
             fontSize: 12,
@@ -59,5 +65,17 @@ ThemeData _materialTheme() {
             fontWeight: FontWeight.normal,
             color: darkGrayColor,
             height: 1.6),
+        caption: TextStyle(
+            fontSize: 10,
+            fontFamily: "SF UI",
+            fontWeight: FontWeight.normal,
+            color: darkGrayColor,
+            height: 1.2),
+        button: TextStyle(
+            fontSize: 12,
+            fontFamily: "SF UI",
+            fontWeight: FontWeight.w600,
+            color: primaryColor,
+            height: 1.2),
       ));
 }
