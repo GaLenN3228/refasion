@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// LIGHT THEME
-const lightPrimaryColor = Color(0xFF1E1E1E);
-const lightAccentColor = Color(0xFF3949AB);
+const primaryColor = Color(0xFF000000);
+const accentColor = Color(0xFFFAD24E);
+const darkGrayColor = Color(0xFF959595);
+const lightGrayColor = Color(0xFFDADADA);
