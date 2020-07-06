@@ -22,7 +22,7 @@ class CatalogTile extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 catalog.name,
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context).textTheme.subtitle1,
               )),
         ),
       ),

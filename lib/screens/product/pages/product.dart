@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/components/button.dart';
 import 'package:refashioned_app/screens/product/components/add_to_cart.dart';
 import 'package:refashioned_app/screens/product/components/add_to_cart_float.dart';
 import 'package:refashioned_app/screens/product/components/additional.dart';
@@ -11,6 +12,7 @@ import 'package:refashioned_app/screens/product/components/related_products.dart
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPage extends StatelessWidget {
   @override
@@ -32,26 +34,33 @@ class ProductPage extends StatelessWidget {
             ProductPayment(),
             ProductAdditional(),
             RelatedProducts(),
-            ProductAddToCartFloat()
           ],
         ),
       ),
       bottomNavigationBar: Container(
-        height: 65,
-        color: Colors.white,
+        height: 50,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: lightGrayColor, width: 0)),
+          color: Colors.white,
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            RaisedButton(
-              color: Colors.black,
-              onPressed: () {},
-              child: Text("КУПИТЬ СЕЙЧАС", style: TextStyle(color: Colors.white)),
+            Expanded(
+              child: Container(
+                  height: double.infinity,
+                  child: Button("Проверка", buttonStyle: ButtonStyle.dark)),
             ),
-            RaisedButton(
-              color: Colors.amber,
-              onPressed: () {},
-              child: Text("В КОРЗИНУ"),
-            )
+            Container(
+              width: 5,
+            ),
+            Expanded(
+              child: Container(
+                  height: double.infinity,
+                  child: Button("В корзину", buttonStyle: ButtonStyle.amber)),
+            ),
           ],
         ),
       ),

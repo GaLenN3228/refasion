@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/components/button.dart';
 
 class ProductAddToCart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Button(
+      "Добавить в корзину",
+      buttonStyle: ButtonStyle.dark,
       height: 45,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Center(
-        child: Text("ДОБАВИТЬ В КОРЗИНУ",
-            style: TextStyle(
-                fontSize: 12,
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
-      ),
+      borderRadius: 5,
     );
   }
 }
