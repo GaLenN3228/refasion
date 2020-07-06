@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_page.dart';
 import 'package:refashioned_app/screens/product/pages/product.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 void main() => runApp(ChangeNotifierProvider<CatalogRepository>(
       create: (_) => CatalogRepository(),
@@ -28,15 +29,35 @@ ThemeData _materialTheme() {
   return ThemeData(
       scaffoldBackgroundColor: Colors.white,
       textTheme: TextTheme(
-        headline1:
-            TextStyle(fontSize: 16, fontFamily: "SF UI", color: Colors.grey),
-        bodyText1:TextStyle(
-            fontSize: 12,
-            fontFamily: "SF UI", ),
+        headline1: TextStyle(
+            fontSize: 16,
+            fontFamily: "SF UI",
+            color: primaryColor,
+            height: 1.2,
+            fontWeight: FontWeight.w600),
         headline2: TextStyle(
+            fontSize: 16,
+            fontFamily: "SF UI",
+            color: primaryColor,
+            fontWeight: FontWeight.w600,
+            height: 1.2),
+        bodyText1: TextStyle(
             fontSize: 12,
             fontFamily: "SF UI",
-            fontWeight: FontWeight.w500,
-            color: Colors.black),
+            color: primaryColor,
+            fontWeight: FontWeight.normal,
+            height: 1.2),
+        subtitle1: TextStyle(
+            fontSize: 12,
+            fontFamily: "SF UI",
+            fontWeight: FontWeight.w600,
+            color: primaryColor,
+            height: 1.2),
+        subtitle2: TextStyle(
+            fontSize: 12,
+            fontFamily: "SF UI",
+            fontWeight: FontWeight.normal,
+            color: darkGrayColor,
+            height: 1.6),
       ));
 }
