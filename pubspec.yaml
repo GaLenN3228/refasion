@@ -67,6 +67,7 @@ flutter:
     - assets/home.svg
     - assets/profile.svg
     - assets/messages.svg
+    - assets/back.svg
     - assets/dresses.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

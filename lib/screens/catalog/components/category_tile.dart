@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
+import 'package:refashioned_app/screens/catalog/pages/categories_page.dart';
 import '../../../models/category.dart';
 
-class CatalogTile extends StatelessWidget {
+class CategoryTile extends StatelessWidget {
   final Category category;
+  final bool uppercase;
 
-  const CatalogTile({Key key, this.category}) : super(key: key);
+  const CategoryTile({Key key, this.category, this.uppercase: false})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => CategoryPage(category: category)));
+            builder: (context) => CategoriesPage(parentCategory: category)));
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 20, right: 12),
@@ -21,8 +23,11 @@ class CatalogTile extends StatelessWidget {
           child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                category.name,
-                style: Theme.of(context).textTheme.headline2,
+                uppercase ? category.name.toUpperCase() : category.name,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline2
+                    .copyWith(fontWeight: FontWeight.w500),
               )),
         ),
       ),

@@ -92,9 +92,8 @@ class NavPanel extends StatelessWidget {
               currentIndex: 1,
               showUnselectedLabels: true,
               type: BottomNavigationBarType.fixed,
-              unselectedLabelStyle:
-                  TextStyle(fontFamily: "SF UI", fontSize: 10),
-              selectedLabelStyle: TextStyle(fontFamily: "SF UI", fontSize: 10),
+              unselectedLabelStyle: Theme.of(context).textTheme.headline3,
+              selectedLabelStyle: Theme.of(context).textTheme.headline3,
               unselectedItemColor: Color(0xFF8E8E8E),
               selectedItemColor: Colors.black,
             ),
