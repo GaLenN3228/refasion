@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_page.dart';
-import 'package:refashioned_app/screens/product/pages/product.dart';
-import 'package:refashioned_app/utils/colors.dart';
 
-void main() => runApp(ChangeNotifierProvider<CatalogRepository>(
-      create: (_) => CatalogRepository(),
-      child: RefashionApp(),
-    ));
+void main() => runApp(RefashionApp());
 
 class RefashionApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: _materialTheme(),
-      debugShowCheckedModeBanner: false,
-      home: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
-        child: ProductPage(),
-      ),
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CatalogRepository>(create: (_) => CatalogRepository()),
+          ChangeNotifierProvider<ProductRepository>(create: (_) => ProductRepository())
+        ],
+        child: MaterialApp(
+          theme: _materialTheme(),
+          debugShowCheckedModeBanner: false,
+          home: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.dark,
+            child: CatalogPage(),
+          ),
+        ));
   }
 }
 

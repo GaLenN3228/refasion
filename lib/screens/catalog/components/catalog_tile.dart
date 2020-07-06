@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
-import '../../../models/catalog.dart';
+import '../../../models/category.dart';
 
 class CatalogTile extends StatelessWidget {
-  final Catalog catalog;
+  final Category category;
 
-  const CatalogTile({Key key, this.catalog}) : super(key: key);
+  const CatalogTile({Key key, this.category}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => CategoryPage(catalog: catalog)));
+            builder: (context) => CategoryPage(category: category)));
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 20, right: 12),
@@ -21,8 +21,8 @@ class CatalogTile extends StatelessWidget {
           child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                catalog.name,
-                style: Theme.of(context).textTheme.subtitle1,
+                category.name,
+                style: Theme.of(context).textTheme.headline2,
               )),
         ),
       ),

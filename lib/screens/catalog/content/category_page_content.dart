@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/catalog/components/catalog_brands.dart';
 import 'package:refashioned_app/screens/catalog/components/catalog_divider.dart';
 import 'package:refashioned_app/screens/catalog/components/catalog_image.dart';
-import '../../../models/catalog.dart';
+import '../../../models/category.dart';
 import '../components/catalog_tile.dart';
 
 class CategoryPageContent extends StatelessWidget {
-  final Catalog catalog;
+  final Category category;
 
-  const CategoryPageContent({Key key, this.catalog}) : super(key: key);
+  const CategoryPageContent({Key key, this.category}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final children = catalog.children;
+    final children = category.children;
 
     if (children.isEmpty)
       return Center(
@@ -25,7 +25,7 @@ class CategoryPageContent extends StatelessWidget {
         children: [CatalogImage(), CatalogBrands()],
       ),
     ]..addAll(
-        children.map((catalog) => CatalogTile(catalog: catalog)).toList()));
+        children.map((catalog) => CatalogTile(category: catalog)).toList()));
 
     return ListView.separated(
       padding: EdgeInsets.only(
