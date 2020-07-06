@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_page.dart';
+import 'package:refashioned_app/screens/product/pages/product.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 void main() => runApp(RefashionApp());
@@ -21,7 +22,7 @@ class RefashionApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle.dark,
-            child: CatalogPage(),
+            child: ProductPage(),
           ),
         ));
   }

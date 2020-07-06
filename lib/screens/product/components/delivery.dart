@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/components/button.dart';
 
 class ProductDelivery extends StatelessWidget {
-  @override
   Widget _deliveryItem(TextTheme textTheme, String assetName, String title, String subtitle) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -31,6 +30,7 @@ class ProductDelivery extends StatelessWidget {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
