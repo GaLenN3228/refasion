@@ -1,31 +1,18 @@
-import 'package:refashioned_app/models/brand.dart';
-import 'package:refashioned_app/models/category.dart';
-
+import 'package:refashioned_app/models/property.dart';
 import 'package:refashioned_app/models/status.dart';
+
+import 'brand.dart';
+import 'category.dart';
 
 class ProductResponse {
   final Status status;
-  final ProductContent productContent;
+  final Product product;
 
-  const ProductResponse({this.status, this.productContent});
+  const ProductResponse({this.status, this.product});
 
   factory ProductResponse.fromJson(Map<String, dynamic> json) {
     return ProductResponse(
-        status: Status.fromJson(json['status']),
-        productContent: ProductContent.fromJson(json['content']));
-  }
-}
-
-class ProductContent {
-  final int count;
-  final List<Product> products;
-
-  const ProductContent({this.count, this.products});
-
-  factory ProductContent.fromJson(Map<String, dynamic> json) {
-    return ProductContent(
-        count: json['count'],
-        products: [for (final product in json['products']) Product.fromJson(product)]);
+        status: Status.fromJson(json['status']), product: Product.fromJson(json['content']));
   }
 }
 
@@ -38,6 +25,9 @@ class Product {
   final String image;
   final Category category;
   final Brand brand;
+  final String description;
+  final List<Property> properties;
+  final List<String> images;
 
   const Product(
       {this.id,
@@ -47,7 +37,10 @@ class Product {
       this.discountPrice,
       this.image,
       this.category,
-      this.brand});
+      this.brand,
+      this.description,
+      this.properties,
+      this.images});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
@@ -58,6 +51,10 @@ class Product {
         discountPrice: json['discount_price'],
         image: json['image'],
         category: Category.fromJson(json['category']),
-        brand: Brand.fromJson(json['brand']));
+        brand: Brand.fromJson(json['brand']),
+        description: json['description'],
+        properties: [for (final property in json['properties']) Property.fromJson(property)],
+        images: [for (final image in json['images']) image]
+    );
   }
 }

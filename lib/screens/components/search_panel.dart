@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/product.dart';
+import 'package:refashioned_app/screens/product/pages/product.dart';
 
 class SearchPanel extends StatelessWidget {
   @override
@@ -13,8 +16,7 @@ class SearchPanel extends StatelessWidget {
               height: 35,
               decoration: ShapeDecoration(
                   color: Color(0xFFF6F6F6),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5))),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
               child: Row(
                 children: [
                   Padding(
@@ -41,11 +43,24 @@ class SearchPanel extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 3, right: 8),
-          child: SvgPicture.asset(
-            'assets/favorite_border.svg',
-            color: Colors.black,
-            width: 44,
-            height: 44,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider<ProductRepository>(
+                    create: (context) => ProductRepository("89e8bf1f-dd00-446c-8bce-4a5e9a31586a"),
+                    child: ProductPage(),
+                  ),
+                ),
+              );
+            },
+            child: SvgPicture.asset(
+              'assets/favorite_border.svg',
+              color: Colors.black,
+              width: 44,
+              height: 44,
+            ),
           ),
         )
       ],
