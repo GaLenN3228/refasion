@@ -14,6 +14,7 @@ class CatalogTile extends StatelessWidget {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => CategoryPage(category: category)));
       },
+
       child: Padding(
         padding: const EdgeInsets.only(left: 20, right: 12),
         child: SizedBox(
