@@ -32,7 +32,7 @@ class CategoryBrands extends StatelessWidget {
                   "По брендам",
                   style: Theme.of(context)
                       .textTheme
-                      .bodyText1
+                      .subtitle1
                       .copyWith(fontWeight: FontWeight.w700),
                 )
               ],
