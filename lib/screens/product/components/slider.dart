@@ -1,31 +1,33 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/utils/colors.dart';
-
-final List<String> imgList = [
-  'https://docs.refashioned.ru/media/product/89e8bf1f-dd00-446c-8bce-4a5e9a31586a/b9fa34e18edb4970d8e115df172c0512.jpg',
-  'https://docs.refashioned.ru/media/product/89e8bf1f-dd00-446c-8bce-4a5e9a31586a/b9fa34e18edb4970d8e115df172c0512.jpg',
-  'https://docs.refashioned.ru/media/product/89e8bf1f-dd00-446c-8bce-4a5e9a31586a/b9fa34e18edb4970d8e115df172c0512.jpg',
-  'https://docs.refashioned.ru/media/product/89e8bf1f-dd00-446c-8bce-4a5e9a31586a/b9fa34e18edb4970d8e115df172c0512.jpg',
-  'https://docs.refashioned.ru/media/product/89e8bf1f-dd00-446c-8bce-4a5e9a31586a/b9fa34e18edb4970d8e115df172c0512.jpg',
-  'https://docs.refashioned.ru/media/product/89e8bf1f-dd00-446c-8bce-4a5e9a31586a/b9fa34e18edb4970d8e115df172c0512.jpg'
-];
-final List<Widget> imageSliders = imgList
-    .map((item) => Container(
-          child: Container(
-            margin: EdgeInsets.all(5.0),
-            child: Image.network(item, fit: BoxFit.contain),
-          ),
-        ))
-    .toList();
+import 'package:refashioned_app/utils/url.dart';
 
 class ProductSlider extends StatefulWidget {
+  final List<String> images;
+
+  const ProductSlider({Key key, this.images}) : super(key: key);
+
   @override
-  _ProductSliderState createState() => _ProductSliderState();
+  _ProductSliderState createState() {
+    return _ProductSliderState(images);
+  }
 }
 
 class _ProductSliderState extends State<ProductSlider> {
   int _current = 0;
+  final List<String> images;
+
+  _getImagesSlider() => images
+      .map((item) => Container(
+            child: Container(
+              margin: EdgeInsets.all(5.0),
+              child: Image.network(Url.mediaBaseUrl + item, fit: BoxFit.contain),
+            ),
+          ))
+      .toList();
+
+  _ProductSliderState(this.images);
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +42,11 @@ class _ProductSliderState extends State<ProductSlider> {
                     _current = index;
                   });
                 }),
-            items: imageSliders,
+            items: _getImagesSlider(),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: imgList
+            children: images
                 .asMap()
                 .map((index, value) => MapEntry(
                     index,

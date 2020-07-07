@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/property.dart';
 import 'package:refashioned_app/screens/product/components/properties.dart';
 
 class ProductDescription extends StatelessWidget {
+  final String description;
+  final String article;
+  final List<Property> properties;
+
+  const ProductDescription(
+      {Key key, @required this.description, @required this.article, @required this.properties})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
           margin: const EdgeInsets.only(bottom: 20),
-          child: Text("Отличное состояние, одевала пару раз, не требует"
-              " глажки, что очень удобно в носке, причина продажи "
-              "маловато", style: Theme.of(context).textTheme.bodyText1,),
+          child: Text(
+            description ?? "Описание отсутствует",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
         ),
-        ProductProperties()
+        ProductProperties(properties: properties, article: article,)
       ],
     );
   }
