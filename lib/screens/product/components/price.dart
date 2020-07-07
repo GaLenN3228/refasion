@@ -11,6 +11,9 @@ class ProductPrice extends StatelessWidget {
     return Row(
       children: <Widget>[
         Text("1 000", style: bodyText2.copyWith(decoration: TextDecoration.lineThrough)),
+        Container(
+          width: 8,
+        ),
         Text("499 ₽", style: bodyText1.copyWith(backgroundColor: accentColor))
       ],
     );
