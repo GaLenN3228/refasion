@@ -24,15 +24,17 @@ class CategoryImage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(category.name.toUpperCase(),
-                  style: Theme.of(context).textTheme.headline1.copyWith(
-                      fontWeight: FontWeight.w600, color: Colors.white)),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1
+                      .copyWith(color: Colors.white)),
               SizedBox(
                 height: 5,
               ),
               Text("1158 вещей",
                   style: Theme.of(context)
                       .textTheme
-                      .headline2
+                      .bodyText1
                       .copyWith(color: Colors.white)),
               SizedBox(
                 height: 10,
@@ -41,7 +43,7 @@ class CategoryImage extends StatelessWidget {
                 "Смотреть все товары >",
                 style: Theme.of(context)
                     .textTheme
-                    .headline2
+                    .bodyText1
                     .copyWith(color: Color(0xFFFAD24E)),
               )
             ],

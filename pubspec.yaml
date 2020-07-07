@@ -55,20 +55,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
-    - assets/small_search.svg
-    - assets/small_star.svg
-    - assets/catalog_brands_background.svg
-    - assets/search.svg
-    - assets/favorite_border.svg
-    - assets/add.svg
-    - assets/small_add.svg
-    - assets/bag.svg
-    - assets/catalog.svg
-    - assets/home.svg
-    - assets/profile.svg
-    - assets/messages.svg
-    - assets/back.svg
-    - assets/dresses.png
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
