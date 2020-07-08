@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:refashioned_app/components/button.dart';
-import 'package:refashioned_app/screens/components/top_panel.dart';
-import 'package:refashioned_app/screens/product/components/add_to_cart.dart';
-import 'package:refashioned_app/screens/product/components/additional.dart';
-import 'package:refashioned_app/screens/product/components/delivery.dart';
-import 'package:refashioned_app/screens/product/components/description.dart';
-import 'package:refashioned_app/screens/product/components/payment.dart';
-import 'package:refashioned_app/screens/product/components/price.dart';
-import 'package:refashioned_app/screens/product/components/questions.dart';
-import 'package:refashioned_app/screens/product/components/related_products.dart';
-import 'package:refashioned_app/screens/product/components/seller.dart';
-import 'package:refashioned_app/screens/product/components/slider.dart';
-import 'package:refashioned_app/screens/product/components/title.dart';
+import 'package:refashioned_app/repositories/product.dart';
+import 'package:refashioned_app/screens/product/components/bottom_bar.dart';
+import 'package:refashioned_app/screens/product/content/product.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPage extends StatelessWidget {
@@ -20,67 +13,29 @@ class ProductPage extends StatelessWidget {
   const ProductPage({Key key, this.onPop}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TopPanel(
-          canPop: true,
-          onPop: onPop,
-          type: PanelType.item,
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            children: <Widget>[
-              ProductSlider(),
-              ProductPrice(),
-              ProductTitle(),
-              ProductAddToCart(),
-              ProductSeller(),
-              ProductDescription(),
-              ProductQuestions(),
-              ProductDelivery(),
-              ProductPayment(),
-              ProductAdditional(),
-              RelatedProducts(),
-            ],
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: lightGrayColor, width: 0)),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding:
-                EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-            child: Container(
-              height: 50,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                        height: double.infinity,
-                        child:
-                            Button("Проверка", buttonStyle: ButtonStyle.dark)),
-                  ),
-                  Container(
-                    width: 5,
-                  ),
-                  Expanded(
-                    child: Container(
-                        height: double.infinity,
-                        child: Button("В корзину",
-                            buttonStyle: ButtonStyle.amber)),
-                  ),
-                ],
+    return ChangeNotifierProvider<ProductRepository>(
+      create: (_) => ProductRepository("89e8bf1f-dd00-446c-8bce-4a5e9a31586a"),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(44.0),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            leading: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SvgPicture.asset(
+                'assets/arrow_left.svg',
+                height:10,
+                color: primaryColor,
               ),
             ),
           ),
-        )
-      ],
+        ),
+        body: SafeArea(
+          child: ProductPageContent(),
+        ),
+        bottomNavigationBar: ProductBottomBar(),
+      ),
     );
   }
 }

@@ -8,6 +8,7 @@ class ProductAddToCart extends StatelessWidget {
       "Добавить в корзину",
       buttonStyle: ButtonStyle.dark,
       height: 45,
+      width: double.infinity,
       borderRadius: 5,
     );
   }
