@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/components/button.dart';
 import 'package:refashioned_app/repositories/product.dart';
 import 'package:refashioned_app/screens/product/components/bottom_bar.dart';
 import 'package:refashioned_app/screens/product/content/product.dart';
