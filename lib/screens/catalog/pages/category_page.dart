@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/catalog/components/category_brands.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/catalog/components/category_image.dart';
+import 'package:refashioned_app/screens/catalog/components/category_root_tile.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
 import '../../../models/category.dart';
+import '../../../utils/colors.dart';
 import '../components/category_tile.dart';
 
 enum CategoryLevel { root, categories, category }
@@ -27,6 +29,36 @@ class CategoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (level == CategoryLevel.root) {
+      final widgets = category.children
+          .map((category) => Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => onPush(category),
+                  child: CategoryRootTile(
+                    category: category,
+                  ),
+                ),
+              ))
+          .toList();
+
+      return Column(
+        children: [
+          TopPanel(
+            canPop: false,
+          ),
+          Expanded(
+            child: Column(
+              children: widgets,
+            ),
+          ),
+          SizedBox(
+            height: 100,
+          )
+        ],
+      );
+    }
+
     final widgets = List<Widget>();
 
     if (level == CategoryLevel.category)
