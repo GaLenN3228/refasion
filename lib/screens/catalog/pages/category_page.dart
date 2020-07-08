@@ -1,28 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/category.dart';
-import 'package:refashioned_app/screens/catalog/content/category_page_content.dart';
-import 'package:refashioned_app/screens/components/nav_panel.dart';
-import 'package:refashioned_app/screens/components/search_panel.dart';
+import 'package:refashioned_app/screens/catalog/components/category_brands.dart';
+import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/catalog/components/category_image.dart';
+import 'package:refashioned_app/screens/components/top_panel.dart';
+import '../../../models/category.dart';
+import '../components/category_tile.dart';
+
+enum CategoryLevel { root, categories, category }
 
 class CategoryPage extends StatelessWidget {
   final Category category;
+  final CategoryLevel level;
+  final Function(Category) onPush;
 
-  const CategoryPage({Key key, this.category}) : super(key: key);
+  final bool canPop;
+  final Function() onPop;
+
+  const CategoryPage(
+      {Key key,
+      this.category,
+      this.onPush,
+      this.level,
+      this.canPop,
+      this.onPop})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
+    final widgets = List<Widget>();
+
+    if (level == CategoryLevel.category)
+      widgets.add(Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned.fill(child: CategoryPageContent(category: category)),
-          Positioned(
-              left: 0,
-              top: MediaQuery.of(context).padding.top,
-              right: 0,
-              child: SearchPanel()),
-          Positioned(left: 0, right: 0, bottom: 0, child: NavPanel())
+          CategoryImage(
+            category: category,
+          ),
+          CategoryBrands()
         ],
-      ),
+      ));
+
+    widgets.addAll(category.children
+        .map((category) => GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => onPush(category),
+              child: CategoryTile(
+                category: category,
+                uppercase: level != CategoryLevel.category,
+              ),
+            ))
+        .toList());
+
+    return Column(
+      children: [
+        TopPanel(
+          canPop: canPop,
+          onPop: onPop,
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.only(bottom: 100),
+            itemCount: widgets.length,
+            itemBuilder: (context, index) {
+              return widgets.elementAt(index);
+            },
+            separatorBuilder: (context, index) {
+              return CategoryDivider();
+            },
+          ),
+        ),
+      ],
     );
   }
 }
