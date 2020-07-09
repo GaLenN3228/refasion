@@ -74,7 +74,8 @@ class ProductsPageContent extends StatelessWidget {
           child: GridView.count(
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 56),
             crossAxisCount: 2,
-            childAspectRatio: MediaQuery.of(context).size.height / 1370,
+            childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height),
+//            childAspectRatio: MediaQuery.of(context).size.height / 1370,
             children: new List<Widget>.generate(productsContent.products.length, (index) {
               return new GridTile(
                 child: ProductsItem(product: productsContent.products[index], onPush: onPush),
