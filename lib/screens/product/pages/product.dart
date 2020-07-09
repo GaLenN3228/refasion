@@ -7,13 +7,14 @@ import 'package:refashioned_app/screens/product/content/product.dart';
 
 class ProductPage extends StatelessWidget {
   final Function() onPop;
+  final String id;
 
-  const ProductPage({Key key, this.onPop}) : super(key: key);
+  const ProductPage({Key key, this.onPop, this.id}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ProductRepository>(
-      create: (_) => ProductRepository("89e8bf1f-dd00-446c-8bce-4a5e9a31586a"),
+      create: (_) => ProductRepository(id),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(

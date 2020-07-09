@@ -8,7 +8,7 @@ class ProductBottomBar extends StatelessWidget {
     final bottomOffset = MediaQuery.of(context).padding.top;
     return Container(
       height: 50,
-      padding: EdgeInsets.only(top: 20, bottom: 20 + bottomOffset, left: 7, right: 7),
+      padding: EdgeInsets.only(top: 7, bottom: 7 + bottomOffset, left: 20, right: 20),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: lightGrayColor, width: 0)),
         color: Colors.white,
