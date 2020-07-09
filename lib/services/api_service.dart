@@ -33,4 +33,8 @@ class ApiService {
   static Future<Response> getProductsCount() async {
     return DioClient().getClient(logging: true).get(Url.productsCount);
   }
+
+  static Future<Response> getFilters() async {
+    return DioClient().getClient(logging: true).get(Url.filters);
+  }
 }
