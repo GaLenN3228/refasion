@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:refashioned_app/screens/catalog/components/measure_size.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 enum TabItem { home, catalog, sell, cart, profile }
