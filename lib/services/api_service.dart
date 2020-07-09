@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:refashioned_app/services/dio_client.dart';
 
 import '../utils/url.dart';
 
@@ -6,17 +7,19 @@ class ApiService {
   static Map<String, String> header = {"Content-Type": "application/json"};
 
   static Future<Response> getCategories() async {
-    Dio dio = new Dio();
-    dio.options.headers['content-Type'] = 'application/json';
-    return dio.get(Url.categories);
+    return DioClient().getClient(logging: true).get(Url.categories);
   }
 
-  static Future<Response> getProducts() async {
-    return Dio().get(Url.products);
+  static Future<Response> getProducts(String id) async {
+    DioClient dioClient = DioClient();
+    var queryParameters = {
+      'p': id,
+    };
+    return dioClient.getClient(logging: true).get(Url.products, queryParameters: queryParameters);
   }
 
   static Future<Response> getProduct(String id) async {
-    return Dio().get(Url.products + id + "/");
+    return DioClient().getClient(logging: true).get(Url.products + id + "/");
   }
 
   static Future<Response> getCart() async {
@@ -24,10 +27,10 @@ class ApiService {
   }
 
   static Future<Response> getContentCatalogMenu() async {
-    return Dio().get(Url.catalogMenu);
+    return DioClient().getClient(logging: true).get(Url.catalogMenu);
   }
 
   static Future<Response> getProductsCount() async {
-    return Dio().get(Url.productsCount);
+    return DioClient().getClient(logging: true).get(Url.productsCount);
   }
 }

@@ -7,10 +7,14 @@ import 'base.dart';
 class ProductsRepository extends BaseRepository {
   ProductsResponse productsResponse;
 
+  final String id;
+
+  ProductsRepository(this.id);
+
   @override
   Future<void> loadData() async {
     try {
-      final Response productResponse = await ApiService.getProducts();
+      final Response productResponse = await ApiService.getProducts(id);
 
       this.productsResponse = ProductsResponse.fromJson(productResponse.data);
 
