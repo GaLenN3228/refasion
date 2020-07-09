@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/screens/catalog/pages/products_page.dart';
 import 'package:refashioned_app/screens/product/pages/product.dart';
+import 'package:refashioned_app/screens/products/pages/products.dart';
 
 class CatalogNavigatorRoutes {
   static const String root = '/';
@@ -64,16 +65,16 @@ class CatalogNavigator extends StatelessWidget {
             settings: RouteSettings(name: CatalogNavigatorRoutes.items)),
       );
 
-  void _pushItem(BuildContext context) => Navigator.push(
+  void _pushItem(BuildContext context, Product product) => Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => _routeBuilder(
-                context, null, CatalogNavigatorRoutes.item)(context),
+                context, null, CatalogNavigatorRoutes.item, product: product)(context),
             settings: RouteSettings(name: CatalogNavigatorRoutes.item)),
       );
 
   WidgetBuilder _routeBuilder(
-      BuildContext context, Category category, String route) {
+      BuildContext context, Category category, String route, {Product product}) {
     switch (route) {
       case CatalogNavigatorRoutes.root:
         return (context) => CategoryPage(
@@ -114,11 +115,12 @@ class CatalogNavigator extends StatelessWidget {
       case CatalogNavigatorRoutes.items:
         return (context) => ProductsPage(
               onPop: () => Navigator.pop(context),
-              onPush: (product) => _pushItem(context),
+              onPush: (product) => _pushItem(context, product),
+              id: category.id
             );
 
       case CatalogNavigatorRoutes.item:
-        return (context) => ProductPage(
+        return (context) => ProductPage(id: product.id,
               onPop: () => Navigator.pop(context),
             );
 

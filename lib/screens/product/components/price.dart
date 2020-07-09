@@ -3,15 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPrice extends StatelessWidget {
+  final int currentPrice;
+  final int discountPrice;
+
+  const ProductPrice({Key key,@required this.currentPrice,@required this.discountPrice}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    TextStyle bodyText1 = textTheme.bodyText1;
+    TextStyle bodyText1 = textTheme.subtitle1;
     TextStyle bodyText2 = textTheme.bodyText2;
     return Row(
       children: <Widget>[
-        Text("1 000", style: bodyText2.copyWith(decoration: TextDecoration.lineThrough)),
-        Text("499 ₽", style: bodyText1.copyWith(backgroundColor: accentColor))
+        this.discountPrice != null
+            ? Text("$discountPrice",
+                style: bodyText2.copyWith(decoration: TextDecoration.lineThrough))
+            : Container(),
+        this.discountPrice != null
+            ? Container(
+                width: 8,
+              )
+            : Container(),
+        this.discountPrice == null
+            ? Text("$currentPrice ₽", style: bodyText1)
+            : Text("$currentPrice ₽", style: bodyText1.copyWith(backgroundColor: accentColor))
       ],
     );
   }
