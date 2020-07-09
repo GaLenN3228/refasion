@@ -6,7 +6,7 @@ import 'package:refashioned_app/screens/components/top_panel.dart';
 import '../../../models/category.dart';
 import '../components/category_tile.dart';
 
-enum CategoryLevel { root, categories, category }
+enum CategoryLevel { categories, category }
 
 class CategoryPage extends StatelessWidget {
   final Category category;
@@ -59,7 +59,7 @@ class CategoryPage extends StatelessWidget {
         ),
         Expanded(
           child: ListView.separated(
-            padding: EdgeInsets.only(bottom: 100),
+            padding: EdgeInsets.only(bottom: 89),
             itemCount: widgets.length,
             itemBuilder: (context, index) {
               return widgets.elementAt(index);
