@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'components/bottom_navigation.dart';
 import 'components/catalog_navigator.dart';
 
@@ -89,7 +90,13 @@ class _TabSwitcherState extends State<TabSwitcher> {
                 showTabBar: showTabBar),
           ),
         );
-
+      case TabItem.cart:
+        return Offstage(
+          offstage: currentTab != tabItem,
+          child: Scaffold(
+            body: CartPage(),
+          ),
+        );
       default:
         return Offstage(
           offstage: currentTab != tabItem,
