@@ -11,7 +11,7 @@ class ProductPrice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    TextStyle bodyText1 = textTheme.bodyText1;
+    TextStyle bodyText1 = textTheme.subtitle1;
     TextStyle bodyText2 = textTheme.bodyText2;
     return Row(
       children: <Widget>[
@@ -24,7 +24,9 @@ class ProductPrice extends StatelessWidget {
                 width: 8,
               )
             : Container(),
-        Text("$currentPrice ₽", style: bodyText1.copyWith(backgroundColor: accentColor))
+        this.discountPrice == null
+            ? Text("$currentPrice ₽", style: bodyText1)
+            : Text("$currentPrice ₽", style: bodyText1.copyWith(backgroundColor: accentColor))
       ],
     );
   }

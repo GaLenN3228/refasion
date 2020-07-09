@@ -53,8 +53,8 @@ class Product {
         category: Category.fromJson(json['category']),
         brand: Brand.fromJson(json['brand']),
         description: json['description'],
-        properties: [for (final property in json['properties']) Property.fromJson(property)],
-        images: [for (final image in json['images']) image]
+        properties: [if (json['properties'] != null) for (final property in json['properties']) Property.fromJson(property)],
+        images: [if (json['images'] != null) for (final image in json['images']) image]
     );
   }
 }
