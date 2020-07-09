@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
@@ -34,19 +35,14 @@ class ProductsPageContent extends StatelessWidget {
     final ProductsContent productsContent =
         productsRepository.productsResponse.productsContent;
 
-    return GridView.count(
+    return StaggeredGridView.countBuilder(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 56),
       crossAxisCount: 2,
-      childAspectRatio: MediaQuery.of(context).size.width /
-          (MediaQuery.of(context).size.height),
-//            childAspectRatio: MediaQuery.of(context).size.height / 1370,
-      children:
-          new List<Widget>.generate(productsContent.products.length, (index) {
-        return new GridTile(
-          child: ProductsItem(
-              product: productsContent.products[index], onPush: onPush),
-        );
-      }),
+      itemCount: productsContent.products.length,
+      itemBuilder: (BuildContext context, int index) =>
+          ProductsItem(product: productsContent.products[index], onPush: onPush),
+      staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
+      mainAxisSpacing: 16.0,
     );
   }
 }

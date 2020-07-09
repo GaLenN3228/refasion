@@ -67,7 +67,7 @@ class ProductsItem extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 margin: const EdgeInsets.only(top: 6.0),
                 child: Text(
-                  product.name,
+                  product.brand.name,
                   style: textTheme.subtitle1,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
