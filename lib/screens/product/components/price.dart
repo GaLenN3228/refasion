@@ -1,30 +1,37 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPrice extends StatelessWidget {
   final int currentPrice;
   final int discountPrice;
 
-  const ProductPrice({Key key,@required this.currentPrice,@required this.discountPrice}) : super(key: key);
+  const ProductPrice({Key key, @required this.currentPrice, @required this.discountPrice})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    TextStyle bodyText1 = textTheme.bodyText1;
+    TextStyle subtitle = textTheme.subtitle1;
     TextStyle bodyText2 = textTheme.bodyText2;
+    final numberFormat = NumberFormat("#,###", "ru_Ru");
     return Row(
       children: <Widget>[
-        this.discountPrice != null
-            ? Text("$discountPrice",
+        discountPrice > 0
+            ? Text("${numberFormat.format(discountPrice)}",
                 style: bodyText2.copyWith(decoration: TextDecoration.lineThrough))
             : Container(),
-        this.discountPrice != null
+        discountPrice > 0
             ? Container(
                 width: 8,
               )
             : Container(),
-        Text("$currentPrice ₽", style: bodyText1.copyWith(backgroundColor: accentColor))
+        Container(
+          color: discountPrice > 0 ? accentColor : Color(0),
+          padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+          child: Text("${numberFormat.format(currentPrice)} ₽", style: subtitle),
+        )
       ],
     );
   }

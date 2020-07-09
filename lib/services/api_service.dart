@@ -19,6 +19,10 @@ class ApiService {
     return Dio().get(Url.products + id + "/");
   }
 
+  static Future<Response> getCart() async {
+    return Dio().get(Url.cart);
+  }
+
   static Future<Response> getContentCatalogMenu() async {
     return Dio().get(Url.catalogMenu);
   }
