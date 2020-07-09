@@ -12,6 +12,7 @@ class CategoryImage extends StatelessWidget {
         Image.asset(
           'assets/dresses.png',
           height: 200,
+          width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
         ),
         Positioned.fill(

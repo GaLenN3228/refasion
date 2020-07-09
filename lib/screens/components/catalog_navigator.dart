@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
+import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/screens/product/pages/product.dart';
@@ -11,8 +12,8 @@ class CatalogNavigatorRoutes {
   static const String root = '/';
   static const String categories = '/categories';
   static const String category = '/categories/category';
-  static const String items = '/categories/category/items';
-  static const String item = '/categories/category/items/item';
+  static const String products = '/categories/category/products';
+  static const String product = '/categories/category/products/product';
 }
 
 class ShowTabBarNavigationObserver extends NavigatorObserver {
@@ -23,13 +24,13 @@ class ShowTabBarNavigationObserver extends NavigatorObserver {
 
   @override
   void didPop(Route route, Route previousRoute) {
-    if (route.settings?.name == CatalogNavigatorRoutes.item) showTabBar();
+    if (route.settings?.name == CatalogNavigatorRoutes.product) showTabBar();
     super.didPop(route, previousRoute);
   }
 
   @override
   void didPush(Route route, Route previousRoute) {
-    if (route.settings?.name == CatalogNavigatorRoutes.item) hideTabBar();
+    if (route.settings?.name == CatalogNavigatorRoutes.product) hideTabBar();
     super.didPush(route, previousRoute);
   }
 }
@@ -45,47 +46,46 @@ class CatalogNavigator extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) => _routeBuilder(
-                context, category, CatalogNavigatorRoutes.categories)(context),
+                CatalogNavigatorRoutes.categories,
+                category: category)(context),
             settings: RouteSettings(name: CatalogNavigatorRoutes.categories)),
       );
 
   void _pushCategory(BuildContext context, Category category) => Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => _routeBuilder(
-                context, category, CatalogNavigatorRoutes.category)(context),
+            builder: (context) => _routeBuilder(CatalogNavigatorRoutes.category,
+                category: category)(context),
             settings: RouteSettings(name: CatalogNavigatorRoutes.category)),
       );
 
-  void _pushItems(BuildContext context, Category category) => Navigator.push(
+  void _pushProducts(BuildContext context, Category category) => Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => _routeBuilder(
-                context, category, CatalogNavigatorRoutes.items)(context),
-            settings: RouteSettings(name: CatalogNavigatorRoutes.items)),
+            builder: (context) => _routeBuilder(CatalogNavigatorRoutes.products,
+                category: category)(context),
+            settings: RouteSettings(name: CatalogNavigatorRoutes.products)),
       );
 
-  void _pushItem(BuildContext context, Product product) => Navigator.push(
+  void _pushProduct(BuildContext context, Product product) => Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => _routeBuilder(
-                context, null, CatalogNavigatorRoutes.item, product: product)(context),
-            settings: RouteSettings(name: CatalogNavigatorRoutes.item)),
+            builder: (context) => _routeBuilder(CatalogNavigatorRoutes.product,
+                product: product)(context),
+            settings: RouteSettings(name: CatalogNavigatorRoutes.product)),
       );
 
-  WidgetBuilder _routeBuilder(
-      BuildContext context, Category category, String route, {Product product}) {
+  WidgetBuilder _routeBuilder(String route,
+      {Category category, List<Category> categories, Product product}) {
     switch (route) {
       case CatalogNavigatorRoutes.root:
-        return (context) => CategoryPage(
-              canPop: false,
-              category: category,
-              level: CategoryLevel.root,
+        return (context) => CatalogRootPage(
+              categories: categories,
               onPush: (category) {
                 if (category.children.isNotEmpty)
                   _pushCategories(context, category);
                 else
-                  _pushItems(context, category);
+                  _pushProducts(context, category);
               },
             );
 
@@ -99,7 +99,7 @@ class CatalogNavigator extends StatelessWidget {
                 if (category.children.isNotEmpty)
                   _pushCategory(context, category);
                 else
-                  _pushItems(context, category);
+                  _pushProducts(context, category);
               },
             );
 
@@ -109,18 +109,18 @@ class CatalogNavigator extends StatelessWidget {
               onPop: () => Navigator.pop(context),
               category: category,
               level: CategoryLevel.category,
-              onPush: (category) => _pushItems(context, category),
+              onPush: (category) => _pushProducts(context, category),
             );
 
-      case CatalogNavigatorRoutes.items:
+      case CatalogNavigatorRoutes.products:
         return (context) => ProductsPage(
-              onPop: () => Navigator.pop(context),
-              onPush: (product) => _pushItem(context, product),
-              id: category.id
-            );
+            onPop: () => Navigator.pop(context),
+            onPush: (product) => _pushProduct(context, product),
+            id: category.id);
 
-      case CatalogNavigatorRoutes.item:
-        return (context) => ProductPage(id: product.id,
+      case CatalogNavigatorRoutes.product:
+        return (context) => ProductPage(
+              id: product.id,
               onPop: () => Navigator.pop(context),
             );
 
@@ -149,9 +149,6 @@ class CatalogNavigator extends StatelessWidget {
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    final selectedTopCategory =
-        catalogRepository.catalogResponse.categories.first;
-
     return Navigator(
       key: navigatorKey,
       observers: [
@@ -161,8 +158,9 @@ class CatalogNavigator extends StatelessWidget {
       initialRoute: CatalogNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return MaterialPageRoute(
-          builder: (context) => _routeBuilder(
-              context, selectedTopCategory, routeSettings.name)(context),
+          builder: (context) => _routeBuilder(routeSettings.name,
+              categories:
+                  catalogRepository.catalogResponse.categories)(context),
         );
       },
     );
