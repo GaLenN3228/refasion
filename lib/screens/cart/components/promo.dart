@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/components/button.dart';
+import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CartPromo extends StatelessWidget {

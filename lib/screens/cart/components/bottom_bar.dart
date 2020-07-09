@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/components/button.dart';
 import 'package:refashioned_app/models/cart.dart';
 import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CartBottomBar extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/components/button.dart';
+import 'package:refashioned_app/screens/components/button.dart';
 
 class ProductDelivery extends StatelessWidget {
   Widget _deliveryItem(TextTheme textTheme, String assetName, String title, String subtitle) {

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/components/button.dart';
 import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:refashioned_app/screens/product/components/properties.dart';
 import 'package:refashioned_app/utils/colors.dart';
