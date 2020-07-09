@@ -17,4 +17,7 @@ class Url {
 
   //Content
   static const catalogMenu = '$refashionedBaseUrl/content/catalog-menu/';
+
+  //Cart Demo
+  static const cart ='https://itlessons.ru/assets/refashioned-cart.json';
 }

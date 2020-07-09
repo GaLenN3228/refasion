@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/product.dart';
+import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/screens/cart/components/bottom_bar.dart';
+import 'package:refashioned_app/screens/cart/content/cart.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
-import 'package:refashioned_app/screens/product/components/bottom_bar.dart';
-import 'package:refashioned_app/screens/product/content/product.dart';
 
-class ProductPage extends StatelessWidget {
+class CartPage extends StatelessWidget {
   final Function() onPop;
-  final String id;
 
-  const ProductPage({Key key, this.onPop, this.id}) : super(key: key);
+  const CartPage({Key key, this.onPop}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProductRepository>(
-      create: (_) => ProductRepository(id),
+    return ChangeNotifierProvider<CartRepository>(
+      create: (_) => CartRepository(),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -26,12 +25,12 @@ class ProductPage extends StatelessWidget {
                 type: PanelType.item,
               ),
               Expanded(
-                child: ProductPageContent(),
+                child: CartPageContent(),
               )
             ],
           ),
         ),
-        bottomNavigationBar: ProductBottomBar(),
+        bottomNavigationBar: CartBottomBar(),
       ),
     );
   }

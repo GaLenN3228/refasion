@@ -5,37 +5,42 @@ import 'package:refashioned_app/models/property.dart';
 class ProductProperties extends StatelessWidget {
   final List<Property> properties;
   final String article;
+  final bool hasDots;
 
-  const ProductProperties({Key key, @required this.properties, @required this.article})
+  const ProductProperties(
+      {Key key, @required this.properties, @required this.article, this.hasDots = true})
       : super(key: key);
 
   Widget _renderPropertyRow(TextTheme textTheme,
           {String name = "Не указан", String value = "Не указан"}) =>
       Row(
         children: <Widget>[
-          Expanded(
+          Flexible(
+              fit: hasDots ? FlexFit.tight : FlexFit.loose,
               child: Opacity(
-            opacity: 0.58,
-            child: Container(
-              decoration: BoxDecoration(
-                  image: new DecorationImage(
-                alignment: Alignment.lerp(Alignment.bottomCenter, Alignment.center, 0.4),
-                repeat: ImageRepeat.repeatX,
-                image: new AssetImage(
-                  'assets/dots.png',
+                opacity: 0.58,
+                child: Container(
+                  decoration: hasDots
+                      ? BoxDecoration(
+                          image: new DecorationImage(
+                          alignment: Alignment.lerp(Alignment.bottomCenter, Alignment.center, 0.4),
+                          repeat: ImageRepeat.repeatX,
+                          image: new AssetImage(
+                            'assets/dots.png',
+                          ),
+                        ))
+                      : BoxDecoration(),
+                  child: Text(
+                    StringUtils.capitalize(name) + (hasDots ? "" : ":"),
+                    style: textTheme.bodyText2.copyWith(backgroundColor: Colors.white, height: 1.8),
+                  ),
                 ),
               )),
-              child: Text(
-                StringUtils.capitalize(name),
-                style: textTheme.bodyText2.copyWith(backgroundColor: Colors.white, height: 2),
-              ),
-            ),
-          )),
           Flexible(
               child: Padding(
-            padding: const EdgeInsets.only(left: 18),
-            child:
-                Text(StringUtils.capitalize(value), style: textTheme.bodyText1.copyWith(height: 2)),
+            padding: hasDots ? const EdgeInsets.only(left: 18) : const EdgeInsets.only(left: 2),
+            child: Text(StringUtils.capitalize(value),
+                style: textTheme.bodyText1.copyWith(height: 1.8)),
           ))
         ],
       );
