@@ -25,7 +25,7 @@ class ProductPageContent extends StatelessWidget {
 
     if (productRepository.loadingFailed)
       return Center(
-        child: Text("Ошибкаs"),
+        child: Text("Ошибка"),
       );
 
     if (productRepository.productResponse.status.code != 200)

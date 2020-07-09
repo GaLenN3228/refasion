@@ -8,7 +8,7 @@ enum TabItem { home, catalog, sell, cart, profile }
 Map<TabItem, String> tabName = {
   TabItem.home: 'Главная',
   TabItem.catalog: 'Каталог',
-  TabItem.sell: 'Продащь вещь',
+  TabItem.sell: 'Продать вещь',
   TabItem.cart: 'Корзина',
   TabItem.profile: 'Профиль',
 };

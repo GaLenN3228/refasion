@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-enum ButtonStyle { dark, amber, outline }
+enum ButtonStyle { dark, amber, outline, gray }
 
 class Button extends StatelessWidget {
   final String textButton;
+  final String subTitle;
   final ButtonStyle buttonStyle;
   final double width;
   final double height;
+  final bool toUpperCase;
 
   final double borderRadius;
 
@@ -15,7 +17,9 @@ class Button extends StatelessWidget {
       {this.buttonStyle = ButtonStyle.amber,
       this.width = 100,
       this.height = 30,
-      this.borderRadius = 3.0});
+      this.borderRadius = 3.0,
+      this.subTitle,
+      this.toUpperCase = true});
 
   Color _getBackgroundColor() {
     switch (buttonStyle) {
@@ -23,51 +27,67 @@ class Button extends StatelessWidget {
         return accentColor;
       case ButtonStyle.outline:
         return Colors.white;
+      case ButtonStyle.gray:
+        return Color(0xFFF5F5F5);
       case ButtonStyle.dark:
       default:
         return primaryColor;
     }
   }
 
-  RoundedRectangleBorder _getShape() {
+  BoxDecoration _getShape() {
     switch (buttonStyle) {
       case ButtonStyle.outline:
-        return RoundedRectangleBorder(
-          side: BorderSide(color: Colors.black),
+        return BoxDecoration(
+          color: _getBackgroundColor(),
+          border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(borderRadius),
         );
       case ButtonStyle.amber:
       case ButtonStyle.dark:
       default:
-      return RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
-      );
+        return BoxDecoration(
+          color: _getBackgroundColor(),
+          borderRadius: BorderRadius.circular(borderRadius),
+        );
     }
   }
 
-  TextStyle _getTextStyle(BuildContext context) {
-    TextStyle buttonDefaultStyle = Theme.of(context).textTheme.button;
+  TextStyle _getTextStyle(TextStyle textStyle) {
     switch (buttonStyle) {
       case ButtonStyle.amber:
       case ButtonStyle.outline:
-        return buttonDefaultStyle.copyWith(color: primaryColor);
+      case ButtonStyle.gray:
+        return textStyle.copyWith(color: primaryColor);
       case ButtonStyle.dark:
       default:
-        return buttonDefaultStyle.copyWith(color: Colors.white);
+        return textStyle.copyWith(color: Colors.white);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    TextStyle buttonTextStyle = Theme.of(context).textTheme.button;
+    TextStyle captionTextStyle = Theme.of(context).textTheme.caption;
     return SizedBox(
       height: height,
       width: width,
-      child: RaisedButton(
-        padding: EdgeInsets.zero,
-        color: _getBackgroundColor(),
-        shape: _getShape(),
-        onPressed: () {},
-        child: Text(textButton.toUpperCase(), style: _getTextStyle(context)),
+      child: GestureDetector(
+        onTap: () {},
+        child: Container(
+          padding: EdgeInsets.zero,
+          decoration: _getShape(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(toUpperCase ? textButton.toUpperCase() : textButton,
+                  style: _getTextStyle(buttonTextStyle)),
+              subTitle != null
+                  ? Text(subTitle, style: _getTextStyle(captionTextStyle))
+                  : Container(),
+            ],
+          ),
+        ),
       ),
     );
   }

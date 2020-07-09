@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/screens/catalog/content/filters_panel_content.dart';
 import 'package:refashioned_app/screens/catalog/content/sorting_panel_content.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
 import '../../../utils/colors.dart';
 
-class ProductsPage extends StatefulWidget {
-  final Function(Product) onPush;
+class FiltersWrap extends StatefulWidget {
   final Function() onPop;
+  final Widget child;
 
-  const ProductsPage({Key key, this.onPush, this.onPop}) : super(key: key);
+  const FiltersWrap({Key key, this.onPop, this.child}) : super(key: key);
 
   @override
-  _ProductsPageState createState() => _ProductsPageState();
+  _FiltersWrapState createState() => _FiltersWrapState();
 }
 
-class _ProductsPageState extends State<ProductsPage> {
+class _FiltersWrapState extends State<FiltersWrap> {
   PanelController controller;
   int selectedIndex;
 
@@ -106,11 +104,11 @@ class _ProductsPageState extends State<ProductsPage> {
             onPop: widget.onPop,
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(13),
-              child: Column(
-                children: [
-                  Row(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(13.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
@@ -147,36 +145,11 @@ class _ProductsPageState extends State<ProductsPage> {
                           ))
                     ],
                   ),
-                  Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () => widget.onPush(null),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Страница каталога",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.headline1,
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            "Нажмите, чтобы открыть\nстраницу товара",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                .copyWith(color: lightGrayColor),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: widget.child,
+                ),
+              ],
             ),
           ),
         ],

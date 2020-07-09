@@ -14,7 +14,6 @@ class RefashionApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<CatalogRepository>(create: (_) => CatalogRepository()),
-          ChangeNotifierProvider<ProductsRepository>(create: (_) => ProductsRepository())
         ],
         child: MaterialApp(
           theme: _materialTheme(),
