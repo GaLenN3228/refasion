@@ -12,6 +12,7 @@ class CategoryPage extends StatelessWidget {
   final Category category;
   final CategoryLevel level;
   final Function(Category) onPush;
+  final Function() onSearch;
 
   final bool canPop;
   final Function() onPop;
@@ -22,7 +23,8 @@ class CategoryPage extends StatelessWidget {
       this.onPush,
       this.level,
       this.canPop,
-      this.onPop})
+      this.onPop,
+      this.onSearch})
       : super(key: key);
 
   @override
@@ -56,6 +58,7 @@ class CategoryPage extends StatelessWidget {
         TopPanel(
           canPop: canPop,
           onPop: onPop,
+          onSearch: onSearch,
         ),
         Expanded(
           child: ListView.separated(

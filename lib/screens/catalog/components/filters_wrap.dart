@@ -8,9 +8,11 @@ import '../../../utils/colors.dart';
 
 class FiltersWrap extends StatefulWidget {
   final Function() onPop;
+  final Function() onSearch;
   final Widget child;
 
-  const FiltersWrap({Key key, this.onPop, this.child}) : super(key: key);
+  const FiltersWrap({Key key, this.onPop, this.child, this.onSearch})
+      : super(key: key);
 
   @override
   _FiltersWrapState createState() => _FiltersWrapState();
@@ -102,6 +104,7 @@ class _FiltersWrapState extends State<FiltersWrap> {
           TopPanel(
             canPop: true,
             onPop: widget.onPop,
+            onSearch: widget.onSearch,
           ),
           Expanded(
             child: Column(

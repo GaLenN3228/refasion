@@ -9,10 +9,11 @@ class ProductsPage extends StatelessWidget {
   //TODO доделать каунтер на фильтр
   final Function(Product) onPush;
   final Function() onPop;
+  final Function() onSearch;
 
   final String id;
 
-  const ProductsPage({Key key, this.onPush, this.onPop, this.id})
+  const ProductsPage({Key key, this.onPush, this.onPop, this.id, this.onSearch})
       : super(key: key);
 
   @override
@@ -21,6 +22,7 @@ class ProductsPage extends StatelessWidget {
       create: (_) => ProductsRepository(id),
       child: FiltersWrap(
         onPop: onPop,
+        onSearch:onSearch,
         child: ProductsPageContent(
           onPush: onPush,
         ),

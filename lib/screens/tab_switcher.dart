@@ -50,6 +50,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () async {
           return !await navigatorKeys[currentTab].currentState.maybePop();

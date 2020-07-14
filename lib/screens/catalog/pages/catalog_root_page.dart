@@ -8,8 +8,9 @@ import 'package:refashioned_app/screens/components/top_panel.dart';
 class CatalogRootPage extends StatelessWidget {
   final List<Category> categories;
   final Function(Category) onPush;
+  final Function() onSearch;
 
-  const CatalogRootPage({Key key, this.categories, this.onPush})
+  const CatalogRootPage({Key key, this.categories, this.onPush, this.onSearch})
       : super(key: key);
 
   Widget tabContent(BuildContext context, Category category) {
@@ -53,7 +54,9 @@ class CatalogRootPage extends StatelessWidget {
             return <Widget>[
               SliverAppBar(
                 titleSpacing: 0.0,
-                title: TopPanel(),
+                title: TopPanel(
+                  onSearch: onSearch,
+                ),
                 backgroundColor: Colors.white,
                 expandedHeight: 136.0 - MediaQuery.of(context).padding.top,
                 pinned: true,
