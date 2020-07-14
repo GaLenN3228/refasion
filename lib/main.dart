@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
-import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/tab_switcher.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -13,15 +13,27 @@ class RefashionApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider<CatalogRepository>(create: (_) => CatalogRepository()),
+          ChangeNotifierProvider<CatalogRepository>(
+              create: (_) => CatalogRepository()),
         ],
         child: MaterialApp(
           theme: _materialTheme(),
           debugShowCheckedModeBanner: false,
-          home: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.dark,
-            child: TabSwitcher(),
-          ),
+          onGenerateRoute: (RouteSettings settings) {
+            switch (settings.name) {
+              case '/':
+                return MaterialWithModalsPageRoute(
+                    builder: (_) => AnnotatedRegion<SystemUiOverlayStyle>(
+                          value: SystemUiOverlayStyle.dark,
+                          child: TabSwitcher(),
+                        ),
+                    settings: settings);
+            }
+            return MaterialPageRoute(
+                builder: (context) => Container(
+                      color: Colors.red,
+                    ));
+          },
         ));
   }
 }

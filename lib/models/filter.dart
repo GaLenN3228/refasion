@@ -25,7 +25,7 @@ class Filter {
         name: json['name'],
         type: json['type'],
         parameterName: json['parameter_name'],
-        values: [if (json['value'] != null) for (final value in json['value']) value]
+        values: [if (json['value'] != null) for (final value in json['value']) value.toString()]
     );
   }
 }
