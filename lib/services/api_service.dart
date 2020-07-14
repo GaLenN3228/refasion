@@ -4,10 +4,12 @@ import 'package:refashioned_app/services/dio_client.dart';
 import '../utils/url.dart';
 
 class ApiService {
+  static const LOG_ENABLE = true;
+
   static Map<String, String> header = {"Content-Type": "application/json"};
 
   static Future<Response> getCategories() async {
-    return DioClient().getClient(logging: true).get(Url.categories);
+    return DioClient().getClient(logging: LOG_ENABLE).get(Url.categories);
   }
 
   static Future<Response> getProducts(String id) async {
@@ -15,26 +17,26 @@ class ApiService {
     var queryParameters = {
       'p': id,
     };
-    return dioClient.getClient(logging: true).get(Url.products, queryParameters: queryParameters);
+    return dioClient.getClient(logging: LOG_ENABLE).get(Url.products, queryParameters: queryParameters);
   }
 
   static Future<Response> getProduct(String id) async {
-    return DioClient().getClient(logging: true).get(Url.products + id + "/");
+    return DioClient().getClient(logging: LOG_ENABLE).get(Url.products + id + "/");
   }
 
   static Future<Response> getCart() async {
-    return Dio().get(Url.cart);
+    return DioClient().getClient(logging: LOG_ENABLE).get(Url.cart);
   }
 
   static Future<Response> getContentCatalogMenu() async {
-    return DioClient().getClient(logging: true).get(Url.catalogMenu);
+    return DioClient().getClient(logging: LOG_ENABLE).get(Url.catalogMenu);
   }
 
   static Future<Response> getProductsCount() async {
-    return DioClient().getClient(logging: true).get(Url.productsCount);
+    return DioClient().getClient(logging: LOG_ENABLE).get(Url.productsCount);
   }
 
   static Future<Response> getFilters() async {
-    return DioClient().getClient(logging: true).get(Url.filters);
+    return DioClient().getClient(logging: LOG_ENABLE).get(Url.filters);
   }
 }
