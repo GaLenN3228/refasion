@@ -24,27 +24,31 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(padding: new EdgeInsets.fromLTRB(0, 10, 0, 0)),
-        SearchTopPanel(
-          onUpdate: (query, results) {
-            print(query.toString() +
-                ": " +
-                results.length.toString() +
-                " search results");
-            setState(() {
-              searchQuery = query;
-              catalogs = results;
-            });
-          },
+        SizedBox(
+          height: 80,
+          child:  SearchTopPanel(
+            onUpdate: (query, results) {
+              print(query.toString() +
+                  ": " +
+                  results.length.toString() +
+                  " search results");
+              setState(() {
+                searchQuery = query;
+                catalogs = results;
+              });
+            },
+
+          ),
         ),
         Expanded(
-          child: ListView.builder(
+          child: ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: catalogs.length,
             itemBuilder: (context, index) => ResultTile(
               query: searchQuery,
               catalog: catalogs.elementAt(index),
             ),
+            separatorBuilder: (context, _) => CategoryDivider(),
           ),
         )
       ],
