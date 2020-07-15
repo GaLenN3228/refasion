@@ -8,8 +8,10 @@ class ProductsRepository extends BaseRepository {
   ProductsResponse productsResponse;
 
   final String id;
+  final int maxPrice;
+  final int minPrice;
 
-  ProductsRepository(this.id);
+  ProductsRepository(this.id, {this.maxPrice, this.minPrice});
 
   @override
   Future<void> loadData() async {
