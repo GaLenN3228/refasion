@@ -20,6 +20,11 @@ class ApiService {
     return dioClient.getClient(logging: LOG_ENABLE).get(Url.products, queryParameters: queryParameters);
   }
 
+  static Future<Response> getSearchResults(String query) async {
+    DioClient dioClient = DioClient();
+    return dioClient.getClient(logging: LOG_ENABLE).get(Url.catalogSearch + query);
+  }
+
   static Future<Response> getProduct(String id) async {
     return DioClient().getClient(logging: LOG_ENABLE).get(Url.products + id + "/");
   }

@@ -20,4 +20,7 @@ class Url {
 
   //Cart Demo
   static const cart ='https://itlessons.ru/assets/refashioned-cart.json';
+
+  //Search catalogs, brands
+  static const catalogSearch = '$refashionedBaseUrl/catalog/search/?q=';
 }
