@@ -24,6 +24,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Padding(padding: new EdgeInsets.fromLTRB(0, 10, 0, 0)),
         SearchTopPanel(
           onUpdate: (query, results) {
             print(query.toString() +
@@ -37,14 +38,13 @@ class _SearchPageState extends State<SearchPage> {
           },
         ),
         Expanded(
-          child: ListView.separated(
+          child: ListView.builder(
             padding: EdgeInsets.zero,
             itemCount: catalogs.length,
             itemBuilder: (context, index) => ResultTile(
               query: searchQuery,
               catalog: catalogs.elementAt(index),
             ),
-            separatorBuilder: (context, _) => CategoryDivider(),
           ),
         )
       ],
