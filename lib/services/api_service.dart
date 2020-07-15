@@ -39,4 +39,12 @@ class ApiService {
   static Future<Response> getFilters() async {
     return DioClient().getClient(logging: LOG_ENABLE).get(Url.filters);
   }
+
+  static Future<Response> search(String query) async {
+    DioClient dioClient = DioClient();
+    var queryParameters = {
+      'q': query,
+    };
+    return dioClient.getClient(logging: LOG_ENABLE).get(Url.search, queryParameters: queryParameters);
+  }
 }
