@@ -31,7 +31,7 @@ class CartProduct extends StatelessWidget {
                 color: lightGrayColor,
               ),
               child: Image.network(
-                Url.mediaBaseUrl + product.images.first,
+                product.images.first,
                 width: 80,
                 height: 80,
                 fit: BoxFit.contain,

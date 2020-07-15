@@ -35,6 +35,8 @@ class ProductsPageContent extends StatelessWidget {
     final ProductsContent productsContent =
         productsRepository.productsResponse.productsContent;
 
+//    productsRepository.filterAndUpdateProducts(filters)
+
     return StaggeredGridView.countBuilder(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 56),
       crossAxisCount: 2,

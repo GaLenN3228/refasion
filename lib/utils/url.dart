@@ -1,7 +1,4 @@
 class Url {
-  //Media Base URLs
-  static const mediaBaseUrl = 'https://docs.refashioned.ru';
-
   //Base URLs
   static const refashionedBaseUrl = 'https://api.refashioned.ru/v1';
 

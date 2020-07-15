@@ -18,7 +18,7 @@ class ProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ProductsRepository>(
-      create: (_) => ProductsRepository(id),
+      create: (_) => ProductsRepository(id: id),
       child: FiltersWrap(
         onPop: onPop,
         child: ProductsPageContent(
