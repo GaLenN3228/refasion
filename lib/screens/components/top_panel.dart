@@ -36,7 +36,7 @@ class TopPanelState extends State<TopPanel> {
       color: Colors.white,
       child: GestureDetector(
         onTap: () {
-          print('Hello');
+          widget.onSearch();
         },
         child: Column(
           children: [

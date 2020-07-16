@@ -1,36 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/models/catalog.dart';
+import 'package:refashioned_app/models/search_result.dart';
 
 class SearchTopPanel extends StatelessWidget {
-  final Function(String, List<Catalog>) onUpdate;
+  final Function(String) onUpdate;
 
   const SearchTopPanel({Key key, this.onUpdate}) : super(key: key);
 
   search(String query) {
-    final queryResults = query.isEmpty
-        ? loadCatalogItems()
-        : loadCatalogItems()
-            .where((catalog) =>
-                catalog.name.toLowerCase().startsWith(query.toLowerCase()))
-            .toList();
-    onUpdate(query, queryResults);
+    onUpdate(query);
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top, 20, 4),
+      padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top, 20, 4),
       child: Row(
         children: [
           Expanded(
             child: Container(
               height: 35,
               decoration: ShapeDecoration(
-                  color: Color(0xFFF6F6F6),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5))),
+                  color: Color(0xFFF6F6F6), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
               child: Row(
                 children: [
                   Padding(
@@ -52,10 +44,7 @@ class SearchTopPanel extends StatelessWidget {
                       border: InputBorder.none,
                       hintText: "Поиск",
                     ),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1
-                        .copyWith(fontWeight: FontWeight.normal),
+                    style: Theme.of(context).textTheme.headline1.copyWith(fontWeight: FontWeight.normal),
                   )),
                 ],
               ),
