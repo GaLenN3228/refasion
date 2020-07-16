@@ -7,9 +7,7 @@ import 'base.dart';
 class SearchRepository extends BaseRepository {
   SearchResultResponse searchResponse;
 
-  final String query;
-
-  SearchRepository(this.query);
+  String query = "";
 
   @override
   Future<void> loadData() async {

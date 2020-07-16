@@ -22,7 +22,7 @@ class _ProductSliderState extends State<ProductSlider> {
       .map((item) => Container(
             child: Container(
               margin: EdgeInsets.all(5.0),
-              child: Image.network(Url.mediaBaseUrl + item, fit: BoxFit.contain),
+              child: Image.network(item, fit: BoxFit.contain),
             ),
           ))
       .toList();
