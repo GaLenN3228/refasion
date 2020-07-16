@@ -14,19 +14,27 @@ class FiltersResponse {
 }
 
 class Filter {
+  static const COLOR = "Цвет";
+  static const MATERIAL = "Материал";
+  static const PRICE = "Цена";
+  static const CONDITION = "Состояние";
+  static const SIZE = "Размер";
+
   final String name;
   final String type;
   final String parameterName;
   final List<FilterValue> values;
+  final List<String> numericValues;
 
-  const Filter({this.name, this.type, this.parameterName, this.values});
+  const Filter({this.name, this.type, this.parameterName, this.values, this.numericValues});
 
   factory Filter.fromJson(Map<String, dynamic> json) {
-    return Filter(
-        name: json['name'],
-        type: json['type'],
-        parameterName: json['parameter_name'],
-        values: [if (json['value'] != null) for (final value in json['value']) FilterValue.fromJson(value)]);
+    return Filter(name: json['name'], type: json['type'], parameterName: json['parameter_name'], values: [
+      if (json['value'] != null && json['parameter_name'] != PRICE)
+        for (final value in json['value']) FilterValue.fromJson(value)
+    ], numericValues: [
+      if (json['value'] != null && json['parameter_name'] == PRICE) for (final value in json['value']) value
+    ]);
   }
 }
 
