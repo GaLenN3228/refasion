@@ -33,7 +33,7 @@ class Filter {
       if (json['value'] != null && json['parameter_name'] != PRICE)
         for (final value in json['value']) FilterValue.fromJson(value)
     ], numericValues: [
-      if (json['value'] != null && json['parameter_name'] == PRICE) for (final value in json['value']) value
+      if (json['value'] != null && json['parameter_name'] == PRICE) for (final value in json['value']) value.toString()
     ]);
   }
 }
