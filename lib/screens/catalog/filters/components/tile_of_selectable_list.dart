@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/catalog/components/selection_mark.dart';
+import 'package:refashioned_app/models/filter.dart';
+import 'package:refashioned_app/screens/catalog/filters/components/selection_mark.dart';
 
-import '../../../utils/colors.dart';
+import '../../../../utils/colors.dart';
 
 class TileOfSelectableList extends StatelessWidget {
   final double horizontalHeight;
@@ -10,8 +11,8 @@ class TileOfSelectableList extends StatelessWidget {
   final double horizontalBorderWidth;
   final double horizontalBorderColor;
   final bool horizontal;
-  final MapEntry<String, bool> data;
-  final Function(String) onSelect;
+  final MapEntry<FilterValue, bool> data;
+  final Function(FilterValue) onSelect;
 
   const TileOfSelectableList(
       {Key key,
@@ -47,7 +48,7 @@ class TileOfSelectableList extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    data.key,
+                    data.key.value,
                     style: Theme.of(context).textTheme.bodyText1.copyWith(
                         fontWeight: FontWeight.w500,
                         color: data.value ? accentColor : primaryColor),
@@ -64,14 +65,17 @@ class TileOfSelectableList extends StatelessWidget {
                     selected: data.value,
                   ),
                   SizedBox(
-                    width: 10,
+                    width: 11,
                   ),
-                  Text(
-                    data.key,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        .copyWith(fontWeight: FontWeight.w500),
+                  Expanded(
+                    child: Text(
+                      data.key.value,
+                      softWrap: true,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontWeight: FontWeight.w500),
+                    ),
                   ),
                 ],
               ),

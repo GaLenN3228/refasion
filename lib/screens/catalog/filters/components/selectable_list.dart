@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
-import 'package:refashioned_app/screens/catalog/components/tile_of_selectable_list.dart';
+import 'package:refashioned_app/screens/catalog/filters/components/tile_of_selectable_list.dart';
 
 class SelectableList extends StatefulWidget {
-  final Map<String, bool> initialData;
-  final Function(List<String>) onUpdate;
-  final Function(String) onSelect;
+  final Map<FilterValue, bool> initialData;
+  final Function(List<FilterValue>) onUpdate;
+  final Function(FilterValue) onSelect;
   final bool multiSelection;
   final bool horizontal;
   final double horizontalHeight;
@@ -26,7 +27,7 @@ class SelectableList extends StatefulWidget {
 }
 
 class _SelectableListState extends State<SelectableList> {
-  Map<String, bool> data;
+  Map<FilterValue, bool> data;
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _SelectableListState extends State<SelectableList> {
     super.initState();
   }
 
-  onSelect(String selectedValue) {
+  onSelect(FilterValue selectedValue) {
     if (widget.multiSelection) {
       setState(() {
         data[selectedValue] = !data[selectedValue];

@@ -48,7 +48,10 @@ class _SortingPanelState extends State<SortingPanel> {
                   if (e.key != 0) CategoryDivider(),
                   GestureDetector(
                       behavior: HitTestBehavior.translucent,
-                      onTap: () => selectIndex(e.key),
+                      onTap: () {
+                        selectIndex(e.key);
+                        Navigator.of(context).pop();
+                      },
                       child: SortMethodTile(
                           method: e.value, selected: e.key == selectedIndex)),
                 ],

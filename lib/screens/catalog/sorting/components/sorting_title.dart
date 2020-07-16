@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/catalog/components/sliding_panel_indicator.dart';
+import 'package:refashioned_app/screens/catalog/filters/components/sliding_panel_indicator.dart';
 
 class SortingTitle extends StatelessWidget {
   @override

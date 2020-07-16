@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/colors.dart';
+import '../../../../utils/colors.dart';
 
 class BottomButton extends StatelessWidget {
   final Function() action;

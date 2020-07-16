@@ -36,7 +36,7 @@ class ProductsPage extends StatelessWidget {
               onPop: onPop,
             ),
             Padding(
-              padding: const EdgeInsets.all(13.0),
+              padding: const EdgeInsets.fromLTRB(20, 15, 20, 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [FiltersButton(), SortingButton()],

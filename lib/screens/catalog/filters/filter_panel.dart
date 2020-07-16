@@ -1,30 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/filter.dart';
-import 'package:refashioned_app/screens/catalog/components/bottom_button.dart';
-import 'package:refashioned_app/screens/catalog/components/selectable_list.dart';
+import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
+import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_title.dart';
 
 class FilterPanel extends StatelessWidget {
-  final Filter filter;
+  final Filter original;
+  final Filter modified;
+  final Function(List<FilterValue>) onChange;
 
-  const FilterPanel({Key key, this.filter}) : super(key: key);
+  const FilterPanel({Key key, this.original, this.onChange, this.modified})
+      : super(key: key);
+
+  bool checkIfModified(FilterValue filterValue) {
+    if (modified != null) {
+      // print(
+      //     "Filter " + original.name + "\noriginal value " + filterValue.value);
+      // print("Modified values " + modified.values.toString());
+      // print("Contains: " + modified.values.contains(filterValue).toString());
+    }
+
+    return modified != null && modified.values.contains(filterValue);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Material(
+          color: Colors.white,
           child: Column(
             children: [
               FiltersTitle(
-                filter: filter,
+                filter: original,
               ),
               Expanded(
                 child: SelectableList(
-                  initialData: Map.fromIterable(filter.values,
-                      key: (value) => value, value: (_) => false),
-                  onUpdate: (value) =>
-                      print("Selected " + value.length.toString() + " values"),
+                  initialData: Map.fromIterable(original.values,
+                      key: (filterValue) => filterValue,
+                      value: (filterValue) => checkIfModified(filterValue)),
+                  onUpdate: (value) => onChange(value),
                 ),
               ),
             ],
