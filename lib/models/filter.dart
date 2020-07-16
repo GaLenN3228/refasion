@@ -8,7 +8,8 @@ class FiltersResponse {
 
   factory FiltersResponse.fromJson(Map<String, dynamic> json) {
     return FiltersResponse(
-        status: Status.fromJson(json['status']), content: [if (json['content'] != null) for (final filter in json['content']) Filter.fromJson(filter)]);
+        status: Status.fromJson(json['status']),
+        content: [if (json['content'] != null) for (final filter in json['content']) Filter.fromJson(filter)]);
   }
 }
 
@@ -16,7 +17,7 @@ class Filter {
   final String name;
   final String type;
   final String parameterName;
-  final List<String> values;
+  final List<FilterValue> values;
 
   const Filter({this.name, this.type, this.parameterName, this.values});
 
@@ -25,7 +26,17 @@ class Filter {
         name: json['name'],
         type: json['type'],
         parameterName: json['parameter_name'],
-        values: [if (json['value'] != null) for (final value in json['value']) value.toString()]
-    );
+        values: [if (json['value'] != null) for (final value in json['value']) FilterValue.fromJson(value)]);
+  }
+}
+
+class FilterValue {
+  final String id;
+  final String value;
+
+  const FilterValue({this.id, this.value});
+
+  factory FilterValue.fromJson(Map<String, dynamic> json) {
+    return FilterValue(id: json['id'], value: json['value']);
   }
 }

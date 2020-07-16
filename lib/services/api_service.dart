@@ -12,10 +12,12 @@ class ApiService {
     return DioClient().getClient(logging: LOG_ENABLE).get(Url.categories);
   }
 
-  static Future<Response> getProducts(String id) async {
+  static Future<Response> getProducts({String id, int maxPrice, int minPrice}) async {
     DioClient dioClient = DioClient();
     var queryParameters = {
-      'p': id,
+      if (id != null) 'p': id,
+      if (maxPrice != null) 'max_price': maxPrice,
+      if (minPrice != null) 'min_price': minPrice
     };
     return dioClient.getClient(logging: LOG_ENABLE).get(Url.products, queryParameters: queryParameters);
   }
@@ -38,5 +40,13 @@ class ApiService {
 
   static Future<Response> getFilters() async {
     return DioClient().getClient(logging: LOG_ENABLE).get(Url.filters);
+  }
+
+  static Future<Response> search(String query) async {
+    DioClient dioClient = DioClient();
+    var queryParameters = {
+      'q': query,
+    };
+    return dioClient.getClient(logging: LOG_ENABLE).get(Url.search, queryParameters: queryParameters);
   }
 }

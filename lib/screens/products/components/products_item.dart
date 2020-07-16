@@ -29,9 +29,8 @@ class ProductsItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.0),
                     child: Image.network(
                       product.image != null
-                          ? Url.mediaBaseUrl + product.image
-                          : Url.mediaBaseUrl +
-                              "/media/product/2c8cb353-4feb-427d-9279-d2b75f46d786/2b22b56279182fe9bedb1f246d9b44b7.JPG",
+                          ? product.image
+                          : "/media/product/2c8cb353-4feb-427d-9279-d2b75f46d786/2b22b56279182fe9bedb1f246d9b44b7.JPG",
                       height: 260,
                       width: double.infinity,
                       fit: BoxFit.cover,

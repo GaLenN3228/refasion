@@ -1,7 +1,4 @@
 class Url {
-  //Media Base URLs
-  static const mediaBaseUrl = 'https://docs.refashioned.ru';
-
   //Base URLs
   static const refashionedBaseUrl = 'https://api.refashioned.ru/v1';
 
@@ -17,6 +14,9 @@ class Url {
 
   //Content
   static const catalogMenu = '$refashionedBaseUrl/content/catalog-menu/';
+
+  //Search
+  static const search = '$refashionedBaseUrl/catalog/search/';
 
   //Cart Demo
   static const cart ='https://itlessons.ru/assets/refashioned-cart.json';
