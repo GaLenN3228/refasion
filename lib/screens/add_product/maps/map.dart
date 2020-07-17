@@ -68,6 +68,9 @@ class _LayersExampleState extends State<_LayersExample> {
   void showUser() async {
     if (_permissionStatus == PermissionStatus.granted) {
       await controller.moveToUser();
+      Future.delayed(const Duration(milliseconds: 2500), () {
+        moveToUser();
+      });
     } else {
       _showMessage(context, const Text('Location permission was NOT granted'));
     }
