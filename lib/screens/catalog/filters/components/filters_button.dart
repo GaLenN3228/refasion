@@ -6,11 +6,10 @@ import 'package:refashioned_app/screens/catalog/filters/filters_panel.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class FiltersButton extends StatefulWidget {
-  final Function() reset;
-  final String Function(List<Filter>) update;
-  final Function(List<Filter>) apply;
+  final Function(String) updateProducts;
+  final String root;
 
-  const FiltersButton({Key key, this.reset, this.update, this.apply})
+  const FiltersButton({Key key, this.updateProducts, this.root})
       : super(key: key);
 
   @override
@@ -18,20 +17,16 @@ class FiltersButton extends StatefulWidget {
 }
 
 class _FiltersButtonState extends State<FiltersButton> {
-  List<Filter> initialFilters;
-  List<Filter> currentFilters;
-
-  ValueNotifier<int> filtersApplied;
-
   FiltersRepository filtersRepository;
+
+  List<Filter> filters;
+  int filtersApplied;
 
   initState() {
     filtersRepository = FiltersRepository();
 
-    filtersApplied = ValueNotifier<int>(0);
-
-    initialFilters = List<Filter>();
-    currentFilters = List<Filter>();
+    filters = List<Filter>();
+    filtersApplied = 0;
 
     super.initState();
   }
@@ -39,7 +34,7 @@ class _FiltersButtonState extends State<FiltersButton> {
   showFilters() {
     if (filtersRepository.isLoaded &&
         filtersRepository.filtersResponse.status.code == 200) {
-      initialFilters = filtersRepository.filtersResponse.content;
+      filters = filtersRepository.filtersResponse.content;
 
       showCupertinoModalBottomSheet(
           expand: true,
@@ -47,27 +42,15 @@ class _FiltersButtonState extends State<FiltersButton> {
           context: context,
           useRootNavigator: true,
           builder: (context, controller) => FiltersPanel(
-                initialFilters: initialFilters,
-                currentFilters: currentFilters,
-                reset: () {
-                  currentFilters.clear();
+                filters: filters,
+                root: widget.root,
+                updateProducts: (String parameters) {
+                  filtersApplied =
+                      filters.where((filter) => filter.modified).length;
 
-                  filtersApplied.value = 0;
-
-                  if (widget.reset != null) widget.reset();
-                },
-                update: (filters) {
-                  currentFilters = filters;
-
-                  if (widget.update != null)
-                    return widget.update(filters);
-                  else
-                    return "Метод не определён";
-                },
-                apply: () {
-                  filtersApplied.value = currentFilters.length;
-
-                  if (widget.apply != null) widget.apply(currentFilters);
+                  if (widget.updateProducts != null) {
+                    widget.updateProducts(parameters);
+                  }
                 },
               ));
     }
@@ -119,27 +102,21 @@ class _FiltersButtonState extends State<FiltersButton> {
             Positioned(
               right: 0,
               bottom: 0,
-              child: ValueListenableBuilder(
-                valueListenable: filtersApplied,
-                builder: (context, value, _) {
-                  if (value != 0)
-                    return Container(
+              child: filtersApplied != 0
+                  ? Container(
                       width: 17,
                       height: 17,
                       decoration: ShapeDecoration(
                           color: accentColor, shape: CircleBorder()),
                       child: Center(
                         child: Text(
-                          value.toString(),
+                          filtersApplied.toString(),
                           style: Theme.of(context).textTheme.caption.copyWith(
                               fontWeight: FontWeight.w500, color: primaryColor),
                         ),
                       ),
-                    );
-
-                  return SizedBox();
-                },
-              ),
+                    )
+                  : SizedBox(),
             )
           ],
         ));

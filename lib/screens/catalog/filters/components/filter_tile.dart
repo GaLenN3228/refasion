@@ -7,39 +7,34 @@ import 'package:refashioned_app/screens/catalog/filters/components/filter_tile_s
 enum FilterType { list, range, slider }
 
 class FilterTile extends StatelessWidget {
-  final Filter original;
-  final Filter modified;
-  final Function(Filter) onChange;
+  final Filter filter;
+  final Function() onUpdate;
 
-  const FilterTile({Key key, this.original, this.onChange, this.modified})
-      : super(key: key);
+  const FilterTile({Key key, this.filter, this.onUpdate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    switch (original.type) {
+    switch (filter.type) {
       case "slider":
         return FilterTileSlider(
-          original: original,
-          modified: modified,
-          onChange: onChange,
+          filter: filter,
+          onUpdate: onUpdate,
         );
 
       case "list":
         return FilterTileList(
-          original: original,
-          modified: modified,
-          onChange: onChange,
+          filter: filter,
+          onUpdate: onUpdate,
         );
 
       case "range":
         return FilterTileRange(
-          original: original,
-          modified: modified,
-          onChange: onChange,
+          filter: filter,
+          onUpdate: onUpdate,
         );
 
       default:
-        return Text(original.type);
+        return Text(filter.type);
     }
   }
 }

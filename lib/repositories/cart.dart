@@ -15,6 +15,7 @@ class CartRepository extends BaseRepository {
 
       finishLoading();
     } catch (err) {
+      print("CartRepository error:");
       print(err);
       receivedError();
     }

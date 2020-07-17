@@ -18,6 +18,7 @@ class SearchRepository extends BaseRepository {
 
       finishLoading();
     } catch (err) {
+      print("SearchRepository error");
       print(err);
       receivedError();
     }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/models/catalog.dart';
 
 enum PanelType { search, item }
 
@@ -19,17 +18,10 @@ class TopPanel extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => TopPanelState(canPop, onPop, type);
+  State<StatefulWidget> createState() => TopPanelState();
 }
 
 class TopPanelState extends State<TopPanel> {
-  final bool canPop;
-  final Function() onPop;
-  final PanelType type;
-  var catalogs = List<Catalog>();
-
-  TopPanelState(this.canPop, this.onPop, this.type);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,10 +40,15 @@ class TopPanelState extends State<TopPanel> {
                 SizedBox(
                   width: 4,
                 ),
-                canPop && onPop != null
+                widget.canPop
                     ? GestureDetector(
                         behavior: HitTestBehavior.translucent,
-                        onTap: () => onPop(),
+                        onTap: () {
+                          if (widget.onPop != null)
+                            widget.onPop();
+                          else
+                            Navigator.of(context).pop();
+                        },
                         child: SvgPicture.asset(
                           "assets/back.svg",
                           color: Color(0xFF222222),
@@ -62,7 +59,7 @@ class TopPanelState extends State<TopPanel> {
                         width: 16,
                       ),
                 Expanded(
-                  child: type == PanelType.search
+                  child: widget.type == PanelType.search
                       ? Container(
                           height: 35,
                           decoration: ShapeDecoration(

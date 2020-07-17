@@ -2,25 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
 
-class FilterTileRange extends StatelessWidget {
-  final Filter original;
-  final Filter modified;
-  final Function(Filter) onChange;
+class FilterTileRange extends StatefulWidget {
+  final Filter filter;
+  final Function() onUpdate;
 
-  const FilterTileRange({Key key, this.original, this.onChange, this.modified})
+  const FilterTileRange({Key key, this.filter, this.onUpdate})
       : super(key: key);
 
-  bool checkIfModified(FilterValue filterValue) {
-    if (modified != null) {
-      // print(
-      //     "Filter " + original.name + "\noriginal value " + filterValue.value);
-      // print("Modified values " + modified.values.toString());
-      // print("Contains: " + modified.values.contains(filterValue).toString());
-    }
+  @override
+  _FilterTileRangeState createState() => _FilterTileRangeState();
+}
 
-    return modified != null && modified.values.contains(filterValue);
-  }
-
+class _FilterTileRangeState extends State<FilterTileRange> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,7 +24,7 @@ class FilterTileRange extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 20),
             child: Text(
-              original.name,
+              widget.filter.name,
               style: Theme.of(context)
                   .textTheme
                   .bodyText1
@@ -44,16 +37,12 @@ class FilterTileRange extends StatelessWidget {
           SelectableList(
             horizontal: true,
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            initialData: Map.fromIterable(original.values,
-                key: (filterValue) => filterValue,
-                value: (filterValue) => checkIfModified(filterValue)),
-            onUpdate: (value) {
-              final newFilter = Filter(
-                  name: original.name,
-                  parameterName: original.parameterName,
-                  type: original.type,
-                  values: value);
-              onChange(newFilter);
+            values: widget.filter.values,
+            onSelect: (id) {
+              setState(() {
+                widget.filter.update(id: id);
+              });
+              if (widget.onUpdate != null) widget.onUpdate();
             },
           ),
         ],

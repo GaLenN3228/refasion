@@ -4,23 +4,23 @@ import 'package:refashioned_app/screens/catalog/filters/components/bottom_button
 import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_title.dart';
 
-class FilterPanel extends StatelessWidget {
-  final Filter original;
-  final Filter modified;
-  final Function(List<FilterValue>) onChange;
+class FilterPanel extends StatefulWidget {
+  final Filter filter;
+  final Function() onUpdate;
 
-  const FilterPanel({Key key, this.original, this.onChange, this.modified})
-      : super(key: key);
+  const FilterPanel({Key key, this.filter, this.onUpdate}) : super(key: key);
 
-  bool checkIfModified(FilterValue filterValue) {
-    if (modified != null) {
-      // print(
-      //     "Filter " + original.name + "\noriginal value " + filterValue.value);
-      // print("Modified values " + modified.values.toString());
-      // print("Contains: " + modified.values.contains(filterValue).toString());
-    }
+  @override
+  _FilterPanelState createState() => _FilterPanelState();
+}
 
-    return modified != null && modified.values.contains(filterValue);
+class _FilterPanelState extends State<FilterPanel> {
+  onReset() {
+    setState(() {
+      widget.filter.reset();
+    });
+
+    if (widget.onUpdate != null) widget.onUpdate();
   }
 
   @override
@@ -32,14 +32,19 @@ class FilterPanel extends StatelessWidget {
           child: Column(
             children: [
               FiltersTitle(
-                filter: original,
+                filter: widget.filter,
+                canReset: widget.filter.modified,
+                onReset: onReset,
               ),
               Expanded(
                 child: SelectableList(
-                  initialData: Map.fromIterable(original.values,
-                      key: (filterValue) => filterValue,
-                      value: (filterValue) => checkIfModified(filterValue)),
-                  onUpdate: (value) => onChange(value),
+                  values: widget.filter.values,
+                  onSelect: (id) {
+                    setState(() {
+                      widget.filter.update(id: id);
+                    });
+                    if (widget.onUpdate != null) widget.onUpdate();
+                  },
                 ),
               ),
             ],

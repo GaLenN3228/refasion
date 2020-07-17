@@ -20,6 +20,7 @@ class ProductRepository extends BaseRepository {
 
       finishLoading();
     } catch (err) {
+      print("ProductRepository error:");
       print(err);
       receivedError();
     }

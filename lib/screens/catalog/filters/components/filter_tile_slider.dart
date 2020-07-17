@@ -1,31 +1,30 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-class FilterTileSlider extends StatelessWidget {
-  final Filter original;
-  final Filter modified;
-  final Function(Filter) onChange;
+class FilterTileSlider extends StatefulWidget {
+  final Filter filter;
+  final Function() onUpdate;
 
-  const FilterTileSlider({Key key, this.original, this.onChange, this.modified})
+  const FilterTileSlider({Key key, this.filter, this.onUpdate})
       : super(key: key);
 
   @override
+  _FilterTileSliderState createState() => _FilterTileSliderState();
+}
+
+class _FilterTileSliderState extends State<FilterTileSlider> {
+  @override
   Widget build(BuildContext context) {
-    if (original.numericValues == null || original.numericValues.isEmpty)
+    if (widget.filter.prices == null || widget.filter.prices.isEmpty)
       return SizedBox();
 
-    final values = original.numericValues
-        .map((filterValue) => double.parse(filterValue))
-        .toList();
+    final min = widget.filter.prices['min'] ?? 0.0;
+    final max = widget.filter.prices['max'] ?? 100000.0;
 
-    final min = values.reduce(math.min);
-    final max = values.reduce(math.max);
-
-    final lower = ValueNotifier<int>(min.toInt());
-    final upper = ValueNotifier<int>(max.toInt());
+    final lower = widget.filter.prices['lower'];
+    final upper = widget.filter.prices['upper'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +32,7 @@ class FilterTileSlider extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
           child: Text(
-            original.name,
+            widget.filter.name,
             style: Theme.of(context)
                 .textTheme
                 .bodyText1
@@ -68,16 +67,13 @@ class FilterTileSlider extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           child: Padding(
                             padding: const EdgeInsets.only(left: 8),
-                            child: ValueListenableBuilder(
-                              valueListenable: lower,
-                              builder: (context, lowerValue, _) => Text(
-                                lowerValue.toString() + " ₽",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(
-                                        color: primaryColor.withOpacity(0.25)),
-                              ),
+                            child: Text(
+                              (lower ?? min).toInt().toString() + " ₽",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(
+                                      color: primaryColor.withOpacity(0.25)),
                             ),
                           ))),
                 ],
@@ -105,16 +101,13 @@ class FilterTileSlider extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                             padding: const EdgeInsets.only(left: 8),
-                            child: ValueListenableBuilder(
-                              valueListenable: upper,
-                              builder: (context, upperValue, _) => Text(
-                                upperValue.toString() + " ₽",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(
-                                        color: primaryColor.withOpacity(0.25)),
-                              ),
+                            child: Text(
+                              (upper ?? max).toInt().toString() + " ₽",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(
+                                      color: primaryColor.withOpacity(0.25)),
                             )),
                       )),
                 ],
@@ -126,7 +119,7 @@ class FilterTileSlider extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(10, 24, 10, 22),
           child: FlutterSlider(
             rangeSlider: true,
-            values: values,
+            values: [lower ?? min, upper ?? max],
             max: max,
             min: min,
             selectByTap: false,
@@ -169,22 +162,11 @@ class FilterTileSlider extends StatelessWidget {
                         side: BorderSide(color: accentColor, width: 3))),
               ),
             ),
-            onDragging: (handlerIndex, lowerValue, upperValue) {
-              lower.value = lowerValue.toInt();
-              upper.value = upperValue.toInt();
-            },
-            onDragCompleted: (handlerIndex, lowerValue, upperValue) {
-              final newFilter = Filter(
-                  name: original.name,
-                  parameterName: original.parameterName,
-                  type: original.type,
-                  numericValues: [
-                    lowerValue.toInt().toString(),
-                    upperValue.toInt().toString(),
-                  ]);
-
-              onChange(newFilter);
-            },
+            onDragging: (handlerIndex, lowerValue, upperValue) => setState(() {
+              widget.filter.update(lower: lowerValue, upper: upperValue);
+            }),
+            onDragCompleted: (handlerIndex, lowerValue, upperValue) =>
+                widget.onUpdate(),
           ),
         ),
       ],
