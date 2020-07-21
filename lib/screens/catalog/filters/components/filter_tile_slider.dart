@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:refashioned_app/models/filter.dart';
+import 'package:refashioned_app/screens/catalog/filters/components/filter_price_input.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class FilterTileSlider extends StatefulWidget {
@@ -44,74 +45,8 @@ class _FilterTileSliderState extends State<FilterTileSlider> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Text(
-                      "От",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Container(
-                      width: 135,
-                      height: 35,
-                      decoration: ShapeDecoration(
-                          color: Color(0xFFF6F6F6),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5))),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Text(
-                              (lower ?? min).toInt().toString() + " ₽",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(
-                                      color: primaryColor.withOpacity(0.25)),
-                            ),
-                          ))),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Text(
-                      "До",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Container(
-                      width: 135,
-                      height: 35,
-                      decoration: ShapeDecoration(
-                          color: Color(0xFFF6F6F6),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5))),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Text(
-                              (upper ?? max).toInt().toString() + " ₽",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(
-                                      color: primaryColor.withOpacity(0.25)),
-                            )),
-                      )),
-                ],
-              )
+              FilterPriceInput(type: PriceType.lower, value: lower, limit: min),
+              FilterPriceInput(type: PriceType.upper, value: upper, limit: max),
             ],
           ),
         ),

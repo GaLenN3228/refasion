@@ -23,6 +23,14 @@ class _FilterPanelState extends State<FilterPanel> {
     if (widget.onUpdate != null) widget.onUpdate();
   }
 
+  onClose() {
+    setState(() {
+      widget.filter.reset(toPrevious: true);
+    });
+
+    if (widget.onUpdate != null) widget.onUpdate();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -32,6 +40,7 @@ class _FilterPanelState extends State<FilterPanel> {
           child: Column(
             children: [
               FiltersTitle(
+                onClose: onClose,
                 filter: widget.filter,
                 canReset: widget.filter.modified,
                 onReset: onReset,
@@ -55,7 +64,10 @@ class _FilterPanelState extends State<FilterPanel> {
           right: 0,
           bottom: 0,
           child: BottomButton(
-            action: () => Navigator.of(context).pop(),
+            action: () {
+              widget.filter.save();
+              Navigator.of(context).pop();
+            },
             title: "ВЫБРАТЬ",
           ),
         )

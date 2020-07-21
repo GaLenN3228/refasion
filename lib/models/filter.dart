@@ -20,18 +20,22 @@ enum Parameter { color, material, price, condition, size, undefined }
 class Filter {
   final String name;
   final String type;
-  final String parameterName;
-  final List<FilterValue> values;
+
+  final Map<String, double> previousPrices;
   final Map<String, double> prices;
+
+  final List<FilterValue> previousValues;
+  final List<FilterValue> values;
 
   final Parameter parameter;
   bool modified = false;
 
   Filter(
-      {this.parameter,
+      {this.previousValues,
+      this.previousPrices,
+      this.parameter,
       this.name,
       this.type,
-      this.parameterName,
       this.values,
       this.prices});
 
@@ -45,8 +49,7 @@ class Filter {
   };
 
   factory Filter.fromJson(Map<String, dynamic> json) {
-    final parameterName = json['parameter_name'];
-    final parameter = _parameters[parameterName];
+    final parameter = _parameters[json['parameter_name']];
 
     final jsonValue = json['value'];
 
@@ -54,9 +57,10 @@ class Filter {
       return Filter(
           name: json['name'],
           type: json['type'],
-          parameterName: parameterName,
-          parameter: _parameters[parameterName],
+          parameter: parameter,
+          previousValues: null,
           values: null,
+          previousPrices: null,
           prices: null);
 
     switch (parameter) {
@@ -67,14 +71,16 @@ class Filter {
 
         final min = prices.reduce(math.min);
         final max = prices.reduce(math.max);
+        final map = {'min': min, 'max': max};
 
         return Filter(
             name: json['name'],
             type: json['type'],
-            parameterName: parameterName,
             parameter: parameter,
+            previousValues: null,
             values: null,
-            prices: {'min': min, 'max': max});
+            previousPrices: Map.from(map),
+            prices: Map.from(map));
 
       default:
         final values = [
@@ -84,10 +90,42 @@ class Filter {
         return Filter(
             name: json['name'],
             type: json['type'],
-            parameterName: parameterName,
             parameter: parameter,
-            values: values,
+            previousValues: values.map((e) => FilterValue.clone(e)).toList(),
+            values: List.from(values),
+            previousPrices: null,
             prices: null);
+    }
+  }
+
+  isModified() {
+    switch (parameter) {
+      case Parameter.price:
+        modified = prices.containsKey('lower') || prices.containsKey('upper');
+        break;
+
+      default:
+        modified =
+            values.where((filterValue) => filterValue.selected).isNotEmpty;
+        break;
+    }
+  }
+
+  save() {
+    switch (parameter) {
+      case Parameter.price:
+        previousPrices
+          ..clear()
+          ..addAll(prices);
+
+        break;
+
+      default:
+        previousValues
+          ..clear()
+          ..addAll(values.map((e) => FilterValue.clone(e)).toList());
+
+        break;
     }
   }
 
@@ -104,37 +142,44 @@ class Filter {
             prices['upper'] = upper;
           else
             prices.remove('upper');
-
-          modified = prices.containsKey('lower') || prices.containsKey('upper');
         }
+
         break;
 
       default:
         if (id != null && id.isNotEmpty)
           values.firstWhere((filterValue) => filterValue.id == id).update();
 
-        modified =
-            values.where((filterValue) => filterValue.selected).isNotEmpty;
         break;
     }
+
+    isModified();
   }
 
-  reset() {
+  reset({bool toPrevious: false}) {
     switch (parameter) {
       case Parameter.price:
-        prices.remove('lower');
-        prices.remove('upper');
+        if (toPrevious)
+          prices
+            ..clear()
+            ..addAll(previousPrices);
+        else
+          prices..remove('lower')..remove('upper');
 
-        modified = prices.containsKey('lower') || prices.containsKey('upper');
         break;
 
       default:
-        values.forEach((filterValue) => filterValue.reset());
+        if (toPrevious)
+          values
+            ..clear()
+            ..addAll(previousValues.map((e) => FilterValue.clone(e)).toList());
+        else
+          values.forEach((filterValue) => filterValue.reset());
 
-        modified =
-            values.where((filterValue) => filterValue.selected).isNotEmpty;
         break;
     }
+
+    isModified();
   }
 
   String getRequestParameters() {
@@ -173,9 +218,11 @@ class FilterValue {
 
   FilterValue({this.id, this.value, this.selected: false});
 
-  factory FilterValue.fromJson(Map<String, dynamic> json) {
-    return FilterValue(id: json['id'], value: json['value']);
-  }
+  factory FilterValue.fromJson(Map<String, dynamic> json) =>
+      FilterValue(id: json['id'], value: json['value']);
+
+  factory FilterValue.clone(FilterValue other) =>
+      FilterValue(id: other.id, value: other.value, selected: other.selected);
 
   update() {
     selected = !selected;
@@ -184,4 +231,8 @@ class FilterValue {
   reset() {
     selected = false;
   }
+
+  @override
+  String toString() =>
+      "Filter Value: " + value + ", selected: " + selected.toString();
 }

@@ -5,9 +5,11 @@ import 'package:refashioned_app/screens/catalog/filters/components/sliding_panel
 class FiltersTitle extends StatelessWidget {
   final Filter filter;
   final Function() onReset;
+  final Function() onClose;
   final bool canReset;
 
-  const FiltersTitle({Key key, this.onReset, this.canReset: false, this.filter})
+  const FiltersTitle(
+      {Key key, this.onReset, this.canReset: false, this.filter, this.onClose})
       : super(key: key);
 
   @override
@@ -23,13 +25,13 @@ class FiltersTitle extends StatelessWidget {
             children: [
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () => Navigator.of(context).pop(),
-                child: SizedBox(
-                  width: 72,
-                  child: Text(
-                    "Закрыть",
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
+                onTap: () {
+                  if (onClose != null) onClose();
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  "Закрыть",
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),
               Text(
@@ -41,7 +43,7 @@ class FiltersTitle extends StatelessWidget {
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  if (canReset) onReset();
+                  if (canReset && onReset != null) onReset();
                 },
                 child: Text(
                   "Сбросить",

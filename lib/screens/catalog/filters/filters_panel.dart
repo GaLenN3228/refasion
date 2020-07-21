@@ -71,6 +71,10 @@ class _FiltersPanelState extends State<FiltersPanel> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FiltersTitle(
+                      onClose: () {
+                        widget.filters.forEach(
+                            (filter) => filter.reset(toPrevious: true));
+                      },
                       onReset: () => resetFilters(context),
                       canReset: widget.filters
                           .where((filter) => filter.modified)
@@ -114,6 +118,8 @@ class _FiltersPanelState extends State<FiltersPanel> {
                   }
                   return BottomButton(
                     action: () {
+                      widget.filters.forEach((filter) => filter.save());
+
                       if (widget.updateProducts != null)
                         widget.updateProducts(countParameters);
 

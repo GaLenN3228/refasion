@@ -4,7 +4,7 @@ import 'package:refashioned_app/services/dio_client.dart';
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -43,7 +43,7 @@ class ApiService {
   static Future<Response> getProductsCount({String parameters}) async {
     DioClient dioClient = DioClient();
     return dioClient
-        .getClient(logging: true)
+        .getClient(logging: LOG_ENABLE)
         .get(Url.productsCount + (parameters ?? ''));
   }
 

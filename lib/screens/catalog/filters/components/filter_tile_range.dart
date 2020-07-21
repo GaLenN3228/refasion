@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class FilterTileRange extends StatefulWidget {
   final Filter filter;
@@ -22,14 +24,49 @@ class _FilterTileRangeState extends State<FilterTileRange> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: Text(
-              widget.filter.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  .copyWith(fontWeight: FontWeight.w500),
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: widget.filter.parameter == Parameter.size
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.filter.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1
+                            .copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/info.svg',
+                            width: 15,
+                            height: 15,
+                            color: primaryColor,
+                          ),
+                          SizedBox(
+                            width: 7,
+                          ),
+                          Text(
+                            "Таблица размеров",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                .copyWith(decoration: TextDecoration.underline),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                : Text(
+                    widget.filter.name,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        .copyWith(fontWeight: FontWeight.w500),
+                  ),
           ),
           SizedBox(
             height: 17,
