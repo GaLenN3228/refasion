@@ -4,12 +4,10 @@ import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/filters/filter_panel.dart';
 
 class FilterTileList extends StatelessWidget {
-  final Filter original;
-  final Filter modified;
-  final Function(Filter) onChange;
+  final Filter filter;
+  final Function() onUpdate;
 
-  const FilterTileList({Key key, this.original, this.onChange, this.modified})
-      : super(key: key);
+  const FilterTileList({Key key, this.filter, this.onUpdate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,23 +18,14 @@ class FilterTileList extends StatelessWidget {
           expand: true,
           context: context,
           useRootNavigator: true,
-          builder: (context, controller) => FilterPanel(
-              original: original,
-              // modified: modified,
-              onChange: (value) {
-                final newFilter = Filter(
-                    name: original.name,
-                    parameterName: original.parameterName,
-                    type: original.type,
-                    values: value);
-                onChange(newFilter);
-              })),
+          builder: (context, controller) =>
+              FilterPanel(filter: filter, onUpdate: onUpdate)),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 22, 20, 23),
         child: SizedBox(
           width: double.infinity,
           child: Text(
-            original.name,
+            filter.name,
             style: Theme.of(context)
                 .textTheme
                 .bodyText1

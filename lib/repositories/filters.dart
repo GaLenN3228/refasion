@@ -16,6 +16,7 @@ class FiltersRepository extends BaseRepository {
 
       finishLoading();
     } catch (err) {
+      print("FiltersRepository error:");
       print(err);
       receivedError();
     }

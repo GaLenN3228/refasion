@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/filter.dart';
+import 'package:refashioned_app/repositories/product_count.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filter_tile.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_title.dart';
 
 class FiltersPanel extends StatefulWidget {
-  final List<Filter> initialFilters;
-  final List<Filter> currentFilters;
-  final Function() reset;
-  final Function(List<Filter>) update;
-  final Function() apply;
+  final String root;
+  final List<Filter> filters;
+  final Function(String) updateProducts;
 
-  const FiltersPanel(
-      {Key key,
-      this.initialFilters,
-      this.reset,
-      this.update,
-      this.currentFilters,
-      this.apply})
+  const FiltersPanel({Key key, this.filters, this.updateProducts, this.root})
       : super(key: key);
 
   @override
@@ -26,94 +20,120 @@ class FiltersPanel extends StatefulWidget {
 }
 
 class _FiltersPanelState extends State<FiltersPanel> {
-  List<Filter> modifiedFilters;
+  String rootParameters;
+  String countParameters;
 
-  initState() {
-    modifiedFilters = widget.currentFilters;
+  @override
+  void initState() {
+    rootParameters = '?p=' + widget.root;
+    countParameters = getParameters(widget.filters);
 
     super.initState();
   }
 
-  updateFilters(Filter filter) {
-    final oldModifiedIndex = modifiedFilters
-        .indexWhere((oldFilter) => oldFilter.name == filter.name);
+  String getParameters(List<Filter> filters) => filters.fold(rootParameters,
+      (parameters, filter) => parameters + filter.getRequestParameters());
 
-    final initialValues = widget.initialFilters
-        .firstWhere((oldFilter) => oldFilter.name == filter.name)
-        .values;
-
+  updateCount(BuildContext context) async {
     setState(() {
-      if (oldModifiedIndex >= 0) modifiedFilters.removeAt(oldModifiedIndex);
-
-      if (filter.values.isNotEmpty && filter.values != initialValues)
-        modifiedFilters.add(filter);
+      countParameters = getParameters(widget.filters);
     });
 
-    if (modifiedFilters.isNotEmpty && widget.update != null)
-      widget.update(modifiedFilters);
+    Provider.of<ProductCountRepository>(context, listen: false)
+        .update(newParameters: countParameters);
   }
 
-  getModified(Filter filter) {
-    if (filter.name == "Размер")
-      print(modifiedFilters.firstWhere(
-          (modified) => modified.name == filter.name,
-          orElse: () => null));
-    return modifiedFilters.firstWhere(
-        (modified) => modified.name == filter.name,
-        orElse: () => null);
-  }
-
-  resetFilters() {
+  resetFilters(BuildContext context) async {
     setState(() {
-      modifiedFilters.clear();
+      widget.filters.forEach((filter) => filter.reset());
+
+      countParameters = rootParameters;
     });
 
-    if (widget.reset != null) widget.reset();
+    Provider.of<ProductCountRepository>(context, listen: false)
+        .update(newParameters: countParameters);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SafeArea(
-          child: Material(
-            color: Colors.white,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FiltersTitle(
-                  onReset: resetFilters,
-                  filtersChanged: modifiedFilters.isNotEmpty,
+    return ChangeNotifierProvider<ProductCountRepository>(
+      create: (_) {
+        return ProductCountRepository(parameters: countParameters);
+      },
+      builder: (context, _) {
+        return Stack(
+          children: [
+            SafeArea(
+              child: Material(
+                color: Colors.white,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FiltersTitle(
+                      onClose: () {
+                        widget.filters.forEach(
+                            (filter) => filter.reset(toPrevious: true));
+                      },
+                      onReset: () => resetFilters(context),
+                      canReset: widget.filters
+                          .where((filter) => filter.modified)
+                          .isNotEmpty,
+                    ),
+                  ]..addAll(
+                      widget.filters.asMap().entries.map((entry) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (entry.key != 0) CategoryDivider(),
+                              FilterTile(
+                                  filter: entry.value,
+                                  onUpdate: () => updateCount(context)),
+                            ],
+                          ))),
                 ),
-              ]..addAll(
-                  widget.initialFilters.asMap().entries.map((entry) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (entry.key != 0) CategoryDivider(),
-                          FilterTile(
-                              original: entry.value,
-                              modified: getModified(entry.value),
-                              onChange: updateFilters),
-                        ],
-                      ))),
+              ),
             ),
-          ),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: BottomButton(
-            action: () {
-              Navigator.of(context).pop();
-              widget.apply();
-            },
-            title: "ПОКАЗАТЬ",
-            subtitle: "5083 товара",
-          ),
-        )
-      ],
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Builder(
+                builder: (context) {
+                  final productCountRepository =
+                      context.watch<ProductCountRepository>();
+
+                  String title = "";
+                  String subtitle = "";
+
+                  if (productCountRepository.isLoading) {
+                    title = "ПОДОЖДИТЕ";
+                    subtitle = "Обновление товаров...";
+                  } else if (productCountRepository.loadingFailed) {
+                    title = "ОШИБКА";
+                    subtitle = "Мы уже работаем над её исправлением";
+                  } else {
+                    title = "ПОКАЗАТЬ";
+                    subtitle = productCountRepository
+                        .productsCountResponse.productsCount.text;
+                  }
+                  return BottomButton(
+                    action: () {
+                      widget.filters.forEach((filter) => filter.save());
+
+                      if (widget.updateProducts != null)
+                        widget.updateProducts(countParameters);
+
+                      Navigator.of(context).pop();
+                    },
+                    title: title,
+                    subtitle: subtitle,
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

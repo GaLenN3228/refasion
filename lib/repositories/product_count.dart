@@ -1,28 +1,33 @@
 import 'package:dio/dio.dart';
-import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/products_count.dart';
 
 import '../services/api_service.dart';
 import 'base.dart';
 
-class CatalogRepository extends BaseRepository {
-  CategoryResponse catalogResponse;
+class ProductCountRepository extends BaseRepository {
   ProductsCountResponse productsCountResponse;
+
+  String parameters;
+
+  ProductCountRepository({this.parameters});
+
+  update({String newParameters}) async {
+    parameters = newParameters;
+    await loadData();
+  }
 
   @override
   Future<void> loadData() async {
     try {
-      final Response catalogResponse = await ApiService.getCategories();
       final Response productsCountResponse =
-          await ApiService.getProductsCount();
+          await ApiService.getProductsCount(parameters: parameters);
 
-      this.catalogResponse = CategoryResponse.fromJson(catalogResponse.data);
       this.productsCountResponse =
           ProductsCountResponse.fromJson(productsCountResponse.data);
 
       finishLoading();
     } catch (err) {
-      print("CatalogRepository error:");
+      print("ProductCountRepository error:");
       print(err);
       receivedError();
     }

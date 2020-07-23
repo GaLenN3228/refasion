@@ -4,7 +4,7 @@ import 'package:refashioned_app/services/dio_client.dart';
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -12,23 +12,24 @@ class ApiService {
     return DioClient().getClient(logging: LOG_ENABLE).get(Url.categories);
   }
 
-  static Future<Response> getProducts({String id, int maxPrice, int minPrice}) async {
+  static Future<Response> getProducts({String parameters}) async {
     DioClient dioClient = DioClient();
-    var queryParameters = {
-      if (id != null) 'p': id,
-      if (maxPrice != null) 'max_price': maxPrice,
-      if (minPrice != null) 'min_price': minPrice
-    };
-    return dioClient.getClient(logging: LOG_ENABLE).get(Url.products, queryParameters: queryParameters);
+    return dioClient
+        .getClient(logging: LOG_ENABLE)
+        .get(Url.products + (parameters ?? ''));
   }
 
   static Future<Response> getSearchResults(String query) async {
     DioClient dioClient = DioClient();
-    return dioClient.getClient(logging: LOG_ENABLE).get(Url.catalogSearch + query);
+    return dioClient
+        .getClient(logging: LOG_ENABLE)
+        .get(Url.catalogSearch + query);
   }
 
   static Future<Response> getProduct(String id) async {
-    return DioClient().getClient(logging: LOG_ENABLE).get(Url.products + id + "/");
+    return DioClient()
+        .getClient(logging: LOG_ENABLE)
+        .get(Url.products + id + "/");
   }
 
   static Future<Response> getCart() async {
@@ -39,8 +40,11 @@ class ApiService {
     return DioClient().getClient(logging: LOG_ENABLE).get(Url.catalogMenu);
   }
 
-  static Future<Response> getProductsCount() async {
-    return DioClient().getClient(logging: LOG_ENABLE).get(Url.productsCount);
+  static Future<Response> getProductsCount({String parameters}) async {
+    DioClient dioClient = DioClient();
+    return dioClient
+        .getClient(logging: LOG_ENABLE)
+        .get(Url.productsCount + (parameters ?? ''));
   }
 
   static Future<Response> getFilters() async {
@@ -52,6 +56,8 @@ class ApiService {
     var queryParameters = {
       'q': query,
     };
-    return dioClient.getClient(logging: LOG_ENABLE).get(Url.search, queryParameters: queryParameters);
+    return dioClient
+        .getClient(logging: LOG_ENABLE)
+        .get(Url.search, queryParameters: queryParameters);
   }
 }

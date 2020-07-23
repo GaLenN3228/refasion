@@ -14,13 +14,13 @@ class ProductsCountResponse {
 }
 
 class ProductsCount {
-  final String detail;
+  final String text;
 
-  const ProductsCount({this.detail});
+  const ProductsCount({this.text});
 
   factory ProductsCount.fromJson(Map<String, dynamic> json) {
-    return ProductsCount(detail: json['detail']);
+    return ProductsCount(text: json['text']);
   }
 
-  String get getDetail => detail;
+  String get getDetail => text;
 }

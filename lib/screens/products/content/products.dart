@@ -35,14 +35,12 @@ class ProductsPageContent extends StatelessWidget {
     final ProductsContent productsContent =
         productsRepository.productsResponse.productsContent;
 
-//    productsRepository.filterAndUpdateProducts(filters)
-
     return StaggeredGridView.countBuilder(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 56),
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 89),
       crossAxisCount: 2,
       itemCount: productsContent.products.length,
-      itemBuilder: (BuildContext context, int index) =>
-          ProductsItem(product: productsContent.products[index], onPush: onPush),
+      itemBuilder: (BuildContext context, int index) => ProductsItem(
+          product: productsContent.products[index], onPush: onPush),
       staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
       mainAxisSpacing: 16.0,
     );

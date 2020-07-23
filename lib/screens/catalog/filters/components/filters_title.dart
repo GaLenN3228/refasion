@@ -5,10 +5,11 @@ import 'package:refashioned_app/screens/catalog/filters/components/sliding_panel
 class FiltersTitle extends StatelessWidget {
   final Filter filter;
   final Function() onReset;
-  final bool filtersChanged;
+  final Function() onClose;
+  final bool canReset;
 
   const FiltersTitle(
-      {Key key, this.onReset, this.filtersChanged: false, this.filter})
+      {Key key, this.onReset, this.canReset: false, this.filter, this.onClose})
       : super(key: key);
 
   @override
@@ -24,13 +25,13 @@ class FiltersTitle extends StatelessWidget {
             children: [
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () => Navigator.of(context).pop(),
-                child: SizedBox(
-                  width: 72,
-                  child: Text(
-                    "Закрыть",
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
+                onTap: () {
+                  if (onClose != null) onClose();
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  "Закрыть",
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),
               Text(
@@ -42,42 +43,14 @@ class FiltersTitle extends StatelessWidget {
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  if (filtersChanged) onReset();
+                  if (canReset && onReset != null) onReset();
                 },
                 child: Text(
                   "Сбросить",
                   style: Theme.of(context).textTheme.bodyText1.copyWith(
-                      color: filter != null
-                          ? Colors.transparent
-                          : filtersChanged ? Colors.black : Color(0xFF959595)),
+                      color: canReset ? Colors.black : Color(0xFF959595)),
                 ),
               ),
-              // filtersChanged != null
-              //     ? ValueListenableBuilder(
-              //         valueListenable: filtersChanged,
-              //         builder: (context, value, _) {
-              //           return GestureDetector(
-              //             behavior: HitTestBehavior.translucent,
-              //             onTap: () {
-              //               if (value) onReset();
-              //             },
-              //             child: Text(
-              //               "Сбросить",
-              //               style: Theme.of(context)
-              //                   .textTheme
-              //                   .bodyText1
-              //                   .copyWith(
-              //                       color: value
-              //                           ? Colors.black
-              //                           : Color(0xFF959595)),
-              //             ),
-              //           );
-              //         },
-              //       )
-              //     : SizedBox(
-              //         width: 72,
-              //         height: 2,
-              //       ),
             ],
           ),
         ),
