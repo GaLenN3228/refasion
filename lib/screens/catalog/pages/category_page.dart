@@ -43,13 +43,9 @@ class CategoryPage extends StatelessWidget {
       ));
 
     widgets.addAll(category.children
-        .map((category) => GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () => onPush(category),
-              child: CategoryTile(
-                category: category,
-                uppercase: level != CategoryLevel.category,
-              ),
+        .map((category) => CategoryTile(
+              category: category,
+              onPush: onPush,
             ))
         .toList());
 

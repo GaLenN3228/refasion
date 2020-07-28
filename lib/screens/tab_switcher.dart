@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
+import 'package:refashioned_app/screens/sell_product/pages/sell_navigator.dart';
 import 'components/bottom_navigation.dart';
 import 'components/catalog_navigator.dart';
 
@@ -24,11 +25,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
   bool showTabBar = true;
 
   void _selectTab(TabItem tabItem) {
-    if (currentTab != tabItem)
+    if (currentTab != tabItem) {
       setState(() {
         currentTab = tabItem;
+
+        if (tabItem == TabItem.sell && showTabBar)
+          showTabBar = false;
+        else if (!showTabBar) showTabBar = true;
       });
-    else {
+    } else {
       navigatorKeys[tabItem]
           .currentState
           .pushNamedAndRemoveUntil('/', (_) => false);
@@ -59,7 +64,10 @@ class _TabSwitcherState extends State<TabSwitcher> {
           _buildOffstageNavigator(TabItem.home),
           _buildOffstageNavigator(TabItem.catalog,
               hideTabBar: _hideTabBar, showTabBar: _showTabBar),
-          _buildOffstageNavigator(TabItem.sell),
+          _buildOffstageNavigator(
+            TabItem.sell,
+            hideTabBar: _hideTabBar,
+          ),
           _buildOffstageNavigator(TabItem.cart),
           _buildOffstageNavigator(TabItem.profile),
           Positioned(
@@ -91,6 +99,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                 showTabBar: showTabBar),
           ),
         );
+
       case TabItem.cart:
         return Offstage(
           offstage: currentTab != tabItem,
@@ -98,6 +107,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
             body: CartPage(),
           ),
         );
+
+      case TabItem.sell:
+        return Offstage(
+          offstage: currentTab != tabItem,
+          child: Scaffold(
+            body: SellNavigator(navigatorKey: navigatorKeys[tabItem]),
+          ),
+        );
+
       default:
         return Offstage(
           offstage: currentTab != tabItem,
