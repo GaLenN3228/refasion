@@ -18,8 +18,10 @@ class Url {
   //Search
   static const search = '$refashionedBaseUrl/catalog/search/';
 
-  //Cart Demo
-  static const cart ='https://itlessons.ru/assets/refashioned-cart.json';
+  //Cart
+  static const cart_demo ='https://itlessons.ru/assets/refashioned-cart.json';
+  static const cartItem ='$refashionedBaseUrl/cart/item/';
+  static const cart ='$refashionedBaseUrl/cart/';
 
   //Search catalogs, brands
   static const catalogSearch = '$refashionedBaseUrl/catalog/search/?q=';

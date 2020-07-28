@@ -8,7 +8,8 @@ class CartNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return sellerCounts > 1 ? Container(
+//    return sellerCounts > 1 ? Container(
+    return sellerCounts > 0 ? Container(
       padding: EdgeInsets.all(16),
       margin: EdgeInsets.only(top: 16),
       color: Color.fromRGBO(250, 210, 78, 0.3),

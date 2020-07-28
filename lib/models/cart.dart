@@ -8,8 +8,7 @@ class CartResponse {
   const CartResponse({this.status, this.cart});
 
   factory CartResponse.fromJson(Map<String, dynamic> json) {
-    return CartResponse(
-        status: Status.fromJson(json['status']), cart: Cart.fromJson(json['content']));
+    return CartResponse(status: Status.fromJson(json['status']), cart: Cart.fromJson(json['content']));
   }
 }
 
@@ -18,6 +17,7 @@ class Cart {
   final String promoCode;
   final int currentPriceAmount;
   final int discountPriceAmount;
+  final int totalDiscount;
   final List<CartItem> cartItems;
 
   Cart(
@@ -25,15 +25,17 @@ class Cart {
       this.promoCode,
       this.currentPriceAmount,
       this.discountPriceAmount,
+      this.totalDiscount,
       this.cartItems});
 
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
       productsCounts: json['products_counts'],
       promoCode: json['promocode'],
-      currentPriceAmount: json['current_price_amount'],
-      discountPriceAmount: json['discount_price_amount'],
-      cartItems: [for (final cartItem in json['cart_items']) CartItem.fromJson(cartItem)],
+      currentPriceAmount: json['total_current_price'],
+      discountPriceAmount: json['total_discount_price'],
+      totalDiscount: json['total_discount'],
+      cartItems: [for (final cartItem in json['items']) CartItem.fromJson(cartItem)],
     );
   }
 }

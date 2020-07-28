@@ -32,6 +32,8 @@ class ProductProperties extends StatelessWidget {
                       : BoxDecoration(),
                   child: Text(
                     StringUtils.capitalize(name) + (hasDots ? "" : ":"),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: textTheme.bodyText2.copyWith(backgroundColor: Colors.white, height: 1.8),
                   ),
                 ),
@@ -39,8 +41,8 @@ class ProductProperties extends StatelessWidget {
           Flexible(
               child: Padding(
             padding: hasDots ? const EdgeInsets.only(left: 18) : const EdgeInsets.only(left: 2),
-            child: Text(StringUtils.capitalize(value),
-                style: textTheme.bodyText1.copyWith(height: 1.8)),
+                child: Text(StringUtils.capitalize(value),
+                maxLines: 1, overflow: TextOverflow.ellipsis, style: textTheme.bodyText1.copyWith(height: 1.8)),
           ))
         ],
       );
