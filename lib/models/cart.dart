@@ -35,7 +35,7 @@ class Cart {
       currentPriceAmount: json['total_current_price'],
       discountPriceAmount: json['total_discount_price'],
       totalDiscount: json['total_discount'],
-      cartItems: [for (final cartItem in json['items']) CartItem.fromJson(cartItem)],
+      cartItems: [if (json['items'] != null) for (final cartItem in json['items']) CartItem.fromJson(cartItem)],
     );
   }
 }

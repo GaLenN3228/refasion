@@ -29,7 +29,7 @@ class CartPageContent extends StatelessWidget {
 
     final Cart cart = cartRepository.cartResponse.cart;
 
-    return ListView(
+    return (cart.cartItems.isNotEmpty) ? ListView(
       padding: EdgeInsets.symmetric(horizontal: 20),
       children: <Widget>[
         Text('Всего ${cart.productsCounts} товара на сумму ${cart.currentPriceAmount} Р',
@@ -48,6 +48,6 @@ class CartPageContent extends StatelessWidget {
             currentPriceAmount: cart.currentPriceAmount,
             discountPriceAmount: cart.discountPriceAmount)
       ],
-    );
+    ): Container();
   }
 }
