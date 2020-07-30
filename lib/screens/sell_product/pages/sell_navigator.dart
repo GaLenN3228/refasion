@@ -12,6 +12,7 @@ import 'package:refashioned_app/screens/sell_product/pages/category_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/description_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/new_adress_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/on_moderation_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/photos_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/price_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/section_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/sell_properties_page.dart';
@@ -25,6 +26,7 @@ class SellNavigatorRoutes {
   static const String topCategory = '/topCategory';
   static const String category = '/category';
   static const String subCategory = '/subCategory';
+  static const String photos = '/photos';
   static const String sellProperty = '/sellProperty';
   static const String sellProperties = '/sellProperties';
   static const String description = '/description';
@@ -86,7 +88,21 @@ class SellNavigator extends StatelessWidget {
           selectedCategory: category,
           onPush: (categories) {
             selectSubCategories(categories);
-            return Navigator.of(context).push(
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(
+                    context, SellNavigatorRoutes.photos,
+                    categories: categories),
+              ),
+            );
+          },
+        );
+
+      case SellNavigatorRoutes.photos:
+        return PhotosPage(
+          onPush: (photos) {
+            addPhotos(photos);
+            Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
                     context, SellNavigatorRoutes.sellProperties,
@@ -207,12 +223,7 @@ class SellNavigator extends StatelessWidget {
 
   selectSubCategories(List<Category> categories) {}
 
-  getProperties(List<String> categories) async {
-    final sellPropertiesRepository = SellPropertiesRepository();
-    sellPropertiesRepository.addListener(() {
-      if (sellPropertiesRepository.isLoaded) {}
-    });
-  }
+  addPhotos(List<String> photos) {}
 
   selectPrice(int price) {}
 
