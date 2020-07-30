@@ -5,7 +5,7 @@ import '../services/api_service.dart';
 import 'base.dart';
 
 class SearchRepository extends BaseRepository {
-  SearchResultResponse searchResponse;
+  SearchResultResponse response;
 
   String query = "";
 
@@ -14,7 +14,7 @@ class SearchRepository extends BaseRepository {
     try {
       final Response searchResponse = await ApiService.search(query);
 
-      this.searchResponse = SearchResultResponse.fromJson(searchResponse.data);
+      this.response = SearchResultResponse.fromJson(searchResponse.data);
 
       finishLoading();
     } catch (err) {
