@@ -51,11 +51,11 @@ class AddPhotoItem extends StatelessWidget {
 
   String getTitle() {
     switch (type) {
-      case 1:
+      case 0:
         return "Вид спереди";
-      case 2:
+      case 1:
         return "Вид сзади";
-      case 3:
+      case 2:
         return "Вид сбоку";
     }
   }

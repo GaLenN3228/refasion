@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -21,20 +21,20 @@ class PhotosPage extends StatefulWidget {
 }
 
 class _PhotosPageState extends State<PhotosPage> {
-  File _image;
   final picker = ImagePicker();
+  Map<int, File> images = {0: null, 1: null, 2: null};
 
-  Future getImage() async {
+  Future getImage(int index) async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
-      _image = File(pickedFile.path);
+      File _image = File(pickedFile.path);
+      images[index] = _image;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var addPhotoTypes = [1, 2, 3];
 
     return CupertinoPageScaffold(
         child: Column(children: [
@@ -46,12 +46,12 @@ class _PhotosPageState extends State<PhotosPage> {
         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
         shrinkWrap: true,
         crossAxisCount: 2,
-        itemCount: addPhotoTypes.length,
+        itemCount: images.length,
         itemBuilder: (BuildContext context, int index) => AddPhotoItem(
-            type: addPhotoTypes[index],
-            image: _image,
+            type: index,
+            image: images[index],
             onPush: (type) {
-              getImage();
+              getImage(index);
             }),
         staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
         crossAxisSpacing: 16,
