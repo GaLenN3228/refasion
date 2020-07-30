@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/repositories/add_cart.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:refashioned_app/utils/url.dart';
 
@@ -50,13 +51,18 @@ class ProductsItem extends StatelessWidget {
                   ),
                   Align(
                     alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 14, right: 14),
-                      child: SvgPicture.asset(
-                        'assets/bag.svg',
-                        color: Colors.black,
-                        width: 24,
-                        height: 24,
+                    child: GestureDetector(
+                      onTap: () => {
+                        AddCartRepository(product.id)
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 14, right: 14),
+                        child: SvgPicture.asset(
+                          'assets/bag.svg',
+                          color: Colors.black,
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
                     ),
                   )

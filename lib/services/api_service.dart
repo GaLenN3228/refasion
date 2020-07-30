@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:refashioned_app/services/dio_client.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = false;
+  static const LOG_ENABLE = true;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -33,7 +38,12 @@ class ApiService {
   }
 
   static Future<Response> getCart() async {
-    return DioClient().getClient(logging: LOG_ENABLE).get(Url.cart);
+    Dio dio = DioClient().getClient(logging: LOG_ENABLE);
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    var cookieJar=PersistCookieJar(dir: "$appDocPath/.cookies/");
+    dio.interceptors.add(CookieManager(cookieJar));
+    return dio.get(Url.cart);
   }
 
   static Future<Response> getContentCatalogMenu() async {
@@ -59,5 +69,18 @@ class ApiService {
     return dioClient
         .getClient(logging: LOG_ENABLE)
         .get(Url.search, queryParameters: queryParameters);
+  }
+
+  static addToCart(String productId) async {
+    Dio dio = DioClient().getClient(logging: LOG_ENABLE);
+
+    var body = {"product": productId};
+
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    var cookieJar=PersistCookieJar(dir: "$appDocPath/.cookies/");
+    dio.interceptors.add(CookieManager(cookieJar));
+
+    await dio.post(Url.cartItem, data: body);
   }
 }
