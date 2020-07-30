@@ -112,6 +112,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
         return Offstage(
           offstage: currentTab != tabItem,
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             body: SellNavigator(navigatorKey: navigatorKeys[tabItem]),
           ),
         );

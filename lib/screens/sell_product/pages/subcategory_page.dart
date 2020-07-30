@@ -5,14 +5,14 @@ import 'package:refashioned_app/screens/sell_product/components/categories_list.
 import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
-class SubcategorySelector extends StatelessWidget {
-  final Function(List<String>) onPush;
+class SubcategoryPage extends StatelessWidget {
+  final Function(List<Category>) onPush;
   final Category selectedCategory;
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
   final isScrolled = ValueNotifier<bool>(false);
 
-  SubcategorySelector(
+  SubcategoryPage(
       {Key key,
       this.onPush,
       this.selectedCategory,

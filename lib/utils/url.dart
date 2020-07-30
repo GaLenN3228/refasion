@@ -9,6 +9,9 @@ class Url {
   static const products = '$refashionedBaseUrl/catalog/products/';
   static const productsCount = '$refashionedBaseUrl/catalog/products/count/';
 
+  //SellProperties
+  static const properties = '$refashionedBaseUrl/catalog/properties/';
+
   //Filters
   static const filters = '$refashionedBaseUrl/catalog/filters/';
 

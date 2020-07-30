@@ -1,13 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
-import 'package:refashioned_app/models/filter.dart';
+import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/screens/sell_product/pages/category_selector.dart';
-import 'package:refashioned_app/screens/sell_product/pages/section_selector.dart';
-import 'package:refashioned_app/screens/sell_product/pages/subcategory_selector.dart';
-import 'package:refashioned_app/screens/sell_product/pages/top_category_selector.dart';
+import 'package:refashioned_app/repositories/sell_properties.dart';
+import 'package:refashioned_app/screens/sell_product/pages/adresses_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/brand_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/category_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/description_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/new_adress_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/on_moderation_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/price_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/section_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/sell_properties_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/sell_property_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/subcategory_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/top_category_page.dart';
 
 class SellNavigatorRoutes {
   static const String root = '/';
@@ -15,12 +25,12 @@ class SellNavigatorRoutes {
   static const String topCategory = '/topCategory';
   static const String category = '/category';
   static const String subCategory = '/subCategory';
-  static const String size = '/size';
-  static const String condition = '/condition';
+  static const String sellProperty = '/sellProperty';
+  static const String sellProperties = '/sellProperties';
   static const String description = '/description';
   static const String brand = '/brand';
   static const String price = '/price';
-  static const String address = '/address';
+  static const String addresses = '/addresses';
   static const String newAddress = '/newAddress';
   static const String onModeration = '/onModeration';
 }
@@ -32,55 +42,161 @@ class SellNavigator extends StatelessWidget {
   Widget _routeBuilder(BuildContext context, String route,
       {Category category,
       List<Category> categories,
-      List<Filter> filters,
-      Filter filter}) {
+      List<SellProperty> sellProperties,
+      int sellPropertyIndex}) {
     switch (route) {
       case SellNavigatorRoutes.section:
-        return SectionSelector(
+        return SectionPage(
           categories: categories,
           onPush: (category) => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) => _routeBuilder(
                   context, SellNavigatorRoutes.topCategory,
-                  filters: filters, category: category),
+                  category: category),
             ),
           ),
         );
 
       case SellNavigatorRoutes.topCategory:
-        return TopCategorySelector(
+        return TopCategoryPage(
           selectedSection: category,
           onPush: (category) => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) => _routeBuilder(
                   context, SellNavigatorRoutes.category,
-                  filters: filters, category: category),
+                  category: category),
             ),
           ),
         );
 
       case SellNavigatorRoutes.category:
-        return CategorySelector(
+        return CategoryPage(
           selectedTopCategory: category,
           onPush: (category) => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) => _routeBuilder(
                   context, SellNavigatorRoutes.subCategory,
-                  filters: filters, category: category),
+                  category: category),
             ),
           ),
         );
 
       case SellNavigatorRoutes.subCategory:
-        return SubcategorySelector(
+        return SubcategoryPage(
           selectedCategory: category,
-          onPush: (categories) => Scaffold.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                  "Выбрано " + categories.length.toString() + " подкатегории"),
-            ),
+          onPush: (categories) {
+            selectSubCategories(categories);
+            return Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(
+                    context, SellNavigatorRoutes.sellProperties,
+                    categories: categories),
+              ),
+            );
+          },
+        );
+
+      case SellNavigatorRoutes.sellProperties:
+        PageRouteBuilder noAnimationRoute(String route,
+                {List<SellProperty> sellProperties, int sellPropertyIndex}) =>
+            PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 0),
+                pageBuilder: (context, animation, seondaryAnimation) =>
+                    _routeBuilder(context, route,
+                        sellProperties: sellProperties,
+                        sellPropertyIndex: sellPropertyIndex));
+
+        return SellPropertiesPage(
+          categories: categories,
+          onPush: (sellProperties) => Navigator.of(context).push(
+            noAnimationRoute(SellNavigatorRoutes.sellProperty,
+                sellProperties: sellProperties, sellPropertyIndex: 0),
+          ),
+          onSkip: () => Navigator.of(context).push(
+            noAnimationRoute(SellNavigatorRoutes.description),
           ),
         );
+
+      case SellNavigatorRoutes.sellProperty:
+        final sellProperty = sellProperties.elementAt(sellPropertyIndex);
+        return SellPropertyPage(
+          sellProperty: sellProperty,
+          onPush: () {
+            selectPropertyValue(sellProperty);
+            if (sellPropertyIndex < sellProperties.length - 1)
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(
+                      context, SellNavigatorRoutes.sellProperty,
+                      sellProperties: sellProperties,
+                      sellPropertyIndex: sellPropertyIndex + 1),
+                ),
+              );
+            else
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      _routeBuilder(context, SellNavigatorRoutes.description),
+                ),
+              );
+          },
+        );
+
+      case SellNavigatorRoutes.description:
+        return DescriptionPage(onPush: (description) {
+          addDescription(description);
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (context) =>
+                  _routeBuilder(context, SellNavigatorRoutes.brand),
+            ),
+          );
+        });
+
+      case SellNavigatorRoutes.brand:
+        return BrandPage(onPush: (brand) {
+          selectBrand(brand);
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (context) =>
+                  _routeBuilder(context, SellNavigatorRoutes.price),
+            ),
+          );
+        });
+
+      case SellNavigatorRoutes.price:
+        return PricePage(onPush: (price) {
+          selectPrice(price);
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (context) =>
+                  _routeBuilder(context, SellNavigatorRoutes.addresses),
+            ),
+          );
+        });
+
+      case SellNavigatorRoutes.addresses:
+        return AdressesPage(onPush: () {
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (context) =>
+                  _routeBuilder(context, SellNavigatorRoutes.newAddress),
+            ),
+          );
+        });
+
+      case SellNavigatorRoutes.newAddress:
+        return NewAdressPage(onPush: () {
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (context) =>
+                  _routeBuilder(context, SellNavigatorRoutes.onModeration),
+            ),
+          );
+        });
+
+      case SellNavigatorRoutes.onModeration:
+        return OnModerationPage();
 
       default:
         return Center(
@@ -88,6 +204,23 @@ class SellNavigator extends StatelessWidget {
         );
     }
   }
+
+  selectSubCategories(List<Category> categories) {}
+
+  getProperties(List<String> categories) async {
+    final sellPropertiesRepository = SellPropertiesRepository();
+    sellPropertiesRepository.addListener(() {
+      if (sellPropertiesRepository.isLoaded) {}
+    });
+  }
+
+  selectPrice(int price) {}
+
+  selectBrand(Brand brand) {}
+
+  addDescription(String description) {}
+
+  selectPropertyValue(SellProperty sellPropery) {}
 
   @override
   Widget build(BuildContext context) {

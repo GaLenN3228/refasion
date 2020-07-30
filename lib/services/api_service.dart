@@ -57,9 +57,14 @@ class ApiService {
         .get(Url.productsCount + (parameters ?? ''));
   }
 
-  static Future<Response> getFilters() async {
-    return DioClient().getClient(logging: LOG_ENABLE).get(Url.filters);
-  }
+  static Future<Response> getSellProperties() async =>
+      await DioClient().getClient(logging: LOG_ENABLE).get(Url.properties);
+
+  static Future<Response> getSellPropertyValues(String id) async =>
+      await DioClient().getClient(logging: LOG_ENABLE).get(Url.properties + id);
+
+  static Future<Response> getFilters() async =>
+      await DioClient().getClient(logging: LOG_ENABLE).get(Url.filters);
 
   static Future<Response> search(String query) async {
     DioClient dioClient = DioClient();

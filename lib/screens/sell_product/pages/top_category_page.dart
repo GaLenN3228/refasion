@@ -5,14 +5,14 @@ import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_category_tile.dart';
 
-class TopCategorySelector extends StatelessWidget {
+class TopCategoryPage extends StatelessWidget {
   final Function() onClose;
   final Function(Category) onPush;
   final Category selectedSection;
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
 
-  const TopCategorySelector(
+  const TopCategoryPage(
       {Key key,
       this.onPush,
       this.selectedSection,

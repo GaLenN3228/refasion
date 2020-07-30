@@ -4,13 +4,13 @@ import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/section_tile.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
-class SectionSelector extends StatelessWidget {
+class SectionPage extends StatelessWidget {
   final Function(Category) onPush;
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
   final List<Category> categories;
 
-  const SectionSelector(
+  const SectionPage(
       {Key key,
       this.onPush,
       this.categories,

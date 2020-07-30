@@ -5,18 +5,16 @@ import 'package:refashioned_app/screens/sell_product/components/categories_list.
 import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
-class CategorySelector extends StatelessWidget {
+class CategoryPage extends StatelessWidget {
   final Function(Category) onPush;
   final Category selectedTopCategory;
-  final Animation<double> animation;
-  final Animation<double> secondaryAnimation;
+  final bool multiselection;
 
-  CategorySelector(
+  CategoryPage(
       {Key key,
       this.onPush,
       this.selectedTopCategory,
-      this.animation,
-      this.secondaryAnimation})
+      this.multiselection: false})
       : super(key: key);
 
   final isScrolled = ValueNotifier<bool>(false);
@@ -27,8 +25,6 @@ class CategorySelector extends StatelessWidget {
         child: selectedTopCategory != null
             ? CategoriesList(
                 categories: selectedTopCategory.children,
-                animation: animation,
-                secondaryAnimation: secondaryAnimation,
                 bottomPadding: 10,
                 isScrolled: isScrolled,
                 appBar: SellProductTopBar(),

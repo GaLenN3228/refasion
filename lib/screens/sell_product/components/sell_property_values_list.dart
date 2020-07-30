@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import '../../../models/category.dart';
-import '../../catalog/components/category_tile.dart';
+import 'package:refashioned_app/screens/sell_product/components/sell_property_value_tile.dart';
 
-class CategoriesList extends StatefulWidget {
+class SellPropertyValuesList extends StatefulWidget {
   final Widget header;
   final Widget appBar;
-  final List<Category> categories;
-  final Function(Category) onPush;
-  final Function(List<Category>) onUpdate;
+  final List<SellPropertyValue> values;
+  final Function(String) onUpdate;
+  final Function() onPush;
   final bool multiselection;
   final double bottomPadding;
   final ValueNotifier<bool> isScrolled;
@@ -17,26 +17,25 @@ class CategoriesList extends StatefulWidget {
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
 
-  const CategoriesList({
+  const SellPropertyValuesList({
     Key key,
-    this.onPush,
     this.onUpdate,
     this.multiselection: false,
     this.bottomPadding: 0.0,
-    this.categories,
+    this.values,
     this.header,
     this.appBar,
     this.isScrolled,
     this.animation,
     this.secondaryAnimation,
+    this.onPush,
   }) : super(key: key);
 
   @override
-  _CategoriesListState createState() => _CategoriesListState();
+  _SellPropertyValuesListState createState() => _SellPropertyValuesListState();
 }
 
-class _CategoriesListState extends State<CategoriesList> {
-  List<Category> selectedSubcategories;
+class _SellPropertyValuesListState extends State<SellPropertyValuesList> {
   ScrollController scrollController;
 
   scrollListener() {
@@ -47,7 +46,6 @@ class _CategoriesListState extends State<CategoriesList> {
 
   @override
   void initState() {
-    selectedSubcategories = List<Category>();
     scrollController = ScrollController();
 
     scrollController.addListener(scrollListener);
@@ -63,34 +61,18 @@ class _CategoriesListState extends State<CategoriesList> {
     super.dispose();
   }
 
-  update(Category category) {
-    final index = selectedSubcategories.indexOf(category);
-
-    setState(() {
-      if (index >= 0)
-        selectedSubcategories.removeAt(index);
-      else
-        selectedSubcategories.add(category);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final widgets = widget.categories
-        .map((category) => GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () => widget.onPush(category),
-              child: CategoryTile(
-                  category: category,
-                  selected: widget.multiselection
-                      ? selectedSubcategories.contains(category)
-                      : null,
-                  onPush: (category) {
-                    if (widget.multiselection)
-                      update(category);
-                    else if (widget.onPush != null) widget.onPush(category);
-                  }),
-            ))
+    final widgets = widget.values
+        .map(
+          (value) => SellPropertyValueTile(
+            sellPropertyValue: value,
+            selected: widget.multiselection ? value.selected : null,
+            onPush: () {
+              if (widget.onUpdate != null) widget.onUpdate(value.id);
+            },
+          ),
+        )
         .toList();
 
     return Column(
@@ -120,8 +102,7 @@ class _CategoriesListState extends State<CategoriesList> {
                       child: widget.multiselection
                           ? BottomButton(
                               title: "ВЫБРАТЬ",
-                              action: () =>
-                                  widget.onUpdate(selectedSubcategories),
+                              action: widget.onPush,
                             )
                           : SizedBox(),
                     )
