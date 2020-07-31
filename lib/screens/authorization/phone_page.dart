@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:refashioned_app/screens/authorization/code_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 
@@ -15,11 +16,13 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
   TextEditingController textEditingController;
   bool phoneIsEmpty;
   String phone;
+  MaskTextInputFormatter maskFormatter;
 
   @override
   void initState() {
     phoneIsEmpty = false;
     textEditingController = TextEditingController();
+    maskFormatter = new MaskTextInputFormatter(mask: '+7 ### ### ## ##', filter: { "#": RegExp(r'[0-9]') });
     textEditingController.addListener(textControllerListener);
 
     super.initState();
@@ -88,6 +91,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
             alignment: Alignment.center,
             margin: const EdgeInsets.only(top: 28.0, left: 20, right: 20),
             child: TextField(
+              inputFormatters: [maskFormatter],
               textAlign: TextAlign.center,
               controller: textEditingController,
               keyboardType: TextInputType.phone,
