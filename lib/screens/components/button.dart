@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/add_product/maps/add_address.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-enum ButtonStyle { dark, amber, outline, gray }
+enum ButtonStyle { dark, amber, outline, gray, dark_gray }
 
 class Button extends StatelessWidget {
   final String textButton;
@@ -32,6 +32,8 @@ class Button extends StatelessWidget {
         return Colors.white;
       case ButtonStyle.gray:
         return Color(0xFFF5F5F5);
+      case ButtonStyle.dark_gray:
+        return Colors.grey;
       case ButtonStyle.dark:
       default:
         return primaryColor;
