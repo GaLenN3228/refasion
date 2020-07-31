@@ -15,46 +15,6 @@ class ProfilePage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: Column(
         children: [
-          SizedBox(
-            height: 32,
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 4,
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () => {},
-                child: SvgPicture.asset(
-                  "assets/back.svg",
-                  color: Color(0xFF222222),
-                  width: 44,
-                ),
-              ),
-              Expanded(
-                  child: Container(
-                      height: 35,
-                      child: Center(
-                        child: Text(
-                          "НОВЫЙ АДРЕС",
-                          style: Theme.of(context).textTheme.headline2.copyWith(fontWeight: FontWeight.w500),
-                        ),
-                      ))),
-              Padding(
-                padding: const EdgeInsets.only(left: 3, right: 16),
-                child: SvgPicture.asset(
-                  'assets/filter.svg',
-                  color: Colors.black,
-                  width: 44,
-                  height: 44,
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 8,
-          ),
           Expanded(
               child: Stack(children: [
             Expanded(

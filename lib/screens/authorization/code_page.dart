@@ -58,6 +58,22 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
         body: Stack(children: [
+      GestureDetector(
+        onTap: () {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          } else {
+            SystemNavigator.pop();
+          }
+        },
+        child: Container(
+            padding: const EdgeInsets.only(right: 16.0, top: 60),
+            alignment: Alignment.topRight,
+            child: Text(
+              "Закрыть",
+              style: Theme.of(context).textTheme.bodyText1.copyWith(color: Color(0xFF959595)),
+            )),
+      ),
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

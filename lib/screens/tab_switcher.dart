@@ -105,7 +105,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
         return Offstage(
           offstage: currentTab != tabItem,
           child: Scaffold(
-            body: CartPage(),
+            body: CartPage(needUpdate: currentTab == tabItem),
           ),
         );
 
