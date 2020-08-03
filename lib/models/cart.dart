@@ -13,7 +13,7 @@ class CartResponse {
 }
 
 class Cart {
-  final int productsCounts;
+  final int productsCount;
   final String promoCode;
   final int currentPriceAmount;
   final int discountPriceAmount;
@@ -21,7 +21,7 @@ class Cart {
   final List<CartItem> cartItems;
 
   Cart(
-      {this.productsCounts,
+      {this.productsCount,
       this.promoCode,
       this.currentPriceAmount,
       this.discountPriceAmount,
@@ -30,7 +30,7 @@ class Cart {
 
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
-      productsCounts: json['products_counts'],
+      productsCount: json['products_count'],
       promoCode: json['promocode'],
       currentPriceAmount: json['total_current_price'],
       discountPriceAmount: json['total_discount_price'],

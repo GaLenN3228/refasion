@@ -5,7 +5,6 @@ import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:refashioned_app/screens/product/components/properties.dart';
 import 'package:refashioned_app/utils/colors.dart';
-import 'package:refashioned_app/utils/url.dart';
 
 class CartProduct extends StatelessWidget {
   final Product product;
@@ -52,7 +51,7 @@ class CartProduct extends StatelessWidget {
                     ],
                   ),
                   ProductProperties(
-                    properties: product.properties,
+                    properties: product.properties.length < 4 ? product.properties : product.properties.sublist(0,3),
                     article: product.article,
                     hasDots: false,
                   ),

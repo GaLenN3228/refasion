@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/screens/sell_product/pages/sell_navigator.dart';
 import 'components/bottom_navigation.dart';
 import 'components/catalog_navigator.dart';
@@ -104,7 +105,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
         return Offstage(
           offstage: currentTab != tabItem,
           child: Scaffold(
-            body: CartPage(),
+            body: CartPage(needUpdate: currentTab == tabItem),
           ),
         );
 
@@ -114,6 +115,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
           child: Scaffold(
             resizeToAvoidBottomInset: false,
             body: SellNavigator(navigatorKey: navigatorKeys[tabItem]),
+          ),
+        );
+
+      case TabItem.profile:
+        return Offstage(
+          offstage: currentTab != tabItem,
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: ProfilePage(),
           ),
         );
 

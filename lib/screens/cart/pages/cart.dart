@@ -5,10 +5,21 @@ import 'package:refashioned_app/screens/cart/components/bottom_bar.dart';
 import 'package:refashioned_app/screens/cart/content/cart.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
 
-class CartPage extends StatelessWidget {
+class CartPage extends StatefulWidget {
   final Function() onPop;
+  final bool needUpdate;
 
-  const CartPage({Key key, this.onPop}) : super(key: key);
+  const CartPage({Key key, this.onPop, this.needUpdate}) : super(key: key);
+
+  @override
+  _CartPageState createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +31,12 @@ class CartPage extends StatelessWidget {
           child: Column(
             children: <Widget>[
               TopPanel(
-                canPop: true,
-                onPop: onPop,
+                canPop: false,
+                onPop: widget.onPop,
                 type: PanelType.item,
               ),
               Expanded(
-                child: CartPageContent(),
+                child: CartPageContent(needUpdate: widget.needUpdate),
               )
             ],
           ),
