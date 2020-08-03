@@ -69,11 +69,11 @@ class CatalogNavigator extends StatelessWidget {
             settings: RouteSettings(name: CatalogNavigatorRoutes.category)),
       );
 
-  void _pushProducts(BuildContext context, Category category, {Category secondLvlCategory}) => Navigator.push(
+  void _pushProducts(BuildContext context, Category category, {Category secondLvlCategory, List<Category> lastCategories}) => Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => _routeBuilder(CatalogNavigatorRoutes.products,
-                category: category, secondLvlCategory: secondLvlCategory)(context),
+                category: category, secondLvlCategory: secondLvlCategory, lastCategories: lastCategories)(context),
             settings: RouteSettings(name: CatalogNavigatorRoutes.products)),
       );
 
@@ -85,9 +85,9 @@ class CatalogNavigator extends StatelessWidget {
             settings: RouteSettings(name: CatalogNavigatorRoutes.product)),
       );
 
-  //TODO refactor secondLvlCategory after the third lvl categories screen changes
+  //TODO refactor secondLvlCategory and lastCategories after the third lvl categories screen changes
   WidgetBuilder _routeBuilder(String route,
-      {Category category, List<Category> categories, Product product, Category secondLvlCategory}) {
+      {Category category, List<Category> categories, Product product, Category secondLvlCategory, List<Category> lastCategories}) {
     switch (route) {
       case CatalogNavigatorRoutes.root:
         return (context) => CatalogRootPage(
@@ -108,7 +108,7 @@ class CatalogNavigator extends StatelessWidget {
               onSearch: () => _pushSearch(context),
               category: category,
               level: CategoryLevel.categories,
-              onPush: (category, {secondLvlCategory}) {
+              onPush: (category, {secondLvlCategory, lastCategories}) {
                 if (category.children.isNotEmpty)
                   _pushCategory(context, category, secondLvlCategory: secondLvlCategory);
                 else
@@ -123,7 +123,7 @@ class CatalogNavigator extends StatelessWidget {
               onSearch: () => _pushSearch(context),
               category: category,
               level: CategoryLevel.category,
-              onPush: (category, {secondLvlCategory}) => _pushProducts(context, category, secondLvlCategory: secondLvlCategory),
+              onPush: (category, {secondLvlCategory, lastCategories}) => _pushProducts(context, category..reset()..selected = true, secondLvlCategory: secondLvlCategory, lastCategories: lastCategories),
             );
 
       case CatalogNavigatorRoutes.products:
@@ -131,7 +131,8 @@ class CatalogNavigator extends StatelessWidget {
             onPush: (product) => _pushProduct(context, product),
             onSearch: () => _pushSearch(context),
             id: category.id,
-            categoryName: secondLvlCategory.name);
+            categoryName: secondLvlCategory.name,
+            categories: lastCategories);
 
       case CatalogNavigatorRoutes.product:
         return (context) => ProductPage(

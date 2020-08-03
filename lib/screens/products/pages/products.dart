@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/quick_filters.dart';
@@ -15,8 +16,11 @@ class ProductsPage extends StatefulWidget {
   final Function() onSearch;
   final String id;
   final String categoryName;
+  final Function() onUpdate;
+  final List<Category> categories;
 
-  const ProductsPage({Key key, this.onPush, this.id, this.onSearch, this.categoryName}) : super(key: key);
+  const ProductsPage({Key key, this.onPush, this.id, this.onSearch, this.categoryName, this.onUpdate, this.categories})
+      : super(key: key);
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -52,8 +56,11 @@ class _ProductsPageState extends State<ProductsPage> {
               onSearch: widget.onSearch,
             ),
             QuickFilterList(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-            ),
+                onUpdate: widget.onUpdate,
+                categoryName: widget.categoryName,
+                categories: widget.categories,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                updateProducts: (parameters) => updateProducts(context, parameters)),
             ProductsTitle(categoryName: widget.categoryName),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),

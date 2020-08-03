@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/quick_filter.dart';
+import 'package:refashioned_app/screens/products/pages/category_filter_panel.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class QuickFilterItem extends StatelessWidget {
@@ -11,6 +14,10 @@ class QuickFilterItem extends StatelessWidget {
   final QuickFilter filterValue;
   final Function(String) onSelect;
   final bool isNavigationButton;
+  final Function() onUpdate;
+  final String categoryName;
+  final List<Category> categories;
+  final Function(String) updateProducts;
 
   const QuickFilterItem(
       {Key key,
@@ -20,7 +27,11 @@ class QuickFilterItem extends StatelessWidget {
       this.horizontalWidth: 30.0,
       this.horizontalCornerRadius: 5.0,
       this.horizontalBorderWidth: 1.0,
-      this.isNavigationButton: false})
+      this.isNavigationButton: false,
+      this.onUpdate,
+      this.categoryName,
+      this.categories,
+      this.updateProducts})
       : super(key: key);
 
   @override
@@ -29,25 +40,37 @@ class QuickFilterItem extends StatelessWidget {
         behavior: HitTestBehavior.translucent,
         onTap: () => onSelect(filterValue.urlParams),
         child: isNavigationButton
-            ? Container(
-                height: horizontalHeight,
-                width: horizontalWidth,
-                decoration: ShapeDecoration(
-                    color: accentColor,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(width: horizontalBorderWidth, color: accentColor),
-                        borderRadius: BorderRadius.circular(horizontalCornerRadius))),
-                child: Center(
-                    child: Padding(
-                  padding: const EdgeInsets.only(left: 7, right: 7),
-                  child: SvgPicture.asset(
-                    'assets/navigation.svg',
-                    color: Colors.black,
-                    width: 44,
-                    height: 44,
-                  ),
-                )),
-              )
+            ? GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () => showCupertinoModalBottomSheet(
+                    backgroundColor: Colors.white,
+                    expand: true,
+                    context: context,
+                    useRootNavigator: true,
+                    builder: (context, controller) => CategoryFilterPanel(
+                        categories: categories,
+                        categoryName: categoryName,
+                        onUpdate: onUpdate,
+                        updateProducts: updateProducts)),
+                child: Container(
+                  height: horizontalHeight,
+                  width: horizontalWidth,
+                  decoration: ShapeDecoration(
+                      color: accentColor,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(width: horizontalBorderWidth, color: accentColor),
+                          borderRadius: BorderRadius.circular(horizontalCornerRadius))),
+                  child: Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(left: 7, right: 7),
+                    child: SvgPicture.asset(
+                      'assets/navigation.svg',
+                      color: Colors.black,
+                      width: 44,
+                      height: 44,
+                    ),
+                  )),
+                ))
             : Container(
                 height: horizontalHeight,
                 decoration: ShapeDecoration(
