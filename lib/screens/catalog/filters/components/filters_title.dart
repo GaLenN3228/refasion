@@ -47,8 +47,10 @@ class FiltersTitle extends StatelessWidget {
                 },
                 child: Text(
                   "Сбросить",
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(
-                      color: canReset ? Colors.black : Color(0xFF959595)),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      .copyWith(color: Color(0xFF959595)),
                 ),
               ),
             ],

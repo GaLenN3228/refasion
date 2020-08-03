@@ -35,12 +35,12 @@ class TileOfSelectableList extends StatelessWidget {
           ? Container(
               height: horizontalHeight,
               decoration: ShapeDecoration(
-                  color: filterValue.selected ? primaryColor : Colors.white,
+                  color: filterValue.selected ? accentColor : Colors.white,
                   shape: RoundedRectangleBorder(
                       side: BorderSide(
                           width: horizontalBorderWidth,
                           color: filterValue.selected
-                              ? primaryColor
+                              ? accentColor
                               : horizontalBorderColor ?? Color(0xFFE6E6E6)),
                       borderRadius:
                           BorderRadius.circular(horizontalCornerRadius))),
@@ -49,10 +49,10 @@ class TileOfSelectableList extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     filterValue.value,
-                    style: Theme.of(context).textTheme.bodyText1.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color:
-                            filterValue.selected ? accentColor : primaryColor),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        .copyWith(fontWeight: FontWeight.w500),
                   ),
                 ),
               ),

@@ -11,8 +11,14 @@ class FiltersPanel extends StatefulWidget {
   final String root;
   final List<Filter> filters;
   final Function(String) updateProducts;
+  final ScrollController scrollController;
 
-  const FiltersPanel({Key key, this.filters, this.updateProducts, this.root})
+  const FiltersPanel(
+      {Key key,
+      this.filters,
+      this.updateProducts,
+      this.root,
+      this.scrollController})
       : super(key: key);
 
   @override
@@ -28,7 +34,18 @@ class _FiltersPanelState extends State<FiltersPanel> {
     rootParameters = '?p=' + widget.root;
     countParameters = getParameters(widget.filters);
 
+    widget.scrollController.addListener(scrollControllerListener);
+
     super.initState();
+  }
+
+  scrollControllerListener() => FocusScope.of(context).unfocus();
+
+  @override
+  dispose() {
+    widget.scrollController?.removeListener(scrollControllerListener);
+
+    super.dispose();
   }
 
   String getParameters(List<Filter> filters) => filters.fold(rootParameters,
@@ -67,9 +84,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
               child: Material(
                 color: Colors.white,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     FiltersTitle(
                       onClose: () {
                         widget.filters.forEach(
@@ -80,16 +95,26 @@ class _FiltersPanelState extends State<FiltersPanel> {
                           .where((filter) => filter.modified)
                           .isNotEmpty,
                     ),
-                  ]..addAll(
-                      widget.filters.asMap().entries.map((entry) => Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (entry.key != 0) CategoryDivider(),
-                              FilterTile(
-                                  filter: entry.value,
-                                  onUpdate: () => updateCount(context)),
-                            ],
-                          ))),
+                    Expanded(
+                      child: ListView(
+                        children: widget.filters
+                            .asMap()
+                            .entries
+                            .map(
+                              (entry) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (entry.key != 0) CategoryDivider(),
+                                  FilterTile(
+                                      filter: entry.value,
+                                      onUpdate: () => updateCount(context)),
+                                ],
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

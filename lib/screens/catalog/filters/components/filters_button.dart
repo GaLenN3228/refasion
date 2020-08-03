@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/screens/catalog/filters/filters_panel.dart';
-import 'package:refashioned_app/utils/colors.dart';
 
 class FiltersButton extends StatefulWidget {
   final Function(String) updateProducts;
@@ -20,13 +19,11 @@ class _FiltersButtonState extends State<FiltersButton> {
   FiltersRepository filtersRepository;
 
   List<Filter> filters;
-  int filtersApplied;
 
   initState() {
     filtersRepository = FiltersRepository();
 
     filters = List<Filter>();
-    filtersApplied = 0;
 
     super.initState();
   }
@@ -44,32 +41,28 @@ class _FiltersButtonState extends State<FiltersButton> {
           builder: (context, controller) => FiltersPanel(
                 filters: filters,
                 root: widget.root,
+                scrollController: controller,
                 updateProducts: (String parameters) {
-                  filtersApplied =
-                      filters.where((filter) => filter.modified).length;
-
                   if (widget.updateProducts != null) {
                     widget.updateProducts(parameters);
                   }
                 },
               ));
     }
-    // else {
-    //   if (filtersRepository.isLoading)
-    //     Scaffold.of(context).showSnackBar(SnackBar(
-    //         content: Text(
-    //       "Фильтры загружаются",
-    //       style: Theme.of(context).textTheme.bodyText1,
-    //     )));
+    if (filtersRepository.isLoading)
+      Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(
+        "Фильтры загружаются",
+        style: Theme.of(context).textTheme.bodyText1,
+      )));
 
-    //   if (filtersRepository.loadingFailed)
-    //     Scaffold.of(context).showSnackBar(SnackBar(
-    //         content: Text(
-    //       "Ошибка при загрузке фильтров. Статус " +
-    //           filtersRepository.filtersResponse.status.code.toString(),
-    //       style: Theme.of(context).textTheme.bodyText1,
-    //     )));
-    // }
+    if (filtersRepository.loadingFailed)
+      Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(
+        "Ошибка при загрузке фильтров. Статус " +
+            filtersRepository.filtersResponse.status.code.toString(),
+        style: Theme.of(context).textTheme.bodyText1,
+      )));
   }
 
   @override
@@ -77,46 +70,23 @@ class _FiltersButtonState extends State<FiltersButton> {
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => showFilters(),
-        child: Stack(
+        child: Row(
           children: [
-            Row(
-              children: [
-                SizedBox(
-                  height: 27,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Фильтровать",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(fontWeight: FontWeight.w500),
-                    ),
-                  ),
+            SizedBox(
+              height: 27,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Фильтровать",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      .copyWith(fontWeight: FontWeight.w500),
                 ),
-                SizedBox(
-                  width: 14,
-                )
-              ],
+              ),
             ),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: filtersApplied != 0
-                  ? Container(
-                      width: 17,
-                      height: 17,
-                      decoration: ShapeDecoration(
-                          color: accentColor, shape: CircleBorder()),
-                      child: Center(
-                        child: Text(
-                          filtersApplied.toString(),
-                          style: Theme.of(context).textTheme.caption.copyWith(
-                              fontWeight: FontWeight.w500, color: primaryColor),
-                        ),
-                      ),
-                    )
-                  : SizedBox(),
+            SizedBox(
+              width: 14,
             )
           ],
         ));
