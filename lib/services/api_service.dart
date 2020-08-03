@@ -88,4 +88,7 @@ class ApiService {
 
     await dio.post(Url.cartItem, data: body);
   }
+
+  static Future<Response> getQuickFilters() async =>
+      await DioClient().getClient(logging: LOG_ENABLE).get(Url.quick_filters);
 }

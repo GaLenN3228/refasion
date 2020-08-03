@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/products.dart';
+import 'package:refashioned_app/repositories/quick_filters.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_button.dart';
 import 'package:refashioned_app/screens/catalog/sorting/components/sorting_button.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
+import 'package:refashioned_app/screens/products/components/products_title.dart';
+import 'package:refashioned_app/screens/products/components/quick_filter_list.dart';
 import 'package:refashioned_app/screens/products/content/products.dart';
 
 class ProductsPage extends StatefulWidget {
   final Function(Product) onPush;
   final Function() onSearch;
   final String id;
+  final String categoryName;
 
-  const ProductsPage({Key key, this.onPush, this.id, this.onSearch})
-      : super(key: key);
+  const ProductsPage({Key key, this.onPush, this.id, this.onSearch, this.categoryName}) : super(key: key);
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -32,30 +35,34 @@ class _ProductsPageState extends State<ProductsPage> {
   updateProducts(BuildContext context, String newParameters) {
     productsParameters = newParameters;
 
-    Provider.of<ProductsRepository>(context, listen: false)
-        .update(newParameters: productsParameters);
+    Provider.of<ProductsRepository>(context, listen: false).update(newParameters: productsParameters);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProductsRepository>(
-      create: (_) => ProductsRepository(parameters: productsParameters),
-      builder: (context, _) {
-        return Column(
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ProductsRepository>(create: (_) => ProductsRepository(parameters: productsParameters)),
+          ChangeNotifierProvider(create: (_) => QuickFiltersRepository())
+        ],
+        child: Column(
           children: [
             TopPanel(
               canPop: true,
               onSearch: widget.onSearch,
             ),
+            QuickFilterList(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+            ),
+            ProductsTitle(categoryName: widget.categoryName),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 15, 20, 8),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   FiltersButton(
                     root: widget.id,
-                    updateProducts: (parameters) =>
-                        updateProducts(context, parameters),
+                    updateProducts: (parameters) => updateProducts(context, parameters),
                   ),
                   SortingButton()
                 ],
@@ -67,8 +74,6 @@ class _ProductsPageState extends State<ProductsPage> {
               ),
             ),
           ],
-        );
-      },
-    );
+        ));
   }
 }

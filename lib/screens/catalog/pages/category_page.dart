@@ -11,7 +11,7 @@ enum CategoryLevel { categories, category }
 class CategoryPage extends StatelessWidget {
   final Category category;
   final CategoryLevel level;
-  final Function(Category) onPush;
+  final Function(Category, {Category secondLvlCategory}) onPush;
   final Function() onSearch;
 
   final bool canPop;
@@ -45,7 +45,12 @@ class CategoryPage extends StatelessWidget {
     widgets.addAll(category.children
         .map((category) => CategoryTile(
               category: category,
-              onPush: onPush,
+      onPush: (category) {
+                onPush(category,
+                    secondLvlCategory: level == CategoryLevel.category
+                        ? this.category
+                        : (level == CategoryLevel.categories ? category : null));
+              },
             ))
         .toList());
 
