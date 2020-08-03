@@ -49,38 +49,40 @@ class _ProductsPageState extends State<ProductsPage> {
           ChangeNotifierProvider<ProductsRepository>(create: (_) => ProductsRepository(parameters: productsParameters)),
           ChangeNotifierProvider(create: (_) => QuickFiltersRepository())
         ],
-        child: Column(
-          children: [
-            TopPanel(
-              canPop: true,
-              onSearch: widget.onSearch,
-            ),
-            QuickFilterList(
-                onUpdate: widget.onUpdate,
-                categoryName: widget.categoryName,
-                categories: widget.categories,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                updateProducts: (parameters) => updateProducts(context, parameters)),
-            ProductsTitle(categoryName: widget.categoryName),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FiltersButton(
-                    root: widget.id,
-                    updateProducts: (parameters) => updateProducts(context, parameters),
-                  ),
-                  SortingButton()
-                ],
+        child: Builder(builder: (BuildContext context) {
+          return Column(
+            children: [
+              TopPanel(
+                canPop: true,
+                onSearch: widget.onSearch,
               ),
-            ),
-            Expanded(
-              child: ProductsPageContent(
-                onPush: widget.onPush,
+              QuickFilterList(
+                  onUpdate: widget.onUpdate,
+                  categoryName: widget.categoryName,
+                  categories: widget.categories,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  updateProducts: (parameters) => updateProducts(context, parameters)),
+              ProductsTitle(categoryName: widget.categoryName),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    FiltersButton(
+                      root: widget.id,
+                      updateProducts: (parameters) => updateProducts(context, parameters),
+                    ),
+                    SortingButton()
+                  ],
+                ),
               ),
-            ),
-          ],
-        ));
+              Expanded(
+                child: ProductsPageContent(
+                  onPush: widget.onPush,
+                ),
+              ),
+            ],
+          );
+        }));
   }
 }

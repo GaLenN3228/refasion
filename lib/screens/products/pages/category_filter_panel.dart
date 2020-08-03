@@ -38,9 +38,9 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
 
   onReset(BuildContext context) {
     setState(() {
-      widget.categories.forEach((category) => category.reset());
-
-      countParameters = rootParameters;
+//      widget.categories.forEach((category) => category.reset());
+//
+//      countParameters = rootParameters;
     });
 
     updateCount(context);
@@ -48,11 +48,11 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
 
   onClose(BuildContext context) {
     setState(() {
-      widget.categories
-        ..clear()
-        ..addAll(previousCategories);
-
-      countParameters = rootParameters;
+//      widget.categories
+//        ..clear()
+//        ..addAll(previousCategories);
+//
+//      countParameters = rootParameters;
     });
 
     updateCount(context);
