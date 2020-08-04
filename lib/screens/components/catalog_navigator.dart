@@ -138,6 +138,7 @@ class CatalogNavigator extends StatelessWidget {
         return (context) => ProductPage(
               id: product.id,
               onPop: () => Navigator.pop(context),
+          onPush: (product) => _pushProduct(context, product),
             );
 
       case CatalogNavigatorRoutes.search:

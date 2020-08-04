@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/product.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
 import 'package:refashioned_app/screens/product/components/bottom_bar.dart';
@@ -8,8 +9,9 @@ import 'package:refashioned_app/screens/product/content/product.dart';
 class ProductPage extends StatelessWidget {
   final Function() onPop;
   final String id;
+  final Function(Product) onPush;
 
-  const ProductPage({Key key, this.onPop, this.id}) : super(key: key);
+  const ProductPage({Key key, this.onPop, this.id, this.onPush}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,9 @@ class ProductPage extends StatelessWidget {
                 type: PanelType.item,
               ),
               Expanded(
-                child: ProductPageContent(),
+                child: ProductPageContent(
+                  onPush: onPush,
+                ),
               )
             ],
           ),

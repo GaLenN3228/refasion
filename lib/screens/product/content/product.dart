@@ -17,6 +17,9 @@ import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
 
 class ProductPageContent extends StatefulWidget {
+  final Function(Product) onPush;
+
+  const ProductPageContent({Key key, this.onPush}) : super(key: key);
   @override
   _ProductPageContentState createState() => _ProductPageContentState();
 }
@@ -91,7 +94,9 @@ class _ProductPageContentState extends State<ProductPageContent> {
                   ChangeNotifierProvider<ProductsRepository>(
                       create: (_) => ProductsRepository(parameters: "?p=93d38e10-fa55-417f-9fe0-493e55de5a17"),
                       builder: (context, _) {
-                        return RecommendedProducts();
+                        return RecommendedProducts(
+                          onPush: widget.onPush,
+                        );
                       }
                   )
                 ],
