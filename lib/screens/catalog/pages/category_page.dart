@@ -11,20 +11,13 @@ enum CategoryLevel { categories, category }
 class CategoryPage extends StatelessWidget {
   final Category category;
   final CategoryLevel level;
-  final Function(Category) onPush;
+  final Function(Category, {Category secondLvlCategory, List<Category> lastCategories}) onPush;
   final Function() onSearch;
 
   final bool canPop;
   final Function() onPop;
 
-  const CategoryPage(
-      {Key key,
-      this.category,
-      this.onPush,
-      this.level,
-      this.canPop,
-      this.onPop,
-      this.onSearch})
+  const CategoryPage({Key key, this.category, this.onPush, this.level, this.canPop, this.onPop, this.onSearch})
       : super(key: key);
 
   @override
@@ -45,7 +38,13 @@ class CategoryPage extends StatelessWidget {
     widgets.addAll(category.children
         .map((category) => CategoryTile(
               category: category,
-              onPush: onPush,
+              onPush: (category) {
+                onPush(category,
+                    secondLvlCategory: level == CategoryLevel.category
+                        ? this.category
+                        : (level == CategoryLevel.categories ? category : null),
+                    lastCategories: level == CategoryLevel.category ? this.category.children : null);
+              },
             ))
         .toList());
 

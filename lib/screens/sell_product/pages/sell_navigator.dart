@@ -5,7 +5,6 @@ import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/sell_properties.dart';
 import 'package:refashioned_app/screens/sell_product/pages/adresses_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/brand_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/category_page.dart';
