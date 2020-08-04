@@ -1,36 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/sort.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/catalog/sorting/components/sorting_method_tile.dart';
 import 'package:refashioned_app/screens/catalog/sorting/components/sorting_title.dart';
 
-class SortingPanel extends StatefulWidget {
-  final List<String> methods;
-  final int initialSelected;
-  final Function(int) onSelect;
+class SortingPanel extends StatelessWidget {
+  final Sort sort;
+  final Function() onUpdate;
 
-  const SortingPanel(
-      {Key key, this.methods, this.onSelect, this.initialSelected})
-      : super(key: key);
+  const SortingPanel(this.sort, this.onUpdate);
 
-  @override
-  _SortingPanelState createState() => _SortingPanelState();
-}
-
-class _SortingPanelState extends State<SortingPanel> {
-  int selectedIndex = 0;
-  final widgetKey = GlobalKey();
-
-  @override
-  initState() {
-    selectedIndex = widget.initialSelected;
-    super.initState();
-  }
-
-  selectIndex(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-    widget.onSelect(index);
+  onSelect(String value) {
+    if (sort != null) {
+      sort.update(value);
+      if (onUpdate != null) onUpdate();
+    }
   }
 
   @override
@@ -43,17 +27,13 @@ class _SortingPanelState extends State<SortingPanel> {
           mainAxisSize: MainAxisSize.min,
           children: [
             SortingTitle(),
-          ]..addAll(widget.methods.asMap().entries.map((e) => Column(
+          ]..addAll(sort.methods.asMap().entries.map((entry) => Column(
                 children: [
-                  if (e.key != 0) CategoryDivider(),
-                  GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        selectIndex(e.key);
-                        Navigator.of(context).pop();
-                      },
-                      child: SortMethodTile(
-                          method: e.value, selected: e.key == selectedIndex)),
+                  if (entry.key != 0) CategoryDivider(),
+                  SortMethodTile(entry.value, () {
+                    onSelect(entry.value.value);
+                    Navigator.of(context).pop();
+                  })
                 ],
               ))),
         ),

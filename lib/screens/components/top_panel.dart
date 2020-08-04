@@ -5,16 +5,11 @@ enum PanelType { search, item }
 
 class TopPanel extends StatefulWidget {
   final bool canPop;
-  final Function() onPop;
   final Function() onSearch;
   final PanelType type;
 
   const TopPanel(
-      {Key key,
-      this.canPop: false,
-      this.onPop,
-      this.type: PanelType.search,
-      this.onSearch})
+      {Key key, this.canPop: false, this.type: PanelType.search, this.onSearch})
       : super(key: key);
 
   @override
@@ -27,9 +22,7 @@ class TopPanelState extends State<TopPanel> {
     return Container(
       color: Colors.white,
       child: GestureDetector(
-        onTap: () {
-          widget.onSearch();
-        },
+        onTap: widget.onSearch,
         child: Column(
           children: [
             SizedBox(
@@ -43,12 +36,7 @@ class TopPanelState extends State<TopPanel> {
                 widget.canPop
                     ? GestureDetector(
                         behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          if (widget.onPop != null)
-                            widget.onPop();
-                          else
-                            Navigator.of(context).pop();
-                        },
+                        onTap: () => Navigator.of(context).pop(),
                         child: SvgPicture.asset(
                           "assets/back.svg",
                           color: Color(0xFF222222),

@@ -16,6 +16,9 @@ class Url {
   static const filters = '$refashionedBaseUrl/catalog/filters/';
   static const quick_filters = '$refashionedBaseUrl/catalog/quickfilters/';
 
+  //Filters
+  static const sortMethods = '$refashionedBaseUrl/catalog/sort/';
+
   //Content
   static const catalogMenu = '$refashionedBaseUrl/content/catalog-menu/';
 
@@ -23,9 +26,9 @@ class Url {
   static const search = '$refashionedBaseUrl/catalog/search/';
 
   //Cart
-  static const cart_demo ='https://itlessons.ru/assets/refashioned-cart.json';
-  static const cartItem ='$refashionedBaseUrl/cart/item/';
-  static const cart ='$refashionedBaseUrl/cart/';
+  static const cart_demo = 'https://itlessons.ru/assets/refashioned-cart.json';
+  static const cartItem = '$refashionedBaseUrl/cart/item/';
+  static const cart = '$refashionedBaseUrl/cart/';
 
   //Search catalogs, brands
   static const catalogSearch = '$refashionedBaseUrl/catalog/search/?q=';

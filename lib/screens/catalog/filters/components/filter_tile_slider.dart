@@ -10,7 +10,7 @@ class FilterTileSlider extends StatefulWidget {
   final double offset;
 
   const FilterTileSlider(
-      {Key key, this.filter, this.onUpdate, this.offset: 10000})
+      {Key key, this.filter, this.onUpdate, this.offset: 1000})
       : super(key: key);
 
   @override

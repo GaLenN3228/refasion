@@ -10,7 +10,7 @@ import 'package:refashioned_app/screens/catalog/filters/components/filters_title
 class FiltersPanel extends StatefulWidget {
   final String root;
   final List<Filter> filters;
-  final Function(String) updateProducts;
+  final Function() updateProducts;
   final ScrollController scrollController;
 
   const FiltersPanel(
@@ -26,12 +26,10 @@ class FiltersPanel extends StatefulWidget {
 }
 
 class _FiltersPanelState extends State<FiltersPanel> {
-  String rootParameters;
   String countParameters;
 
   @override
   void initState() {
-    rootParameters = '?p=' + widget.root;
     countParameters = getParameters(widget.filters);
 
     widget.scrollController.addListener(scrollControllerListener);
@@ -48,7 +46,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
     super.dispose();
   }
 
-  String getParameters(List<Filter> filters) => filters.fold(rootParameters,
+  String getParameters(List<Filter> filters) => filters.fold(widget.root,
       (parameters, filter) => parameters + filter.getRequestParameters());
 
   updateCount(BuildContext context) async {
@@ -64,7 +62,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
     setState(() {
       widget.filters.forEach((filter) => filter.reset());
 
-      countParameters = rootParameters;
+      countParameters = widget.root;
     });
 
     Provider.of<ProductCountRepository>(context, listen: false)
@@ -146,7 +144,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
                       widget.filters.forEach((filter) => filter.save());
 
                       if (widget.updateProducts != null)
-                        widget.updateProducts(countParameters);
+                        widget.updateProducts();
 
                       Navigator.of(context).pop();
                     },
