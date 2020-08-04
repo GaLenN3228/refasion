@@ -8,8 +8,10 @@ class ResultTile extends StatelessWidget {
   const ResultTile({Key key, this.searchResult, this.query}) : super(key: key);
 
   List<String> splitResult() {
-    if (query.isNotEmpty && searchResult.name.toLowerCase().contains(query.toLowerCase())) {
-      final queryStart = searchResult.name.toLowerCase().indexOf(query.toLowerCase());
+    if (query.isNotEmpty &&
+        searchResult.name.toLowerCase().contains(query.toLowerCase())) {
+      final queryStart =
+          searchResult.name.toLowerCase().indexOf(query.toLowerCase());
       final queryEnd = queryStart + query.length;
 
       final prevString = searchResult.name.substring(0, queryStart);
@@ -40,12 +42,15 @@ class ResultTile extends StatelessWidget {
               text: splitted.elementAt(0),
               style: textTheme,
               children: <TextSpan>[
-                TextSpan(text: splitted.elementAt(1), style: textTheme.copyWith(fontWeight: FontWeight.w700)),
+                TextSpan(
+                    text: splitted.elementAt(1),
+                    style: textTheme.copyWith(fontWeight: FontWeight.w700)),
                 TextSpan(text: splitted.elementAt(2)),
               ],
             ),
           ),
         );
     }
+    return SizedBox();
   }
 }

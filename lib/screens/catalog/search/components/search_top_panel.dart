@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/models/catalog.dart';
-import 'package:refashioned_app/models/search_result.dart';
 
 class SearchTopPanel extends StatelessWidget {
   final Function(String) onUpdate;

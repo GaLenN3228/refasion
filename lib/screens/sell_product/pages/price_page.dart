@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/price_button.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
@@ -18,30 +17,30 @@ class PricePage extends StatefulWidget {
   _PricePageState createState() => _PricePageState();
 }
 
-class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
-  final double bottomPadding = 16;
-
-  TextEditingController textEditingController;
-  bool canPush;
-  bool keyboardVisible;
+class _PricePageState extends State<PricePage> {
+  TextEditingController textController;
   Map<PriceButtonType, int> prices;
 
   @override
   void initState() {
-    textEditingController = TextEditingController();
-    canPush = false;
-    keyboardVisible = false;
+    textController = TextEditingController();
     prices = {PriceButtonType.tradeIn: 0, PriceButtonType.diy: 0};
 
-    textEditingController.addListener(textControllerListener);
+    textController.addListener(textControllerListener);
 
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    textController.removeListener(textControllerListener);
+
+    super.dispose();
   }
 
   textControllerListener() {
-    if (int.tryParse(textEditingController.text) != null) {
-      final newPrice = int.parse(textEditingController.text);
+    if (int.tryParse(textController.text) != null) {
+      final newPrice = int.parse(textController.text);
       setState(() => prices = {
             PriceButtonType.tradeIn: (newPrice * 0.7).round(),
             PriceButtonType.diy: (newPrice * 0.85).round()
@@ -50,62 +49,6 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
       setState(
           () => prices = {PriceButtonType.tradeIn: 0, PriceButtonType.diy: 0});
     }
-  }
-
-  @override
-  void dispose() {
-    textEditingController.removeListener(textControllerListener);
-
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  //Метод определения высоты клавиатуры: https://medium.com/flutter-nyc/avoiding-the-on-screen-keyboard-in-flutter-ae0e46ecb96c
-
-  // @override
-  // void didChangeMetrics() {
-  //   final renderObject = context.findRenderObject();
-  //   final renderBox = renderObject as RenderBox;
-  //   final offset = renderBox.localToGlobal(Offset.zero);
-  //   final widgetRect = Rect.fromLTWH(
-  //     offset.dx,
-  //     offset.dy,
-  //     renderBox.size.width,
-  //     renderBox.size.height,
-  //   );
-  //   final keyboardTopPixels =
-  //       window.physicalSize.height - window.viewInsets.bottom;
-  //   final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
-  //   final overlap = widgetRect.bottom - keyboardTopPoints;
-  //   print("Overlap: " + overlap.toString());
-
-  //   if (overlap > 200) {
-  //     setState(() => bottomOverlap = overlap + bottomPadding);
-  //     print("Bottom Overlap: " + bottomOverlap.toString() + "\n\n");
-  //   } else if (overlap == 0) {
-  //     setState(() => bottomOverlap = 0);
-  //     print("Bottom Overlap: " + bottomOverlap.toString() + "\n\n");
-  //   }
-  // }
-
-  void didChangeMetrics() {
-    final renderObject = context.findRenderObject();
-    final renderBox = renderObject as RenderBox;
-    final offset = renderBox.localToGlobal(Offset.zero);
-    final widgetRect = Rect.fromLTWH(
-      offset.dx,
-      offset.dy,
-      renderBox.size.width,
-      renderBox.size.height,
-    );
-    final keyboardTopPixels =
-        window.physicalSize.height - window.viewInsets.bottom;
-    final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
-    final overlap = widgetRect.bottom - keyboardTopPoints;
-
-    setState(() {
-      keyboardVisible = overlap > 200;
-    });
   }
 
   @override
@@ -131,7 +74,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                     padding: const EdgeInsets.only(top: 22, bottom: 10),
                     child: TextField(
                       textAlign: TextAlign.center,
-                      controller: textEditingController,
+                      controller: textController,
                       keyboardType: TextInputType.number,
                       autofocus: true,
                       style: Theme.of(context)

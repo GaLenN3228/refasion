@@ -33,14 +33,14 @@ class _SearchPageState extends State<SearchPageContent> {
             },
           ),
         ),
-        if (searchRepository.searchResponse != null && searchRepository.searchResponse.content.results.length > 0)
+        if (searchRepository.response != null && searchRepository.response.content.results.length > 0)
           Expanded(
             child: ListView.separated(
               padding: EdgeInsets.zero,
-              itemCount: searchRepository.searchResponse.content.results.length,
+              itemCount: searchRepository.response.content.results.length,
               itemBuilder: (context, index) => ResultTile(
                 query: searchQuery,
-                searchResult: searchRepository.searchResponse.content.results.elementAt(index),
+                searchResult: searchRepository.response.content.results.elementAt(index),
               ),
               separatorBuilder: (context, _) => CategoryDivider(),
             ),
