@@ -14,6 +14,7 @@ class Url {
 
   //Filters
   static const filters = '$refashionedBaseUrl/catalog/filters/';
+  static const quick_filters = '$refashionedBaseUrl/catalog/quickfilters/';
 
   //Content
   static const catalogMenu = '$refashionedBaseUrl/content/catalog-menu/';
