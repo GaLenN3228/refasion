@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/add_product/maps/add_address.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -24,12 +23,7 @@ class ProductBottomBar extends StatelessWidget {
                 child: Button(
                   "Купить сейчас",
                   buttonStyle: ButtonStyle.dark,
-                  onClick: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AddAddress()),
-                    );
-                  },
+                  onClick: () { },
                 )),
           ),
           Container(

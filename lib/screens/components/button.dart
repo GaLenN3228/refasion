@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/add_product/maps/add_address.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 enum ButtonStyle { dark, amber, outline, gray, dark_gray }

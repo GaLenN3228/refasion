@@ -5,7 +5,7 @@ import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/screens/sell_product/pages/adresses_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/brand_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/category_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/description_page.dart';
@@ -191,7 +191,7 @@ class SellNavigator extends StatelessWidget {
         });
 
       case SellNavigatorRoutes.addresses:
-        return AdressesPage(onPush: () {
+        return AddressesPage(onPush: () {
           Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) =>

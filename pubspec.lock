@@ -453,9 +453,9 @@ packages:
   yandex_mapkit:
     dependency: "direct main"
     description:
-      name: yandex_mapkit
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "yandex_mapkit-0.3.9"
+      relative: true
+    source: path
     version: "0.3.9"
 sdks:
   dart: ">=2.7.0 <3.0.0"

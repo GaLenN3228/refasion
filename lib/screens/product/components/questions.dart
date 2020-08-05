@@ -23,7 +23,10 @@ class ProductQuestions extends StatelessWidget {
               "Задайте вопрос и вам ответят",
               style: textTheme.bodyText2,
             ),
-            trailing: Button("Спросить", buttonStyle: ButtonStyle.amber,),
+            trailing: Button(
+              "Спросить",
+              buttonStyle: ButtonStyle.amber,
+            ),
           ),
           Container(
             color: const Color(0xFFE6E6E6),
@@ -31,20 +34,24 @@ class ProductQuestions extends StatelessWidget {
             height: 1,
           ),
           ListTile(
-              isThreeLine: false,
-              dense: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-              title: Row(
-                children: <Widget>[
-                  Text("Все вопросы  ", style: textTheme.subtitle1,),
-                  Text("3", style: textTheme.bodyText2),
-                ],
-              ),
-              trailing: SvgPicture.asset(
-                'assets/arrow_right.svg',
-                height: 12,
-                color: primaryColor,
-              ),)
+            isThreeLine: false,
+            dense: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+            title: Row(
+              children: <Widget>[
+                Text(
+                  "Все вопросы  ",
+                  style: textTheme.subtitle1,
+                ),
+                Text("3", style: textTheme.bodyText2),
+              ],
+            ),
+            trailing: SvgPicture.asset(
+              'assets/arrow_right.svg',
+              height: 12,
+              color: primaryColor,
+            ),
+          )
         ],
       ),
     );

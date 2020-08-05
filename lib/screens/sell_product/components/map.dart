@@ -27,7 +27,7 @@ class _LayersExampleState extends State<_LayersExample> {
   Future<void> _requestPermission() async {
     final List<PermissionGroup> permissions = <PermissionGroup>[PermissionGroup.location];
     final Map<PermissionGroup, PermissionStatus> permissionRequestResult =
-        await PermissionHandler().requestPermissions(permissions);
+    await PermissionHandler().requestPermissions(permissions);
     setState(() {
       _permissionStatus = permissionRequestResult[PermissionGroup.location];
       showUserLayer();
@@ -68,10 +68,22 @@ class _LayersExampleState extends State<_LayersExample> {
   void showUser() async {
     if (_permissionStatus == PermissionStatus.granted) {
       await controller.moveToUser();
+//      Future.delayed(const Duration(milliseconds: 2500), () {
+//        moveToUser();
+//      });
     } else {
-      _showMessage(context, const Text('Location permission was NOT granted'));
+//      _showMessage(context, const Text('Location permission was NOT granted'));
     }
   }
+
+//  void moveToUser() async {
+//    if (_permissionStatus == PermissionStatus.granted) {
+//      await controller.move(
+//          point: await controller.getTargetPoint(), animation: const MapAnimation(smooth: true, duration: 2.0));
+//    } else {
+////      _showMessage(context, const Text('Location permission was NOT granted'));
+//    }
+//  }
 
   void showUserLayer() async {
     if (_permissionStatus == PermissionStatus.granted) {
@@ -80,7 +92,7 @@ class _LayersExampleState extends State<_LayersExample> {
           arrowName: 'assets/place.png',
           accuracyCircleFillColor: Colors.green.withOpacity(0.5));
     } else {
-      _showMessage(context, const Text('Location permission was NOT granted'));
+//      _showMessage(context, const Text('Location permission was NOT granted'));
     }
   }
 }
