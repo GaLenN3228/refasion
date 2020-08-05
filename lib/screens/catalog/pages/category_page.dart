@@ -38,7 +38,10 @@ class CategoryPage extends StatelessWidget {
           .map(
             (category) => CategoryTile(
               category: category,
-              onPush: onPush,
+              onPush: () {
+                topCategory.updateChild(category.id);
+                onPush(category);
+              },
             ),
           )
           .toList());

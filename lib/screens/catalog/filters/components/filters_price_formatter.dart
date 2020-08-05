@@ -14,7 +14,7 @@ class PriceFormatter extends TextInputFormatter {
   PriceFormatter({this.currency: PriceCurrency.rub});
 
   String plainText(String value, {String currency}) =>
-      value.replaceAll(currency ?? currencyText(), '');
+      value.isNotEmpty ? value.replaceAll(currency ?? currencyText(), '') : '';
 
   String currencyText() => ' ' + currencySymbolsMap[currency];
 

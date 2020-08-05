@@ -77,20 +77,16 @@ class _CategoriesListState extends State<CategoriesList> {
   @override
   Widget build(BuildContext context) {
     final widgets = widget.categories
-        .map((category) => GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () => widget.onPush(category),
-              child: CategoryTile(
-                  category: category,
-                  selected: widget.multiselection
-                      ? selectedSubcategories.contains(category)
-                      : null,
-                  onPush: (category) {
-                    if (widget.multiselection)
-                      update(category);
-                    else if (widget.onPush != null) widget.onPush(category);
-                  }),
-            ))
+        .map((category) => CategoryTile(
+            category: category,
+            selected: widget.multiselection
+                ? selectedSubcategories.contains(category)
+                : null,
+            onPush: () {
+              if (widget.multiselection)
+                update(category);
+              else if (widget.onPush != null) widget.onPush(category);
+            }))
         .toList();
 
     return Column(

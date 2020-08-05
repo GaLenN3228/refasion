@@ -6,6 +6,7 @@ import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class SectionPage extends StatelessWidget {
   final Function(Category) onPush;
+  final Function() onClose;
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
   final List<Category> categories;
@@ -15,7 +16,8 @@ class SectionPage extends StatelessWidget {
       this.onPush,
       this.categories,
       this.animation,
-      this.secondaryAnimation})
+      this.secondaryAnimation,
+      this.onClose})
       : super(key: key);
 
   @override
@@ -25,7 +27,8 @@ class SectionPage extends StatelessWidget {
         child: Column(
           children: [
             SellProductTopBar(
-              canPop: false,
+              TopBarType.start,
+              onClose: onClose,
             ),
             Header(
               text: "Для кого ваша вещь?",

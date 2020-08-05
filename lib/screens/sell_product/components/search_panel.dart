@@ -10,7 +10,8 @@ class SearchPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 13, 20, 4),
-      child: Expanded(
+      child: Material(
+        color: Colors.white,
         child: Container(
           height: 35,
           decoration: ShapeDecoration(

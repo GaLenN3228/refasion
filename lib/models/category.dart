@@ -7,12 +7,12 @@ class CategoryResponse {
   const CategoryResponse({this.status, this.categories});
 
   factory CategoryResponse.fromJson(Map<String, dynamic> json) {
-    final categories = [for (final category in json['content']) Category.fromJson(category)];
+    final categories = [
+      for (final category in json['content']) Category.fromJson(category)
+    ];
 
     return CategoryResponse(
-      status: Status.fromJson(json['status']),
-      categories: categories
-    );
+        status: Status.fromJson(json['status']), categories: categories);
   }
 }
 
@@ -26,11 +26,14 @@ class Category {
   Category({this.id, this.name, this.children, this.selected = false});
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(
-        id: json['id'],
-        name: json['name'],
-        children: [if (json['children'] != null) for (final child in json['children']) Category.fromJson(child)]);
+    return Category(id: json['id'], name: json['name'], children: [
+      if (json['children'] != null)
+        for (final child in json['children']) Category.fromJson(child)
+    ]);
   }
+
+  updateChild(String id) =>
+      children.firstWhere((child) => child.id == id).update();
 
   update() {
     selected = !selected;
@@ -43,4 +46,11 @@ class Category {
   String get getId => id;
 
   String get getName => name;
+
+  String getRequestParameters() =>
+      "?p=" +
+      children
+          .where((category) => category.selected)
+          .map((category) => category.id)
+          .join(',');
 }

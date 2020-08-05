@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
@@ -17,22 +18,16 @@ class _TabSwitcherState extends State<TabSwitcher> {
   Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
     TabItem.home: GlobalKey<NavigatorState>(),
     TabItem.catalog: GlobalKey<NavigatorState>(),
-    TabItem.sell: GlobalKey<NavigatorState>(),
     TabItem.cart: GlobalKey<NavigatorState>(),
     TabItem.profile: GlobalKey<NavigatorState>(),
   };
 
   TabItem currentTab = TabItem.catalog;
-  bool showTabBar = true;
 
   void _selectTab(TabItem tabItem) {
     if (currentTab != tabItem) {
       setState(() {
         currentTab = tabItem;
-
-        if (tabItem == TabItem.sell && showTabBar)
-          showTabBar = false;
-        else if (!showTabBar) showTabBar = true;
       });
     } else {
       navigatorKeys[tabItem]
@@ -41,46 +36,43 @@ class _TabSwitcherState extends State<TabSwitcher> {
     }
   }
 
-  void _hideTabBar() {
-    setState(() {
-      showTabBar = false;
-    });
-  }
-
-  void _showTabBar() {
-    setState(() {
-      showTabBar = true;
-    });
-  }
+  _pushPageOnTop(Widget page) => Navigator.of(context)
+      .push(CupertinoPageRoute(builder: (context) => page));
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
-      body: WillPopScope(
+      child: WillPopScope(
         onWillPop: () async {
           return !await navigatorKeys[currentTab].currentState.maybePop();
         },
         child: Stack(children: <Widget>[
           _buildOffstageNavigator(TabItem.home),
-          _buildOffstageNavigator(TabItem.catalog,
-              hideTabBar: _hideTabBar, showTabBar: _showTabBar),
-          _buildOffstageNavigator(
-            TabItem.sell,
-            hideTabBar: _hideTabBar,
-          ),
+          _buildOffstageNavigator(TabItem.catalog),
+          _buildOffstageNavigator(TabItem.sell),
           _buildOffstageNavigator(TabItem.cart),
           _buildOffstageNavigator(TabItem.profile),
           Positioned(
             left: 0,
             bottom: 0,
             right: 0,
-            child: showTabBar
-                ? BottomNavigation(
-                    currentTab: currentTab,
-                    onSelectTab: _selectTab,
-                  )
-                : SizedBox(),
+            child: BottomNavigation(
+              currentTab: currentTab,
+              onSelectTab: _selectTab,
+              onFAB: () {
+                final navigatorKey = GlobalKey<NavigatorState>();
+
+                return _pushPageOnTop(
+                  WillPopScope(
+                      onWillPop: () async {
+                        return !await navigatorKey.currentState.maybePop();
+                      },
+                      child: SellNavigator(
+                          onClose: () => Navigator.of(context).pop())),
+                );
+              },
+            ),
           )
         ]),
       ),
@@ -93,46 +85,49 @@ class _TabSwitcherState extends State<TabSwitcher> {
       case TabItem.catalog:
         return Offstage(
           offstage: currentTab != tabItem,
-          child: Scaffold(
-            body: CatalogNavigator(
+          child: CupertinoPageScaffold(
+            child: CatalogNavigator(
                 navigatorKey: navigatorKeys[tabItem],
-                hideTabBar: hideTabBar,
-                showTabBar: showTabBar),
+                onPushPageOnTop: _pushPageOnTop),
           ),
         );
 
       case TabItem.cart:
         return Offstage(
           offstage: currentTab != tabItem,
-          child: Scaffold(
-            body: CartPage(needUpdate: currentTab == tabItem),
+          child: CupertinoPageScaffold(
+            child: CartPage(needUpdate: currentTab == tabItem),
           ),
         );
 
-      case TabItem.sell:
-        return Offstage(
-          offstage: currentTab != tabItem,
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: SellNavigator(navigatorKey: navigatorKeys[tabItem]),
-          ),
-        );
+      // case TabItem.sell:
+      // return
+      //   return Offstage(
+      //     offstage: currentTab != tabItem,
+      //     child: CupertinoPageScaffold(
+      //       resizeToAvoidBottomInset: false,
+      //       child: SellNavigator(navigatorKey: navigatorKeys[tabItem]),
+      //     ),
+      //   );
 
-      case TabItem.profile:
-        return Offstage(
-          offstage: currentTab != tabItem,
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: ProfilePage(),
-          ),
-        );
+      // case TabItem.profile:
+      //   return Offstage(
+      //     offstage: currentTab != tabItem,
+      //     child: CupertinoPageScaffold(
+      //       resizeToAvoidBottomInset: false,
+      //       child: ProfilePage(),
+      //     ),
+      //   );
 
       default:
         return Offstage(
           offstage: currentTab != tabItem,
-          child: Scaffold(
-            body: Center(
-              child: Text(tabItem.toString()),
+          child: CupertinoPageScaffold(
+            child: Center(
+              child: Text(
+                "Вкладка " + tabItem.toString(),
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
             ),
           ),
         );

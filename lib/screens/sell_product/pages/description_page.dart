@@ -8,8 +8,9 @@ import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class DescriptionPage extends StatefulWidget {
   final Function(String) onPush;
+  final Function() onClose;
 
-  const DescriptionPage({Key key, this.onPush}) : super(key: key);
+  const DescriptionPage({Key key, this.onPush, this.onClose}) : super(key: key);
 
   @override
   _DescriptionPageState createState() => _DescriptionPageState();
@@ -100,29 +101,35 @@ class _DescriptionPageState extends State<DescriptionPage>
       resizeToAvoidBottomInset: true,
       child: Column(
         children: <Widget>[
-          SellProductTopBar(),
+          SellProductTopBar(
+            TopBarType.addItem,
+            onClose: widget.onClose,
+          ),
           Header(
             text: "Опишите вещь",
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-              child: TextField(
-                controller: textEditingController,
-                autofocus: true,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline1
-                    .copyWith(fontWeight: FontWeight.normal),
-                cursorWidth: 2.0,
-                cursorRadius: Radius.circular(2.0),
-                cursorColor: Color(0xFFE6E6E6),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "Опишите вашу вещь",
-                  hintStyle: Theme.of(context).textTheme.headline1.copyWith(
-                      color: Color.fromRGBO(0, 0, 0, 0.25),
-                      fontWeight: FontWeight.normal),
+            child: Material(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                child: TextField(
+                  controller: textEditingController,
+                  autofocus: true,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1
+                      .copyWith(fontWeight: FontWeight.normal),
+                  cursorWidth: 2.0,
+                  cursorRadius: Radius.circular(2.0),
+                  cursorColor: Color(0xFFE6E6E6),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Опишите вашу вещь",
+                    hintStyle: Theme.of(context).textTheme.headline1.copyWith(
+                        color: Color.fromRGBO(0, 0, 0, 0.25),
+                        fontWeight: FontWeight.normal),
+                  ),
                 ),
               ),
             ),

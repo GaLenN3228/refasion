@@ -22,9 +22,10 @@ Map<TabItem, String> assetName = {
 };
 
 class BottomNavigation extends StatefulWidget {
-  BottomNavigation({this.currentTab, this.onSelectTab});
+  BottomNavigation({this.currentTab, this.onSelectTab, this.onFAB});
   final TabItem currentTab;
   final ValueChanged<TabItem> onSelectTab;
+  final Function() onFAB;
 
   @override
   _BottomNavigationState createState() => _BottomNavigationState();
@@ -75,19 +76,23 @@ class _BottomNavigationState extends State<BottomNavigation> {
           ),
           Align(
             alignment: Alignment.topCenter,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration:
-                  ShapeDecoration(shape: CircleBorder(), color: Colors.black),
-              child: Center(
-                child: SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: SvgPicture.asset(
-                      "assets/small_add.svg",
-                      color: Color(0xFFFAD24E),
-                    )),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: widget.onFAB,
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration:
+                    ShapeDecoration(shape: CircleBorder(), color: Colors.black),
+                child: Center(
+                  child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: SvgPicture.asset(
+                        "assets/small_add.svg",
+                        color: Color(0xFFFAD24E),
+                      )),
+                ),
               ),
             ),
           ),

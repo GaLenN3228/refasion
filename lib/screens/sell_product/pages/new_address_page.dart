@@ -1,24 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/sell_product/components/map.dart';
+import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
-class ProfilePage extends StatelessWidget {
-  final Function(List<String>) onPush;
+class NewAddressPage extends StatelessWidget {
+  final Function() onPush;
 
-  const ProfilePage({Key key, this.onPush}) : super(key: key);
-
+  const NewAddressPage({Key key, this.onPush}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return CupertinoPageScaffold(
+    return Container(
+      color: Colors.white,
       child: Column(
         children: [
+          SellProductTopBar(TopBarType.newAddress),
+          SizedBox(
+            height: 8,
+          ),
           Expanded(
               child: Stack(children: [
             Expanded(
               child: Container(
-                color: Colors.grey,
+                child: MapsPage(),
               ),
             ),
             Align(
@@ -29,7 +34,7 @@ class ProfilePage extends StatelessWidget {
                     topRight: Radius.circular(10)),
                 child: Container(
                   color: Colors.white,
-                  height: 280,
+                  height: 160,
                   child: Column(children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -51,7 +56,7 @@ class ProfilePage extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       margin: const EdgeInsets.only(top: 14.0, left: 20),
                       child: Text(
-                        "Давайте знакомиться!",
+                        "Откуда забрать вашу вещь?",
                         style: textTheme.subtitle1,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -61,34 +66,19 @@ class ProfilePage extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       margin: const EdgeInsets.only(top: 10.0, left: 20),
                       child: Text(
-                        "Получайте персональные предложения, дарим подарок на день рождения, сохраним адрес доставки и расскажем об акциях",
+                        "Укажите на карте или введите адрес вручную",
                         style: textTheme.caption,
                       ),
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(left: 20, right: 20, top: 20),
+                      padding: const EdgeInsets.all(20),
                       child: Button(
-                        "ВОЙТИ ПО НОМЕРУ ТЕЛЕФОНА",
-                        buttonStyle: ButtonStyle.dark,
+                        "ВВЕСТИ АДРЕС",
+                        buttonStyle: ButtonStyle.amber,
                         height: 45,
                         width: double.infinity,
                         borderRadius: 5,
-                        onClick: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => PhonePage()));
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, top: 10, bottom: 40),
-                      child: Button(
-                        "ВОЙТИ ЧЕРЕЗ СБЕРБАНК ID",
-                        buttonStyle: ButtonStyle.outline,
-                        height: 45,
-                        width: double.infinity,
-                        borderRadius: 5,
+                        onClick: onPush,
                       ),
                     )
                   ]),
