@@ -28,7 +28,11 @@ class Filter {
   final List<FilterValue> values;
 
   final Parameter parameter;
+
   bool modified = false;
+  bool modifiedMin = false;
+  bool modifiedMax = false;
+  int selectedValuesCount = 0;
 
   Filter(
       {this.previousValues,
@@ -101,14 +105,15 @@ class Filter {
   isModified() {
     switch (parameter) {
       case Parameter.price:
-        modified = prices.containsKey('lower') || prices.containsKey('upper');
+        modifiedMin = prices.containsKey('lower');
+        modifiedMax = prices.containsKey('upper');
         break;
 
       default:
-        modified =
-            values.where((filterValue) => filterValue.selected).isNotEmpty;
+        selectedValuesCount = values.where((value) => value.selected).length;
         break;
     }
+    modified = selectedValuesCount != 0 || modifiedMin || modifiedMax;
   }
 
   save() {
@@ -132,13 +137,15 @@ class Filter {
   update({String id, double lower, double upper}) {
     switch (parameter) {
       case Parameter.price:
-        if (lower != null && upper != null) {
-          if (lower != prices['min'])
+        if (lower != null) {
+          if (lower > prices['min'])
             prices['lower'] = lower;
           else
             prices.remove('lower');
+        }
 
-          if (upper != prices['max'])
+        if (upper != null) {
+          if (upper < prices['max'])
             prices['upper'] = upper;
           else
             prices.remove('upper');

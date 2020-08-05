@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/catalog/components/category_brands.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
@@ -9,65 +10,60 @@ import '../components/category_tile.dart';
 enum CategoryLevel { categories, category }
 
 class CategoryPage extends StatelessWidget {
-  final Category category;
+  final Category topCategory;
   final CategoryLevel level;
-  final Function(Category, {Category secondLvlCategory, List<Category> lastCategories}) onPush;
+  final Function(Category) onPush;
   final Function() onSearch;
 
-  final bool canPop;
-  final Function() onPop;
-
-  const CategoryPage({Key key, this.category, this.onPush, this.level, this.canPop, this.onPop, this.onSearch})
+  const CategoryPage(
+      {Key key, this.topCategory, this.onPush, this.level, this.onSearch})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final widgets = List<Widget>();
-
-    if (level == CategoryLevel.category)
-      widgets.add(Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CategoryImage(
-            category: category,
-          ),
-          CategoryBrands()
-        ],
-      ));
-
-    widgets.addAll(category.children
-        .map((category) => CategoryTile(
+    final widgets = (level == CategoryLevel.category
+        ? <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CategoryImage(
+                  category: topCategory,
+                ),
+                CategoryBrands()
+              ],
+            )
+          ]
+        : List<Widget>())
+      ..addAll(topCategory.children
+          .map(
+            (category) => CategoryTile(
               category: category,
-              onPush: (category) {
-                onPush(category,
-                    secondLvlCategory: level == CategoryLevel.category
-                        ? this.category
-                        : (level == CategoryLevel.categories ? category : null),
-                    lastCategories: level == CategoryLevel.category ? this.category.children : null);
-              },
-            ))
-        .toList());
+              onPush: onPush,
+            ),
+          )
+          .toList());
 
-    return Column(
-      children: [
-        TopPanel(
-          canPop: canPop,
-          onPop: onPop,
-          onSearch: onSearch,
-        ),
-        Expanded(
-          child: ListView.separated(
-            padding: EdgeInsets.only(bottom: 89),
-            itemCount: widgets.length,
-            itemBuilder: (context, index) {
-              return widgets.elementAt(index);
-            },
-            separatorBuilder: (context, index) {
-              return CategoryDivider();
-            },
+    return CupertinoPageScaffold(
+      child: Column(
+        children: [
+          TopPanel(
+            canPop: true,
+            onSearch: onSearch,
           ),
-        ),
-      ],
+          Expanded(
+            child: ListView.separated(
+              padding: EdgeInsets.only(bottom: 89),
+              itemCount: widgets.length,
+              itemBuilder: (context, index) {
+                return widgets.elementAt(index);
+              },
+              separatorBuilder: (context, index) {
+                return CategoryDivider();
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

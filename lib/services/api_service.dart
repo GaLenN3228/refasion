@@ -9,7 +9,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -41,7 +41,7 @@ class ApiService {
     Dio dio = DioClient().getClient(logging: LOG_ENABLE);
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
-    var cookieJar=PersistCookieJar(dir: "$appDocPath/.cookies/");
+    var cookieJar = PersistCookieJar(dir: "$appDocPath/.cookies/");
     dio.interceptors.add(CookieManager(cookieJar));
     return dio.get(Url.cart);
   }
@@ -66,6 +66,9 @@ class ApiService {
   static Future<Response> getFilters() async =>
       await DioClient().getClient(logging: LOG_ENABLE).get(Url.filters);
 
+  static Future<Response> getSortMethods() async =>
+      await DioClient().getClient(logging: LOG_ENABLE).get(Url.sortMethods);
+
   static Future<Response> search(String query) async {
     DioClient dioClient = DioClient();
     var queryParameters = {
@@ -83,7 +86,7 @@ class ApiService {
 
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
-    var cookieJar=PersistCookieJar(dir: "$appDocPath/.cookies/");
+    var cookieJar = PersistCookieJar(dir: "$appDocPath/.cookies/");
     dio.interceptors.add(CookieManager(cookieJar));
 
     await dio.post(Url.cartItem, data: body);

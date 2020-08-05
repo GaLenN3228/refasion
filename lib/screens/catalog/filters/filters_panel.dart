@@ -10,9 +10,15 @@ import 'package:refashioned_app/screens/catalog/filters/components/filters_title
 class FiltersPanel extends StatefulWidget {
   final String root;
   final List<Filter> filters;
-  final Function(String) updateProducts;
+  final Function() updateProducts;
+  final ScrollController scrollController;
 
-  const FiltersPanel({Key key, this.filters, this.updateProducts, this.root})
+  const FiltersPanel(
+      {Key key,
+      this.filters,
+      this.updateProducts,
+      this.root,
+      this.scrollController})
       : super(key: key);
 
   @override
@@ -20,18 +26,27 @@ class FiltersPanel extends StatefulWidget {
 }
 
 class _FiltersPanelState extends State<FiltersPanel> {
-  String rootParameters;
   String countParameters;
 
   @override
   void initState() {
-    rootParameters = '?p=' + widget.root;
     countParameters = getParameters(widget.filters);
+
+    widget.scrollController.addListener(scrollControllerListener);
 
     super.initState();
   }
 
-  String getParameters(List<Filter> filters) => filters.fold(rootParameters,
+  scrollControllerListener() => FocusScope.of(context).unfocus();
+
+  @override
+  dispose() {
+    widget.scrollController?.removeListener(scrollControllerListener);
+
+    super.dispose();
+  }
+
+  String getParameters(List<Filter> filters) => filters.fold(widget.root,
       (parameters, filter) => parameters + filter.getRequestParameters());
 
   updateCount(BuildContext context) async {
@@ -47,7 +62,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
     setState(() {
       widget.filters.forEach((filter) => filter.reset());
 
-      countParameters = rootParameters;
+      countParameters = widget.root;
     });
 
     Provider.of<ProductCountRepository>(context, listen: false)
@@ -67,9 +82,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
               child: Material(
                 color: Colors.white,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     FiltersTitle(
                       onClose: () {
                         widget.filters.forEach(
@@ -80,16 +93,26 @@ class _FiltersPanelState extends State<FiltersPanel> {
                           .where((filter) => filter.modified)
                           .isNotEmpty,
                     ),
-                  ]..addAll(
-                      widget.filters.asMap().entries.map((entry) => Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (entry.key != 0) CategoryDivider(),
-                              FilterTile(
-                                  filter: entry.value,
-                                  onUpdate: () => updateCount(context)),
-                            ],
-                          ))),
+                    Expanded(
+                      child: ListView(
+                        children: widget.filters
+                            .asMap()
+                            .entries
+                            .map(
+                              (entry) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (entry.key != 0) CategoryDivider(),
+                                  FilterTile(
+                                      filter: entry.value,
+                                      onUpdate: () => updateCount(context)),
+                                ],
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -121,7 +144,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
                       widget.filters.forEach((filter) => filter.save());
 
                       if (widget.updateProducts != null)
-                        widget.updateProducts(countParameters);
+                        widget.updateProducts();
 
                       Navigator.of(context).pop();
                     },

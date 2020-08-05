@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/catalog/components/category_root_card.dart';
@@ -27,14 +28,9 @@ class CatalogRootPage extends StatelessWidget {
       key: PageStorageKey<String>(category.name),
       //null element is for the Brands card
       children: [null, ...category.children]
-          .map((category) => GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  if (category != null) onPush(category);
-                },
-                child: CategoryRootCard(
-                  category: category,
-                ),
+          .map((category) => CategoryRootCard(
+                category: category,
+                onPush: () => onPush(category),
               ))
           .toList(),
     );
@@ -42,8 +38,8 @@ class CatalogRootPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DefaultTabController(
+    return CupertinoPageScaffold(
+      child: DefaultTabController(
         length: categories.length,
         initialIndex: max(
             0, categories.indexWhere((element) => element.children.isNotEmpty)),
@@ -85,7 +81,9 @@ class CatalogRootPage extends StatelessWidget {
             ];
           },
           body: TabBarView(
-            children: categories.map((e) => tabContent(context, e)).toList(),
+            children: categories
+                .map((category) => tabContent(context, category))
+                .toList(),
           ),
         ),
       ),

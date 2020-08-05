@@ -7,11 +7,10 @@ import 'package:refashioned_app/screens/product/components/bottom_bar.dart';
 import 'package:refashioned_app/screens/product/content/product.dart';
 
 class ProductPage extends StatelessWidget {
-  final Function() onPop;
   final String id;
   final Function(Product) onPush;
 
-  const ProductPage({Key key, this.onPop, this.id, this.onPush}) : super(key: key);
+  const ProductPage({Key key, this.id, this.onPush}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,6 @@ class ProductPage extends StatelessWidget {
             children: <Widget>[
               TopPanel(
                 canPop: true,
-                onPop: onPop,
                 type: PanelType.item,
               ),
               Expanded(

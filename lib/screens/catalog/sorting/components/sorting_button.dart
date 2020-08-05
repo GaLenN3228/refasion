@@ -1,84 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:refashioned_app/repositories/filters.dart';
+import 'package:refashioned_app/models/sort.dart';
 import 'package:refashioned_app/screens/catalog/sorting/sorting_panel.dart';
 
 import '../../../../utils/colors.dart';
 
 class SortingButton extends StatefulWidget {
+  final Function() onUpdate;
+  final Sort sort;
+
+  const SortingButton({Key key, this.onUpdate, this.sort}) : super(key: key);
+
   @override
   _SortingButtonState createState() => _SortingButtonState();
 }
 
 class _SortingButtonState extends State<SortingButton> {
-  int selectedIndex;
-  String selectedSortingMethod;
-
-  final sortingMethods = [
-    "Сначала новинки",
-    "Дешевле",
-    "Дороже",
-    "По рейтингу",
-    "По скидке"
-  ];
-
-  @override
-  initState() {
-    selectedIndex = 0;
-    selectedSortingMethod = sortingMethods.elementAt(selectedIndex);
-
-    super.initState();
-  }
+  onUpdate() => setState(() => widget.onUpdate());
 
   showSorting(BuildContext context) {
     showMaterialModalBottomSheet(
         expand: false,
         context: context,
         useRootNavigator: true,
-        builder: (context, controller) => SortingPanel(
-              initialSelected: selectedIndex,
-              methods: sortingMethods,
-              onSelect: (index) {
-                selectedIndex = index;
-                setState(() {
-                  selectedSortingMethod = sortingMethods.elementAt(index);
-                });
-              },
-            ));
+        builder: (context, controller) => SortingPanel(widget.sort, onUpdate));
   }
 
   @override
   Widget build(BuildContext context) {
-    final filtersRepository = FiltersRepository();
-
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {
-          if (filtersRepository.isLoaded &&
-              filtersRepository.filtersResponse.status.code == 200)
-            showSorting(context);
-          else {
-            if (filtersRepository.isLoading)
-              Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                "Фильтры загружаются",
-                style: Theme.of(context).textTheme.bodyText1,
-              )));
-
-            if (filtersRepository.loadingFailed)
-              Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                "Ошибка при загрузке фильтров. Статус " +
-                    filtersRepository.filtersResponse.status.code.toString(),
-                style: Theme.of(context).textTheme.bodyText1,
-              )));
-          }
-        },
+        onTap: () => showSorting(context),
         child: Row(
           children: [
             Text(
-              selectedSortingMethod,
+              widget.sort.methods.elementAt(widget.sort.index)?.name ??
+                  "Не выбран",
               style: Theme.of(context)
                   .textTheme
                   .bodyText1
