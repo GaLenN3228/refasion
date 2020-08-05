@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
@@ -18,19 +17,9 @@ import 'package:refashioned_app/screens/products/content/products.dart';
 class ProductsPage extends StatefulWidget {
   final Function(Product) onPush;
   final Function() onSearch;
-  final String id;
-  final String categoryName;
-  final Function() onUpdate;
-  final List<Category> categories;
+  final Category topCategory;
 
-  const ProductsPage(
-      {Key key,
-      this.onPush,
-      this.id,
-      this.onSearch,
-      this.categoryName,
-      this.onUpdate,
-      this.categories});
+  const ProductsPage({Key key, this.onPush, this.onSearch, this.topCategory});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -40,7 +29,7 @@ class _ProductsPageState extends State<ProductsPage> {
   FiltersRepository filtersRepository;
   SortMethodsRepository sortMethodsRepository;
 
-  String root;
+  String categoriesParameters;
 
   @override
   void initState() {
@@ -50,7 +39,7 @@ class _ProductsPageState extends State<ProductsPage> {
     filtersRepository.addListener(repositoryListener);
     sortMethodsRepository.addListener(repositoryListener);
 
-    root = "?p=" + widget.id;
+    categoriesParameters = widget.topCategory.getRequestParameters();
 
     super.initState();
   }
@@ -65,7 +54,9 @@ class _ProductsPageState extends State<ProductsPage> {
 
   repositoryListener() => setState(() {});
 
-  String getParameters() {
+  updateProducts(BuildContext context) {
+    categoriesParameters = widget.topCategory.getRequestParameters();
+
     final filtersParameters = filtersRepository.isLoaded &&
             filtersRepository.filtersResponse.status.code == 200
         ? filtersRepository.filtersResponse.content.fold("",
@@ -77,11 +68,8 @@ class _ProductsPageState extends State<ProductsPage> {
         ? sortMethodsRepository.response.content.getRequestParameters()
         : "";
 
-    return root + filtersParameters + sortParameters;
-  }
-
-  updateProducts(BuildContext context) {
-    final newParameters = getParameters();
+    final newParameters =
+        categoriesParameters + filtersParameters + sortParameters;
 
     Provider.of<ProductsRepository>(context, listen: false)
         .update(newParameters: newParameters);
@@ -93,7 +81,8 @@ class _ProductsPageState extends State<ProductsPage> {
       child: MultiProvider(
           providers: [
             ChangeNotifierProvider<ProductsRepository>(
-                create: (_) => ProductsRepository(parameters: root)),
+                create: (_) =>
+                    ProductsRepository(parameters: categoriesParameters)),
             ChangeNotifierProvider(create: (_) => QuickFiltersRepository())
           ],
           builder: (context, _) {
@@ -138,19 +127,18 @@ class _ProductsPageState extends State<ProductsPage> {
                   onSearch: widget.onSearch,
                 ),
                 QuickFilterList(
-                    onUpdate: widget.onUpdate,
-                    categoryName: widget.categoryName,
-                    categories: widget.categories,
+                    categoryName: widget.topCategory.name,
+                    categories: widget.topCategory.children,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     updateProducts: (parameters) => updateProducts(context)),
-                ProductsTitle(categoryName: widget.categoryName),
+                ProductsTitle(categoryName: widget.topCategory.name),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 15, 20, 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       FiltersButton(
-                        root: root,
+                        root: categoriesParameters,
                         filters: filtersRepository.filtersResponse.content,
                         onApply: () => updateProducts(context),
                       ),

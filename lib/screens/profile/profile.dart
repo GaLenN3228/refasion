@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 
@@ -25,7 +24,9 @@ class ProfilePage extends StatelessWidget {
             Align(
               alignment: Alignment.bottomCenter,
               child: ClipRRect(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
                 child: Container(
                   color: Colors.white,
                   height: 280,
@@ -41,7 +42,8 @@ class ProfilePage extends StatelessWidget {
                           height: 3,
                           decoration: ShapeDecoration(
                               color: Colors.black.withOpacity(0.1),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100))),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100))),
                         ),
                       ],
                     ),
@@ -64,7 +66,8 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                      padding:
+                          const EdgeInsets.only(left: 20, right: 20, top: 20),
                       child: Button(
                         "ВОЙТИ ПО НОМЕРУ ТЕЛЕФОНА",
                         buttonStyle: ButtonStyle.dark,
@@ -72,12 +75,14 @@ class ProfilePage extends StatelessWidget {
                         width: double.infinity,
                         borderRadius: 5,
                         onClick: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhonePage()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => PhonePage()));
                         },
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 40),
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, top: 10, bottom: 40),
                       child: Button(
                         "ВОЙТИ ЧЕРЕЗ СБЕРБАНК ID",
                         buttonStyle: ButtonStyle.outline,

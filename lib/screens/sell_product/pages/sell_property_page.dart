@@ -8,8 +8,10 @@ import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 class SellPropertyPage extends StatefulWidget {
   final SellProperty sellProperty;
   final Function() onPush;
+  final Function() onClose;
 
-  const SellPropertyPage({Key key, this.sellProperty, this.onPush})
+  const SellPropertyPage(
+      {Key key, this.sellProperty, this.onPush, this.onClose})
       : super(key: key);
 
   @override
@@ -26,7 +28,10 @@ class _SellPropertyPageState extends State<SellPropertyPage> {
           values: widget.sellProperty.values,
           bottomPadding: 10,
           isScrolled: isScrolled,
-          appBar: SellProductTopBar(),
+          appBar: SellProductTopBar(
+            TopBarType.addItem,
+            onClose: widget.onClose,
+          ),
           header: Header(
             text: widget.sellProperty.header,
             isScrolled: isScrolled,

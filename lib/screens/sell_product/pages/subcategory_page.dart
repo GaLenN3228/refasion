@@ -7,6 +7,7 @@ import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class SubcategoryPage extends StatelessWidget {
   final Function(List<Category>) onPush;
+  final Function() onClose;
   final Category selectedCategory;
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
@@ -17,7 +18,8 @@ class SubcategoryPage extends StatelessWidget {
       this.onPush,
       this.selectedCategory,
       this.animation,
-      this.secondaryAnimation})
+      this.secondaryAnimation,
+      this.onClose})
       : super(key: key);
 
   @override
@@ -29,7 +31,10 @@ class SubcategoryPage extends StatelessWidget {
               animation: animation,
               secondaryAnimation: secondaryAnimation,
               bottomPadding: 65,
-              appBar: SellProductTopBar(),
+              appBar: SellProductTopBar(
+                TopBarType.addItem,
+                onClose: onClose,
+              ),
               isScrolled: isScrolled,
               header: Header(
                 text: "Выберите категорию",

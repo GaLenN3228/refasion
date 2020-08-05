@@ -7,6 +7,7 @@ import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class CategoryPage extends StatelessWidget {
   final Function(Category) onPush;
+  final Function() onClose;
   final Category selectedTopCategory;
   final bool multiselection;
 
@@ -14,7 +15,8 @@ class CategoryPage extends StatelessWidget {
       {Key key,
       this.onPush,
       this.selectedTopCategory,
-      this.multiselection: false})
+      this.multiselection: false,
+      this.onClose})
       : super(key: key);
 
   final isScrolled = ValueNotifier<bool>(false);
@@ -27,7 +29,10 @@ class CategoryPage extends StatelessWidget {
                 categories: selectedTopCategory.children,
                 bottomPadding: 10,
                 isScrolled: isScrolled,
-                appBar: SellProductTopBar(),
+                appBar: SellProductTopBar(
+                  TopBarType.addItem,
+                  onClose: onClose,
+                ),
                 header: Header(
                   text: "Выберите категорию",
                   isScrolled: isScrolled,

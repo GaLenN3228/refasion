@@ -5,16 +5,16 @@ import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/sell_properties.dart';
 import 'package:refashioned_app/screens/sell_product/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/brand_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/category_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/description_page.dart';
-import 'package:refashioned_app/screens/sell_product/pages/new_adress_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/new_address_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/on_moderation_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/photos_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/price_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/section_page.dart';
-import 'package:refashioned_app/screens/sell_product/pages/sell_properties_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/sell_property_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/subcategory_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/top_category_page.dart';
@@ -27,7 +27,6 @@ class SellNavigatorRoutes {
   static const String subCategory = '/subCategory';
   static const String photos = '/photos';
   static const String sellProperty = '/sellProperty';
-  static const String sellProperties = '/sellProperties';
   static const String description = '/description';
   static const String brand = '/brand';
   static const String price = '/price';
@@ -36,19 +35,28 @@ class SellNavigatorRoutes {
   static const String onModeration = '/onModeration';
 }
 
-class SellNavigator extends StatelessWidget {
-  SellNavigator({this.navigatorKey});
-  final GlobalKey<NavigatorState> navigatorKey;
+class SellNavigator extends StatefulWidget {
+  SellNavigator({this.onClose});
+
+  final Function() onClose;
+
+  @override
+  _SellNavigatorState createState() => _SellNavigatorState();
+}
+
+class _SellNavigatorState extends State<SellNavigator> {
+  SellPropertiesRepository sellPropertiesRepository;
 
   Widget _routeBuilder(BuildContext context, String route,
       {Category category,
       List<Category> categories,
       List<SellProperty> sellProperties,
-      int sellPropertyIndex}) {
+      int sellPropertyIndex: 0}) {
     switch (route) {
       case SellNavigatorRoutes.section:
         return SectionPage(
           categories: categories,
+          onClose: widget.onClose,
           onPush: (category) => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) => _routeBuilder(
@@ -61,6 +69,7 @@ class SellNavigator extends StatelessWidget {
       case SellNavigatorRoutes.topCategory:
         return TopCategoryPage(
           selectedSection: category,
+          onClose: widget.onClose,
           onPush: (category) => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) => _routeBuilder(
@@ -73,6 +82,7 @@ class SellNavigator extends StatelessWidget {
       case SellNavigatorRoutes.category:
         return CategoryPage(
           selectedTopCategory: category,
+          onClose: widget.onClose,
           onPush: (category) => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) => _routeBuilder(
@@ -85,6 +95,7 @@ class SellNavigator extends StatelessWidget {
       case SellNavigatorRoutes.subCategory:
         return SubcategoryPage(
           selectedCategory: category,
+          onClose: widget.onClose,
           onPush: (categories) {
             selectSubCategories(categories);
             Navigator.of(context).push(
@@ -99,42 +110,33 @@ class SellNavigator extends StatelessWidget {
 
       case SellNavigatorRoutes.photos:
         return PhotosPage(
-          onPush: (photos) {
-            addPhotos(photos);
+          onClose: widget.onClose,
+          onPush: () {
+            addPhotos(null);
+
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(
-                    context, SellNavigatorRoutes.sellProperties,
-                    categories: categories),
+                builder: (context) {
+                  if (sellPropertiesRepository != null &&
+                          sellPropertiesRepository.isLoaded ||
+                      sellPropertiesRepository.response.status.code == 200)
+                    return _routeBuilder(
+                        context, SellNavigatorRoutes.sellProperty,
+                        sellProperties:
+                            sellPropertiesRepository.response.content);
+                  else
+                    return _routeBuilder(
+                        context, SellNavigatorRoutes.description);
+                },
               ),
             );
           },
         );
 
-      case SellNavigatorRoutes.sellProperties:
-        PageRouteBuilder noAnimationRoute(String route,
-                {List<SellProperty> sellProperties, int sellPropertyIndex}) =>
-            PageRouteBuilder(
-                transitionDuration: const Duration(milliseconds: 0),
-                pageBuilder: (context, animation, seondaryAnimation) =>
-                    _routeBuilder(context, route,
-                        sellProperties: sellProperties,
-                        sellPropertyIndex: sellPropertyIndex));
-
-        return SellPropertiesPage(
-          categories: categories,
-          onPush: (sellProperties) => Navigator.of(context).push(
-            noAnimationRoute(SellNavigatorRoutes.sellProperty,
-                sellProperties: sellProperties, sellPropertyIndex: 0),
-          ),
-          onSkip: () => Navigator.of(context).push(
-            noAnimationRoute(SellNavigatorRoutes.description),
-          ),
-        );
-
       case SellNavigatorRoutes.sellProperty:
         final sellProperty = sellProperties.elementAt(sellPropertyIndex);
         return SellPropertyPage(
+          onClose: widget.onClose,
           sellProperty: sellProperty,
           onPush: () {
             selectPropertyValue(sellProperty);
@@ -158,50 +160,58 @@ class SellNavigator extends StatelessWidget {
         );
 
       case SellNavigatorRoutes.description:
-        return DescriptionPage(onPush: (description) {
-          addDescription(description);
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) =>
-                  _routeBuilder(context, SellNavigatorRoutes.brand),
-            ),
-          );
-        });
+        return DescriptionPage(
+            onClose: widget.onClose,
+            onPush: (description) {
+              addDescription(description);
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      _routeBuilder(context, SellNavigatorRoutes.brand),
+                ),
+              );
+            });
 
       case SellNavigatorRoutes.brand:
-        return BrandPage(onPush: (brand) {
-          selectBrand(brand);
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) =>
-                  _routeBuilder(context, SellNavigatorRoutes.price),
-            ),
-          );
-        });
+        return BrandPage(
+            onClose: widget.onClose,
+            onPush: (brand) {
+              selectBrand(brand);
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      _routeBuilder(context, SellNavigatorRoutes.price),
+                ),
+              );
+            });
 
       case SellNavigatorRoutes.price:
-        return PricePage(onPush: (price) {
-          selectPrice(price);
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) =>
-                  _routeBuilder(context, SellNavigatorRoutes.addresses),
-            ),
-          );
-        });
+        return PricePage(
+            onClose: widget.onClose,
+            onPush: (price) {
+              selectPrice(price);
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      _routeBuilder(context, SellNavigatorRoutes.addresses),
+                ),
+              );
+            });
 
       case SellNavigatorRoutes.addresses:
-        return AddressesPage(onPush: () {
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) =>
-                  _routeBuilder(context, SellNavigatorRoutes.newAddress),
-            ),
-          );
-        });
+        return AddressesPage(
+            onClose: widget.onClose,
+            onPush: () {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      _routeBuilder(context, SellNavigatorRoutes.newAddress),
+                ),
+              );
+            });
 
       case SellNavigatorRoutes.newAddress:
-        return NewAdressPage(onPush: () {
+        return NewAddressPage(onPush: () {
           Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) =>
@@ -211,7 +221,9 @@ class SellNavigator extends StatelessWidget {
         });
 
       case SellNavigatorRoutes.onModeration:
-        return OnModerationPage();
+        return OnModerationPage(
+          onClose: widget.onClose,
+        );
 
       default:
         return Center(
@@ -220,7 +232,9 @@ class SellNavigator extends StatelessWidget {
     }
   }
 
-  selectSubCategories(List<Category> categories) {}
+  selectSubCategories(List<Category> categories) {
+    sellPropertiesRepository = SellPropertiesRepository();
+  }
 
   addPhotos(List<String> photos) {}
 
@@ -252,7 +266,6 @@ class SellNavigator extends StatelessWidget {
       );
 
     return Navigator(
-      key: navigatorKey,
       initialRoute: SellNavigatorRoutes.section,
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(

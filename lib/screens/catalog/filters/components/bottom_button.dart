@@ -10,6 +10,7 @@ class BottomButton extends StatelessWidget {
   final Color titleColor;
   final Color subtitleColor;
   final double height;
+  final double bottomPadding;
   final bool enabled;
 
   const BottomButton(
@@ -21,7 +22,8 @@ class BottomButton extends StatelessWidget {
       this.titleColor,
       this.subtitleColor,
       this.height: 45.0,
-      this.enabled: true})
+      this.enabled: true,
+      this.bottomPadding})
       : super(key: key);
 
   @override
@@ -30,7 +32,7 @@ class BottomButton extends StatelessWidget {
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-            20, 0, 20, MediaQuery.of(context).padding.bottom),
+            20, 0, 20, bottomPadding ?? MediaQuery.of(context).padding.bottom),
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: enabled ? action : () {},

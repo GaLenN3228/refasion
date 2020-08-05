@@ -1,20 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
 import 'package:refashioned_app/repositories/products.dart';
+import 'package:refashioned_app/screens/product/pages/product.dart';
 import 'package:refashioned_app/screens/products/components/products_item.dart';
 
 class RecommendedProducts extends StatelessWidget {
   final Product product;
-  final Function(Product) onPush;
 
-  const RecommendedProducts({Key key, this.product, this.onPush}) : super(key: key);
+  const RecommendedProducts({Key key, this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final ProductsRepository productsRepository = context.watch<ProductsRepository>();
+    final ProductsRepository productsRepository =
+        context.watch<ProductsRepository>();
     if (productsRepository.isLoading)
       return Center(
         child: Text("Загрузка", style: Theme.of(context).textTheme.bodyText1),
@@ -30,7 +32,8 @@ class RecommendedProducts extends StatelessWidget {
         child: Text("Статус", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    final ProductsContent productsContent = productsRepository.productsResponse.productsContent;
+    final ProductsContent productsContent =
+        productsRepository.productsResponse.productsContent;
 
     return StaggeredGridView.countBuilder(
       physics: const NeverScrollableScrollPhysics(),
@@ -40,7 +43,11 @@ class RecommendedProducts extends StatelessWidget {
       itemCount: productsContent.products.length,
       itemBuilder: (BuildContext context, int index) => ProductsItem(
         product: productsContent.products[index],
-        onPush: (product) => onPush(product),
+        onPush: (product) => Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (context) => ProductPage(id: product.id),
+          ),
+        ),
       ),
       staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
       mainAxisSpacing: 16.0,

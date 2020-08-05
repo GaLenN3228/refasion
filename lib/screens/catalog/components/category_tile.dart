@@ -4,7 +4,7 @@ import '../../../models/category.dart';
 
 class CategoryTile extends StatelessWidget {
   final Category category;
-  final Function(Category) onPush;
+  final Function() onPush;
   final bool selected;
 
   const CategoryTile({Key key, this.category, this.onPush, this.selected})
@@ -14,7 +14,7 @@ class CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () => onPush(category) ?? {},
+      onTap: onPush,
       child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           height: 50,

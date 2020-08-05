@@ -11,8 +11,9 @@ import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class BrandPage extends StatelessWidget {
   final Function(Brand) onPush;
+  final Function() onClose;
 
-  const BrandPage({Key key, this.onPush}) : super(key: key);
+  const BrandPage({Key key, this.onPush, this.onClose}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SearchRepository>(
@@ -20,7 +21,10 @@ class BrandPage extends StatelessWidget {
       child: CupertinoPageScaffold(
         child: Column(
           children: <Widget>[
-            SellProductTopBar(),
+            SellProductTopBar(
+              TopBarType.addItem,
+              onClose: onClose,
+            ),
             Header(
               text: "Выберите бренд",
             ),
@@ -58,9 +62,7 @@ class BrandPage extends StatelessWidget {
 
                   final results = repository.response.content.results
                       .where((result) => result.model == "brand")
-                      .map((result) => Brand(
-                          id: result.id,
-                          name: result.name))
+                      .map((result) => Brand(id: result.id, name: result.name))
                       .toList();
 
                   if (results.isEmpty)

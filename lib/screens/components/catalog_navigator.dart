@@ -15,34 +15,13 @@ class CatalogNavigatorRoutes {
   static const String categories = '/categories';
   static const String category = '/category';
   static const String products = '/products';
-  static const String product = '/product';
   static const String search = '/search';
 }
 
-class ShowTabBarNavigationObserver extends NavigatorObserver {
-  final Function() hideTabBar;
-  final Function() showTabBar;
-
-  ShowTabBarNavigationObserver({this.showTabBar, this.hideTabBar});
-
-  @override
-  void didPop(Route route, Route previousRoute) {
-    if (route.settings?.name == CatalogNavigatorRoutes.product) showTabBar();
-    super.didPop(route, previousRoute);
-  }
-
-  @override
-  void didPush(Route route, Route previousRoute) {
-    if (route.settings?.name == CatalogNavigatorRoutes.product) hideTabBar();
-    super.didPush(route, previousRoute);
-  }
-}
-
 class CatalogNavigator extends StatelessWidget {
-  CatalogNavigator({this.navigatorKey, this.hideTabBar, this.showTabBar});
+  CatalogNavigator({this.navigatorKey, this.onPushPageOnTop});
   final GlobalKey<NavigatorState> navigatorKey;
-  final Function() hideTabBar;
-  final Function() showTabBar;
+  final Function(Widget) onPushPageOnTop;
 
   _pushSearch(BuildContext context) => Navigator.of(context).push(
         CupertinoPageRoute(
@@ -112,38 +91,21 @@ class CatalogNavigator extends StatelessWidget {
       case CatalogNavigatorRoutes.products:
         return ProductsPage(
           onSearch: () => _pushSearch(context),
-          id: category.id,
-          categoryName: category.name,
-          categories: category.children,
-          onPush: (product) => Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) => _routeBuilder(
-                  context, CatalogNavigatorRoutes.product,
-                  product: product),
-              settings: RouteSettings(name: CatalogNavigatorRoutes.product),
-            ),
-          ),
-        );
-
-      case CatalogNavigatorRoutes.product:
-        return ProductPage(
-          id: product.id,
-          onPush: (product) => Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) => _routeBuilder(
-                  context, CatalogNavigatorRoutes.product,
-                  product: product),
-              settings: RouteSettings(name: CatalogNavigatorRoutes.product),
-            ),
-          ),
+          topCategory: category,
+          onPush: (product) => onPushPageOnTop(ProductPage(id: product.id)),
         );
 
       case CatalogNavigatorRoutes.search:
         return SearchPage();
 
       default:
-        return Center(
-          child: Text("Default"),
+        return CupertinoPageScaffold(
+          child: Center(
+            child: Text(
+              "Неизвестный маршрут: " + route.toString(),
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
         );
     }
   }
@@ -168,10 +130,6 @@ class CatalogNavigator extends StatelessWidget {
 
     return Navigator(
       key: navigatorKey,
-      observers: [
-        ShowTabBarNavigationObserver(
-            hideTabBar: hideTabBar, showTabBar: showTabBar)
-      ],
       initialRoute: CatalogNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(

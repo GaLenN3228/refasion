@@ -26,7 +26,10 @@ class TopCategoryPage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: Column(
         children: [
-          SellProductTopBar(),
+          SellProductTopBar(
+            TopBarType.addItem,
+            onClose: onClose,
+          ),
           Expanded(
             child: Column(
               children: [
