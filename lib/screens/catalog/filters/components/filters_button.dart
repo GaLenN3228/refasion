@@ -14,9 +14,7 @@ class FiltersButton extends StatelessWidget {
   showFilters(BuildContext context) {
     showCupertinoModalBottomSheet(
         expand: true,
-        backgroundColor: Colors.white,
         context: context,
-        useRootNavigator: true,
         builder: (context, controller) => FiltersPanel(
               filters: filters,
               root: root,

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/sell_property.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/sell_properties.dart';
 import 'package:refashioned_app/screens/sell_product/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/brand_page.dart';
+import 'package:refashioned_app/screens/sell_product/pages/cards_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/category_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/description_page.dart';
 import 'package:refashioned_app/screens/sell_product/pages/new_address_page.dart';
@@ -30,6 +32,7 @@ class SellNavigatorRoutes {
   static const String description = '/description';
   static const String brand = '/brand';
   static const String price = '/price';
+  static const String cards = '/cards';
   static const String addresses = '/addresses';
   static const String newAddress = '/newAddress';
   static const String onModeration = '/onModeration';
@@ -174,51 +177,77 @@ class _SellNavigatorState extends State<SellNavigator> {
 
       case SellNavigatorRoutes.brand:
         return BrandPage(
-            onClose: widget.onClose,
-            onPush: (brand) {
-              selectBrand(brand);
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) =>
-                      _routeBuilder(context, SellNavigatorRoutes.price),
-                ),
-              );
-            });
+          onClose: widget.onClose,
+          onPush: (brand) {
+            selectBrand(brand);
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) =>
+                    _routeBuilder(context, SellNavigatorRoutes.price),
+              ),
+            );
+          },
+        );
 
       case SellNavigatorRoutes.price:
         return PricePage(
-            onClose: widget.onClose,
-            onPush: (price) {
-              selectPrice(price);
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) =>
-                      _routeBuilder(context, SellNavigatorRoutes.addresses),
-                ),
-              );
-            });
+          onClose: widget.onClose,
+          onPush: (price) {
+            selectPrice(price);
+            Navigator.of(context).push(
+              MaterialWithModalsPageRoute(
+                builder: (context) =>
+                    _routeBuilder(context, SellNavigatorRoutes.cards),
+              ),
+            );
+          },
+        );
+
+      case SellNavigatorRoutes.cards:
+        return CardsPage(
+          onClose: widget.onClose,
+          onPush: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) =>
+                    _routeBuilder(context, SellNavigatorRoutes.addresses),
+              ),
+            );
+          },
+        );
 
       case SellNavigatorRoutes.addresses:
         return AddressesPage(
-            onClose: widget.onClose,
-            onPush: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) =>
-                      _routeBuilder(context, SellNavigatorRoutes.newAddress),
-                ),
-              );
-            });
+          onClose: widget.onClose,
+          onPush: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) =>
+                    _routeBuilder(context, SellNavigatorRoutes.newAddress),
+              ),
+            );
+          },
+          onSkip: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) =>
+                    _routeBuilder(context, SellNavigatorRoutes.onModeration),
+              ),
+            );
+          },
+        );
 
       case SellNavigatorRoutes.newAddress:
-        return NewAddressPage(onPush: () {
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) =>
-                  _routeBuilder(context, SellNavigatorRoutes.onModeration),
-            ),
-          );
-        });
+        return NewAddressPage(
+          onPush: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) =>
+                    _routeBuilder(context, SellNavigatorRoutes.onModeration),
+              ),
+            );
+          },
+        );
 
       case SellNavigatorRoutes.onModeration:
         return OnModerationPage(

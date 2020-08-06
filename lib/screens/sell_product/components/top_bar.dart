@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-enum TopBarType { start, addItem, newAddress, onModeration }
+enum TopBarType { start, addItem, newCard, newAddress, onModeration }
 
 class SellProductTopBar extends StatelessWidget {
   final TopBarType type;
@@ -24,6 +24,11 @@ class SellProductTopBar extends StatelessWidget {
       case TopBarType.addItem:
         trail = BackButton();
         title = "Добавить вещь";
+        action = CloseButton(onClose: onClose);
+        break;
+      case TopBarType.newCard:
+        trail = SizedBox();
+        title = "Новая карта";
         action = CloseButton(onClose: onClose);
         break;
       case TopBarType.newAddress:

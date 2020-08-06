@@ -21,31 +21,36 @@ class _SearchPageState extends State<SearchPageContent> {
   @override
   Widget build(BuildContext context) {
     final SearchRepository searchRepository = context.watch<SearchRepository>();
-    return Column(
-      children: [
-        SizedBox(
-          height: 80,
-          child: SearchTopPanel(
-            onUpdate: (query) {
-              searchRepository.query = query;
-              searchRepository.refreshData();
-              searchQuery = query;
-            },
-          ),
-        ),
-        if (searchRepository.response != null && searchRepository.response.content.results.length > 0)
-          Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.zero,
-              itemCount: searchRepository.response.content.results.length,
-              itemBuilder: (context, index) => ResultTile(
-                query: searchQuery,
-                searchResult: searchRepository.response.content.results.elementAt(index),
-              ),
-              separatorBuilder: (context, _) => CategoryDivider(),
+    return Material(
+      color: Colors.white,
+      child: Column(
+        children: [
+          SizedBox(
+            height: 80,
+            child: SearchTopPanel(
+              onUpdate: (query) {
+                searchRepository.query = query;
+                searchRepository.refreshData();
+                searchQuery = query;
+              },
             ),
-          )
-      ],
+          ),
+          if (searchRepository.response != null &&
+              searchRepository.response.content.results.length > 0)
+            Expanded(
+              child: ListView.separated(
+                padding: EdgeInsets.zero,
+                itemCount: searchRepository.response.content.results.length,
+                itemBuilder: (context, index) => ResultTile(
+                  query: searchQuery,
+                  searchResult: searchRepository.response.content.results
+                      .elementAt(index),
+                ),
+                separatorBuilder: (context, _) => CategoryDivider(),
+              ),
+            )
+        ],
+      ),
     );
   }
 }

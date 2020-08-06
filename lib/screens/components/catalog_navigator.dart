@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
@@ -15,7 +16,6 @@ class CatalogNavigatorRoutes {
   static const String categories = '/categories';
   static const String category = '/category';
   static const String products = '/products';
-  static const String search = '/search';
 }
 
 class CatalogNavigator extends StatelessWidget {
@@ -23,21 +23,13 @@ class CatalogNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   final Function(Widget) onPushPageOnTop;
 
-  _pushSearch(BuildContext context) => Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (context) =>
-              _routeBuilder(context, CatalogNavigatorRoutes.search),
-          settings: RouteSettings(name: CatalogNavigatorRoutes.search),
-        ),
-      );
-
   Widget _routeBuilder(BuildContext context, String route,
       {Category category, List<Category> categories, Product product}) {
     switch (route) {
       case CatalogNavigatorRoutes.root:
         return CatalogRootPage(
           categories: categories,
-          onSearch: () => _pushSearch(context),
+          onSearch: () => onPushPageOnTop(SearchPage()),
           onPush: (category) {
             final newRoute = category.children.isNotEmpty
                 ? CatalogNavigatorRoutes.categories
@@ -47,7 +39,6 @@ class CatalogNavigator extends StatelessWidget {
               CupertinoPageRoute(
                 builder: (context) =>
                     _routeBuilder(context, newRoute, category: category),
-                settings: RouteSettings(name: newRoute),
               ),
             );
           },
@@ -55,7 +46,7 @@ class CatalogNavigator extends StatelessWidget {
 
       case CatalogNavigatorRoutes.categories:
         return CategoryPage(
-          onSearch: () => _pushSearch(context),
+          onSearch: () => onPushPageOnTop(SearchPage()),
           topCategory: category,
           level: CategoryLevel.categories,
           onPush: (category) {
@@ -67,7 +58,6 @@ class CatalogNavigator extends StatelessWidget {
               CupertinoPageRoute(
                 builder: (context) =>
                     _routeBuilder(context, newRoute, category: category),
-                settings: RouteSettings(name: newRoute),
               ),
             );
           },
@@ -75,28 +65,24 @@ class CatalogNavigator extends StatelessWidget {
 
       case CatalogNavigatorRoutes.category:
         return CategoryPage(
-          onSearch: () => _pushSearch(context),
+          onSearch: () => onPushPageOnTop(SearchPage()),
           topCategory: category,
           level: CategoryLevel.category,
           onPush: (_) => Navigator.of(context).push(
-            CupertinoPageRoute(
+            MaterialWithModalsPageRoute(
               builder: (context) => _routeBuilder(
                   context, CatalogNavigatorRoutes.products,
                   category: category),
-              settings: RouteSettings(name: CatalogNavigatorRoutes.products),
             ),
           ),
         );
 
       case CatalogNavigatorRoutes.products:
         return ProductsPage(
-          onSearch: () => _pushSearch(context),
+          onSearch: () => onPushPageOnTop(SearchPage()),
           topCategory: category,
           onPush: (product) => onPushPageOnTop(ProductPage(id: product.id)),
         );
-
-      case CatalogNavigatorRoutes.search:
-        return SearchPage();
 
       default:
         return CupertinoPageScaffold(
