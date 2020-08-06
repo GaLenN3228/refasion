@@ -52,6 +52,7 @@ class CatalogRootPage extends StatelessWidget {
                 titleSpacing: 0.0,
                 title: TopPanel(
                   onSearch: onSearch,
+                  includeTopPadding: false,
                 ),
                 backgroundColor: Colors.white,
                 expandedHeight: 136.0 - MediaQuery.of(context).padding.top,

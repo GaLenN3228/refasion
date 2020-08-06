@@ -1,16 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/screens/sell_product/components/border_button.dart';
 import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
+import 'package:refashioned_app/screens/sell_product/pages/new_card_page.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
-class AddressesPage extends StatelessWidget {
+class CardsPage extends StatelessWidget {
   final Function() onPush;
-  final Function() onSkip;
   final Function() onClose;
 
-  const AddressesPage({Key key, this.onPush, this.onClose, this.onSkip})
-      : super(key: key);
+  const CardsPage({Key key, this.onPush, this.onClose}) : super(key: key);
+
+  showNewCardPanel(BuildContext context) {
+    showCupertinoModalBottomSheet(
+      expand: true,
+      context: context,
+      builder: (context, controller) => NewCardPage(
+        onPush: () {},
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +34,7 @@ class AddressesPage extends StatelessWidget {
             onClose: onClose,
           ),
           Header(
-            text: "Укажите вдрес",
+            text: "Выберите банковскую карту",
           ),
           Expanded(
             child: Column(
@@ -31,14 +43,16 @@ class AddressesPage extends StatelessWidget {
               children: [
                 GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    onTap: onSkip,
+                    onTap: onPush,
                     child: Column(
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(16),
-                          child: SizedBox(
+                          child: SvgPicture.asset(
+                            "assets/card.svg",
                             width: 32,
                             height: 22,
+                            color: primaryColor,
                           ),
                         ),
                         Padding(
@@ -46,7 +60,7 @@ class AddressesPage extends StatelessWidget {
                           child: SizedBox(
                             width: 250,
                             child: Text(
-                              "Cписок адресов пуст",
+                              "Cписок банковских карт пуст",
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: Theme.of(context).textTheme.headline1,
@@ -58,7 +72,7 @@ class AddressesPage extends StatelessWidget {
                           child: SizedBox(
                             width: 230,
                             child: Text(
-                              "Укажите удобное вам место встречи с покупателем",
+                              "Укажите банковскую карту для получения денег в случае продажи",
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               style: Theme.of(context).textTheme.bodyText2,
@@ -70,8 +84,8 @@ class AddressesPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(28),
                   child: BorderButton(
-                    type: BorderButtonType.newAddress,
-                    onTap: onPush,
+                    type: BorderButtonType.newCard,
+                    onTap: () => showNewCardPanel(context),
                   ),
                 )
               ],
