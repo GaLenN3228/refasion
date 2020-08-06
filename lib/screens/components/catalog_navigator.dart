@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -92,23 +90,6 @@ class CatalogNavigator extends StatelessWidget {
           onSearch: () => onPushPageOnTop(SearchPage()),
           topCategory: category,
           onPush: (product) => onPushPageOnTop(ProductPage(id: product.id)),
-        );
-
-      case CatalogNavigatorRoutes.search:
-        return SearchPage(
-          onClick: (searchResult) {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => ProductsPage(
-                  onSearch: () => _pushSearch(context),
-                  searchResult: searchResult,
-                  topCategory: category,
-                  onPush: (product) => onPushPageOnTop(ProductPage(id: product.id)),
-                ),
-                settings: RouteSettings(name: CatalogNavigatorRoutes.products),
-              ),
-            );
-          },
         );
 
       default:

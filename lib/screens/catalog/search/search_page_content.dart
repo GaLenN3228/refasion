@@ -26,9 +26,7 @@ class _SearchPageState extends State<SearchPageContent> {
   @override
   Widget build(BuildContext context) {
     final SearchRepository searchRepository = context.watch<SearchRepository>();
-    return Material(
-      color: Colors.white,
-      child: Column(
+    return  Column(
         children: [
           SizedBox(
             height: 80,
@@ -50,12 +48,12 @@ class _SearchPageState extends State<SearchPageContent> {
                   query: searchQuery,
                   searchResult: searchRepository.response.content.results
                       .elementAt(index),
+                  onClick: widget.onClick,
                 ),
                 separatorBuilder: (context, _) => CategoryDivider(),
               ),
             )
         ],
-      ),
     );
   }
 }
