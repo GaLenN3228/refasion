@@ -1,70 +1,158 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/product_count.dart';
 import 'package:refashioned_app/screens/catalog/components/category_brands.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/catalog/components/category_image.dart';
+import 'package:refashioned_app/screens/catalog/components/category_tile.dart';
+import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
+import 'package:refashioned_app/screens/products/components/category_filter_item.dart';
 import '../../../models/category.dart';
-import '../components/category_tile.dart';
 
 enum CategoryLevel { categories, category }
 
-class CategoryPage extends StatelessWidget {
+class CategoryPage extends StatefulWidget {
   final Category topCategory;
   final CategoryLevel level;
-  final Function(Category) onPush;
+  final Function(Category, {dynamic callback}) onPush;
   final Function() onSearch;
 
-  const CategoryPage(
-      {Key key, this.topCategory, this.onPush, this.level, this.onSearch})
-      : super(key: key);
+  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onSearch}) : super(key: key);
+
+  @override
+  _CategoryPageState createState() => _CategoryPageState();
+}
+
+class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver {
+  String countParameters;
+
+  updateCount() {
+    prepareParameters();
+    Provider.of<ProductCountRepository>(context, listen: false).update(newParameters: countParameters);
+  }
+
+  prepareParameters() {
+    final selectedIdList =
+        widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
+
+    if (selectedIdList.isNotEmpty && widget.level == CategoryLevel.category)
+      countParameters = "?p=" + selectedIdList.join(',');
+    else
+      countParameters = "?p=" + widget.topCategory.id;
+  }
+
+  clearSelectedCategories({Category category}) {
+    category.children.forEach((category) {
+      category.reset();
+    });
+  }
+
+  @override
+  void initState() {
+    prepareParameters();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final widgets = (level == CategoryLevel.category
+    final widgets = (widget.level == CategoryLevel.category
         ? <Widget>[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CategoryImage(
-                  category: topCategory,
+                  category: widget.topCategory,
                 ),
                 CategoryBrands()
               ],
             )
           ]
         : List<Widget>())
-      ..addAll(topCategory.children
-          .map(
-            (category) => CategoryTile(
-              category: category,
-              onPush: () {
-                topCategory.updateChild(category.id);
-                onPush(category);
-              },
-            ),
-          )
-          .toList());
+      ..addAll((widget.level == CategoryLevel.category)
+          ? widget.topCategory.children
+              .map(
+                (category) => CategoryFilterItem(
+                  category: category,
+                  onSelect: (id) {
+                    setState(() {
+                      widget.topCategory.updateChild(category.id);
+                      updateCount();
+                    });
+                  },
+                ),
+              )
+              .toList()
+          : widget.topCategory.children
+              .map(
+                (category) => CategoryTile(
+                  category: category,
+                  onPush: () {
+                    widget.topCategory.updateChild(category.id);
+                    widget.onPush(category, callback: clearSelectedCategories);
+                  },
+                ),
+              )
+              .toList());
 
     return CupertinoPageScaffold(
       child: Column(
         children: [
           TopPanel(
             canPop: true,
-            onSearch: onSearch,
+            onSearch: widget.onSearch,
           ),
           Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.only(bottom: 89),
-              itemCount: widgets.length,
-              itemBuilder: (context, index) {
-                return widgets.elementAt(index);
-              },
-              separatorBuilder: (context, index) {
-                return CategoryDivider();
-              },
+              child: Stack(children: [
+            Expanded(
+              child: ListView.separated(
+                padding: EdgeInsets.only(bottom: 130),
+                itemCount: widgets.length,
+                itemBuilder: (context, index) {
+                  return widgets.elementAt(index);
+                },
+                separatorBuilder: (context, index) {
+                  return CategoryDivider();
+                },
+              ),
             ),
-          ),
+            (widget.level == CategoryLevel.category)
+                ? Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 70,
+                    child: Builder(
+                      builder: (context) {
+                        final productCountRepository = context.watch<ProductCountRepository>();
+
+                        String title = "";
+                        String subtitle = "";
+
+                        if (productCountRepository.isLoading) {
+                          title = "ПОДОЖДИТЕ";
+                          subtitle = "Обновление товаров...";
+                        } else if (productCountRepository.loadingFailed) {
+                          title = "ОШИБКА";
+                          subtitle = "Мы уже работаем над её исправлением";
+                        } else {
+                          title = "ПОКАЗАТЬ";
+                          subtitle = productCountRepository.productsCountResponse.productsCount.text;
+                        }
+                        return BottomButton(
+                          action: () {
+                            widget.onPush(widget.topCategory, callback: updateCount);
+                          },
+                          title: title,
+                          subtitle: subtitle,
+                        );
+                      },
+                    ),
+                  )
+                : Container()
+          ]))
         ],
       ),
     );

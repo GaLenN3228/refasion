@@ -7,89 +7,63 @@ import 'package:refashioned_app/screens/products/components/category_filter_list
 import 'package:refashioned_app/screens/products/components/category_filter_panel_title.dart';
 
 class CategoryFilterPanel extends StatefulWidget {
-  final Function() onUpdate;
-  final String categoryName;
-  final List<Category> categories;
-  final Function(String) updateProducts;
+  final Function() updateProducts;
+  final Category topCategory;
 
-  const CategoryFilterPanel({Key key, this.onUpdate, this.categoryName, this.categories, this.updateProducts})
-      : super(key: key);
+  const CategoryFilterPanel({Key key, this.updateProducts, this.topCategory}) : super(key: key);
 
   @override
   _CategoryFilterPanelState createState() => _CategoryFilterPanelState();
 }
 
 class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
-  List<Category> previousCategories;
-  String rootParameters;
-  String countParameters;
+  List<Category> savedCategories;
+  String categoryFiltersParameters;
 
-  String getCategoryFiltersParameters() {
-    final selectedIdList = widget.categories.where((category) => category.selected).map((category) => category.id);
-
+  prepareParameters() {
+    final selectedIdList =
+        widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
     if (selectedIdList.isNotEmpty)
-      return "&p=" + selectedIdList.join(',');
+      categoryFiltersParameters = "?p=" + selectedIdList.join(',');
     else
-      return "";
+      categoryFiltersParameters = "?p=" + widget.topCategory.id;
   }
-
-//  String getParameters(List<Category> categories) =>
-//      categories.fold(rootParameters, (parameters, category) => parameters + getRequestParameters());
 
   onReset(BuildContext context) {
     setState(() {
-//      widget.categories.forEach((category) => category.reset());
-//
-//      countParameters = rootParameters;
+      widget.topCategory.children.forEach((category) => category.reset());
     });
-
+    prepareParameters();
     updateCount(context);
   }
 
   onClose(BuildContext context) {
-    setState(() {
-//      widget.categories
-//        ..clear()
-//        ..addAll(previousCategories);
-//
-//      countParameters = rootParameters;
-    });
-
-    updateCount(context);
+    widget.topCategory.children
+      ..clear()
+      ..addAll(savedCategories);
   }
 
-  updateCategories(BuildContext context, {String id}) {
-    if (id != null && id.isNotEmpty) widget.categories.firstWhere((category) => category.id == id).update();
-
-    setState(() {
-//      countParameters = getRequestParameters();
-    });
-
+  updateCategory(BuildContext context, {String id}) {
+    if (id != null && id.isNotEmpty) widget.topCategory.children.firstWhere((category) => category.id == id).update();
+    prepareParameters();
     updateCount(context);
   }
 
   updateCount(BuildContext context) {
-    Provider.of<ProductCountRepository>(context, listen: false).update(newParameters: countParameters);
-  }
-
-  saveCategories() {
-    previousCategories
-      ..clear()
-      ..addAll(widget.categories);
+    Provider.of<ProductCountRepository>(context, listen: false).update(newParameters: categoryFiltersParameters);
   }
 
   @override
   void initState() {
-    previousCategories = List()..addAll(widget.categories);
-//    rootParameters =  + getRequestParameters();
-//    countParameters = getParameters(widget.filters);
+    savedCategories = List()..addAll(widget.topCategory.children.map((e) => Category.clone(e)).toList());
+    prepareParameters();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ProductCountRepository>(create: (_) {
-      return ProductCountRepository(parameters: countParameters);
+      return ProductCountRepository(parameters: categoryFiltersParameters);
     }, builder: (context, _) {
       return WillPopScope(
           onWillPop: () async {
@@ -104,17 +78,16 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                   children: [
                     CategoryFilterPanelTitle(
                       onClose: () => onClose(context),
-                      categoryName: widget.categoryName,
+                      categoryName: widget.topCategory.name,
                       onReset: () => onReset(context),
                     ),
                     Expanded(
                       child: CategoryFilterList(
-                        values: widget.categories,
+                        values: widget.topCategory.children,
                         onSelect: (id) {
                           setState(() {
-                            updateCategories(context, id: id);
+                            updateCategory(context, id: id);
                           });
-                          if (widget.onUpdate != null) widget.onUpdate();
                         },
                       ),
                     ),
@@ -144,10 +117,7 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                     }
                     return BottomButton(
                       action: () {
-                        saveCategories();
-
-                        if (widget.updateProducts != null) widget.updateProducts(countParameters);
-
+                        if (widget.updateProducts != null) widget.updateProducts();
                         Navigator.of(context).pop();
                       },
                       title: title,

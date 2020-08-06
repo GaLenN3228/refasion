@@ -21,4 +21,16 @@ class QuickFiltersRepository extends BaseRepository {
       receivedError();
     }
   }
+
+  update({String urlParams}) {
+    if (urlParams != null && urlParams.isNotEmpty)
+      quickFiltersResponse.content.firstWhere((filterValue) => filterValue.urlParams == urlParams).update();
+  }
+
+  String getRequestParameters() =>
+      "&" +
+          quickFiltersResponse.content
+              .where((filter) => filter.selected)
+              .map((filter) => filter.urlParams)
+              .join('&');
 }

@@ -6,18 +6,17 @@ import 'package:refashioned_app/screens/products/components/category_filter_item
 class CategoryFilterList extends StatelessWidget {
   final List<Category> values;
   final Function(String) onSelect;
-  final EdgeInsets padding;
 
-  const CategoryFilterList({Key key, this.values, this.onSelect, this.padding}) : super(key: key);
+  const CategoryFilterList({Key key, this.values, this.onSelect}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 0.0,
       child: ListView.separated(
+        padding: EdgeInsets.only(bottom: 60),
         scrollDirection: Axis.vertical,
         itemCount: values.length,
-        padding: padding ?? EdgeInsets.zero,
         itemBuilder: (context, index) {
           return CategoryFilterItem(
             category: values.elementAt(index),

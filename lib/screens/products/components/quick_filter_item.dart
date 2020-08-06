@@ -14,10 +14,8 @@ class QuickFilterItem extends StatelessWidget {
   final QuickFilter filterValue;
   final Function(String) onSelect;
   final bool isNavigationButton;
-  final Function() onUpdate;
-  final String categoryName;
-  final List<Category> categories;
-  final Function(String) updateProducts;
+  final Function() updateProducts;
+  final Category topCategory;
 
   const QuickFilterItem(
       {Key key,
@@ -28,10 +26,8 @@ class QuickFilterItem extends StatelessWidget {
       this.horizontalCornerRadius: 5.0,
       this.horizontalBorderWidth: 1.0,
       this.isNavigationButton: false,
-      this.onUpdate,
-      this.categoryName,
-      this.categories,
-      this.updateProducts})
+      this.updateProducts,
+      this.topCategory})
       : super(key: key);
 
   @override
@@ -48,10 +44,7 @@ class QuickFilterItem extends StatelessWidget {
                     context: context,
                     useRootNavigator: true,
                     builder: (context, controller) => CategoryFilterPanel(
-                        categories: categories,
-                        categoryName: categoryName,
-                        onUpdate: onUpdate,
-                        updateProducts: updateProducts)),
+                        topCategory: topCategory, updateProducts: updateProducts)),
                 child: Container(
                   height: horizontalHeight,
                   width: horizontalWidth,

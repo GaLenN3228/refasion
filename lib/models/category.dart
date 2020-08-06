@@ -32,6 +32,9 @@ class Category {
     ]);
   }
 
+  factory Category.clone(Category other) =>
+      Category(id: other.id, name: other.name, children: other.children, selected: other.selected);
+
   updateChild(String id) =>
       children.firstWhere((child) => child.id == id).update();
 
@@ -49,8 +52,8 @@ class Category {
 
   String getRequestParameters() =>
       "?p=" +
-      children
+          (children.where((category) => category.selected).isNotEmpty ? children
           .where((category) => category.selected)
           .map((category) => category.id)
-          .join(',');
+          .join(',') : id);
 }

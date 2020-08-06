@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
+import 'package:refashioned_app/repositories/product_count.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
 import 'package:provider/provider.dart';
@@ -58,35 +61,40 @@ class CatalogNavigator extends StatelessWidget {
           onSearch: () => _pushSearch(context),
           topCategory: category,
           level: CategoryLevel.categories,
-          onPush: (category) {
-            final newRoute = category.children.isNotEmpty
-                ? CatalogNavigatorRoutes.category
-                : CatalogNavigatorRoutes.products;
-
-            return Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, newRoute, category: category),
-                settings: RouteSettings(name: newRoute),
-              ),
-            );
+          onPush: (category, {callback}) {
+            final newRoute =
+                category.children.isNotEmpty ? CatalogNavigatorRoutes.category : CatalogNavigatorRoutes.products;
+            return Navigator.of(context)
+                .push(
+                  CupertinoPageRoute(
+                    builder: (context) => _routeBuilder(context, newRoute, category: category),
+                    settings: RouteSettings(name: newRoute),
+                  ),
+                )
+                .then((flag) => callback(category: category));
           },
         );
 
       case CatalogNavigatorRoutes.category:
-        return CategoryPage(
-          onSearch: () => _pushSearch(context),
-          topCategory: category,
-          level: CategoryLevel.category,
-          onPush: (_) => Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) => _routeBuilder(
-                  context, CatalogNavigatorRoutes.products,
-                  category: category),
-              settings: RouteSettings(name: CatalogNavigatorRoutes.products),
-            ),
-          ),
-        );
+        return ChangeNotifierProvider<ProductCountRepository>(create: (_) {
+          return ProductCountRepository(parameters: "?p=" + category.id);
+        }, builder: (context, _) {
+          return CategoryPage(
+            onSearch: () => _pushSearch(context),
+            topCategory: category,
+            level: CategoryLevel.category,
+            onPush: (category, {callback}) => Navigator.of(context)
+                .push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
+                settings: RouteSettings(name: CatalogNavigatorRoutes.products),
+              ),
+            )
+                .then((flag) {
+              callback();
+            }),
+          );
+        });
 
       case CatalogNavigatorRoutes.products:
         return ProductsPage(
@@ -96,7 +104,21 @@ class CatalogNavigator extends StatelessWidget {
         );
 
       case CatalogNavigatorRoutes.search:
-        return SearchPage();
+        return SearchPage(
+          onClick: (searchResult) {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => ProductsPage(
+                  onSearch: () => _pushSearch(context),
+                  searchResult: searchResult,
+                  topCategory: category,
+                  onPush: (product) => onPushPageOnTop(ProductPage(id: product.id)),
+                ),
+                settings: RouteSettings(name: CatalogNavigatorRoutes.products),
+              ),
+            );
+          },
+        );
 
       default:
         return CupertinoPageScaffold(

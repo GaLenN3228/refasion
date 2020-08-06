@@ -9,7 +9,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = false;
+  static const LOG_ENABLE = true;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 

@@ -11,11 +11,6 @@ class QuickFiltersResponse {
         status: Status.fromJson(json['status']),
         content: [if (json['content'] != null) for (final filter in json['content']) QuickFilter.fromJson(filter)]);
   }
-
-  update({String urlParams}) {
-    if (urlParams != null && urlParams.isNotEmpty)
-      content.firstWhere((filterValue) => filterValue.urlParams == urlParams).update();
-  }
 }
 
 class QuickFilter {

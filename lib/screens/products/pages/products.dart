@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/quick_filters.dart';
@@ -18,8 +19,9 @@ class ProductsPage extends StatefulWidget {
   final Function(Product) onPush;
   final Function() onSearch;
   final Category topCategory;
+  final SearchResult searchResult;
 
-  const ProductsPage({Key key, this.onPush, this.onSearch, this.topCategory});
+  const ProductsPage({Key key, this.onPush, this.onSearch, this.topCategory, this.searchResult});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -29,7 +31,7 @@ class _ProductsPageState extends State<ProductsPage> {
   FiltersRepository filtersRepository;
   SortMethodsRepository sortMethodsRepository;
 
-  String categoriesParameters;
+  String initialParameters;
 
   @override
   void initState() {
@@ -39,7 +41,11 @@ class _ProductsPageState extends State<ProductsPage> {
     filtersRepository.addListener(repositoryListener);
     sortMethodsRepository.addListener(repositoryListener);
 
-    categoriesParameters = widget.topCategory.getRequestParameters();
+    if (widget.searchResult != null) {
+      initialParameters = "?p=" + widget.searchResult.id;
+    } else {
+      initialParameters = widget.topCategory.getRequestParameters();
+    }
 
     super.initState();
   }
@@ -55,24 +61,23 @@ class _ProductsPageState extends State<ProductsPage> {
   repositoryListener() => setState(() {});
 
   updateProducts(BuildContext context) {
-    categoriesParameters = widget.topCategory.getRequestParameters();
+    if (widget.topCategory != null) initialParameters = widget.topCategory.getRequestParameters();
 
-    final filtersParameters = filtersRepository.isLoaded &&
-            filtersRepository.filtersResponse.status.code == 200
-        ? filtersRepository.filtersResponse.content.fold("",
-            (parameters, filter) => parameters + filter.getRequestParameters())
+    final quickFiltersRepository = Provider.of<QuickFiltersRepository>(context, listen: false);
+    final quickFiltersParameters = quickFiltersRepository.getRequestParameters();
+
+    final filtersParameters = filtersRepository.isLoaded && filtersRepository.filtersResponse.status.code == 200
+        ? filtersRepository.filtersResponse.content
+            .fold("", (parameters, filter) => parameters + filter.getRequestParameters())
         : "";
 
-    final sortParameters = sortMethodsRepository.isLoaded &&
-            sortMethodsRepository.response.status.code == 200
+    final sortParameters = sortMethodsRepository.isLoaded && sortMethodsRepository.response.status.code == 200
         ? sortMethodsRepository.response.content.getRequestParameters()
         : "";
 
-    final newParameters =
-        categoriesParameters + filtersParameters + sortParameters;
+    String newParameters = initialParameters + filtersParameters + sortParameters + quickFiltersParameters;
 
-    Provider.of<ProductsRepository>(context, listen: false)
-        .update(newParameters: newParameters);
+    Provider.of<ProductsRepository>(context, listen: false).update(newParameters: newParameters);
   }
 
   @override
@@ -82,7 +87,7 @@ class _ProductsPageState extends State<ProductsPage> {
           providers: [
             ChangeNotifierProvider<ProductsRepository>(
                 create: (_) =>
-                    ProductsRepository(parameters: categoriesParameters)),
+                    ProductsRepository(parameters: initialParameters)),
             ChangeNotifierProvider(create: (_) => QuickFiltersRepository())
           ],
           builder: (context, _) {
@@ -127,18 +132,18 @@ class _ProductsPageState extends State<ProductsPage> {
                   onSearch: widget.onSearch,
                 ),
                 QuickFilterList(
-                    categoryName: widget.topCategory.name,
-                    categories: widget.topCategory.children,
+                    topCategory: widget.topCategory,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    updateProducts: (parameters) => updateProducts(context)),
-                ProductsTitle(categoryName: widget.topCategory.name),
+                    updateProducts: () => updateProducts(context)),
+                ProductsTitle(
+                    categoryName: widget.searchResult != null ? widget.searchResult.name : widget.topCategory.name),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 15, 20, 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       FiltersButton(
-                        root: categoriesParameters,
+                        root: initialParameters,
                         filters: filtersRepository.filtersResponse.content,
                         onApply: () => updateProducts(context),
                       ),

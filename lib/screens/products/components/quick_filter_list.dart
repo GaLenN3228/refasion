@@ -7,19 +7,11 @@ import 'package:provider/provider.dart';
 class QuickFilterList extends StatefulWidget {
   final double horizontalHeight;
   final EdgeInsets padding;
-  final Function() onUpdate;
-  final String categoryName;
-  final List<Category> categories;
-  final Function(String) updateProducts;
+  final Category topCategory;
+  final Function() updateProducts;
 
   const QuickFilterList(
-      {Key key,
-      this.horizontalHeight: 30.0,
-      this.padding,
-      this.onUpdate,
-      this.categoryName,
-      this.categories,
-      this.updateProducts})
+      {Key key, this.horizontalHeight: 30.0, this.padding, this.updateProducts, this.topCategory})
       : super(key: key);
 
   @override
@@ -37,24 +29,23 @@ class _QuickFilterListState extends State<QuickFilterList> {
       height: widget.horizontalHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: widget.categories != null
+        itemCount: widget.topCategory != null && widget.topCategory.children != null
             ? quickFiltersRepository.quickFiltersResponse.content.length + 1
             : quickFiltersRepository.quickFiltersResponse.content.length,
         padding: widget.padding ?? EdgeInsets.zero,
         itemBuilder: (context, index) {
           return QuickFilterItem(
-              onUpdate: widget.onUpdate,
-              categoryName: widget.categoryName,
-              categories: widget.categories,
-              isNavigationButton: widget.categories != null ? index == 0 : false,
+              topCategory: widget.topCategory,
+              isNavigationButton: widget.topCategory != null && widget.topCategory.children != null ? index == 0 : false,
               horizontalHeight: widget.horizontalHeight,
-              filterValue: widget.categories != null
+              filterValue: widget.topCategory != null && widget.topCategory.children != null
                   ? ((index > 0) ? quickFiltersRepository.quickFiltersResponse.content.elementAt(index - 1) : null)
                   : quickFiltersRepository.quickFiltersResponse.content.elementAt(index),
               onSelect: (urlParameter) {
                 setState(() {
-                  quickFiltersRepository.quickFiltersResponse.update(urlParams: urlParameter);
+                  quickFiltersRepository.update(urlParams: urlParameter);
                 });
+                widget.updateProducts();
               },
               updateProducts: widget.updateProducts);
         },
