@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class OnModerationPage extends StatelessWidget {
@@ -11,9 +14,14 @@ class OnModerationPage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: Column(
         children: <Widget>[
-          SellProductTopBar(
-            TopBarType.onModeration,
-            onClose: onClose,
+          TopBar(
+            leftButtonType: TBButtonType.none,
+            middleType: TBMiddleType.text,
+            middleText: "На модерации",
+            rightButtonType: TBButtonType.text,
+            rightButtonText: "Закрыть",
+            rightButtonAction: onClose,
+            bottomType: TBBottomType.none,
           ),
           Expanded(
             child: Center(

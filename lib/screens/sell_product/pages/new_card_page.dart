@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class NewCardPage extends StatelessWidget {
@@ -13,9 +16,14 @@ class NewCardPage extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 5),
-            child: SellProductTopBar(
-              TopBarType.newCard,
-              onClose: () => Navigator.of(context).pop(),
+            child: TopBar(
+              leftButtonType: TBButtonType.none,
+              middleType: TBMiddleType.text,
+              middleText: "Новая карта",
+              rightButtonType: TBButtonType.text,
+              rightButtonText: "Закрыть",
+              rightButtonAction: () => Navigator.of(context).pop(),
+              bottomType: TBBottomType.none,
             ),
           ),
           Expanded(

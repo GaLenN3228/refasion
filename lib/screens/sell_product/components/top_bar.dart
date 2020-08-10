@@ -1,139 +1,147 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_search.dart';
 
-enum TopBarType { start, addItem, newCard, newAddress, onModeration }
+class TopBar extends StatelessWidget {
+  final TBSearchController searchController;
 
-class SellProductTopBar extends StatelessWidget {
-  final TopBarType type;
-  final Function() onClose;
+  final TBButtonType leftButtonType;
+  final Function() leftButtonAction;
+  final String leftButtonText;
+  final Color leftButtonTextColor;
+  final TBIconType leftButtonIcon;
+  final Color leftButtonIconColor;
 
-  SellProductTopBar(this.type, {Key key, this.onClose}) : super(key: key);
+  final TBMiddleType middleType;
+  final String middleText;
+
+  final TBButtonType rightButtonType;
+  final Function() rightButtonAction;
+  final String rightButtonText;
+  final Color rightButtonTextColor;
+  final TBIconType rightButtonIcon;
+  final Color rightButtonIconColor;
+
+  final TBBottomType bottomType;
+  final String bootomHeaderText;
+
+  final String searchHintText;
+  final Function(String) onSearchUpdate;
+  final Function() onSearchFocus;
+  final Function() onSearchUnfocus;
+  final bool autofocus;
+
+  final ValueNotifier<bool> isElevated;
+
+  final Widget customBottom;
+
+  const TopBar({
+    this.leftButtonType,
+    this.middleType,
+    this.rightButtonType,
+    this.leftButtonText,
+    this.leftButtonAction,
+    this.leftButtonIcon,
+    this.leftButtonTextColor,
+    this.rightButtonText,
+    this.rightButtonAction,
+    this.rightButtonIcon,
+    this.rightButtonTextColor,
+    this.middleText,
+    this.leftButtonIconColor,
+    this.rightButtonIconColor,
+    this.bottomType,
+    this.bootomHeaderText,
+    this.isElevated,
+    this.searchHintText,
+    this.onSearchUpdate,
+    this.onSearchFocus,
+    this.onSearchUnfocus,
+    this.autofocus,
+    this.customBottom,
+    this.searchController,
+  }) : assert(leftButtonType != null &&
+            middleType != null &&
+            rightButtonType != null &&
+            bottomType != null);
 
   @override
   Widget build(BuildContext context) {
-    Widget trail;
-    String title;
-    Widget action;
+    final buttonWidth = middleType != TBMiddleType.search
+        ? MediaQuery.of(context).size.width * 0.25
+        : null;
 
-    switch (type) {
-      case TopBarType.start:
-        trail = SizedBox();
-        title = "Добавить вещь";
-        action = CloseButton(onClose: onClose);
-        break;
-      case TopBarType.addItem:
-        trail = BackButton();
-        title = "Добавить вещь";
-        action = CloseButton(onClose: onClose);
-        break;
-      case TopBarType.newCard:
-        trail = SizedBox();
-        title = "Новая карта";
-        action = CloseButton(onClose: onClose);
-        break;
-      case TopBarType.newAddress:
-        trail = BackButton();
-        title = "Новый адрес";
-        action = FiltersButton();
-        break;
-      case TopBarType.onModeration:
-        trail = SizedBox();
-        title = "На модерации";
-        action = CloseButton(onClose: onClose);
-        break;
-    }
-
-    return Column(
-      children: [
-        SizedBox(
-          height: MediaQuery.of(context).padding.top,
-        ),
-        SizedBox(
-          height: 44,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: 80,
-                child: trail,
-              ),
-              Text(
-                title.toUpperCase(),
-                style: Theme.of(context).textTheme.headline1,
-              ),
-              SizedBox(
-                width: 80,
-                child: action,
-              ),
-            ],
+    return ValueListenableBuilder(
+      valueListenable: isElevated ?? ValueNotifier(false),
+      builder: (context, value, child) => Container(
+        child: child,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: (value)
+                ? [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        offset: Offset(0, 4),
+                        blurRadius: 4)
+                  ]
+                : []),
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).padding.top,
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class BackButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: Navigator.of(context).pop,
-      child: Container(
-        padding: const EdgeInsets.only(left: 4),
-        alignment: Alignment.centerLeft,
-        child: SvgPicture.asset(
-          "assets/back.svg",
-          color: Color(0xFF222222),
-          width: 44,
-        ),
-      ),
-    );
-  }
-}
-
-class CloseButton extends StatelessWidget {
-  final Function() onClose;
-
-  const CloseButton({Key key, this.onClose}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: onClose,
-      child: Container(
-        width: 80,
-        padding: const EdgeInsets.only(right: 20),
-        alignment: Alignment.centerRight,
-        child: onClose != null
-            ? Text(
-                "Закрыть",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    .copyWith(color: Color(0xFF959595)),
-              )
-            : SizedBox(),
-      ),
-    );
-  }
-}
-
-class FiltersButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {},
-        child: Container(
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(left: 3, right: 16),
-          child: SvgPicture.asset(
-            'assets/filter.svg',
-            color: Colors.black,
-            width: 44,
+          SizedBox(
             height: 44,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: buttonWidth,
+                  child: TBButton(
+                    leftButtonType,
+                    TBButtonAlign.left,
+                    onTap: leftButtonAction,
+                    text: leftButtonText,
+                    textColor: leftButtonTextColor,
+                    icon: leftButtonIcon,
+                    iconColor: leftButtonIconColor,
+                  ),
+                ),
+                Expanded(
+                  child: TBMiddle(
+                    middleType,
+                    text: middleText,
+                  ),
+                ),
+                SizedBox(
+                  width: buttonWidth,
+                  child: TBButton(
+                    rightButtonType,
+                    TBButtonAlign.right,
+                    onTap: rightButtonAction,
+                    text: rightButtonText,
+                    textColor: rightButtonTextColor,
+                    icon: rightButtonIcon,
+                    iconColor: rightButtonIconColor,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ));
+          TBBottom(
+            type: bottomType,
+            headerText: bootomHeaderText,
+            searchHintText: searchHintText,
+            onSearchUpdate: onSearchUpdate,
+            onSearchFocus: onSearchFocus,
+            onSearchUnfocus: onSearchUnfocus,
+            searchController: searchController,
+          ),
+          customBottom ?? SizedBox(),
+        ],
+      ),
+    );
   }
 }

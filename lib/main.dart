@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
-import 'package:refashioned_app/screens/tab_switcher.dart';
+import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/screens/startup_builder.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 void main() => runApp(RefashionApp());
@@ -12,12 +13,16 @@ class RefashionApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<CatalogRepository>(
-              create: (_) => CatalogRepository()),
+            create: (_) => CatalogRepository(),
+          ),
+          ChangeNotifierProvider<CitiesRepository>(
+            create: (_) => CitiesRepository(),
+          ),
         ],
         child: MaterialApp(
           theme: _materialTheme(),
           debugShowCheckedModeBanner: false,
-          home: TabSwitcher(),
+          home: StartUpBuilder(),
         ));
   }
 }

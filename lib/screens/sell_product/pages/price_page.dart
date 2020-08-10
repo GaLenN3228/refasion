@@ -1,11 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_price_formatter.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/price_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -13,7 +14,7 @@ class PricePage extends StatefulWidget {
   final Function(int) onPush;
   final Function() onClose;
 
-  const PricePage({Key key, this.onPush, this.onClose}) : super(key: key);
+  const PricePage({this.onPush, this.onClose});
 
   @override
   _PricePageState createState() => _PricePageState();
@@ -59,9 +60,17 @@ class _PricePageState extends State<PricePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SellProductTopBar(TopBarType.addItem, onClose: widget.onClose),
-          Header(
-            text: "Укажите цену",
+          TopBar(
+            leftButtonType: TBButtonType.icon,
+            leftButtonIcon: TBIconType.back,
+            leftButtonAction: () => Navigator.of(context).pop(),
+            middleType: TBMiddleType.text,
+            middleText: "Добавить вещь",
+            rightButtonType: TBButtonType.text,
+            rightButtonText: "Закрыть",
+            rightButtonAction: widget.onClose,
+            bottomType: TBBottomType.header,
+            bootomHeaderText: "Укажите цену",
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 21),

@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/sell_product/components/header.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class DescriptionPage extends StatefulWidget {
@@ -101,12 +104,17 @@ class _DescriptionPageState extends State<DescriptionPage>
       resizeToAvoidBottomInset: true,
       child: Column(
         children: <Widget>[
-          SellProductTopBar(
-            TopBarType.addItem,
-            onClose: widget.onClose,
-          ),
-          Header(
-            text: "Опишите вещь",
+          TopBar(
+            leftButtonType: TBButtonType.icon,
+            leftButtonIcon: TBIconType.back,
+            leftButtonAction: () => Navigator.of(context).pop(),
+            middleType: TBMiddleType.text,
+            middleText: "Добавить вещь",
+            rightButtonType: TBButtonType.text,
+            rightButtonText: "Закрыть",
+            rightButtonAction: widget.onClose,
+            bottomType: TBBottomType.header,
+            bootomHeaderText: "Опишите вещь",
           ),
           Expanded(
             child: Material(

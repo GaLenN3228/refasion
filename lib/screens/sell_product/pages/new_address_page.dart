@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/sell_product/components/map.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class NewAddressPage extends StatelessWidget {
@@ -15,7 +18,16 @@ class NewAddressPage extends StatelessWidget {
       child: Container(
         child: Column(
           children: [
-            SellProductTopBar(TopBarType.newAddress),
+            TopBar(
+              leftButtonType: TBButtonType.icon,
+              leftButtonIcon: TBIconType.back,
+              leftButtonAction: () => Navigator.of(context).pop(),
+              middleType: TBMiddleType.text,
+              middleText: "Новый адрес",
+              rightButtonType: TBButtonType.icon,
+              rightButtonIcon: TBIconType.filters,
+              bottomType: TBBottomType.none,
+            ),
             SizedBox(
               height: 8,
             ),
