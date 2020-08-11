@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/screens/sell_product/components/border_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 import 'package:refashioned_app/screens/sell_product/pages/new_card_page.dart';
 import 'package:refashioned_app/utils/colors.dart';
@@ -12,7 +14,7 @@ class CardsPage extends StatelessWidget {
   final Function() onPush;
   final Function() onClose;
 
-  const CardsPage({Key key, this.onPush, this.onClose}) : super(key: key);
+  const CardsPage({this.onPush, this.onClose});
 
   showNewCardPanel(BuildContext context) {
     showCupertinoModalBottomSheet(
@@ -29,12 +31,17 @@ class CardsPage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: Column(
         children: <Widget>[
-          SellProductTopBar(
-            TopBarType.addItem,
-            onClose: onClose,
-          ),
-          Header(
-            text: "Выберите банковскую карту",
+          TopBar(
+            leftButtonType: TBButtonType.icon,
+            leftButtonIcon: TBIconType.back,
+            leftButtonAction: () => Navigator.of(context).pop(),
+            middleType: TBMiddleType.text,
+            middleText: "Добавить вещь",
+            rightButtonType: TBButtonType.text,
+            rightButtonText: "Закрыть",
+            rightButtonAction: onClose,
+            bottomType: TBBottomType.header,
+            bootomHeaderText: "Выберите банковскую карту",
           ),
           Expanded(
             child: Column(

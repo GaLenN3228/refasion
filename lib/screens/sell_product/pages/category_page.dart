@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/sell_product/components/categories_list.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class CategoryPage extends StatelessWidget {
@@ -17,30 +19,32 @@ class CategoryPage extends StatelessWidget {
       this.selectedTopCategory,
       this.multiselection: false,
       this.onClose})
-      : super(key: key);
+      : assert(selectedTopCategory != null);
 
   final isScrolled = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        child: selectedTopCategory != null
-            ? CategoriesList(
-                categories: selectedTopCategory.children,
-                bottomPadding: 10,
-                isScrolled: isScrolled,
-                appBar: SellProductTopBar(
-                  TopBarType.addItem,
-                  onClose: onClose,
-                ),
-                header: Header(
-                  text: "Выберите категорию",
-                  isScrolled: isScrolled,
-                ),
-                onPush: onPush,
-              )
-            : Center(
-                child: Text("Не выбрана категория"),
-              ));
+      child: CategoriesList(
+        categories: selectedTopCategory.children,
+        bottomPadding: 10,
+        isScrolled: isScrolled,
+        onPush: onPush,
+        appBar: TopBar(
+          leftButtonType: TBButtonType.icon,
+          leftButtonIcon: TBIconType.back,
+          leftButtonAction: () => Navigator.of(context).pop(),
+          middleType: TBMiddleType.text,
+          middleText: "Добавить вещь",
+          rightButtonType: TBButtonType.text,
+          rightButtonText: "Закрыть",
+          rightButtonAction: onClose,
+          bottomType: TBBottomType.header,
+          bootomHeaderText: "Выберите категорию",
+          isElevated: isScrolled,
+        ),
+      ),
+    );
   }
 }

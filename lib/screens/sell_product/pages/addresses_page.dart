@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/sell_product/components/border_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class AddressesPage extends StatelessWidget {
@@ -9,20 +11,24 @@ class AddressesPage extends StatelessWidget {
   final Function() onSkip;
   final Function() onClose;
 
-  const AddressesPage({Key key, this.onPush, this.onClose, this.onSkip})
-      : super(key: key);
+  const AddressesPage({this.onPush, this.onClose, this.onSkip});
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       child: Column(
         children: <Widget>[
-          SellProductTopBar(
-            TopBarType.addItem,
-            onClose: onClose,
-          ),
-          Header(
-            text: "Укажите вдрес",
+          TopBar(
+            leftButtonType: TBButtonType.icon,
+            leftButtonIcon: TBIconType.back,
+            leftButtonAction: () => Navigator.of(context).pop(),
+            middleType: TBMiddleType.text,
+            middleText: "Добавить вещь",
+            rightButtonType: TBButtonType.text,
+            rightButtonText: "Закрыть",
+            rightButtonAction: onClose,
+            bottomType: TBBottomType.header,
+            bootomHeaderText: "Укажите адрес",
           ),
           Expanded(
             child: Column(

@@ -5,15 +5,18 @@ import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/sell_product/components/brand_tile.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/search_panel.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class BrandPage extends StatelessWidget {
   final Function(Brand) onPush;
   final Function() onClose;
 
-  const BrandPage({Key key, this.onPush, this.onClose}) : super(key: key);
+  const BrandPage({this.onPush, this.onClose});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SearchRepository>(
@@ -21,12 +24,17 @@ class BrandPage extends StatelessWidget {
       child: CupertinoPageScaffold(
         child: Column(
           children: <Widget>[
-            SellProductTopBar(
-              TopBarType.addItem,
-              onClose: onClose,
-            ),
-            Header(
-              text: "Выберите бренд",
+            TopBar(
+              leftButtonType: TBButtonType.icon,
+              leftButtonIcon: TBIconType.back,
+              leftButtonAction: () => Navigator.of(context).pop(),
+              middleType: TBMiddleType.text,
+              middleText: "Добавить вещь",
+              rightButtonType: TBButtonType.text,
+              rightButtonText: "Закрыть",
+              rightButtonAction: onClose,
+              bottomType: TBBottomType.header,
+              bootomHeaderText: "Выберите бренд",
             ),
             Builder(
               builder: (context) {

@@ -19,6 +19,11 @@ class Url {
   //Filters
   static const sortMethods = '$refashionedBaseUrl/catalog/sort/';
 
+  //Cities
+  static const getCities = '$refashionedBaseUrl/geo/cities/';
+  static const getGeolocation = '$refashionedBaseUrl/geo/geolocation/';
+  static const selectCity = '$refashionedBaseUrl/geo/cities/select/';
+
   //Content
   static const catalogMenu = '$refashionedBaseUrl/content/catalog-menu/';
 

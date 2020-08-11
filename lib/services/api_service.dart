@@ -9,7 +9,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -68,6 +68,23 @@ class ApiService {
 
   static Future<Response> getSortMethods() async =>
       await DioClient().getClient(logging: LOG_ENABLE).get(Url.sortMethods);
+
+  static Future<Response> getCities() async =>
+      await DioClient().getClient(logging: LOG_ENABLE).get(Url.getCities);
+
+  static Future<Response> getGeolocation() async =>
+      await DioClient().getClient(logging: LOG_ENABLE).get(Url.getGeolocation);
+
+  static Future<Response> selectCity(String city) async {
+    final dio = DioClient().getClient(logging: LOG_ENABLE);
+
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    var cookieJar = PersistCookieJar(dir: "$appDocPath/.cookies/");
+    dio.interceptors.add(CookieManager(cookieJar));
+
+    return await dio.post(Url.selectCity, data: city);
+  }
 
   static Future<Response> search(String query) async {
     DioClient dioClient = DioClient();

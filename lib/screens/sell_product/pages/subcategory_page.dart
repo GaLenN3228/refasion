@@ -2,50 +2,43 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/sell_product/components/categories_list.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class SubcategoryPage extends StatelessWidget {
   final Function(List<Category>) onPush;
   final Function() onClose;
   final Category selectedCategory;
-  final Animation<double> animation;
-  final Animation<double> secondaryAnimation;
   final isScrolled = ValueNotifier<bool>(false);
 
-  SubcategoryPage(
-      {Key key,
-      this.onPush,
-      this.selectedCategory,
-      this.animation,
-      this.secondaryAnimation,
-      this.onClose})
-      : super(key: key);
+  SubcategoryPage({this.onPush, this.selectedCategory, this.onClose})
+      : assert(selectedCategory != null);
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      child: selectedCategory != null
-          ? CategoriesList(
-              categories: selectedCategory.children,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              bottomPadding: 65,
-              appBar: SellProductTopBar(
-                TopBarType.addItem,
-                onClose: onClose,
-              ),
-              isScrolled: isScrolled,
-              header: Header(
-                text: "Выберите категорию",
-                isScrolled: isScrolled,
-              ),
-              multiselection: true,
-              onUpdate: onPush,
-            )
-          : Center(
-              child: Text("Не выбрана категория"),
-            ),
+      child: CategoriesList(
+        categories: selectedCategory.children,
+        bottomPadding: 65,
+        multiselection: true,
+        onUpdate: onPush,
+        isScrolled: isScrolled,
+        appBar: TopBar(
+          leftButtonType: TBButtonType.icon,
+          leftButtonIcon: TBIconType.back,
+          leftButtonAction: () => Navigator.of(context).pop(),
+          middleType: TBMiddleType.text,
+          middleText: "Добавить вещь",
+          rightButtonType: TBButtonType.text,
+          rightButtonText: "Закрыть",
+          rightButtonAction: onClose,
+          bottomType: TBBottomType.header,
+          bootomHeaderText: "Выберите категорию",
+          isElevated: isScrolled,
+        ),
+      ),
     );
   }
 }

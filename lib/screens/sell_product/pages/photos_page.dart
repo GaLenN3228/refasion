@@ -7,6 +7,9 @@ import 'package:refashioned_app/screens/catalog/filters/components/bottom_button
 import 'package:refashioned_app/screens/sell_product/components/add_photo_description_item.dart';
 import 'package:refashioned_app/screens/sell_product/components/add_photo_item.dart';
 import 'package:refashioned_app/screens/sell_product/components/header.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class PhotosPage extends StatefulWidget {
@@ -39,11 +42,18 @@ class _PhotosPageState extends State<PhotosPage> {
         children: [
           Column(
             children: [
-              SellProductTopBar(
-                TopBarType.addItem,
-                onClose: widget.onClose,
+              TopBar(
+                leftButtonType: TBButtonType.icon,
+                leftButtonIcon: TBIconType.back,
+                leftButtonAction: () => Navigator.of(context).pop(),
+                middleType: TBMiddleType.text,
+                middleText: "Добавить вещь",
+                rightButtonType: TBButtonType.text,
+                rightButtonText: "Закрыть",
+                rightButtonAction: widget.onClose,
+                bottomType: TBBottomType.header,
+                bootomHeaderText: "Внешний вид",
               ),
-              Header(text: "Внешний вид"),
               StaggeredGridView.countBuilder(
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 shrinkWrap: true,

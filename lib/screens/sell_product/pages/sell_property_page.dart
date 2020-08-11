@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/sell_property.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/sell_product/components/sell_property_values_list.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
 import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
 
 class SellPropertyPage extends StatefulWidget {
@@ -10,9 +12,8 @@ class SellPropertyPage extends StatefulWidget {
   final Function() onPush;
   final Function() onClose;
 
-  const SellPropertyPage(
-      {Key key, this.sellProperty, this.onPush, this.onClose})
-      : super(key: key);
+  const SellPropertyPage({this.sellProperty, this.onPush, this.onClose})
+      : assert(sellProperty != null);
 
   @override
   _SellPropertyPageState createState() => _SellPropertyPageState();
@@ -28,13 +29,18 @@ class _SellPropertyPageState extends State<SellPropertyPage> {
           values: widget.sellProperty.values,
           bottomPadding: 10,
           isScrolled: isScrolled,
-          appBar: SellProductTopBar(
-            TopBarType.addItem,
-            onClose: widget.onClose,
-          ),
-          header: Header(
-            text: widget.sellProperty.header,
-            isScrolled: isScrolled,
+          appBar: TopBar(
+            leftButtonType: TBButtonType.icon,
+            leftButtonIcon: TBIconType.back,
+            leftButtonAction: () => Navigator.of(context).pop(),
+            middleType: TBMiddleType.text,
+            middleText: "Добавить вещь",
+            rightButtonType: TBButtonType.text,
+            rightButtonText: "Закрыть",
+            rightButtonAction: widget.onClose,
+            bottomType: TBBottomType.header,
+            bootomHeaderText: widget.sellProperty.header,
+            isElevated: isScrolled,
           ),
           multiselection: widget.sellProperty.multiselection,
           onUpdate: (id) {
