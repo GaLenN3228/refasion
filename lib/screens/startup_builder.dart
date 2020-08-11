@@ -8,15 +8,25 @@ import 'package:refashioned_app/screens/tab_switcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
-class StartUpBuilder extends StatelessWidget {
+class StartUpBuilder extends StatefulWidget {
+  @override
+  _StartUpBuilderState createState() => _StartUpBuilderState();
+}
+
+class _StartUpBuilderState extends State<StartUpBuilder> {
+  bool canSkip = false;
+
   @override
   Widget build(BuildContext context) {
     final citiesRepository = context.watch<CitiesRepository>();
 
     if (citiesRepository.isLoading) return EmptyPage(text: "Загрузка городов");
 
-    if (citiesRepository.loadingFailed)
-      return EmptyPage(text: "Ошибка загрузки городов");
+    if (citiesRepository.loadingFailed && !canSkip)
+      return EmptyPage(
+        text: "Ошибка загрузки городов",
+        onPush: () => setState(() => canSkip = true),
+      );
 
     return FutureBuilder<SharedPreferences>(
         future: SharedPreferences.getInstance(),
@@ -34,7 +44,9 @@ class StartUpBuilder extends StatelessWidget {
 
           if (prefs.containsKey("city_id")) {
             final cityId = prefs.getString("city_id");
+
             print("cityId:" + cityId);
+
             return TabSwitcher();
           }
 

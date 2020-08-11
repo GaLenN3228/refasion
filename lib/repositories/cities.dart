@@ -25,6 +25,7 @@ class CitiesRepository extends BaseRepository {
       });
     } catch (err) {
       print("City Select error: " + err.toString());
+
       return null;
     }
   }
@@ -40,17 +41,20 @@ class CitiesRepository extends BaseRepository {
         else
           return null;
       }).then((geolocationRequestResponse) {
-        final geolocationResponse =
-            GeolocationResponse.fromJson(geolocationRequestResponse.data);
+        if (geolocationRequestResponse != null) {
+          final geolocationResponse =
+              GeolocationResponse.fromJson(geolocationRequestResponse.data);
 
-        if (geolocationResponse.status.code == 200) {
-          citiesResponse.content.updateGeolocation(geolocationResponse.content);
-          finishLoading();
-        } else
-          return null;
+          if (geolocationResponse.status.code == 200)
+            citiesResponse.content
+                .updateGeolocation(geolocationResponse.content);
+        }
+
+        finishLoading();
       });
     } catch (err) {
       print("CitiesRepository error: " + err.toString());
+
       receivedError();
     }
   }
