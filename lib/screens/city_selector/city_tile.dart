@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/models/cities.dart';
-import 'package:refashioned_app/screens/catalog/filters/components/selection_mark.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CityTile extends StatelessWidget {
@@ -47,7 +46,7 @@ class CityTile extends StatelessWidget {
                   : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5),
                       child: SvgPicture.asset(
-                        "assets/done.svg",
+                        "assets/done_19dp.svg",
                         width: 17,
                         height: 12,
                         color: primaryColor,

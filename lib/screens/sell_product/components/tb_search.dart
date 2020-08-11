@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/screens/catalog/components/measure_size.dart';
 import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
 
 class TBSearchController {
@@ -48,9 +47,11 @@ class _TBSearchState extends State<TBSearch>
   AnimationController animationController;
   Animation<double> animation;
   Animation<Offset> offsetAnimation;
-  double buttonWidth;
 
   FocusNode focusNode;
+
+  TextEditingController textController;
+  ValueNotifier<bool> hasText;
 
   @override
   void initState() {
@@ -59,10 +60,14 @@ class _TBSearchState extends State<TBSearch>
     animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
     offsetAnimation = Tween<Offset>(begin: Offset(1, 0), end: Offset(0, 0))
         .animate(animationController);
-    buttonWidth = 0;
 
     focusNode = FocusNode();
     focusNode.addListener(focusListener);
+
+    textController = TextEditingController();
+    textController.addListener(textListener);
+
+    hasText = ValueNotifier(false);
 
     super.initState();
   }
@@ -85,10 +90,15 @@ class _TBSearchState extends State<TBSearch>
     if (focusNode.hasFocus) focusNode.unfocus();
   }
 
+  textListener() => hasText.value = textController.text.isNotEmpty;
+
   @override
   void dispose() {
     focusNode.removeListener(focusListener);
     focusNode.dispose();
+
+    textController.removeListener(textListener);
+    textController.dispose();
 
     super.dispose();
   }
@@ -122,7 +132,7 @@ class _TBSearchState extends State<TBSearch>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15, 10, 10, 10),
                     child: SvgPicture.asset(
-                      'assets/small_search.svg',
+                      'assets/topbar/search_14dp.svg',
                       color: Color(0xFF8E8E93),
                       width: 14,
                       height: 14,
@@ -130,6 +140,7 @@ class _TBSearchState extends State<TBSearch>
                   ),
                   Expanded(
                     child: TextField(
+                      controller: textController,
                       autofocus: widget.autofocus,
                       enableSuggestions: false,
                       autocorrect: false,
@@ -143,6 +154,39 @@ class _TBSearchState extends State<TBSearch>
                           .textTheme
                           .headline1
                           .copyWith(fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: ValueListenableBuilder(
+                        valueListenable: hasText,
+                        builder: (context, value, child) =>
+                            value ? child : SizedBox(),
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () => textController.clear(),
+                          child: Stack(
+                            children: [
+                              Container(
+                                decoration: ShapeDecoration(
+                                    shape: CircleBorder(),
+                                    color: Colors.black.withOpacity(0.25)),
+                              ),
+                              Center(
+                                child: SvgPicture.asset(
+                                  'assets/topbar/close_14dp.svg',
+                                  color: Colors.white,
+                                  width: 14,
+                                  height: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],

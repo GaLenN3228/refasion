@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/sell_product/components/tb_header.dart';
 import 'package:refashioned_app/screens/sell_product/components/tb_search.dart';
 
-enum TBBottomType { search, header, none }
+enum TBBottomType { search, header, headerAndSearch, none }
 
 class TBBottom extends StatelessWidget {
   final TBBottomType type;
@@ -39,14 +40,26 @@ class TBBottom extends StatelessWidget {
       case TBBottomType.header:
         if (headerText == null || headerText.isEmpty) return SizedBox();
 
-        return Container(
-          padding: const EdgeInsets.fromLTRB(20, 11, 20, 16),
-          child: Center(
-            child: Text(
-              headerText,
-              style: Theme.of(context).textTheme.headline1,
+        return TBHeader(
+          text: headerText,
+        );
+
+      case TBBottomType.headerAndSearch:
+        if (headerText == null || headerText.isEmpty) return SizedBox();
+
+        return Column(
+          children: [
+            TBHeader(
+              text: headerText,
             ),
-          ),
+            TBSearch(
+              hintText: searchHintText,
+              onSearchUpdate: onSearchUpdate,
+              onFocus: onSearchFocus,
+              onUnfocus: onSearchUnfocus,
+              searchController: searchController,
+            ),
+          ],
         );
 
       default:

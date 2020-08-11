@@ -54,6 +54,7 @@ class CitiesProvider {
   City _selectedCity;
   City get selectedCity => _selectedCity;
 
+  int _allPinnedCount = 0;
   int _pinnedCount = 0;
   int get pinnedCount => _pinnedCount;
 
@@ -62,7 +63,7 @@ class CitiesProvider {
       ..clear()
       ..addAll([for (final city in json['top']) City.fromJson(city)]);
 
-    _pinnedCount = _allCities.length;
+    _allPinnedCount = _allCities.length;
 
     _allCities.addAll([for (final city in json['other']) City.fromJson(city)]);
 
@@ -72,6 +73,7 @@ class CitiesProvider {
   }
 
   search(String query) {
+    print("Query: " + query);
     if (query.isNotEmpty) {
       final startsWithList = List<City>();
       final containsList = List<City>();
@@ -83,12 +85,16 @@ class CitiesProvider {
           containsList.add(city);
       });
 
+      _pinnedCount = 0;
+
       cities.add([...startsWithList, ...containsList]);
     } else
       reset();
   }
 
   reset() {
+    _pinnedCount = _allPinnedCount;
+
     cities.add(_allCities);
   }
 
@@ -107,12 +113,12 @@ class CitiesProvider {
     if (locatedCityIndex >= 0) {
       final locatedCity = _allCities.elementAt(locatedCityIndex);
 
-      if (locatedCityIndex > _pinnedCount) {
+      if (locatedCityIndex > _allPinnedCount) {
         _allCities.removeAt(locatedCityIndex);
 
-        _allCities.insert(_pinnedCount, locatedCity);
+        _allCities.insert(_allPinnedCount, locatedCity);
 
-        _pinnedCount++;
+        _allPinnedCount++;
 
         cities.add(_allCities);
       }
