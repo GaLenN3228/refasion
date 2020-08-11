@@ -25,7 +25,9 @@ class GeolocationResponse {
 
     return GeolocationResponse(
       status: Status.fromJson(json['status']),
-      content: content != null ? City.fromJson(content['city']) : null,
+      content: content != null && content['city'] != null
+          ? City.fromJson(content['city'])
+          : null,
     );
   }
 }
@@ -107,6 +109,8 @@ class CitiesProvider {
   }
 
   updateGeolocation(City newCity) {
+    if (newCity = null) return;
+
     final locatedCityIndex =
         _allCities.indexWhere((city) => city.id == newCity.id);
 
