@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_search.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
 
 class TopBar extends StatelessWidget {
   final TBSearchController searchController;
@@ -65,7 +65,9 @@ class TopBar extends StatelessWidget {
   }) : assert(leftButtonType != null &&
             middleType != null &&
             rightButtonType != null &&
-            bottomType != null);
+            bottomType != null &&
+            (middleType != TBMiddleType.search ||
+                bottomType != TBBottomType.search));
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +84,9 @@ class TopBar extends StatelessWidget {
             boxShadow: (value)
                 ? [
                     BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        offset: Offset(0, 4),
-                        blurRadius: 4)
+                        color: Colors.black.withOpacity(0.05),
+                        offset: Offset(0, 2),
+                        blurRadius: 2)
                   ]
                 : []),
       ),
@@ -112,7 +114,12 @@ class TopBar extends StatelessWidget {
                 Expanded(
                   child: TBMiddle(
                     middleType,
-                    text: middleText,
+                    titleText: middleText,
+                    searchHintText: searchHintText,
+                    onSearchUpdate: onSearchUpdate,
+                    onSearchFocus: onSearchFocus,
+                    onSearchUnfocus: onSearchUnfocus,
+                    searchController: searchController,
                   ),
                 ),
                 SizedBox(

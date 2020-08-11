@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/city_selector/city_tile.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_search.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
 
 class CitiesList extends StatefulWidget {
   final CitiesProvider citiesProvider;

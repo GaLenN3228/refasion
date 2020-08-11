@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/screens/sell_product/components/sell_property_values_list.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
-import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class SellPropertyPage extends StatefulWidget {
   final SellProperty sellProperty;

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/status.dart';
 import 'package:rxdart/subjects.dart';
@@ -56,26 +58,37 @@ class CitiesProvider {
   City _selectedCity;
   City get selectedCity => _selectedCity;
 
-  int _allPinnedCount = 0;
   int _pinnedCount = 0;
   int get pinnedCount => _pinnedCount;
+
+  final _pinnedIDs = List<String>();
 
   CitiesProvider.fromJson(Map<String, dynamic> json) {
     _allCities
       ..clear()
       ..addAll([for (final city in json['top']) City.fromJson(city)]);
 
-    _allPinnedCount = _allCities.length;
+    _pinnedIDs.addAll(_allCities.map((city) => city.id));
 
     _allCities.addAll([for (final city in json['other']) City.fromJson(city)]);
 
-    select(_allCities.first);
+    // select(_allCities.first);
 
     reset();
   }
 
+  updatePinnedCount(List<City> list) {
+    final maxLength = min(list.length, _pinnedIDs.length);
+    final reverseIndex = list
+        .sublist(0, maxLength)
+        .reversed
+        .toList()
+        .indexWhere((city) => _pinnedIDs.contains(city.id));
+
+    _pinnedCount = reverseIndex >= 0 ? _pinnedIDs.length - reverseIndex : 0;
+  }
+
   search(String query) {
-    print("Query: " + query);
     if (query.isNotEmpty) {
       final startsWithList = List<City>();
       final containsList = List<City>();
@@ -87,15 +100,17 @@ class CitiesProvider {
           containsList.add(city);
       });
 
-      _pinnedCount = 0;
+      final newList = [...startsWithList, ...containsList];
 
-      cities.add([...startsWithList, ...containsList]);
+      updatePinnedCount(newList);
+
+      cities.add(newList);
     } else
       reset();
   }
 
   reset() {
-    _pinnedCount = _allPinnedCount;
+    _pinnedCount = _pinnedIDs.length;
 
     cities.add(_allCities);
   }
@@ -108,8 +123,34 @@ class CitiesProvider {
     _selectedCity = newCity;
   }
 
+  bool checkSavedCity(String id) {
+    if (id == null) {
+      print("Null id on city check");
+
+      return false;
+    }
+
+    final selectedCityIndex = _allCities.indexWhere((city) => city.id == id);
+
+    if (selectedCityIndex >= 0) {
+      _selectedCity = _allCities.elementAt(selectedCityIndex)..select();
+
+      print("Selected city: " + _selectedCity.toString());
+
+      return true;
+    } else {
+      print("City with id " + id + " not found");
+
+      return false;
+    }
+  }
+
   updateGeolocation(City newCity) {
-    if (newCity = null) return;
+    if (newCity == null) {
+      print("City not found");
+
+      return;
+    }
 
     final locatedCityIndex =
         _allCities.indexWhere((city) => city.id == newCity.id);
@@ -117,17 +158,19 @@ class CitiesProvider {
     if (locatedCityIndex >= 0) {
       final locatedCity = _allCities.elementAt(locatedCityIndex);
 
-      if (locatedCityIndex > _allPinnedCount) {
+      if (locatedCityIndex > _pinnedIDs.length) {
         _allCities.removeAt(locatedCityIndex);
 
-        _allCities.insert(_allPinnedCount, locatedCity);
+        _allCities.insert(0, locatedCity);
 
-        _allPinnedCount++;
+        _pinnedIDs.insert(0, locatedCity.id);
+
+        updatePinnedCount(_allCities);
 
         cities.add(_allCities);
       }
 
-      if (!locatedCity.selected.value) select(locatedCity);
+      // if (!locatedCity.selected.value) select(locatedCity);
     } else
       print("City " + newCity.toString() + " not found");
   }
@@ -154,10 +197,7 @@ class City {
 
   deselect() => selected.value = false;
 
-  Map toJson() => {
-        'id': id,
-        'region': region.toJson(),
-      };
+  Map toJson() => {'city': id};
 }
 
 class Region {
@@ -170,9 +210,5 @@ class Region {
       Region(name: json['name'], id: json['id']);
 
   @override
-  String toString() => "Region: " + name;
-
-  Map toJson() => {
-        'id': id,
-      };
+  String toString() => name;
 }

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_price_formatter.dart';
 import 'package:refashioned_app/screens/sell_product/components/price_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
-import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class PricePage extends StatefulWidget {

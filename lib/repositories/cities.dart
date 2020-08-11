@@ -12,16 +12,17 @@ class CitiesRepository extends BaseRepository {
     try {
       return ApiService.selectCity(selectedCity)
           .then((citySelectRequestResponse) {
-        print("CitySelectRequestRespinse: ");
-        print(citySelectRequestResponse);
-
         final citySelectResponse =
             CitySelectResponse.fromJson(citySelectRequestResponse.data);
 
-        if (citySelectResponse.status.code == 201)
+        if (citySelectResponse.status.code == 200)
           return citySelectResponse.content;
-        else
+        else {
+          print("CitySelectRequestResponse: " +
+              citySelectRequestResponse.toString());
+
           return null;
+        }
       });
     } catch (err) {
       print("City Select error: " + err.toString());

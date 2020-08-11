@@ -6,10 +6,10 @@ import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/sell_product/components/brand_tile.dart';
 import 'package:refashioned_app/screens/sell_product/components/search_panel.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
-import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class BrandPage extends StatelessWidget {
   final Function(Brand) onPush;

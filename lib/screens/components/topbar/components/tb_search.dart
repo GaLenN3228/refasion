@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
 
 class TBSearchController {
   void Function() unfocus;
@@ -90,7 +90,13 @@ class _TBSearchState extends State<TBSearch>
     if (focusNode.hasFocus) focusNode.unfocus();
   }
 
-  textListener() => hasText.value = textController.text.isNotEmpty;
+  textListener() {
+    final text = textController.text;
+
+    hasText.value = text.isNotEmpty;
+
+    widget.onSearchUpdate(text);
+  }
 
   @override
   void dispose() {
@@ -132,7 +138,7 @@ class _TBSearchState extends State<TBSearch>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15, 10, 10, 10),
                     child: SvgPicture.asset(
-                      'assets/topbar/search_14dp.svg',
+                      'assets/topbar/svg/search_14dp.svg',
                       color: Color(0xFF8E8E93),
                       width: 14,
                       height: 14,
@@ -145,11 +151,15 @@ class _TBSearchState extends State<TBSearch>
                       enableSuggestions: false,
                       autocorrect: false,
                       focusNode: focusNode,
-                      onChanged: widget.onSearchUpdate,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: widget.hintText ?? "Поиск",
-                      ),
+                          border: InputBorder.none,
+                          hintText: widget.hintText ?? "Поиск",
+                          hintStyle: Theme.of(context)
+                              .textTheme
+                              .headline1
+                              .copyWith(
+                                  fontWeight: FontWeight.normal,
+                                  color: Color.fromRGBO(0, 0, 0, 0.25))),
                       style: Theme.of(context)
                           .textTheme
                           .headline1
@@ -177,7 +187,7 @@ class _TBSearchState extends State<TBSearch>
                               ),
                               Center(
                                 child: SvgPicture.asset(
-                                  'assets/topbar/close_14dp.svg',
+                                  'assets/topbar/svg/close_14dp.svg',
                                   color: Colors.white,
                                   width: 14,
                                   height: 14,
