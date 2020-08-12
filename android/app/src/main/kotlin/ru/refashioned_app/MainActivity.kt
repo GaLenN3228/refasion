@@ -1,4 +1,4 @@
-package dev.refashioned_app
+package ru.refashioned_app
 
 import android.os.Bundle
 

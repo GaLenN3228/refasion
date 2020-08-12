@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/services/dio_client.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = false;
+  static const LOG_ENABLE = true;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -75,15 +76,19 @@ class ApiService {
   static Future<Response> getGeolocation() async =>
       await DioClient().getClient(logging: LOG_ENABLE).get(Url.getGeolocation);
 
-  static Future<Response> selectCity(String city) async {
+  static Future<Response> selectCity(City city) async {
     final dio = DioClient().getClient(logging: LOG_ENABLE);
+
+    var body = {
+      "city": city.id
+    };
 
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
     var cookieJar = PersistCookieJar(dir: "$appDocPath/.cookies/");
     dio.interceptors.add(CookieManager(cookieJar));
 
-    return await dio.post(Url.selectCity, data: city);
+    return await dio.post(Url.selectCity, data: body);
   }
 
   static Future<Response> search(String query) async {
@@ -111,4 +116,9 @@ class ApiService {
 
   static Future<Response> getQuickFilters() async =>
       await DioClient().getClient(logging: LOG_ENABLE).get(Url.quick_filters);
+
+  static Future<Response> getProductRecommended(String id) async {
+    DioClient dioClient = DioClient();
+    return dioClient.getClient(logging: LOG_ENABLE).get(Url.productsRecommended(id));
+  }
 }

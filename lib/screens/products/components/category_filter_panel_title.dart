@@ -24,14 +24,14 @@ class CategoryFilterPanelTitle extends StatelessWidget {
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  if (onClose != null) onClose();
-                  Navigator.of(context).pop();
+//                  if (onClose != null) onClose();
+//                  Navigator.of(context).pop();
                 },
-                child: Text(
-                  "Вся одежда",
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-              ),
+//                child: Text(
+//                  "Вся одежда",
+//                  style: Theme.of(context).textTheme.bodyText1,
+//                ),
+            child: SizedBox(width: 50,)),
               Text(
                 categoryName != null
                     ? categoryName.toUpperCase()

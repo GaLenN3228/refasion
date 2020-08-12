@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/product.dart';
+import 'package:refashioned_app/repositories/product_recommended.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/product/components/add_to_cart.dart';
 import 'package:refashioned_app/screens/product/components/additional.dart';
@@ -84,10 +85,8 @@ class ProductPageContent extends StatelessWidget {
                         style: textTheme.headline2,
                       ),
                     ),
-                    ChangeNotifierProvider<ProductsRepository>(
-                        create: (_) => ProductsRepository(
-                            parameters:
-                                "?p=93d38e10-fa55-417f-9fe0-493e55de5a17"),
+                    ChangeNotifierProvider<ProductRecommendedRepository>(
+                        create: (_) => ProductRecommendedRepository(product.id),
                         builder: (context, _) {
                           return RecommendedProducts();
                         })

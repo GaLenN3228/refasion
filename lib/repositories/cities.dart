@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:refashioned_app/models/cities.dart';
 import '../services/api_service.dart';
 import 'base.dart';

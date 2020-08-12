@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
+import 'package:refashioned_app/repositories/product_recommended.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/product/pages/product.dart';
 import 'package:refashioned_app/screens/products/components/products_item.dart';
@@ -15,8 +16,8 @@ class RecommendedProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ProductsRepository productsRepository =
-        context.watch<ProductsRepository>();
+    final ProductRecommendedRepository productsRepository =
+        context.watch<ProductRecommendedRepository>();
     if (productsRepository.isLoading)
       return Center(
         child: Text("Загрузка", style: Theme.of(context).textTheme.bodyText1),
@@ -32,17 +33,14 @@ class RecommendedProducts extends StatelessWidget {
         child: Text("Статус", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    final ProductsContent productsContent =
-        productsRepository.productsResponse.productsContent;
-
     return StaggeredGridView.countBuilder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       padding: const EdgeInsets.only(top: 16),
       crossAxisCount: 2,
-      itemCount: productsContent.products.length,
+      itemCount: productsRepository.productsResponse.products.length,
       itemBuilder: (BuildContext context, int index) => ProductsItem(
-        product: productsContent.products[index],
+        product: productsRepository.productsResponse.products[index],
         onPush: (product) => Navigator.of(context).push(
           CupertinoPageRoute(
             builder: (context) => ProductPage(id: product.id),

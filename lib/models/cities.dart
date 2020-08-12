@@ -58,6 +58,7 @@ class CitiesProvider {
   City _selectedCity;
   City get selectedCity => _selectedCity;
 
+  int _allPinnedCount = 0;
   int _pinnedCount = 0;
   int get pinnedCount => _pinnedCount;
 
