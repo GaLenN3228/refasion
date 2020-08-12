@@ -76,6 +76,9 @@ class _BottomTabButtonState extends State<BottomTabButton> {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         if (widget.tab != null && widget.currentTab != null)
+          if (widget.currentTab.value == widget.tab)
+          widget.currentTab.notifyListeners();
+        else
           widget.currentTab.value = widget.tab;
         if (widget.customOnPush != null) widget.customOnPush();
       },
