@@ -76,19 +76,15 @@ class ApiService {
   static Future<Response> getGeolocation() async =>
       await DioClient().getClient(logging: LOG_ENABLE).get(Url.getGeolocation);
 
-  static Future<Response> selectCity(City city) async {
+  static Future<Response> selectCity(String city) async {
     final dio = DioClient().getClient(logging: LOG_ENABLE);
-
-    var body = {
-      "city": city.id
-    };
 
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
     var cookieJar = PersistCookieJar(dir: "$appDocPath/.cookies/");
     dio.interceptors.add(CookieManager(cookieJar));
 
-    return await dio.post(Url.selectCity, data: body);
+    return await dio.post(Url.selectCity, data: city);
   }
 
   static Future<Response> search(String query) async {
