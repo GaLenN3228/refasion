@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/product.dart';
 import 'package:refashioned_app/repositories/product_recommended.dart';
-import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/product/components/add_to_cart.dart';
 import 'package:refashioned_app/screens/product/components/additional.dart';
 import 'package:refashioned_app/screens/product/components/delivery.dart';
@@ -65,7 +64,9 @@ class ProductPageContent extends StatelessWidget {
                   brand: product.brand.name,
                 ),
                 ProductAddToCart(),
-                ProductSeller(),
+                ProductSeller(
+                  seller: product.seller,
+                ),
                 ProductDescription(
                   description: product.description,
                   properties: product.properties,

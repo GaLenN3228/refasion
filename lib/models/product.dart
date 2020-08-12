@@ -1,4 +1,5 @@
 import 'package:refashioned_app/models/property.dart';
+import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/models/status.dart';
 
 import 'brand.dart';
@@ -12,7 +13,8 @@ class ProductResponse {
 
   factory ProductResponse.fromJson(Map<String, dynamic> json) {
     return ProductResponse(
-        status: Status.fromJson(json['status']), product: Product.fromJson(json['content']));
+        status: Status.fromJson(json['status']),
+        product: Product.fromJson(json['content']));
   }
 }
 
@@ -25,6 +27,7 @@ class Product {
   final String image;
   final Category category;
   final Brand brand;
+  final Seller seller;
   final String description;
   final List<Property> properties;
   final List<String> images;
@@ -38,6 +41,7 @@ class Product {
       this.image,
       this.category,
       this.brand,
+      this.seller,
       this.description,
       this.properties,
       this.images});
@@ -52,9 +56,16 @@ class Product {
         image: json['image'],
         category: Category.fromJson(json['category']),
         brand: Brand.fromJson(json['brand']),
+        seller: json['seller'] != null ? Seller.fromJson(json['seller']) : null,
         description: json['description'],
-        properties: [if (json['properties'] != null) for (final property in json['properties']) Property.fromJson(property)],
-        images: [if (json['images'] != null) for (final image in json['images']) image]
-    );
+        properties: [
+          if (json['properties'] != null)
+            for (final property in json['properties'])
+              Property.fromJson(property)
+        ],
+        images: [
+          if (json['images'] != null)
+            for (final image in json['images']) image
+        ]);
   }
 }
