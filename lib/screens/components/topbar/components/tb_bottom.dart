@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_header.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_search.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_header.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
 
 enum TBBottomType { search, header, headerAndSearch, none }
 

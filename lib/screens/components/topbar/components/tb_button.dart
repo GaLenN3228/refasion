@@ -37,19 +37,19 @@ class TBButton extends StatelessWidget {
   asset() {
     switch (icon) {
       case TBIconType.back:
-        return "assets/topbar/back_44dp.svg";
+        return "assets/topbar/svg/back_44dp.svg";
       case TBIconType.share:
-        return "assets/topbar/share_44dp.svg";
+        return "assets/topbar/svg/share_44dp.svg";
       case TBIconType.favorites:
-        return "assets/topbar/favorites_44dp.svg";
+        return "assets/topbar/svg/favorite_border_44dp.svg";
       case TBIconType.filters:
-        return "assets/topbar/filters_44dp.svg";
+        return "assets/topbar/svg/filters_44dp.svg";
       case TBIconType.setttings:
-        return "assets/topbar/settings_44dp.svg";
+        return "assets/topbar/svg/settings_44dp.svg";
       case TBIconType.search:
-        return "assets/topbar/search_44dp.svg";
+        return "assets/topbar/svg/search_44dp.svg";
       case TBIconType.wardrobe:
-        return "assets/topbar/wardrobe_44dp.svg";
+        return "assets/topbar/svg/hanger_44dp.svg";
     }
   }
 

@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/screens/city_selector/cities_list.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_middle.dart';
-import 'package:refashioned_app/screens/sell_product/components/tb_search.dart';
-import 'package:refashioned_app/screens/sell_product/components/top_bar.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
+import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CitySelectorPage extends StatelessWidget {
@@ -46,14 +46,16 @@ class CitySelectorPage extends StatelessWidget {
               searchController: searchController,
               citiesProvider: citiesProvider,
               isScrolled: isScrolled,
-              onSelect: () async {
+              onSelect: () {
                 citiesRepository
                     .selectCity(citiesProvider.selectedCity)
                     .then((newCity) {
-                  // if (newCity != null)
-                  return setCityId(newCity?.id ?? 'id').then((_) =>
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil('/', (route) => false));
+                  if (newCity != null)
+                    return setCityId(newCity.id).then((_) =>
+                        Navigator.of(context)
+                            .pushNamedAndRemoveUntil('/', (route) => false));
+                  else
+                    print("null city received");
                 });
               },
             ),

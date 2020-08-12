@@ -12,19 +12,21 @@ class CitiesRepository extends BaseRepository {
     try {
       return ApiService.selectCity(selectedCity)
           .then((citySelectRequestResponse) {
-        print("CitySelectRequestRespinse: ");
-        print(citySelectRequestResponse);
-
         final citySelectResponse =
             CitySelectResponse.fromJson(citySelectRequestResponse.data);
 
-        if (citySelectResponse.status.code == 201)
+        if (citySelectResponse.status.code == 200)
           return citySelectResponse.content;
-        else
+        else {
+          print("CitySelectRequestResponse: " +
+              citySelectRequestResponse.toString());
+
           return null;
+        }
       });
     } catch (err) {
       print("City Select error: " + err.toString());
+
       return null;
     }
   }
@@ -40,17 +42,20 @@ class CitiesRepository extends BaseRepository {
         else
           return null;
       }).then((geolocationRequestResponse) {
-        final geolocationResponse =
-            GeolocationResponse.fromJson(geolocationRequestResponse.data);
+        if (geolocationRequestResponse != null) {
+          final geolocationResponse =
+              GeolocationResponse.fromJson(geolocationRequestResponse.data);
 
-        if (geolocationResponse.status.code == 200) {
-          citiesResponse.content.updateGeolocation(geolocationResponse.content);
-          finishLoading();
-        } else
-          return null;
+          if (geolocationResponse.status.code == 200)
+            citiesResponse.content
+                .updateGeolocation(geolocationResponse.content);
+        }
+
+        finishLoading();
       });
     } catch (err) {
       print("CitiesRepository error: " + err.toString());
+
       receivedError();
     }
   }
