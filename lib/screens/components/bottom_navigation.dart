@@ -18,8 +18,6 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
-    final cartCountRepository = context.watch<CartCountRepository>();
-    log("cartCount: " + cartCountRepository.cartCount);
     return Stack(
       children: [
         Padding(

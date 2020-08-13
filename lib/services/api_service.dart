@@ -99,7 +99,7 @@ class ApiService {
 
   static Future<Response> getQuickFilters() async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    await dioClient.get(Url.quick_filters);
+    return dioClient.get(Url.quick_filters);
   }
 
   static Future<Response> getProductRecommended(String id) async {

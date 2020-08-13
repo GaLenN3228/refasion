@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/cart_count.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 enum BottomTab { home, catalog, cart, profile }
@@ -75,8 +77,7 @@ class _BottomTabButtonState extends State<BottomTabButton> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        if (widget.tab != null && widget.currentTab != null)
-          if (widget.currentTab.value == widget.tab)
+        if (widget.tab != null && widget.currentTab != null) if (widget.currentTab.value == widget.tab)
           widget.currentTab.notifyListeners();
         else
           widget.currentTab.value = widget.tab;
@@ -86,27 +87,55 @@ class _BottomTabButtonState extends State<BottomTabButton> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            width: 28,
-            height: 28,
-            child: widget.tab != null
-                ? SvgPicture.asset(
-                    asset,
-                    color: selected ? accentColor : primaryColor,
-                  )
-                : SizedBox(),
+          Container(
+            height: 32,
+            child: Stack(children: [
+              SizedBox(
+                width: 28,
+                height: 28,
+                child: widget.tab != null
+                    ? SvgPicture.asset(
+                        asset,
+                        color: selected ? accentColor : primaryColor,
+                      )
+                    : SizedBox(),
+              ),
+              (widget.tab == BottomTab.cart)
+                  ? Consumer<CartCountRepository>(
+                      builder: (context, model, child) => model.cartCount != "0"
+                          ? Positioned.fill(
+                              child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Container(
+                                  width: 15,
+                                  height: 15,
+                                  decoration: new BoxDecoration(
+                                    color: accentColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    model.cartCount,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.subtitle1.copyWith(
+                                        fontFamily: "SF Compact Display", color: selected ? primaryColor : null),
+                                  )),
+                            ))
+                          : SizedBox())
+                  : SizedBox()
+            ]),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 3, bottom: 1),
+            padding: const EdgeInsets.only(top: 2, bottom: 1),
             child: SizedBox(
                 width: widget.tab != null ? 70 : 85,
                 height: 12,
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.caption.copyWith(
-                      fontFamily: "SF Compact Display",
-                      color: selected ? primaryColor : null),
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption
+                      .copyWith(fontFamily: "SF Compact Display", color: selected ? primaryColor : null),
                 )),
           ),
         ],
