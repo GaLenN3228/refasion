@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/add_cart.dart';
+import 'package:refashioned_app/repositories/cart_count.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:refashioned_app/utils/url.dart';
 
@@ -53,7 +54,9 @@ class ProductsItem extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
                       onTap: () => {
-                        AddCartRepository(product.id)
+                        AddCartRepository(product.id).addListener(() {
+                          CartCountRepository.notify(context, Uri.parse(Url.cartItem));
+                        })
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 14, right: 14),

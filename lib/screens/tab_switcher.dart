@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/cart_count.dart';
 import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_view.dart';
 import 'package:refashioned_app/screens/sell_product/pages/sell_navigator.dart';
@@ -39,27 +41,29 @@ class _TabSwitcherState extends State<TabSwitcher> {
         onWillPop: () async {
           return !await navigatorKeys[currentTab.value].currentState.maybePop();
         },
-        child: Stack(children: <Widget>[
-          TabView(BottomTab.home, currentTab),
-          TabView(
-            BottomTab.catalog,
-            currentTab,
-            pushPageOnTop: pushPageOnTop,
-          ),
-          TabView(BottomTab.cart, currentTab),
-          TabView(BottomTab.profile, currentTab),
-          Positioned(
-            left: 0,
-            bottom: 0,
-            right: 0,
-            child: BottomNavigation(
-              currentTab,
-              () => pushPageOnTop(
-                SellNavigator(onClose: () => Navigator.of(context).pop()),
+        child: ChangeNotifierProvider<CartCountRepository>(
+            create: (_) => CartCountRepository(),
+            child: Stack(children: <Widget>[
+              TabView(BottomTab.home, currentTab),
+              TabView(
+                BottomTab.catalog,
+                currentTab,
+                pushPageOnTop: pushPageOnTop,
               ),
-            ),
-          )
-        ]),
+              TabView(BottomTab.cart, currentTab),
+              TabView(BottomTab.profile, currentTab),
+              Positioned(
+                left: 0,
+                bottom: 0,
+                right: 0,
+                child: BottomNavigation(
+                  currentTab,
+                  () => pushPageOnTop(
+                    SellNavigator(onClose: () => Navigator.of(context).pop()),
+                  ),
+                ),
+              )
+            ])),
       ),
     );
   }

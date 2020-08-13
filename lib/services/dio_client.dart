@@ -1,11 +1,28 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:refashioned_app/services/dio_cookies_manager.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 
 class DioClient {
-  Dio getClient({logging = false}) {
-    Dio dio = Dio();
+  Dio _dioClient;
+
+  DioClient() {
+    _initDioClient();
+  }
+
+  void _initDioClient() {
+    _dioClient = Dio();
+  }
+
+  Future<Dio> getClient({manageCookies = false, logging = false}) async {
+    if (manageCookies) {
+      PersistCookieJar persistCookieJar = await DioCookiesManager().getPersistCookieJar();
+      _dioClient.interceptors.add(CookieManager(persistCookieJar));
+    }
+
     if (logging)
-      dio.interceptors.add(PrettyDioLogger(
+      _dioClient.interceptors.add(PrettyDioLogger(
           requestHeader: true,
           requestBody: true,
           responseBody: true,
@@ -13,6 +30,6 @@ class DioClient {
           error: true,
           compact: true,
           maxWidth: 90));
-    return dio;
+    return _dioClient;
   }
 }

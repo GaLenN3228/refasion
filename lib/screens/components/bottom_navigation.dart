@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:refashioned_app/repositories/cart_count.dart';
 import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavigation extends StatefulWidget {
   BottomNavigation(this.currentTab, this.onFAB);
@@ -14,6 +18,8 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
+    final cartCountRepository = context.watch<CartCountRepository>();
+    log("cartCount: " + cartCountRepository.cartCount);
     return Stack(
       children: [
         Padding(
