@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:refashioned_app/repositories/pick_point.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
+import 'package:provider/provider.dart';
 
 class MapsPage extends StatelessWidget {
   @override
@@ -17,9 +19,15 @@ class _LayersExample extends StatefulWidget {
 class _LayersExampleState extends State<_LayersExample> {
   YandexMapController controller;
   PermissionStatus _permissionStatus = PermissionStatus.unknown;
+  List<Placemark> placeMarks = List();
+  PickPointRepository pickPointRepository;
 
   @override
   void initState() {
+    pickPointRepository = new PickPointRepository();
+    pickPointRepository.addListener(() {
+      showPickPoints();
+    });
     super.initState();
     _requestPermission();
   }
@@ -27,7 +35,7 @@ class _LayersExampleState extends State<_LayersExample> {
   Future<void> _requestPermission() async {
     final List<PermissionGroup> permissions = <PermissionGroup>[PermissionGroup.location];
     final Map<PermissionGroup, PermissionStatus> permissionRequestResult =
-    await PermissionHandler().requestPermissions(permissions);
+        await PermissionHandler().requestPermissions(permissions);
     setState(() {
       _permissionStatus = permissionRequestResult[PermissionGroup.location];
       showUserLayer();
@@ -75,6 +83,26 @@ class _LayersExampleState extends State<_LayersExample> {
 //      _showMessage(context, const Text('Location permission was NOT granted'));
     }
   }
+
+  void showPickPoints() {
+    if (pickPointRepository.isLoaded) {
+      Future.delayed(const Duration(milliseconds: 2500), () {
+        pickPointRepository.pickPointResponse.content.where((element) => element.address.contains("Москва")).forEach((element) {
+          var _point = Point(latitude: double.parse(element.lat), longitude: double.parse(element.lon));
+          final Placemark _placemark = Placemark(
+            point: _point,
+            opacity: 0.8,
+            iconName: 'assets/pick_point.png',
+            onTap: (double latitude, double longitude) => print('Tapped me at $latitude,$longitude'),
+          );
+          placeMarks.add(_placemark);
+          controller.addPlacemark(_placemark);
+        });
+      });
+    }
+  }
+
+  void addPlaceMark() {}
 
 //  void moveToUser() async {
 //    if (_permissionStatus == PermissionStatus.granted) {

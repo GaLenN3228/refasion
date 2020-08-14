@@ -1,11 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:refashioned_app/services/dio_client.dart';
 import 'package:refashioned_app/services/dio_cookies_manager.dart';
+import 'dart:io' show Platform;
 
 import '../utils/url.dart';
 
+
 class ApiService {
-  static const LOG_ENABLE = false;
+  //FIXME set LOG_ENABLE = false in release build
+  static bool LOG_ENABLE = (Platform.isAndroid) ? true : false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -109,5 +112,10 @@ class ApiService {
   static Future<Response> getProductRecommended(String id) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.productsRecommended(id));
+  }
+
+  static Future<Response> getPickPoints() async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    return dioClient.get(Url.pickPoints);
   }
 }

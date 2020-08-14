@@ -41,4 +41,7 @@ class Url {
 
   //Search catalogs, brands
   static const catalogSearch = '$refashionedBaseUrl/catalog/search/?q=';
+
+  //Maps
+  static const pickPoints = '$refashionedBaseUrl/pickpoints';
 }

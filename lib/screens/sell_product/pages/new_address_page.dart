@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/pick_point.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/sell_product/components/map.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
@@ -35,8 +37,10 @@ class NewAddressPage extends StatelessWidget {
               child: Stack(
                 children: [
                   Container(
+                      child: ChangeNotifierProvider<PickPointRepository>(
+                    create: (_) => PickPointRepository(),
                     child: MapsPage(),
-                  ),
+                  )),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
