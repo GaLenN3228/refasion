@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/catalog_navigator.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 
 final navigatorKeys = {
   BottomTab.home: GlobalKey<NavigatorState>(),
@@ -73,11 +74,12 @@ class _TabViewState extends State<TabView> {
         );
         break;
 
-      // case BottomTab.profile:
-      //   return CupertinoPageScaffold(
-      //     resizeToAvoidBottomInset: false,
-      //     child: ProfilePage(),
-      //   );
+       case BottomTab.profile:
+         content = CupertinoPageScaffold(
+           resizeToAvoidBottomInset: false,
+           child: ProfilePage(),
+         );
+         break;
 
       default:
         content = CupertinoPageScaffold(
