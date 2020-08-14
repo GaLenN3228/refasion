@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-typedef void OnWidgetSizeChange(Size size);
-
 class MeasureSize extends StatefulWidget {
   final Widget child;
-  final OnWidgetSizeChange onChange;
+  final Function(Size, Offset) onChange;
 
   const MeasureSize({
     Key key,
@@ -18,6 +16,21 @@ class MeasureSize extends StatefulWidget {
 }
 
 class _MeasureSizeState extends State<MeasureSize> {
+  GlobalKey widgetKey;
+
+  Size oldSize;
+  Offset oldPosition;
+
+  @override
+  initState() {
+    widgetKey = GlobalKey();
+
+    oldSize = Size.zero;
+    oldPosition = Offset.zero;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback(postFrameCallback);
@@ -27,17 +40,22 @@ class _MeasureSizeState extends State<MeasureSize> {
     );
   }
 
-  var widgetKey = GlobalKey();
-  var oldSize;
-
   void postFrameCallback(_) {
-    var context = widgetKey.currentContext;
+    final context = widgetKey.currentContext;
+
     if (context == null) return;
 
-    var newSize = context.size;
-    if (oldSize == newSize) return;
+    final renderBox = context.findRenderObject() as RenderBox;
+
+    final newSize = renderBox.size;
+
+    final newPosition = renderBox.localToGlobal(Offset.zero);
+
+    if (oldSize == newSize && newPosition == oldPosition) return;
 
     oldSize = newSize;
-    widget.onChange(newSize);
+    oldPosition = newPosition;
+
+    widget.onChange(newSize, newPosition);
   }
 }

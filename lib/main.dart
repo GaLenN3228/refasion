@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/startup_builder.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -17,6 +18,9 @@ class RefashionApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<CitiesRepository>(
             create: (_) => CitiesRepository(),
+          ),
+          Provider<SizesRepository>(
+            create: (_) => SizesRepository(),
           ),
         ],
         child: MaterialApp(

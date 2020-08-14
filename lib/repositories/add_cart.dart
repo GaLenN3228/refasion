@@ -2,7 +2,6 @@ import '../services/api_service.dart';
 import 'base.dart';
 
 class AddCartRepository extends BaseRepository {
-
   final String productId;
 
   AddCartRepository(this.productId);

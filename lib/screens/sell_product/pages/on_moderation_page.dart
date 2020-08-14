@@ -14,10 +14,10 @@ class OnModerationPage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: Column(
         children: <Widget>[
-          TopBar(
+          RefashionedTopBar(
             leftButtonType: TBButtonType.none,
-            middleType: TBMiddleType.text,
-            middleText: "На модерации",
+            middleType: TBMiddleType.title,
+            middleTitleText: "На модерации",
             rightButtonType: TBButtonType.text,
             rightButtonText: "Закрыть",
             rightButtonAction: onClose,

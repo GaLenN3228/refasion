@@ -75,6 +75,7 @@ flutter:
   assets:
     - assets/
     - assets/topbar/svg/
+    - assets/button/svg/
     - assets/topbar/png/
 
   # An image asset can refer to one or more resolution-specific "variants", see

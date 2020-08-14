@@ -20,12 +20,12 @@ class TopCategoryPage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: Column(
         children: [
-          TopBar(
+          RefashionedTopBar(
             leftButtonType: TBButtonType.icon,
             leftButtonIcon: TBIconType.back,
             leftButtonAction: () => Navigator.of(context).pop(),
-            middleType: TBMiddleType.text,
-            middleText: "Добавить вещь",
+            middleType: TBMiddleType.title,
+            middleTitleText: "Добавить вещь",
             rightButtonType: TBButtonType.text,
             rightButtonText: "Закрыть",
             rightButtonAction: onClose,

@@ -6,14 +6,14 @@ import 'package:refashioned_app/screens/components/topbar/components/tb_search.d
 
 class CitiesList extends StatefulWidget {
   final CitiesProvider citiesProvider;
-  final ValueNotifier<bool> isScrolled;
+  final ScrollController scrollController;
   final Function() onSelect;
   final TBSearchController searchController;
 
   const CitiesList(
       {Key key,
       this.citiesProvider,
-      this.isScrolled,
+      this.scrollController,
       this.onSelect,
       this.searchController})
       : assert(citiesProvider != null);
@@ -23,39 +23,34 @@ class CitiesList extends StatefulWidget {
 }
 
 class _CitiesListState extends State<CitiesList> {
-  ScrollController scrollController;
-  bool isScrolled;
+  // ScrollController scrollController;
 
-  @override
-  void initState() {
-    scrollController = ScrollController();
+  // @override
+  // void initState() {
+  //   scrollController = widget.scrollController ?? ScrollController();
 
-    scrollController.addListener(scrollListener);
+  //   scrollController.addListener(scrollListener);
 
-    super.initState();
-  }
+  //   super.initState();
+  // }
 
-  scrollListener() {
-    final newIsScrolled =
-        scrollController.offset > scrollController.position.minScrollExtent;
+  // scrollListener() {
+  //   final isScrolled =
+  //       scrollController.offset > scrollController.position.minScrollExtent;
 
-    if (widget.isScrolled != null) widget.isScrolled.value = newIsScrolled;
+  //   if (!isScrolled)
+  //     widget.searchController?.focus();
+  //   else
+  //     widget.searchController?.unfocus();
+  // }
 
-    if (!newIsScrolled)
-      widget.searchController?.focus();
-    else
-      widget.searchController?.unfocus();
+  // @override
+  // dispose() {
+  //   scrollController.removeListener(scrollListener);
+  //   scrollController.dispose();
 
-    isScrolled = newIsScrolled;
-  }
-
-  @override
-  dispose() {
-    scrollController.removeListener(scrollListener);
-    scrollController.dispose();
-
-    super.dispose();
-  }
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +78,7 @@ class _CitiesListState extends State<CitiesList> {
         final pinnedCount = widget.citiesProvider.pinnedCount;
 
         return ListView.separated(
-          controller: scrollController,
+          controller: widget.scrollController ?? ScrollController(),
           padding: EdgeInsets.only(
               top: 10, bottom: MediaQuery.of(context).padding.bottom),
           itemCount: snapshot.data.length,

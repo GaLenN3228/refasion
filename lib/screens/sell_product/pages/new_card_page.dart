@@ -16,10 +16,10 @@ class NewCardPage extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 5),
-            child: TopBar(
+            child: RefashionedTopBar(
               leftButtonType: TBButtonType.none,
-              middleType: TBMiddleType.text,
-              middleText: "Новая карта",
+              middleType: TBMiddleType.title,
+              middleTitleText: "Новая карта",
               rightButtonType: TBButtonType.text,
               rightButtonText: "Закрыть",
               rightButtonAction: () => Navigator.of(context).pop(),

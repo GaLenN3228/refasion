@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/cart_count.dart';
+import 'package:refashioned_app/repositories/sizes.dart';
+import 'package:refashioned_app/screens/catalog/components/measure_size.dart';
 import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_view.dart';
 import 'package:refashioned_app/screens/sell_product/pages/sell_navigator.dart';
@@ -56,10 +58,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
                 left: 0,
                 bottom: 0,
                 right: 0,
-                child: BottomNavigation(
-                  currentTab,
-                  () => pushPageOnTop(
-                    SellNavigator(onClose: () => Navigator.of(context).pop()),
+                child: MeasureSize(
+                  onChange: (size, position) =>
+                      Provider.of<SizesRepository>(context, listen: false)
+                          .update(WidgetKeys.bottomNavigation, size, position),
+                  child: BottomNavigation(
+                    currentTab,
+                    () => pushPageOnTop(
+                      SellNavigator(onClose: () => Navigator.of(context).pop()),
+                    ),
                   ),
                 ),
               )
