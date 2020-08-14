@@ -31,12 +31,12 @@ class CardsPage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: Column(
         children: <Widget>[
-          TopBar(
+          RefashionedTopBar(
             leftButtonType: TBButtonType.icon,
             leftButtonIcon: TBIconType.back,
             leftButtonAction: () => Navigator.of(context).pop(),
-            middleType: TBMiddleType.text,
-            middleText: "Добавить вещь",
+            middleType: TBMiddleType.title,
+            middleTitleText: "Добавить вещь",
             rightButtonType: TBButtonType.text,
             rightButtonText: "Закрыть",
             rightButtonAction: onClose,

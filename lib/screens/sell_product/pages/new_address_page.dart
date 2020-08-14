@@ -18,12 +18,12 @@ class NewAddressPage extends StatelessWidget {
       child: Container(
         child: Column(
           children: [
-            TopBar(
+            RefashionedTopBar(
               leftButtonType: TBButtonType.icon,
               leftButtonIcon: TBIconType.back,
               leftButtonAction: () => Navigator.of(context).pop(),
-              middleType: TBMiddleType.text,
-              middleText: "Новый адрес",
+              middleType: TBMiddleType.title,
+              middleTitleText: "Новый адрес",
               rightButtonType: TBButtonType.icon,
               rightButtonIcon: TBIconType.filters,
               bottomType: TBBottomType.none,

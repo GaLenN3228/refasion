@@ -4,7 +4,7 @@ import 'package:refashioned_app/screens/components/topbar/components/tb_button.d
 import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
 
-class TopBar extends StatelessWidget {
+class RefashionedTopBar extends StatefulWidget {
   final TBSearchController searchController;
 
   final TBButtonType leftButtonType;
@@ -14,8 +14,16 @@ class TopBar extends StatelessWidget {
   final TBIconType leftButtonIcon;
   final Color leftButtonIconColor;
 
+  final TBButtonType secondLeftButtonType;
+  final Function() secondLeftButtonAction;
+  final String secondLeftButtonText;
+  final Color secondLeftButtonTextColor;
+  final TBIconType secondLeftButtonIcon;
+  final Color secondLeftButtonIconColor;
+
   final TBMiddleType middleType;
-  final String middleText;
+  final String middleTitleText;
+  final String middleSubtitleText;
 
   final TBButtonType rightButtonType;
   final Function() rightButtonAction;
@@ -23,6 +31,13 @@ class TopBar extends StatelessWidget {
   final Color rightButtonTextColor;
   final TBIconType rightButtonIcon;
   final Color rightButtonIconColor;
+
+  final TBButtonType secondRightButtonType;
+  final Function() secondRightButtonAction;
+  final String secondRightButtonText;
+  final Color secondRightButtonTextColor;
+  final TBIconType secondRightButtonIcon;
+  final Color secondRightButtonIconColor;
 
   final TBBottomType bottomType;
   final String bootomHeaderText;
@@ -33,14 +48,18 @@ class TopBar extends StatelessWidget {
   final Function() onSearchUnfocus;
   final bool autofocus;
 
-  final ValueNotifier<bool> isElevated;
+  final ScrollController scrollController;
+  final double scrollPastOffset;
 
   final Widget customBottom;
 
-  const TopBar({
-    this.leftButtonType,
-    this.middleType,
-    this.rightButtonType,
+  const RefashionedTopBar({
+    this.leftButtonType: TBButtonType.none,
+    this.secondLeftButtonType: TBButtonType.none,
+    this.middleType: TBMiddleType.none,
+    this.rightButtonType: TBButtonType.none,
+    this.secondRightButtonType: TBButtonType.none,
+    this.bottomType: TBBottomType.none,
     this.leftButtonText,
     this.leftButtonAction,
     this.leftButtonIcon,
@@ -49,12 +68,11 @@ class TopBar extends StatelessWidget {
     this.rightButtonAction,
     this.rightButtonIcon,
     this.rightButtonTextColor,
-    this.middleText,
+    this.middleTitleText,
+    this.middleSubtitleText,
     this.leftButtonIconColor,
     this.rightButtonIconColor,
-    this.bottomType,
     this.bootomHeaderText,
-    this.isElevated,
     this.searchHintText,
     this.onSearchUpdate,
     this.onSearchFocus,
@@ -62,33 +80,105 @@ class TopBar extends StatelessWidget {
     this.autofocus,
     this.customBottom,
     this.searchController,
+    this.secondLeftButtonAction,
+    this.secondLeftButtonText,
+    this.secondLeftButtonTextColor,
+    this.secondLeftButtonIcon,
+    this.secondLeftButtonIconColor,
+    this.secondRightButtonAction,
+    this.secondRightButtonText,
+    this.secondRightButtonTextColor,
+    this.secondRightButtonIcon,
+    this.secondRightButtonIconColor,
+    this.scrollController,
+    this.scrollPastOffset,
   }) : assert(leftButtonType != null &&
+            secondLeftButtonType != null &&
             middleType != null &&
             rightButtonType != null &&
+            secondRightButtonType != null &&
             bottomType != null &&
             (middleType != TBMiddleType.search ||
                 bottomType != TBBottomType.search));
 
   @override
+  _RefashionedTopBarState createState() => _RefashionedTopBarState();
+}
+
+class _RefashionedTopBarState extends State<RefashionedTopBar>
+    with SingleTickerProviderStateMixin {
+  ValueNotifier<bool> isElevated;
+  ValueNotifier<bool> isScrolledPastOffset;
+
+  AnimationController animationController;
+  Animation<double> animation;
+
+  final flatShadow = null;
+  final elevatedShadow = BoxShadow(
+      color: Colors.black.withOpacity(0.05),
+      offset: Offset(0, 4),
+      blurRadius: 4);
+
+  @override
+  void initState() {
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
+
+    animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
+
+    isElevated = ValueNotifier(false);
+
+    isScrolledPastOffset = ValueNotifier(false);
+
+    widget.scrollController?.addListener(scrollListener);
+
+    isElevated.addListener(scrollStateListener);
+
+    super.initState();
+  }
+
+  scrollListener() {
+    isElevated.value = widget.scrollController.offset >
+        widget.scrollController.position.minScrollExtent;
+
+    isScrolledPastOffset.value =
+        widget.scrollController.offset > widget.scrollPastOffset;
+  }
+
+  scrollStateListener() {
+    if (isElevated.value)
+      animationController.forward();
+    else
+      animationController.reverse();
+  }
+
+  @override
+  void dispose() {
+    isElevated.removeListener(scrollStateListener);
+
+    widget.scrollController?.removeListener(scrollListener);
+
+    isElevated.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final buttonWidth = middleType != TBMiddleType.search
-        ? MediaQuery.of(context).size.width * 0.25
+    final buttonWidth = widget.middleType != TBMiddleType.search
+        ? MediaQuery.of(context).size.width * 0.3
         : null;
 
-    return ValueListenableBuilder(
-      valueListenable: isElevated ?? ValueNotifier(false),
-      builder: (context, value, child) => Container(
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) => Container(
         child: child,
         decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: (value)
-                ? [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        offset: Offset(0, 2),
-                        blurRadius: 2)
-                  ]
-                : []),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow.lerp(flatShadow, elevatedShadow, animation.value)
+          ],
+        ),
       ),
       child: Column(
         children: [
@@ -101,52 +191,86 @@ class TopBar extends StatelessWidget {
               children: [
                 SizedBox(
                   width: buttonWidth,
-                  child: TBButton(
-                    leftButtonType,
-                    TBButtonAlign.left,
-                    onTap: leftButtonAction,
-                    text: leftButtonText,
-                    textColor: leftButtonTextColor,
-                    icon: leftButtonIcon,
-                    iconColor: leftButtonIconColor,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TBButton(
+                        widget.leftButtonType,
+                        TBButtonAlign.left,
+                        onTap: widget.leftButtonAction,
+                        text: widget.leftButtonText,
+                        textColor: widget.leftButtonTextColor,
+                        icon: widget.leftButtonIcon,
+                        iconColor: widget.leftButtonIconColor,
+                      ),
+                      TBButton(
+                        widget.secondLeftButtonType,
+                        TBButtonAlign.left,
+                        onTap: widget.secondLeftButtonAction,
+                        text: widget.secondLeftButtonText,
+                        textColor: widget.secondLeftButtonTextColor,
+                        icon: widget.secondLeftButtonIcon,
+                        iconColor: widget.secondLeftButtonIconColor,
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
                   child: TBMiddle(
-                    middleType,
-                    titleText: middleText,
-                    searchHintText: searchHintText,
-                    onSearchUpdate: onSearchUpdate,
-                    onSearchFocus: onSearchFocus,
-                    onSearchUnfocus: onSearchUnfocus,
-                    searchController: searchController,
+                    widget.middleType,
+                    titleText: widget.middleTitleText,
+                    subtitleText: widget.middleSubtitleText,
+                    searchHintText: widget.searchHintText,
+                    onSearchUpdate: widget.onSearchUpdate,
+                    onSearchFocus: widget.onSearchFocus,
+                    onSearchUnfocus: widget.onSearchUnfocus,
+                    searchController: widget.searchController,
+                    isElevated: isElevated,
+                    isScrolledPastOffset: isScrolledPastOffset,
                   ),
                 ),
                 SizedBox(
                   width: buttonWidth,
-                  child: TBButton(
-                    rightButtonType,
-                    TBButtonAlign.right,
-                    onTap: rightButtonAction,
-                    text: rightButtonText,
-                    textColor: rightButtonTextColor,
-                    icon: rightButtonIcon,
-                    iconColor: rightButtonIconColor,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TBButton(
+                        widget.secondRightButtonType,
+                        TBButtonAlign.right,
+                        onTap: widget.secondRightButtonAction,
+                        text: widget.secondRightButtonText,
+                        textColor: widget.secondRightButtonTextColor,
+                        icon: widget.secondRightButtonIcon,
+                        iconColor: widget.secondRightButtonIconColor,
+                      ),
+                      TBButton(
+                        widget.rightButtonType,
+                        TBButtonAlign.right,
+                        onTap: widget.rightButtonAction,
+                        text: widget.rightButtonText,
+                        textColor: widget.rightButtonTextColor,
+                        icon: widget.rightButtonIcon,
+                        iconColor: widget.rightButtonIconColor,
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
           TBBottom(
-            type: bottomType,
-            headerText: bootomHeaderText,
-            searchHintText: searchHintText,
-            onSearchUpdate: onSearchUpdate,
-            onSearchFocus: onSearchFocus,
-            onSearchUnfocus: onSearchUnfocus,
-            searchController: searchController,
+            type: widget.bottomType,
+            headerText: widget.bootomHeaderText,
+            searchHintText: widget.searchHintText,
+            onSearchUpdate: widget.onSearchUpdate,
+            onSearchFocus: widget.onSearchFocus,
+            onSearchUnfocus: widget.onSearchUnfocus,
+            searchController: widget.searchController,
+            isElevated: isElevated,
           ),
-          customBottom ?? SizedBox(),
+          widget.customBottom ?? SizedBox(),
         ],
       ),
     );

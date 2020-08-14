@@ -7,36 +7,56 @@ import 'package:refashioned_app/screens/components/topbar/components/tb_button.d
 import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
-class SubcategoryPage extends StatelessWidget {
+class SubcategoryPage extends StatefulWidget {
   final Function(List<Category>) onPush;
   final Function() onClose;
   final Category selectedCategory;
-  final isScrolled = ValueNotifier<bool>(false);
 
   SubcategoryPage({this.onPush, this.selectedCategory, this.onClose})
       : assert(selectedCategory != null);
 
   @override
+  _SubcategoryPageState createState() => _SubcategoryPageState();
+}
+
+class _SubcategoryPageState extends State<SubcategoryPage> {
+  ScrollController scrollController;
+
+  @override
+  void initState() {
+    scrollController = ScrollController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       child: CategoriesList(
-        categories: selectedCategory.children,
+        categories: widget.selectedCategory.children,
         bottomPadding: 65,
         multiselection: true,
-        onUpdate: onPush,
-        isScrolled: isScrolled,
-        appBar: TopBar(
+        onUpdate: widget.onPush,
+        scrollController: scrollController,
+        appBar: RefashionedTopBar(
           leftButtonType: TBButtonType.icon,
           leftButtonIcon: TBIconType.back,
           leftButtonAction: () => Navigator.of(context).pop(),
-          middleType: TBMiddleType.text,
-          middleText: "Добавить вещь",
+          middleType: TBMiddleType.title,
+          middleTitleText: "Добавить вещь",
           rightButtonType: TBButtonType.text,
           rightButtonText: "Закрыть",
-          rightButtonAction: onClose,
+          rightButtonAction: widget.onClose,
           bottomType: TBBottomType.header,
           bootomHeaderText: "Выберите категорию",
-          isElevated: isScrolled,
+          scrollController: scrollController,
         ),
       ),
     );

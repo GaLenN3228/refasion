@@ -12,7 +12,7 @@ class CategoriesList extends StatefulWidget {
   final Function(List<Category>) onUpdate;
   final bool multiselection;
   final double bottomPadding;
-  final ValueNotifier<bool> isScrolled;
+  final ScrollController scrollController;
 
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
@@ -26,7 +26,7 @@ class CategoriesList extends StatefulWidget {
     this.categories,
     this.header,
     this.appBar,
-    this.isScrolled,
+    this.scrollController,
     this.animation,
     this.secondaryAnimation,
   }) : super(key: key);
@@ -37,29 +37,16 @@ class CategoriesList extends StatefulWidget {
 
 class _CategoriesListState extends State<CategoriesList> {
   List<Category> selectedSubcategories;
-  ScrollController scrollController;
-
-  scrollListener() {
-    if (widget.isScrolled != null)
-      widget.isScrolled.value =
-          scrollController.offset > scrollController.position.minScrollExtent;
-  }
 
   @override
   void initState() {
     selectedSubcategories = List<Category>();
-    scrollController = ScrollController();
-
-    scrollController.addListener(scrollListener);
 
     super.initState();
   }
 
   @override
   dispose() {
-    scrollController.removeListener(scrollListener);
-    scrollController.dispose();
-
     super.dispose();
   }
 
@@ -100,7 +87,7 @@ class _CategoriesListState extends State<CategoriesList> {
                 child: Stack(
                   children: [
                     ListView.separated(
-                      controller: scrollController,
+                      controller: widget.scrollController ?? ScrollController(),
                       padding: EdgeInsets.only(
                           top: widget.header != null ? 11 : 0,
                           bottom: MediaQuery.of(context).padding.bottom +

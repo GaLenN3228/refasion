@@ -15,6 +15,8 @@ class TBBottom extends StatelessWidget {
 
   final TBSearchController searchController;
 
+  final ValueNotifier<bool> isElevated;
+
   const TBBottom(
       {this.type,
       this.headerText,
@@ -22,7 +24,8 @@ class TBBottom extends StatelessWidget {
       this.searchHintText,
       this.onSearchFocus,
       this.onSearchUnfocus,
-      this.searchController})
+      this.searchController,
+      this.isElevated})
       : assert(type != null);
 
   @override
@@ -35,6 +38,7 @@ class TBBottom extends StatelessWidget {
           onFocus: onSearchFocus,
           onUnfocus: onSearchUnfocus,
           searchController: searchController,
+          isScrolled: isElevated,
         );
 
       case TBBottomType.header:
@@ -58,6 +62,7 @@ class TBBottom extends StatelessWidget {
               onFocus: onSearchFocus,
               onUnfocus: onSearchUnfocus,
               searchController: searchController,
+              isScrolled: isElevated,
             ),
           ],
         );
