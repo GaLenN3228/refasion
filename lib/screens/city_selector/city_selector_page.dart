@@ -9,45 +9,66 @@ import 'package:refashioned_app/screens/components/topbar/components/tb_search.d
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CitySelectorPage extends StatelessWidget {
+class CitySelectorPage extends StatefulWidget {
   final CitiesRepository citiesRepository;
-
-  final isScrolled = ValueNotifier<bool>(false);
-  final searchController = TBSearchController();
 
   CitySelectorPage({@required this.citiesRepository})
       : assert(citiesRepository != null);
+
+  @override
+  _CitySelectorPageState createState() => _CitySelectorPageState();
+}
+
+class _CitySelectorPageState extends State<CitySelectorPage> {
+  ScrollController scrollController;
+  TBSearchController searchController;
+
+  @override
+  void initState() {
+    scrollController = ScrollController();
+
+    searchController = TBSearchController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+
+    super.dispose();
+  }
 
   Future<void> setCityId(String id) async => SharedPreferences.getInstance()
       .then((prefs) => prefs.setString("city_id", id));
 
   @override
   Widget build(BuildContext context) {
-    final citiesProvider = citiesRepository.citiesResponse.content;
+    final citiesProvider = widget.citiesRepository.citiesResponse.content;
 
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       child: Column(
         children: [
-          TopBar(
+          RefashionedTopBar(
             searchController: searchController,
             leftButtonType: TBButtonType.none,
-            middleType: TBMiddleType.text,
-            middleText: "Выбор города",
+            middleType: TBMiddleType.title,
+            middleTitleText: "Выбор города",
             rightButtonType: TBButtonType.none,
             bottomType: TBBottomType.search,
             searchHintText: "Город или регион",
             onSearchUpdate: citiesProvider.search,
             autofocus: true,
-            isElevated: isScrolled,
+            scrollController: scrollController,
           ),
           Expanded(
             child: CitiesList(
               searchController: searchController,
               citiesProvider: citiesProvider,
-              isScrolled: isScrolled,
+              scrollController: scrollController,
               onSelect: () {
-                citiesRepository
+                widget.citiesRepository
                     .selectCity(citiesProvider.selectedCity)
                     .then((newCity) {
                   if (newCity != null)

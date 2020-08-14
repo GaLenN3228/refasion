@@ -22,13 +22,8 @@ class TBButton extends StatelessWidget {
   final Color iconColor;
 
   TBButton(this.type, this.align,
-      {Key key,
-      this.onTap,
-      this.text,
-      this.icon,
-      this.textColor,
-      this.iconColor})
-      : super(key: key);
+      {this.onTap, this.text, this.icon, this.textColor, this.iconColor})
+      : assert(type != null && align != null);
 
   final noneButton = SizedBox(
     width: 4,

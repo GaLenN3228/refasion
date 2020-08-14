@@ -19,10 +19,10 @@ class SectionPage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: Column(
         children: [
-          TopBar(
+          RefashionedTopBar(
             leftButtonType: TBButtonType.none,
-            middleType: TBMiddleType.text,
-            middleText: "Добавить вещь",
+            middleType: TBMiddleType.title,
+            middleTitleText: "Добавить вещь",
             rightButtonType: TBButtonType.text,
             rightButtonText: "Закрыть",
             rightButtonAction: onClose,

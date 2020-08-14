@@ -5,7 +5,7 @@ import 'package:refashioned_app/services/dio_cookies_manager.dart';
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -30,12 +30,14 @@ class ApiService {
   }
 
   static Future<Response> getCart() async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.get(Url.cart);
   }
 
   static Future<String> getCartCountFromCookies(Uri responseUri) async {
-    return await DioCookiesManager().getValue(CookiesValues.cartCount, responseUri);
+    return await DioCookiesManager()
+        .getValue(CookiesValues.cartCount, responseUri);
   }
 
   static Future<Response> getContentCatalogMenu() async {
@@ -79,7 +81,8 @@ class ApiService {
   }
 
   static Future<Response> selectCity(String city) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.post(Url.selectCity, data: city);
   }
 
@@ -92,7 +95,8 @@ class ApiService {
   }
 
   static addToCart(String productId) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"product": productId};
     await dioClient.post(Url.cartItem, data: body);
   }

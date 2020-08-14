@@ -42,12 +42,12 @@ class _PhotosPageState extends State<PhotosPage> {
         children: [
           Column(
             children: [
-              TopBar(
+              RefashionedTopBar(
                 leftButtonType: TBButtonType.icon,
                 leftButtonIcon: TBIconType.back,
                 leftButtonAction: () => Navigator.of(context).pop(),
-                middleType: TBMiddleType.text,
-                middleText: "Добавить вещь",
+                middleType: TBMiddleType.title,
+                middleTitleText: "Добавить вещь",
                 rightButtonType: TBButtonType.text,
                 rightButtonText: "Закрыть",
                 rightButtonAction: widget.onClose,

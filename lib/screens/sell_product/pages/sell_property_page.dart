@@ -20,7 +20,21 @@ class SellPropertyPage extends StatefulWidget {
 }
 
 class _SellPropertyPageState extends State<SellPropertyPage> {
-  final isScrolled = ValueNotifier<bool>(false);
+  ScrollController scrollController;
+
+  @override
+  void initState() {
+    scrollController = ScrollController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,19 +42,19 @@ class _SellPropertyPageState extends State<SellPropertyPage> {
       child: SellPropertyValuesList(
           values: widget.sellProperty.values,
           bottomPadding: 10,
-          isScrolled: isScrolled,
-          appBar: TopBar(
+          scrollController: scrollController,
+          appBar: RefashionedTopBar(
             leftButtonType: TBButtonType.icon,
             leftButtonIcon: TBIconType.back,
             leftButtonAction: () => Navigator.of(context).pop(),
-            middleType: TBMiddleType.text,
-            middleText: "Добавить вещь",
+            middleType: TBMiddleType.title,
+            middleTitleText: "Добавить вещь",
             rightButtonType: TBButtonType.text,
             rightButtonText: "Закрыть",
             rightButtonAction: widget.onClose,
             bottomType: TBBottomType.header,
             bootomHeaderText: widget.sellProperty.header,
-            isElevated: isScrolled,
+            scrollController: scrollController,
           ),
           multiselection: widget.sellProperty.multiselection,
           onUpdate: (id) {

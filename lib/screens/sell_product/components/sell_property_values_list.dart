@@ -12,7 +12,7 @@ class SellPropertyValuesList extends StatefulWidget {
   final Function() onPush;
   final bool multiselection;
   final double bottomPadding;
-  final ValueNotifier<bool> isScrolled;
+  final ScrollController scrollController;
 
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
@@ -25,7 +25,7 @@ class SellPropertyValuesList extends StatefulWidget {
     this.values,
     this.header,
     this.appBar,
-    this.isScrolled,
+    this.scrollController,
     this.animation,
     this.secondaryAnimation,
     this.onPush,
@@ -36,31 +36,6 @@ class SellPropertyValuesList extends StatefulWidget {
 }
 
 class _SellPropertyValuesListState extends State<SellPropertyValuesList> {
-  ScrollController scrollController;
-
-  scrollListener() {
-    if (widget.isScrolled != null)
-      widget.isScrolled.value =
-          scrollController.offset > scrollController.position.minScrollExtent;
-  }
-
-  @override
-  void initState() {
-    scrollController = ScrollController();
-
-    scrollController.addListener(scrollListener);
-
-    super.initState();
-  }
-
-  @override
-  dispose() {
-    scrollController.removeListener(scrollListener);
-    scrollController.dispose();
-
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final widgets = widget.values
@@ -86,7 +61,7 @@ class _SellPropertyValuesListState extends State<SellPropertyValuesList> {
                 child: Stack(
                   children: [
                     ListView.separated(
-                      controller: scrollController,
+                      controller: widget.scrollController ?? ScrollController(),
                       padding: EdgeInsets.only(
                           top: widget.header != null ? 11 : 0,
                           bottom: MediaQuery.of(context).padding.bottom +

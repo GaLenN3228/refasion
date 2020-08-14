@@ -22,6 +22,8 @@ class TBSearch extends StatefulWidget {
   final Function() onUnfocus;
   final bool autofocus;
 
+  final ValueNotifier<bool> isScrolled;
+
   const TBSearch({
     this.onSearchUpdate,
     this.hintText,
@@ -29,6 +31,7 @@ class TBSearch extends StatefulWidget {
     this.onUnfocus,
     this.autofocus: false,
     this.searchController,
+    this.isScrolled,
   });
 
   @override
@@ -69,6 +72,8 @@ class _TBSearchState extends State<TBSearch>
 
     hasText = ValueNotifier(false);
 
+    widget.isScrolled?.addListener(scrollListener);
+
     super.initState();
   }
 
@@ -98,8 +103,17 @@ class _TBSearchState extends State<TBSearch>
     widget.onSearchUpdate(text);
   }
 
+  scrollListener() {
+    if (widget.isScrolled.value)
+      unfocus();
+    else
+      focus();
+  }
+
   @override
   void dispose() {
+    widget.isScrolled?.removeListener(scrollListener);
+
     focusNode.removeListener(focusListener);
     focusNode.dispose();
 
