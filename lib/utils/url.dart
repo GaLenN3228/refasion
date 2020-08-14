@@ -9,9 +9,7 @@ class Url {
   static const products = '$refashionedBaseUrl/catalog/products/';
   static const productsCount = '$refashionedBaseUrl/catalog/products/count/';
 
-  static String productsRecommended(id) {
-    return '$refashionedBaseUrl/catalog/products/' + id + '/recommended';
-  }
+  static String productsRecommended(id) => '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';
 
   //SellProperties
   static const properties = '$refashionedBaseUrl/catalog/properties/';
@@ -44,4 +42,8 @@ class Url {
 
   //Maps
   static const pickPoints = '$refashionedBaseUrl/pickpoints';
+
+  //Authorization
+  static const authorization = '$refashionedBaseUrl/users/authorization/';
+  static String codeAuthorization(String phone, String hash) => '$authorization' + phone + '_' + hash + '/';
 }
