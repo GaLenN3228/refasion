@@ -1,14 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:refashioned_app/services/dio_client.dart';
 import 'package:refashioned_app/services/dio_cookies_manager.dart';
-import 'dart:io' show Platform;
 
 import '../utils/url.dart';
 
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static bool LOG_ENABLE = (Platform.isAndroid) ? true : false;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
