@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/screens/authorization/code_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 
@@ -22,7 +24,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
   void initState() {
     phoneIsEmpty = false;
     textEditingController = TextEditingController();
-    maskFormatter = new MaskTextInputFormatter(mask: '+7 ### ### ## ##', filter: { "#": RegExp(r'[0-9]') });
+    maskFormatter = new MaskTextInputFormatter(mask: '+7 ### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
     textEditingController.addListener(textControllerListener);
 
     super.initState();
@@ -142,7 +144,11 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
           borderRadius: 5,
           onClick: !phoneIsEmpty
               ? () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => CodePage(phone: phone)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
+                            create: (_) => AuthorizationRepository(phone.replaceAll("+", "").replaceAll(" ", "")),
+                            child: CodePage(phone: phone),
+                          )));
                 }
               : () {},
         ),

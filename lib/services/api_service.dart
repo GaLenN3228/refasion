@@ -5,7 +5,8 @@ import 'package:refashioned_app/services/dio_cookies_manager.dart';
 import '../utils/url.dart';
 
 class ApiService {
-  static const LOG_ENABLE = false;
+  //FIXME set LOG_ENABLE = false in release build
+  static const LOG_ENABLE = true;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -30,14 +31,12 @@ class ApiService {
   }
 
   static Future<Response> getCart() async {
-    Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.get(Url.cart);
   }
 
   static Future<String> getCartCountFromCookies(Uri responseUri) async {
-    return await DioCookiesManager()
-        .getValue(CookiesValues.cartCount, responseUri);
+    return await DioCookiesManager().getValue(CookiesValues.cartCount, responseUri);
   }
 
   static Future<Response> getContentCatalogMenu() async {
@@ -81,8 +80,7 @@ class ApiService {
   }
 
   static Future<Response> selectCity(String city) async {
-    Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.post(Url.selectCity, data: city);
   }
 
@@ -95,8 +93,7 @@ class ApiService {
   }
 
   static addToCart(String productId) async {
-    Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"product": productId};
     await dioClient.post(Url.cartItem, data: body);
   }
@@ -109,5 +106,22 @@ class ApiService {
   static Future<Response> getProductRecommended(String id) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.productsRecommended(id));
+  }
+
+  static Future<Response> getPickPoints() async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    return dioClient.get(Url.pickPoints);
+  }
+
+  static Future<Response> authorization(String phone) async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    var body = {"phone": phone};
+    return dioClient.post(Url.authorization, data: body);
+  }
+
+  static Future<Response> codeAuthorization(String phone, String hash, String code) async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    var body = {"code": code};
+    return dioClient.post(Url.codeAuthorization(phone, hash), data: body);
   }
 }

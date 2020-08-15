@@ -38,7 +38,8 @@ dependencies:
   dio_cookie_manager: 1.0.0
   path_provider: ^1.1.0
   image_picker: ^0.6.7+4
-  #  https://pub:dev/packages/pin_code_fields:
+  #  https://pub.dev/packages/pin_code_fields:
+  #  https://github.com/adar2378/pin_code_fields
   pin_code_fields: ^4.0.0
   # https://pub.dev/packages/mask_text_input_formatter
   mask_text_input_formatter: ^1.0.7

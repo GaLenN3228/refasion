@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/sell_product/pages/new_address_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final Function(List<String>) onPush;
@@ -89,6 +90,9 @@ class ProfilePage extends StatelessWidget {
                         height: 45,
                         width: double.infinity,
                         borderRadius: 5,
+                        onClick: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewAddressPage()));
+                        },
                       ),
                     )
                   ]),
