@@ -16,92 +16,70 @@ class ButtonContainerData {
   }) : assert((decorationType != null));
 }
 
-class ButtonContainer extends StatefulWidget {
-  final ButtonContainerData data;
-  final ValueNotifier<ButtonContainerData> statesData;
+class ButtonContainer extends StatelessWidget {
+  final ButtonContainerData currentData;
+  final ButtonContainerData nextData;
+
+  final Animation<double> animation;
 
   final Widget child;
 
-  const ButtonContainer({this.data, this.statesData, this.child})
-      : assert(data != null || statesData != null);
+  const ButtonContainer(
+      {this.currentData, this.nextData, this.child, this.animation})
+      : assert(currentData != null);
 
-  @override
-  _ButtonContainerState createState() => _ButtonContainerState();
-}
-
-class _ButtonContainerState extends State<ButtonContainer> {
-  ButtonContainerData data;
-
-  BorderRadius borderRadius;
-  ShapeDecoration shapeDecoration;
-
-  @override
-  void initState() {
-    data = widget.statesData != null ? widget.statesData.value : widget.data;
-
-    updateShape();
-
-    widget.statesData?.addListener(buttonStateListener);
-
-    super.initState();
-  }
-
-  updateShape() {
-    borderRadius = BorderRadius.circular(data.cornerRadius);
-
-    switch (data.decorationType) {
+  selectDecoration(ButtonContainerData newData) {
+    switch (newData.decorationType) {
       case ButtonDecorationType.black:
-        shapeDecoration = ShapeDecoration(
+        return ShapeDecoration(
           color: primaryColor,
-          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(newData.cornerRadius)),
         );
-        break;
       case ButtonDecorationType.accent:
-        shapeDecoration = ShapeDecoration(
+        return ShapeDecoration(
           color: accentColor,
-          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(newData.cornerRadius)),
         );
-        break;
       case ButtonDecorationType.outlined:
-        shapeDecoration = ShapeDecoration(
+        return ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: borderRadius,
-            side: BorderSide(color: primaryColor, width: data.borderWidth),
+            borderRadius: BorderRadius.circular(newData.cornerRadius),
+            side: BorderSide(color: primaryColor, width: newData.borderWidth),
           ),
         );
-        break;
       case ButtonDecorationType.red:
-        shapeDecoration = ShapeDecoration(
+        return ShapeDecoration(
           color: Colors.red,
-          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(newData.cornerRadius)),
         );
-        break;
     }
-  }
-
-  buttonStateListener() {
-    setState(() {
-      data = widget.statesData != null ? widget.statesData.value : widget.data;
-
-      updateShape();
-    });
-  }
-
-  @override
-  dispose() {
-    widget.statesData?.removeListener(buttonStateListener);
-
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: widget.child,
-      height: double.infinity,
-      width: double.infinity,
-      decoration: shapeDecoration,
+    final currentDecoration = selectDecoration(currentData);
+    final nextDecoration = selectDecoration(nextData);
+
+    final currentBorderRadius = BorderRadius.circular(currentData.cornerRadius);
+    final nextBorderRadius = BorderRadius.circular(currentData.cornerRadius);
+
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, _) => Container(
+        child: ClipRRect(
+          child: child,
+          borderRadius: BorderRadius.lerp(
+              currentBorderRadius, nextBorderRadius, animation.value),
+        ),
+        height: double.infinity,
+        width: double.infinity,
+        decoration: ShapeDecoration.lerp(
+            currentDecoration, nextDecoration, animation.value),
+      ),
     );
   }
 }

@@ -8,18 +8,29 @@ enum ButtonIconType { none, arrow_right_long }
 
 enum ButtonIconColor { white, accent, black, darkGray }
 
-class ButtonIcon extends StatelessWidget {
+class ButtonIconData {
   final ButtonIconType icon;
-  final ButtonIconAlign align;
   final ButtonIconColor color;
 
-  ButtonIcon({this.icon, this.align, this.color})
-      : assert((icon != null && align != null && color != null) ||
-            icon == ButtonIconType.none);
+  ButtonIconData({this.icon: ButtonIconType.none, this.color})
+      : assert((icon != null && color != null) || icon == ButtonIconType.none);
+}
+
+class ButtonIcon extends StatelessWidget {
+  final ButtonIconData currentData;
+  final ButtonIconData nextData;
+
+  final ButtonIconAlign align;
+
+  final Animation<double> animation;
+
+  const ButtonIcon(
+      {this.currentData, this.nextData, this.animation, this.align})
+      : assert(currentData != null && align != null);
 
   @override
   Widget build(BuildContext context) {
-    if (icon == ButtonIconType.none) return SizedBox();
+    if (currentData.icon == ButtonIconType.none) return SizedBox();
 
     EdgeInsets padding;
     Alignment alignment;
@@ -37,7 +48,7 @@ class ButtonIcon extends StatelessWidget {
 
     String asset;
 
-    switch (icon) {
+    switch (currentData.icon) {
       case ButtonIconType.arrow_right_long:
         asset = "assets/button/svg/long_arrow_right_21dp.svg";
         break;
@@ -47,7 +58,7 @@ class ButtonIcon extends StatelessWidget {
 
     Color iconColor;
 
-    switch (color) {
+    switch (currentData.color) {
       case ButtonIconColor.white:
         iconColor = Colors.white;
         break;

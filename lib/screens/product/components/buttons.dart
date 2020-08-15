@@ -28,6 +28,8 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
   }
 
   addToCart() {
+    HapticFeedback.mediumImpact();
+
     addCartRepository = AddCartRepository(widget.productId);
 
     addCartRepository.addListener(repositoryListener);
@@ -37,12 +39,11 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
     if (addCartRepository != null) {
       if (addCartRepository.isLoading) buttonStates.value = ButtonState.loading;
       if (addCartRepository.isLoaded) {
-        HapticFeedback.lightImpact();
         buttonStates.value = ButtonState.done;
         CartCountRepository.notify(context, Uri.parse(Url.cartItem));
       }
       if (addCartRepository.loadingFailed) {
-        HapticFeedback.mediumImpact();
+        HapticFeedback.vibrate();
         buttonStates.value = ButtonState.error;
       }
     }
@@ -59,26 +60,44 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
   final buttonStatesData = {
     ButtonState.enabled: ButtonData(
-      decorationType: ButtonDecorationType.accent,
-      titleText: "В корзину",
-      titleColor: ButtonTitleColor.black,
+      buttonContainerData: ButtonContainerData(
+        decorationType: ButtonDecorationType.accent,
+      ),
+      titleData: ButtonTitleData(
+        text: "В корзину",
+        color: ButtonTitleColor.black,
+      ),
     ),
     ButtonState.loading: ButtonData(
-      decorationType: ButtonDecorationType.black,
-      titleText: "Добавляем",
-      titleColor: ButtonTitleColor.white,
+      buttonContainerData: ButtonContainerData(
+        decorationType: ButtonDecorationType.black,
+      ),
+      titleData: ButtonTitleData(
+        text: "Добавляем",
+        color: ButtonTitleColor.white,
+      ),
     ),
     ButtonState.done: ButtonData(
-      decorationType: ButtonDecorationType.outlined,
-      titleText: "Добавлено",
-      titleColor: ButtonTitleColor.black,
-      rightIcon: ButtonIconType.arrow_right_long,
-      rightIconColor: ButtonIconColor.black,
+      buttonContainerData: ButtonContainerData(
+        decorationType: ButtonDecorationType.outlined,
+      ),
+      titleData: ButtonTitleData(
+        text: "Добавлено",
+        color: ButtonTitleColor.black,
+      ),
+      rightIconData: ButtonIconData(
+        icon: ButtonIconType.arrow_right_long,
+        color: ButtonIconColor.black,
+      ),
     ),
     ButtonState.error: ButtonData(
-      decorationType: ButtonDecorationType.red,
-      titleText: "Ошибка",
-      titleColor: ButtonTitleColor.black,
+      buttonContainerData: ButtonContainerData(
+        decorationType: ButtonDecorationType.red,
+      ),
+      titleData: ButtonTitleData(
+        text: "Ошибка",
+        color: ButtonTitleColor.black,
+      ),
     ),
   };
 
@@ -92,11 +111,16 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
           children: <Widget>[
             Expanded(
               child: RefashionedButton(
+                onTap: () => HapticFeedback.mediumImpact(),
                 data: ButtonData(
+                  buttonContainerData: ButtonContainerData(
                     decorationType: ButtonDecorationType.black,
-                    titleText: "Спросить",
-                    titleColor: ButtonTitleColor.white,
-                    leftIcon: ButtonIconType.none),
+                  ),
+                  titleData: ButtonTitleData(
+                    text: "Спросить",
+                    color: ButtonTitleColor.white,
+                  ),
+                ),
               ),
             ),
             Container(
