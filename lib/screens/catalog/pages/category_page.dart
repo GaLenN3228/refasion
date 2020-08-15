@@ -21,23 +21,28 @@ class CategoryPage extends StatefulWidget {
   final Function(Category, {dynamic callback}) onPush;
   final Function() onSearch;
 
-  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onSearch}) : super(key: key);
+  const CategoryPage(
+      {Key key, this.topCategory, this.onPush, this.level, this.onSearch})
+      : super(key: key);
 
   @override
   _CategoryPageState createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver {
+class _CategoryPageState extends State<CategoryPage>
+    with WidgetsBindingObserver {
   String countParameters;
 
   updateCount() {
     prepareParameters();
-    Provider.of<ProductCountRepository>(context, listen: false).update(newParameters: countParameters);
+    Provider.of<ProductCountRepository>(context, listen: false)
+        .update(newParameters: countParameters);
   }
 
   prepareParameters() {
-    final selectedIdList =
-        widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
+    final selectedIdList = widget.topCategory.children
+        .where((category) => category.selected)
+        .map((category) => category.id);
 
     if (selectedIdList.isNotEmpty && widget.level == CategoryLevel.category)
       countParameters = "?p=" + selectedIdList.join(',');
@@ -106,53 +111,57 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
             onSearch: widget.onSearch,
           ),
           Expanded(
-              child: Stack(children: [
-            Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.only(bottom: 130),
-                itemCount: widgets.length,
-                itemBuilder: (context, index) {
-                  return widgets.elementAt(index);
-                },
-                separatorBuilder: (context, index) {
-                  return CategoryDivider();
-                },
-              ),
-            ),
-            (widget.level == CategoryLevel.category)
-                ? Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 70,
-                    child: Builder(
-                      builder: (context) {
-                        final productCountRepository = context.watch<ProductCountRepository>();
+            child: Stack(
+              children: [
+                ListView.separated(
+                  padding: EdgeInsets.only(bottom: 130),
+                  itemCount: widgets.length,
+                  itemBuilder: (context, index) {
+                    return widgets.elementAt(index);
+                  },
+                  separatorBuilder: (context, index) {
+                    return CategoryDivider();
+                  },
+                ),
+                (widget.level == CategoryLevel.category)
+                    ? Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 70,
+                        child: Builder(
+                          builder: (context) {
+                            final productCountRepository =
+                                context.watch<ProductCountRepository>();
 
-                        String title = "";
-                        String subtitle = "";
+                            String title = "";
+                            String subtitle = "";
 
-                        if (productCountRepository.isLoading) {
-                          title = "ПОДОЖДИТЕ";
-                          subtitle = "Обновление товаров...";
-                        } else if (productCountRepository.loadingFailed) {
-                          title = "ОШИБКА";
-                          subtitle = "Мы уже работаем над её исправлением";
-                        } else {
-                          title = "ПОКАЗАТЬ";
-                          subtitle = productCountRepository.productsCountResponse.productsCount.text;
-                        }
-                        return BottomButton(
-                          action: () {
-                            widget.onPush(widget.topCategory, callback: updateCount);
+                            if (productCountRepository.isLoading) {
+                              title = "ПОДОЖДИТЕ";
+                              subtitle = "Обновление товаров...";
+                            } else if (productCountRepository.loadingFailed) {
+                              title = "ОШИБКА";
+                              subtitle = "Мы уже работаем над её исправлением";
+                            } else {
+                              title = "ПОКАЗАТЬ";
+                              subtitle = productCountRepository
+                                  .productsCountResponse.productsCount.text;
+                            }
+                            return BottomButton(
+                              action: () {
+                                widget.onPush(widget.topCategory,
+                                    callback: updateCount);
+                              },
+                              title: title,
+                              subtitle: subtitle,
+                            );
                           },
-                          title: title,
-                          subtitle: subtitle,
-                        );
-                      },
-                    ),
-                  )
-                : Container()
-          ]))
+                        ),
+                      )
+                    : Container()
+              ],
+            ),
+          )
         ],
       ),
     );
