@@ -99,8 +99,9 @@ class _SellNavigatorState extends State<SellNavigator> {
         return SubcategoryPage(
           selectedCategory: category,
           onClose: widget.onClose,
-          onPush: (categories) {
-            selectSubCategories(categories);
+          onPush: (_) {
+            selectSubCategories(category);
+
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
@@ -121,12 +122,14 @@ class _SellNavigatorState extends State<SellNavigator> {
               CupertinoPageRoute(
                 builder: (context) {
                   if (sellPropertiesRepository != null &&
-                          sellPropertiesRepository.isLoaded ||
-                      sellPropertiesRepository.response.status.code == 200)
+                      sellPropertiesRepository.isLoaded &&
+                      sellPropertiesRepository.response.status.code == 200 &&
+                      sellPropertiesRepository
+                          .response.content.requiredProperties.isNotEmpty)
                     return _routeBuilder(
                         context, SellNavigatorRoutes.sellProperty,
-                        sellProperties:
-                            sellPropertiesRepository.response.content);
+                        sellProperties: sellPropertiesRepository
+                            .response.content.requiredProperties);
                   else
                     return _routeBuilder(
                         context, SellNavigatorRoutes.description);
@@ -138,6 +141,7 @@ class _SellNavigatorState extends State<SellNavigator> {
 
       case SellNavigatorRoutes.sellProperty:
         final sellProperty = sellProperties.elementAt(sellPropertyIndex);
+
         return SellPropertyPage(
           onClose: widget.onClose,
           sellProperty: sellProperty,
@@ -261,9 +265,8 @@ class _SellNavigatorState extends State<SellNavigator> {
     }
   }
 
-  selectSubCategories(List<Category> categories) {
-    sellPropertiesRepository = SellPropertiesRepository();
-  }
+  selectSubCategories(Category topCategory) => sellPropertiesRepository =
+      SellPropertiesRepository(category: topCategory.id);
 
   addPhotos(List<String> photos) {}
 

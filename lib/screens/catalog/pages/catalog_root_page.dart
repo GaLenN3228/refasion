@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/catalog/components/category_root_card.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
@@ -55,6 +56,7 @@ class CatalogRootPage extends StatelessWidget {
                   includeTopPadding: false,
                 ),
                 backgroundColor: Colors.white,
+                brightness: Brightness.light,
                 expandedHeight: 136.0 - MediaQuery.of(context).padding.top,
                 pinned: true,
                 floating: true,
