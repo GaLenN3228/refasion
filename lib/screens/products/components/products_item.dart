@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/add_cart.dart';
 import 'package:refashioned_app/repositories/cart_count.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/url.dart';
 
 class ProductsItem extends StatelessWidget {
@@ -38,18 +40,27 @@ class ProductsItem extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 2, right: 2),
-                      child: SvgPicture.asset(
-                        'assets/favorite_border.svg',
-                        color: Colors.black,
-                        width: 40,
-                        height: 40,
-                      ),
-                    ),
-                  ),
+                  GestureDetector(
+                      onTap: () => {
+                            showCupertinoModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                expand: false,
+                                context: context,
+                                useRootNavigator: true,
+                                builder: (context, controller) => ProfilePage())
+                          },
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 2, right: 2),
+                          child: SvgPicture.asset(
+                            'assets/favorite_border.svg',
+                            color: Colors.black,
+                            width: 40,
+                            height: 40,
+                          ),
+                        ),
+                      )),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
