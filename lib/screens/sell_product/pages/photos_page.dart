@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
+import 'package:refashioned_app/screens/multi_selection_dialog/dialog.dart' as MultiSelectionDialog;
+import 'package:refashioned_app/screens/multi_selection_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/sell_product/components/add_photo_description_item.dart';
 import 'package:refashioned_app/screens/sell_product/components/add_photo_item.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
@@ -27,12 +28,41 @@ class _PhotosPageState extends State<PhotosPage> {
   Map<int, File> images = {0: null, 1: null, 2: null};
 
   Future getImage(int index) async {
+    showDialog(
+        context: context,
+        builder: (dialogContext) => MultiSelectionDialog.Dialog(
+              dialogContent: [
+                DialogItemContent("Сделать фото", () {
+                  openCamera(index);
+                }, DialogItemType.item, icon: "assets/camera_small.svg"),
+                DialogItemContent("Выбрать из галереи", () {
+                  openGallery(index);
+                }, DialogItemType.item, icon: "assets/gallery_small.svg"),
+                DialogItemContent("Закрыть", () {
+                  Navigator.pop(dialogContext);
+                }, DialogItemType.system)
+              ],
+            ));
+  }
+
+  Future openGallery(int index) async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
-    setState(() {
-      File _image = File(pickedFile.path);
-      images[index] = _image;
-    });
+    if (pickedFile != null)
+      setState(() {
+        File _image = File(pickedFile.path);
+        images[index] = _image;
+      });
+  }
+
+  Future openCamera(int index) async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    if (pickedFile != null)
+      setState(() {
+        File _image = File(pickedFile.path);
+        images[index] = _image;
+      });
   }
 
   @override
@@ -80,12 +110,9 @@ class _PhotosPageState extends State<PhotosPage> {
                         style: Theme.of(context).textTheme.headline1,
                       ),
                     ),
-                    AddPhotoDescriptionItem(
-                        title: "Сфотографируйте все имеющиеся деффекты"),
-                    AddPhotoDescriptionItem(
-                        title: "Сделайте фото бирки и ото этикетки с размером"),
-                    AddPhotoDescriptionItem(
-                        title: "Используйте нейтральный фон"),
+                    AddPhotoDescriptionItem(title: "Сфотографируйте все имеющиеся деффекты"),
+                    AddPhotoDescriptionItem(title: "Сделайте фото бирки и ото этикетки с размером"),
+                    AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
                   ],
                 ),
               ),
