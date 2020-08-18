@@ -3,20 +3,30 @@ import 'package:refashioned_app/utils/colors.dart';
 
 enum ButtonTitleColor { white, accent, black, darkGray }
 
-class ButtonTitle extends StatelessWidget {
-  final ButtonTitleColor type;
+class ButtonTitleData {
+  final ButtonTitleColor color;
 
   final String text;
   final bool uppercase;
 
-  const ButtonTitle({this.type, this.text, this.uppercase: true})
-      : assert(type != null && text != null);
+  const ButtonTitleData({this.color, this.text, this.uppercase: true})
+      : assert(color != null && text != null);
+}
+
+class ButtonTitle extends StatelessWidget {
+  final ButtonTitleData currentData;
+  final ButtonTitleData nextData;
+
+  final Animation<double> animation;
+
+  const ButtonTitle({this.currentData, this.nextData, this.animation})
+      : assert(currentData != null);
 
   @override
   Widget build(BuildContext context) {
     Color textColor;
 
-    switch (type) {
+    switch (currentData.color) {
       case ButtonTitleColor.darkGray:
         textColor = darkGrayColor;
         break;
@@ -34,7 +44,10 @@ class ButtonTitle extends StatelessWidget {
         break;
     }
 
-    return Text(uppercase ? text.toUpperCase() : text,
+    return Text(
+        currentData.uppercase
+            ? currentData.text.toUpperCase()
+            : currentData.text,
         style: Theme.of(context).textTheme.button.copyWith(color: textColor));
   }
 }
