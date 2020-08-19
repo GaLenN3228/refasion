@@ -52,6 +52,18 @@ ThemeData _materialTheme() {
         color: primaryColor,
         fontWeight: FontWeight.w600,
         height: 1.2),
+    headline5: TextStyle(
+        fontSize: 16,
+        fontFamily: "SF UI Text",
+        color: primaryColor,
+        fontWeight: FontWeight.normal,
+        height: 1.2),
+    headline6: TextStyle(
+        fontSize: 16,
+        fontFamily: "SF UI Text",
+        color: primaryColor,
+        fontWeight: FontWeight.w600,
+        height: 1.2),
     bodyText1: TextStyle(
         fontSize: 12,
         fontFamily: "SF UI Text",
