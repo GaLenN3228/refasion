@@ -4,9 +4,11 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/add_cart.dart';
 import 'package:refashioned_app/repositories/cart_count.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/url.dart';
+import 'package:provider/provider.dart';
 
 class ProductsItem extends StatelessWidget {
   final Product product;
@@ -16,6 +18,7 @@ class ProductsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FavouriteRepository favouriteRepository = context.watch<FavouriteRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Padding(
         padding: const EdgeInsets.only(left: 2, right: 2),
@@ -42,12 +45,13 @@ class ProductsItem extends StatelessWidget {
                   ),
                   GestureDetector(
                       onTap: () => {
-                            showCupertinoModalBottomSheet(
-                                backgroundColor: Colors.white,
-                                expand: false,
-                                context: context,
-                                useRootNavigator: true,
-                                builder: (context, controller) => ProfilePage())
+//                            showCupertinoModalBottomSheet(
+//                                backgroundColor: Colors.white,
+//                                expand: false,
+//                                context: context,
+//                                useRootNavigator: true,
+//                                builder: (context, controller) => ProfilePage())
+                            favouriteRepository.addToFavourites()
                           },
                       child: Align(
                         alignment: Alignment.topRight,

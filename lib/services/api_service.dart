@@ -120,8 +120,25 @@ class ApiService {
   }
 
   static Future<Response> codeAuthorization(String phone, String hash, String code) async {
-    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"code": code};
     return dioClient.post(Url.codeAuthorization(phone, hash), data: body);
+  }
+
+  static Future<Response> getFavourites() async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    return dioClient.get(Url.wished);
+  }
+
+  static Future<Response> addToFavourites(String product, String customer) async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    var body = {"product": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "customer": "3fa85f64-5717-4562-b3fc-2c963f66afa6"};
+    return dioClient.post(Url.wished, data: body);
+  }
+
+  static Future<Response> removeFromFavourites(String product, String customer) async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    var body = {"product": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "customer": "3fa85f64-5717-4562-b3fc-2c963f66afa6"};
+    return dioClient.delete(Url.wished, data: body);
   }
 }

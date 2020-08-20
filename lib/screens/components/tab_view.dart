@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/catalog_navigator.dart';
@@ -41,9 +43,7 @@ class _TabViewState extends State<TabView> {
       if (currentTab != newTab)
         currentTab = newTab;
       else
-        navigatorKeys[currentTab]
-            .currentState
-            .pushNamedAndRemoveUntil('/', (_) => false);
+        navigatorKeys[currentTab].currentState.pushNamedAndRemoveUntil('/', (_) => false);
     });
   }
 
@@ -61,10 +61,10 @@ class _TabViewState extends State<TabView> {
     switch (widget.tab) {
       case BottomTab.catalog:
         content = CupertinoPageScaffold(
-          child: CatalogNavigator(
-              navigatorKey: navigatorKeys[widget.tab],
-              onPushPageOnTop: widget.pushPageOnTop),
-        );
+            child: ChangeNotifierProvider<FavouriteRepository>(
+          create: (_) => FavouriteRepository(),
+          child: CatalogNavigator(navigatorKey: navigatorKeys[widget.tab], onPushPageOnTop: widget.pushPageOnTop),
+        ));
         break;
 
       case BottomTab.cart:

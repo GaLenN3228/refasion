@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/quick_filters.dart';
