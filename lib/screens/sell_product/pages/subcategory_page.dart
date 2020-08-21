@@ -1,62 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/sell_product/components/categories_list.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
-class SubcategoryPage extends StatefulWidget {
-  final Function(List<Category>) onPush;
+class SubcategoryPage extends StatelessWidget {
+  final Category initialData;
+  final Category topCategory;
+
   final Function() onClose;
-  final Category selectedCategory;
+  final Function() onUpdate;
+  final Function() onPush;
 
-  SubcategoryPage({this.onPush, this.selectedCategory, this.onClose})
-      : assert(selectedCategory != null);
-
-  @override
-  _SubcategoryPageState createState() => _SubcategoryPageState();
-}
-
-class _SubcategoryPageState extends State<SubcategoryPage> {
-  ScrollController scrollController;
-
-  @override
-  void initState() {
-    scrollController = ScrollController();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    scrollController.dispose();
-
-    super.dispose();
-  }
+  SubcategoryPage(
+      {this.onPush,
+      this.topCategory,
+      this.onClose,
+      this.onUpdate,
+      this.initialData})
+      : assert(topCategory != null);
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: CategoriesList(
-        categories: widget.selectedCategory.children,
+        categories: topCategory.children,
         bottomPadding: 65,
         multiselection: true,
-        onUpdate: widget.onPush,
-        scrollController: scrollController,
+        onUpdate: (_) => onPush(),
         appBar: RefashionedTopBar(
-          leftButtonType: TBButtonType.icon,
-          leftButtonIcon: TBIconType.back,
-          leftButtonAction: () => Navigator.of(context).pop(),
-          middleType: TBMiddleType.title,
-          middleTitleText: "Добавить вещь",
-          rightButtonType: TBButtonType.text,
-          rightButtonText: "Закрыть",
-          rightButtonAction: widget.onClose,
-          bottomType: TBBottomType.header,
-          bootomHeaderText: "Выберите категорию",
-          scrollController: scrollController,
+          data: TopBarData.sellerPage(
+            leftAction: () => Navigator.of(context).pop(),
+            titleText: "Добавить вещь",
+            rightAction: onClose,
+            headerText: "Выберите категорию",
+          ),
         ),
       ),
     );

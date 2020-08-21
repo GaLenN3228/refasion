@@ -1,51 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:refashioned_app/screens/components/scaffold/components/action.dart';
+import 'package:refashioned_app/screens/components/scaffold/components/actions_provider.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-
-class TBSearchController {
-  void Function() unfocus;
-  void Function() focus;
-
-  TBSearchController() {
-    this.unfocus =
-        () => print("Search Controller method unfocus wasn't redefined");
-    this.focus = () => print("Search Controller method focus wasn't redefined");
-  }
-}
+import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 
 class TBSearch extends StatefulWidget {
-  final TBSearchController searchController;
+  final TBSearchData data;
+  final ScaffoldScrollActionsProvider scrollActionsProvider;
 
-  final String hintText;
-  final Function(String) onSearchUpdate;
-  final Function() onFocus;
-  final Function() onUnfocus;
-  final bool autofocus;
-
-  final ValueNotifier<bool> isScrolled;
-
-  const TBSearch({
-    this.onSearchUpdate,
-    this.hintText,
-    this.onFocus,
-    this.onUnfocus,
-    this.autofocus: false,
-    this.searchController,
-    this.isScrolled,
-  });
+  const TBSearch({Key key, this.data, this.scrollActionsProvider})
+      : super(key: key);
 
   @override
-  _TBSearchState createState() => _TBSearchState(searchController);
+  _TBSearchState createState() => _TBSearchState();
 }
 
 class _TBSearchState extends State<TBSearch>
     with SingleTickerProviderStateMixin {
-  _TBSearchState(TBSearchController searchController) {
-    if (searchController != null) {
-      searchController.focus = focus;
-      searchController.unfocus = unfocus;
-    }
-  }
+  ValueNotifier<ScrollActionState> stateNotifier;
 
   AnimationController animationController;
   Animation<double> animation;
@@ -56,8 +30,15 @@ class _TBSearchState extends State<TBSearch>
   TextEditingController textController;
   ValueNotifier<bool> hasText;
 
+  static final formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
+    stateNotifier = widget.scrollActionsProvider
+        ?.getAction(ScrollActionType.elevateTopBar)
+        ?.state;
+    stateNotifier?.addListener(stateListener);
+
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
     animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
@@ -72,19 +53,25 @@ class _TBSearchState extends State<TBSearch>
 
     hasText = ValueNotifier(false);
 
-    widget.isScrolled?.addListener(scrollListener);
-
     super.initState();
   }
 
   focusListener() {
     if (focusNode.hasFocus) {
       animationController.forward();
-      if (widget.onFocus != null) widget.onFocus();
+      if (widget.data.onFocus != null) widget.data.onFocus();
     } else {
       animationController.reverse();
-      if (widget.onUnfocus != null) widget.onUnfocus();
+      if (widget.data.onUnfocus != null) widget.data.onUnfocus();
     }
+  }
+
+  textListener() {
+    final text = textController.text;
+
+    hasText.value = text.isNotEmpty;
+
+    widget.data.onSearchUpdate(text);
   }
 
   focus() {
@@ -95,24 +82,24 @@ class _TBSearchState extends State<TBSearch>
     if (focusNode.hasFocus) focusNode.unfocus();
   }
 
-  textListener() {
-    final text = textController.text;
-
-    hasText.value = text.isNotEmpty;
-
-    widget.onSearchUpdate(text);
-  }
-
-  scrollListener() {
-    if (widget.isScrolled.value)
-      unfocus();
-    else
-      focus();
+  stateListener() {
+    switch (stateNotifier?.value) {
+      case ScrollActionState.forwarded:
+        unfocus();
+        break;
+      case ScrollActionState.reversed:
+        focus();
+        break;
+      default:
+        break;
+    }
   }
 
   @override
   void dispose() {
-    widget.isScrolled?.removeListener(scrollListener);
+    animationController.dispose();
+
+    stateNotifier?.removeListener(stateListener);
 
     focusNode.removeListener(focusListener);
     focusNode.dispose();
@@ -124,10 +111,7 @@ class _TBSearchState extends State<TBSearch>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: Stack(
+  Widget build(BuildContext context) => Stack(
         children: [
           AnimatedBuilder(
             animation: animation,
@@ -159,15 +143,16 @@ class _TBSearchState extends State<TBSearch>
                     ),
                   ),
                   Expanded(
-                    child: TextField(
+                    child: TextFormField(
+                      key: formKey,
                       controller: textController,
-                      autofocus: widget.autofocus,
+                      autofocus: widget.data.autofocus,
                       enableSuggestions: false,
                       autocorrect: false,
                       focusNode: focusNode,
                       decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: widget.hintText ?? "Поиск",
+                          hintText: widget.data.hintText ?? "Поиск",
                           hintStyle: Theme.of(context)
                               .textTheme
                               .headline1
@@ -224,15 +209,15 @@ class _TBSearchState extends State<TBSearch>
             child: SlideTransition(
               position: offsetAnimation,
               child: TBButton(
-                TBButtonType.text,
-                TBButtonAlign.right,
-                text: "Отменить",
-                onTap: unfocus,
+                data: TBButtonData(
+                  type: TBButtonType.text,
+                  align: TBButtonAlign.right,
+                  text: "Отменить",
+                  onTap: unfocus,
+                ),
               ),
             ),
           )
         ],
-      ),
-    );
-  }
+      );
 }

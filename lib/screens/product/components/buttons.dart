@@ -11,7 +11,7 @@ import 'package:refashioned_app/utils/url.dart';
 class ProductBottomButtons extends StatefulWidget {
   final String productId;
 
-  const ProductBottomButtons({this.productId}) : assert(productId != null);
+  const ProductBottomButtons({this.productId});
   @override
   _ProductBottomButtonsState createState() => _ProductBottomButtonsState();
 }
@@ -103,6 +103,8 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.productId == null) return SizedBox();
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: SizedBox(
@@ -110,28 +112,42 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
         child: Row(
           children: <Widget>[
             Expanded(
-              child: RefashionedButton(
-                onTap: () => HapticFeedback.mediumImpact(),
-                data: ButtonData(
-                  buttonContainerData: ButtonContainerData(
-                    decorationType: ButtonDecorationType.black,
-                  ),
-                  titleData: ButtonTitleData(
-                    text: "Спросить",
-                    color: ButtonTitleColor.white,
-                  ),
-                ),
-              ),
+              child: widget.productId != null && widget.productId.isNotEmpty
+                  ? RefashionedButton(
+                      onTap: () => HapticFeedback.mediumImpact(),
+                      data: ButtonData(
+                        buttonContainerData: ButtonContainerData(
+                          decorationType: ButtonDecorationType.black,
+                        ),
+                        titleData: ButtonTitleData(
+                          text: "Спросить",
+                          color: ButtonTitleColor.white,
+                        ),
+                      ),
+                    )
+                  : RefashionedButton(
+                      data: ButtonData(
+                          buttonContainerData: ButtonContainerData(
+                        decorationType: ButtonDecorationType.black,
+                      )),
+                    ),
             ),
             Container(
               width: 5,
             ),
             Expanded(
-              child: RefashionedButton(
-                onTap: addToCart,
-                states: buttonStates,
-                statesData: buttonStatesData,
-              ),
+              child: widget.productId != null && widget.productId.isNotEmpty
+                  ? RefashionedButton(
+                      onTap: addToCart,
+                      states: buttonStates,
+                      statesData: buttonStatesData,
+                    )
+                  : RefashionedButton(
+                      data: ButtonData(
+                          buttonContainerData: ButtonContainerData(
+                        decorationType: ButtonDecorationType.accent,
+                      )),
+                    ),
             ),
           ],
         ),

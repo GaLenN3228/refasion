@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -114,7 +112,7 @@ class _CategoryPageState extends State<CategoryPage>
             child: Stack(
               children: [
                 ListView.separated(
-                  padding: EdgeInsets.only(bottom: 130),
+                  padding: EdgeInsets.only(bottom: 89.0 + 65.0),
                   itemCount: widgets.length,
                   itemBuilder: (context, index) {
                     return widgets.elementAt(index);
@@ -127,7 +125,7 @@ class _CategoryPageState extends State<CategoryPage>
                     ? Positioned(
                         left: 0,
                         right: 0,
-                        bottom: 70,
+                        bottom: 0,
                         child: Builder(
                           builder: (context) {
                             final productCountRepository =
@@ -154,6 +152,7 @@ class _CategoryPageState extends State<CategoryPage>
                               },
                               title: title,
                               subtitle: subtitle,
+                              bottomPadding: 99,
                             );
                           },
                         ),

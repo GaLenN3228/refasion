@@ -6,9 +6,13 @@ enum Status { loading, error, loaded }
 abstract class BaseRepository with ChangeNotifier {
   final BuildContext context;
 
+  ValueNotifier<Status> _statusNotifier;
+
   Status _status;
 
   BaseRepository([this.context]) {
+    _statusNotifier = ValueNotifier(Status.loading);
+
     startLoading();
     loadData();
   }
@@ -21,17 +25,27 @@ abstract class BaseRepository with ChangeNotifier {
   bool get loadingFailed => _status == Status.error;
   bool get isLoaded => _status == Status.loaded;
 
+  ValueNotifier<Status> get statusNotifier => _statusNotifier;
+
   void startLoading() {
     _status = Status.loading;
+
+    _statusNotifier.value = _status;
   }
 
   void finishLoading() {
     _status = Status.loaded;
+
+    _statusNotifier.value = _status;
+
     notifyListeners();
   }
 
   void receivedError() {
     _status = Status.error;
+
+    _statusNotifier.value = _status;
+
     notifyListeners();
   }
 }

@@ -4,37 +4,49 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/sell_product/components/brand_tile.dart';
 import 'package:refashioned_app/screens/sell_product/components/search_panel.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
-class BrandPage extends StatelessWidget {
-  final Function(Brand) onPush;
+class BrandPage extends StatefulWidget {
+  final String initialQuery;
+  final Brand initialData;
+
   final Function() onClose;
+  final Function(String, Brand) onUpdate;
+  final Function() onPush;
 
-  const BrandPage({this.onPush, this.onClose});
+  final FocusNode focusNode;
 
+  const BrandPage(
+      {this.onPush,
+      this.onClose,
+      this.focusNode,
+      this.initialData,
+      this.onUpdate,
+      this.initialQuery});
+
+  @override
+  _BrandPageState createState() => _BrandPageState();
+}
+
+class _BrandPageState extends State<BrandPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SearchRepository>(
       create: (_) => SearchRepository(),
       child: CupertinoPageScaffold(
+        backgroundColor: Colors.white,
         child: Column(
           children: <Widget>[
             RefashionedTopBar(
-              leftButtonType: TBButtonType.icon,
-              leftButtonIcon: TBIconType.back,
-              leftButtonAction: () => Navigator.of(context).pop(),
-              middleType: TBMiddleType.title,
-              middleTitleText: "Добавить вещь",
-              rightButtonType: TBButtonType.text,
-              rightButtonText: "Закрыть",
-              rightButtonAction: onClose,
-              bottomType: TBBottomType.header,
-              bootomHeaderText: "Выберите бренд",
+              data: TopBarData.sellerPage(
+                leftAction: () => Navigator.of(context).pop(),
+                titleText: "Добавить вещь",
+                rightAction: widget.onClose,
+                headerText: "Выберите бренд",
+              ),
             ),
             Builder(
               builder: (context) {
@@ -42,6 +54,8 @@ class BrandPage extends StatelessWidget {
                     Provider.of<SearchRepository>(context, listen: false);
 
                 return SearchPanel(
+                  initialQuery: widget.initialQuery,
+                  focusNode: widget.focusNode,
                   onUpdate: (query) => repository
                     ..query = query
                     ..refreshData(),
@@ -52,6 +66,12 @@ class BrandPage extends StatelessWidget {
               child: Builder(
                 builder: (context) {
                   final repository = context.watch<SearchRepository>();
+
+                  if (widget.initialQuery != null && repository != null) {
+                    repository
+                      ..query = widget.initialQuery
+                      ..refreshData();
+                  }
 
                   if (repository.isLoading)
                     return Center(
@@ -86,7 +106,11 @@ class BrandPage extends StatelessWidget {
                     itemCount: results.length,
                     itemBuilder: (context, index) => BrandTile(
                         brand: results.elementAt(index),
-                        onPush: () => onPush(results.elementAt(index))),
+                        onPush: () {
+                          widget.onUpdate(
+                              repository.query, results.elementAt(index));
+                          widget.onPush();
+                        }),
                     separatorBuilder: (context, _) => CategoryDivider(),
                   );
                 },

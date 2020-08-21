@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
@@ -20,8 +21,9 @@ class ProductsItem extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.only(left: 2, right: 2),
         child: GestureDetector(
-          onTap: () => {
-            onPush(product),
+          onTap: () {
+            HapticFeedback.mediumImpact();
+            onPush(product);
           },
           child: new Card(
             shadowColor: Colors.transparent,
@@ -66,7 +68,8 @@ class ProductsItem extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () => {
                         AddCartRepository(product.id).addListener(() {
-                          CartCountRepository.notify(context, Uri.parse(Url.cartItem));
+                          CartCountRepository.notify(
+                              context, Uri.parse(Url.cartItem));
                         })
                       },
                       child: Padding(

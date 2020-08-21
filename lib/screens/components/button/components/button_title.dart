@@ -24,6 +24,9 @@ class ButtonTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (currentData.text == null || currentData.color == null)
+      return SizedBox();
+
     Color textColor;
 
     switch (currentData.color) {

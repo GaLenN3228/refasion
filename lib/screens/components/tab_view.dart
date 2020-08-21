@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/cart/cart_navigator.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/catalog_navigator.dart';
@@ -60,17 +61,15 @@ class _TabViewState extends State<TabView> {
 
     switch (widget.tab) {
       case BottomTab.catalog:
-        content = CupertinoPageScaffold(
-          child: CatalogNavigator(
-              navigatorKey: navigatorKeys[widget.tab],
-              onPushPageOnTop: widget.pushPageOnTop),
-        );
+        content = CatalogNavigator(
+            navigatorKey: navigatorKeys[widget.tab],
+            onPushPageOnTop: widget.pushPageOnTop);
         break;
 
       case BottomTab.cart:
-        content = CupertinoPageScaffold(
-          child: CartPage(needUpdate: currentTab == widget.tab),
-        );
+        content = CartNavigator(
+            navigatorKey: navigatorKeys[widget.tab],
+            needUpdate: currentTab == widget.tab);
         break;
 
 //       case BottomTab.profile:

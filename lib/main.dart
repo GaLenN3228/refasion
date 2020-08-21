@@ -12,6 +12,12 @@ void main() => runApp(RefashionApp());
 class RefashionApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      // DeviceOrientation.landscapeRight,
+      // DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      // DeviceOrientation.portraitDown,
+    ]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.white,
       statusBarBrightness: Brightness.light,
@@ -25,14 +31,14 @@ class RefashionApp extends StatelessWidget {
           ChangeNotifierProvider<CitiesRepository>(
             create: (_) => CitiesRepository(),
           ),
-          Provider<SizesRepository>(
-            create: (_) => SizesRepository(),
+          Provider<SizesProvider>(
+            create: (_) => SizesProvider(),
           ),
         ],
         child: MaterialApp(
           theme: _materialTheme(),
           debugShowCheckedModeBanner: false,
-          home: StartUpBuilder(),
+          home: StartupBuilder(),
         ));
   }
 }

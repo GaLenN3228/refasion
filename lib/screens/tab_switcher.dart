@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/cart_count.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
-import 'package:refashioned_app/screens/catalog/components/measure_size.dart';
 import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_view.dart';
+import 'package:refashioned_app/screens/components/update_widgets_data.dart';
 import 'package:refashioned_app/screens/sell_product/pages/sell_navigator.dart';
 import 'components/bottom_navigation.dart';
 
@@ -23,10 +23,19 @@ class TabSwitcher extends StatefulWidget {
 }
 
 class _TabSwitcherState extends State<TabSwitcher> {
+  WidgetData bottomNavWidgetData;
+
+  SizesProvider sizesProvider;
+
   ValueNotifier<BottomTab> currentTab;
 
   @override
   initState() {
+    sizesProvider = Provider.of<SizesProvider>(context, listen: false);
+
+    bottomNavWidgetData =
+        sizesProvider.getData("bottomNav") ?? WidgetData.create("bottomNav");
+
     currentTab = ValueNotifier(widget.initialTab);
 
     super.initState();
@@ -41,11 +50,13 @@ class _TabSwitcherState extends State<TabSwitcher> {
       resizeToAvoidBottomInset: false,
       child: WillPopScope(
         onWillPop: () async {
+          print("tab switcher onwillpopscope");
           return !await navigatorKeys[currentTab.value].currentState.maybePop();
         },
         child: ChangeNotifierProvider<CartCountRepository>(
-            create: (_) => CartCountRepository(),
-            child: Stack(children: <Widget>[
+          create: (_) => CartCountRepository(),
+          child: Stack(
+            children: <Widget>[
               TabView(BottomTab.home, currentTab),
               TabView(
                 BottomTab.catalog,
@@ -58,19 +69,34 @@ class _TabSwitcherState extends State<TabSwitcher> {
                 left: 0,
                 bottom: 0,
                 right: 0,
-                child: MeasureSize(
-                  onChange: (size, position) =>
-                      Provider.of<SizesRepository>(context, listen: false)
-                          .update(WidgetKeys.bottomNavigation, size, position),
-                  child: BottomNavigation(
-                    currentTab,
-                    () => pushPageOnTop(
-                      SellNavigator(onClose: () => Navigator.of(context).pop()),
+                child: UpdateWidgetsData(
+                  widgetsToUpdate: [bottomNavWidgetData],
+                  sizesProvider: sizesProvider,
+                  child: SizedBox(
+                    key: bottomNavWidgetData.key,
+                    child: BottomNavigation(
+                      currentTab,
+                      () => Navigator.of(context).push(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  SlideTransition(
+                            position:
+                                Tween(begin: Offset(0, 1), end: Offset.zero)
+                                    .animate(animation),
+                            child: SellNavigator(
+                              onClose: () => Navigator.of(context).pop(),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              )
-            ])),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class NewCardPage extends StatelessWidget {
@@ -12,18 +10,17 @@ class NewCardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Column(
         children: <Widget>[
-          Padding(
+          Container(
+            color: Colors.white,
             padding: const EdgeInsets.only(top: 5),
             child: RefashionedTopBar(
-              leftButtonType: TBButtonType.none,
-              middleType: TBMiddleType.title,
-              middleTitleText: "Новая карта",
-              rightButtonType: TBButtonType.text,
-              rightButtonText: "Закрыть",
-              rightButtonAction: () => Navigator.of(context).pop(),
-              bottomType: TBBottomType.none,
+              data: TopBarData.sellerPage(
+                titleText: "Новая карта",
+                leftAction: () => Navigator.of(context).pop(),
+              ),
             ),
           ),
           Expanded(

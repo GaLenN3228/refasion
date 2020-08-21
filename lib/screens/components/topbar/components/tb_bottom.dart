@@ -1,68 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/components/scaffold/components/actions_provider.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_bottom_data.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_header.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
-
-enum TBBottomType { search, header, headerAndSearch, none }
+import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 
 class TBBottom extends StatelessWidget {
-  final TBBottomType type;
-  final String headerText;
-
-  final String searchHintText;
-  final Function(String) onSearchUpdate;
-  final Function() onSearchFocus;
-  final Function() onSearchUnfocus;
-
-  final TBSearchController searchController;
-
-  final ValueNotifier<bool> isElevated;
+  final TBBottomData data;
+  final TBSearchData searchData;
+  final ScaffoldScrollActionsProvider scrollActionsProvider;
 
   const TBBottom(
-      {this.type,
-      this.headerText,
-      this.onSearchUpdate,
-      this.searchHintText,
-      this.onSearchFocus,
-      this.onSearchUnfocus,
-      this.searchController,
-      this.isElevated})
-      : assert(type != null);
+      {Key key, this.data, this.scrollActionsProvider, this.searchData})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    switch (type) {
+    switch (data.type) {
       case TBBottomType.search:
         return TBSearch(
-          hintText: searchHintText,
-          onSearchUpdate: onSearchUpdate,
-          onFocus: onSearchFocus,
-          onUnfocus: onSearchUnfocus,
-          searchController: searchController,
-          isScrolled: isElevated,
+          data: searchData,
+          scrollActionsProvider: scrollActionsProvider,
         );
 
       case TBBottomType.header:
-        if (headerText == null || headerText.isEmpty) return SizedBox();
+        if (data.headerText == null || data.headerText.isEmpty)
+          return SizedBox();
 
         return TBHeader(
-          text: headerText,
+          text: data.headerText,
         );
 
       case TBBottomType.headerAndSearch:
-        if (headerText == null || headerText.isEmpty) return SizedBox();
+        if (data.headerText == null || data.headerText.isEmpty)
+          return SizedBox();
 
         return Column(
           children: [
             TBHeader(
-              text: headerText,
+              text: data.headerText,
             ),
             TBSearch(
-              hintText: searchHintText,
-              onSearchUpdate: onSearchUpdate,
-              onFocus: onSearchFocus,
-              onUnfocus: onSearchUnfocus,
-              searchController: searchController,
-              isScrolled: isElevated,
+              data: searchData,
+              scrollActionsProvider: scrollActionsProvider,
             ),
           ],
         );

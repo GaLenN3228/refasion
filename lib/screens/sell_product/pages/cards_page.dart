@@ -2,19 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/sell_product/components/border_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/sell_product/pages/new_card_page.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CardsPage extends StatelessWidget {
-  final Function() onPush;
-  final Function() onClose;
+  final String initialData;
 
-  const CardsPage({this.onPush, this.onClose});
+  final Function() onClose;
+  final Function(String) onUpdate;
+  final Function() onPush;
+
+  const CardsPage({this.onPush, this.onClose, this.initialData, this.onUpdate});
 
   showNewCardPanel(BuildContext context) {
     showCupertinoModalBottomSheet(
@@ -29,19 +30,16 @@ class CardsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Column(
         children: <Widget>[
           RefashionedTopBar(
-            leftButtonType: TBButtonType.icon,
-            leftButtonIcon: TBIconType.back,
-            leftButtonAction: () => Navigator.of(context).pop(),
-            middleType: TBMiddleType.title,
-            middleTitleText: "Добавить вещь",
-            rightButtonType: TBButtonType.text,
-            rightButtonText: "Закрыть",
-            rightButtonAction: onClose,
-            bottomType: TBBottomType.header,
-            bootomHeaderText: "Выберите банковскую карту",
+            data: TopBarData.sellerPage(
+              leftAction: () => Navigator.of(context).pop(),
+              titleText: "Добавить вещь",
+              rightAction: onClose,
+              headerText: "Выберите банковскую карту",
+            ),
           ),
           Expanded(
             child: Column(
