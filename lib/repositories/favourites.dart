@@ -18,9 +18,9 @@ class FavouriteRepository extends BaseRepository {
     }
   }
 
-  Future<void> addToFavourites() async {
+  Future<void> addToFavourites(String productId) async {
     try {
-      await ApiService.addToFavourites("", "");
+      await ApiService.addToFavourites(productId);
 
       finishLoading();
     } catch (err) {
@@ -29,9 +29,9 @@ class FavouriteRepository extends BaseRepository {
     }
   }
 
-  Future<void> removeFromFavourites() async {
+  Future<void> removeFromFavourites(String productId) async {
     try {
-      await ApiService.removeFromFavourites("", "");
+      await ApiService.removeFromFavourites(productId);
 
       finishLoading();
     } catch (err) {

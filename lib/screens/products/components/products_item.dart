@@ -51,7 +51,7 @@ class ProductsItem extends StatelessWidget {
 //                                context: context,
 //                                useRootNavigator: true,
 //                                builder: (context, controller) => ProfilePage())
-                            favouriteRepository.addToFavourites()
+                            favouriteRepository.addToFavourites(product.id)
                           },
                       child: Align(
                         alignment: Alignment.topRight,

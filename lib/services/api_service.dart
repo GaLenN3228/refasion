@@ -130,15 +130,15 @@ class ApiService {
     return dioClient.get(Url.wished);
   }
 
-  static Future<Response> addToFavourites(String product, String customer) async {
+  static Future<Response> addToFavourites(String productId) async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
-    var body = {"product": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "customer": "3fa85f64-5717-4562-b3fc-2c963f66afa6"};
+    var body = {"product": productId};
     return dioClient.post(Url.wished, data: body);
   }
 
-  static Future<Response> removeFromFavourites(String product, String customer) async {
+  static Future<Response> removeFromFavourites(String product) async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
-    var body = {"product": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "customer": "3fa85f64-5717-4562-b3fc-2c963f66afa6"};
+    var body = {"product": "3fa85f64-5717-4562-b3fc-2c963f66afa6"};
     return dioClient.delete(Url.wished, data: body);
   }
 }
