@@ -36,7 +36,7 @@ class _RefashionedTopBarState extends State<RefashionedTopBar>
 
     if (animationController == null)
       return Container(
-        color: widget.data.backgroundColor ?? Colors.red,
+        color: widget.data.backgroundColor ?? Colors.white,
         child: TBContent(
           data: widget.data,
           scrollActionsProvider: widget.scrollActionsProvider,
@@ -51,7 +51,7 @@ class _RefashionedTopBarState extends State<RefashionedTopBar>
       builder: (context, child) => Container(
         child: child,
         decoration: BoxDecoration(
-          color: widget.data.backgroundColor ?? Colors.amber,
+          color: widget.data.backgroundColor ?? Colors.white,
           boxShadow: [
             BoxShadow.lerp(flatShadow, elevatedShadow, animation.value)
           ],
