@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
-import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/catalog_navigator.dart';
 
@@ -35,17 +34,18 @@ class _TabViewState extends State<TabView> {
     super.initState();
   }
 
-  tabListener() {
+  tabListener() async {
     final newTab = widget.currentTab.value;
 
-    setState(() {
-      if (currentTab != newTab)
-        currentTab = newTab;
-      else
-        navigatorKeys[currentTab]
-            .currentState
-            .pushNamedAndRemoveUntil('/', (_) => false);
-    });
+    final canPop =
+        await navigatorKeys[currentTab]?.currentState?.maybePop() ?? false;
+
+    if (currentTab != newTab)
+      setState(() => currentTab = newTab);
+    else if (canPop)
+      navigatorKeys[currentTab]
+          .currentState
+          .pushNamedAndRemoveUntil('/', (route) => false);
   }
 
   @override

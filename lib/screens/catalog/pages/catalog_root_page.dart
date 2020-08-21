@@ -1,10 +1,8 @@
 import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart';
-import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/catalog/components/category_root_card.dart';
 import 'package:refashioned_app/screens/components/top_panel.dart';
 import 'package:refashioned_app/utils/colors.dart';
