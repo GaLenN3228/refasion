@@ -102,6 +102,7 @@ class _CategoryPageState extends State<CategoryPage>
               .toList());
 
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Column(
         children: [
           TopPanel(

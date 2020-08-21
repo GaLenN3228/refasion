@@ -22,7 +22,6 @@ class ProductsItem extends StatelessWidget {
         padding: const EdgeInsets.only(left: 2, right: 2),
         child: GestureDetector(
           onTap: () {
-            HapticFeedback.mediumImpact();
             onPush(product);
           },
           child: new Card(
@@ -66,11 +65,12 @@ class ProductsItem extends StatelessWidget {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
-                      onTap: () => {
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
                         AddCartRepository(product.id).addListener(() {
                           CartCountRepository.notify(
                               context, Uri.parse(Url.cartItem));
-                        })
+                        });
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 14, right: 14),
