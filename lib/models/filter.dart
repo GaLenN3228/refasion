@@ -1,20 +1,6 @@
 import 'package:refashioned_app/models/status.dart';
 import 'dart:math' as math;
 
-class FiltersResponse {
-  final Status status;
-  final List<Filter> content;
-
-  const FiltersResponse({this.status, this.content});
-
-  factory FiltersResponse.fromJson(Map<String, dynamic> json) {
-    return FiltersResponse(status: Status.fromJson(json['status']), content: [
-      if (json['content'] != null)
-        for (final filter in json['content']) Filter.fromJson(filter)
-    ]);
-  }
-}
-
 enum Parameter { color, material, price, condition, size, undefined }
 
 class Filter {

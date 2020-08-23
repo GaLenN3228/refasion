@@ -4,18 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/status.dart';
 import 'package:rxdart/subjects.dart';
 
-class CitiesResponse {
-  final Status status;
-  final CitiesProvider content;
-
-  const CitiesResponse({this.status, this.content});
-
-  factory CitiesResponse.fromJson(Map<String, dynamic> json) => CitiesResponse(
-        status: Status.fromJson(json['status']),
-        content: CitiesProvider.fromJson(json['content']),
-      );
-}
-
 class GeolocationResponse {
   final Status status;
   final City content;

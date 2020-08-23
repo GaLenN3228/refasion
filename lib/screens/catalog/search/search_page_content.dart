@@ -32,8 +32,7 @@ class _SearchPageState extends State<SearchPageContent> {
             height: 80,
             child: SearchTopPanel(
               onUpdate: (query) {
-                searchRepository.query = query;
-                searchRepository.refreshData();
+                searchRepository.search(searchQuery);
                 searchQuery = query;
               },
             ),

@@ -28,6 +28,7 @@ class _LayersExampleState extends State<_LayersExample> {
     pickPointRepository.addListener(() {
       showPickPoints();
     });
+    pickPointRepository.getPickPoints();
     super.initState();
     _requestPermission();
   }
@@ -87,7 +88,7 @@ class _LayersExampleState extends State<_LayersExample> {
   void showPickPoints() {
     if (pickPointRepository.isLoaded) {
       Future.delayed(const Duration(milliseconds: 2500), () {
-        pickPointRepository.pickPointResponse.content.where((element) => element.address.contains("Москва")).forEach((element) {
+        pickPointRepository.response.content.where((element) => element.address.contains("Москва")).forEach((element) {
           var _point = Point(latitude: double.parse(element.lat), longitude: double.parse(element.lon));
           final Placemark _placemark = Placemark(
             point: _point,

@@ -12,7 +12,7 @@ class CartBottomBar extends StatelessWidget {
     final cartRepository = context.watch<CartRepository>();
     if (cartRepository.isLoading) return Container();
 
-    final Cart cart = cartRepository.cartResponse.cart;
+    final Cart cart = cartRepository.response.content;
     final numberFormat = NumberFormat("#,###", "ru_Ru");
 
     final bottomOffset = MediaQuery.of(context).padding.top;

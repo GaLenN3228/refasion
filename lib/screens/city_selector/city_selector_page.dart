@@ -7,6 +7,7 @@ import 'package:refashioned_app/screens/components/topbar/components/tb_button.d
 import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CitySelectorPage extends StatefulWidget {
@@ -40,11 +41,26 @@ class _CitySelectorPageState extends State<CitySelectorPage> {
   }
 
   Future<void> setCityId(String id) async => SharedPreferences.getInstance()
-      .then((prefs) => prefs.setString("city_id", id));
+      .then((prefs) => prefs.setString(Prefs.city_id, id));
 
   @override
   Widget build(BuildContext context) {
-    final citiesProvider = widget.citiesRepository.citiesResponse.content;
+    if (widget.citiesRepository.isLoading)
+      return Center(
+        child: Text("Загрузка", style: Theme.of(context).textTheme.bodyText1),
+      );
+
+    if (widget.citiesRepository.loadingFailed)
+      return Center(
+        child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+      );
+
+    if (widget.citiesRepository.getStatusCode != 200)
+      return Center(
+        child: Text("Статус", style: Theme.of(context).textTheme.bodyText1),
+      );
+
+    final citiesProvider = widget.citiesRepository.response.content;
 
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,

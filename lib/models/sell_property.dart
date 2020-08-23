@@ -1,21 +1,5 @@
 import 'package:refashioned_app/models/status.dart';
 
-class SellPropertiesResponse {
-  final Status status;
-  final List<SellProperty> content;
-
-  const SellPropertiesResponse({this.status, this.content});
-
-  factory SellPropertiesResponse.fromJson(Map<String, dynamic> json) {
-    return SellPropertiesResponse(
-        status: Status.fromJson(json['status']),
-        content: [
-          if (json['content'] != null)
-            for (final filter in json['content']) SellProperty.fromJson(filter)
-        ]);
-  }
-}
-
 class SellProperty {
   final String id;
   final String name;
@@ -117,23 +101,6 @@ class SellProperty {
       multiselection.toString() +
       ". Values: " +
       values.join(',');
-}
-
-class SellPropertyValuesResponse {
-  final Status status;
-  final List<SellPropertyValue> content;
-
-  const SellPropertyValuesResponse({this.status, this.content});
-
-  factory SellPropertyValuesResponse.fromJson(Map<String, dynamic> json) {
-    return SellPropertyValuesResponse(
-        status: Status.fromJson(json['status']),
-        content: [
-          if (json['content'] != null)
-            for (final filter in json['content'])
-              SellPropertyValue.fromJson(filter)
-        ]);
-  }
 }
 
 class SellPropertyValue {

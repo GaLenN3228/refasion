@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/product_count.dart';
+import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/products/components/category_filter_list.dart';
 import 'package:refashioned_app/screens/products/components/category_filter_panel_title.dart';
@@ -50,7 +50,7 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
   }
 
   updateCount(BuildContext context) {
-    Provider.of<ProductCountRepository>(context, listen: false).update(newParameters: categoryFiltersParameters);
+    Provider.of<ProductsCountRepository>(context, listen: false).getProductsCount(categoryFiltersParameters);
   }
 
   @override
@@ -62,8 +62,8 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProductCountRepository>(create: (_) {
-      return ProductCountRepository(parameters: categoryFiltersParameters);
+    return ChangeNotifierProvider<ProductsCountRepository>(create: (_) {
+      return ProductsCountRepository()..getProductsCount(categoryFiltersParameters);
     }, builder: (context, _) {
       return WillPopScope(
           onWillPop: () async {
@@ -100,7 +100,7 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                 bottom: 0,
                 child: Builder(
                   builder: (context) {
-                    final productCountRepository = context.watch<ProductCountRepository>();
+                    final productCountRepository = context.watch<ProductsCountRepository>();
 
                     String title = "";
                     String subtitle = "";
@@ -113,7 +113,7 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                       subtitle = "Мы уже работаем над её исправлением";
                     } else {
                       title = "ПОКАЗАТЬ";
-                      subtitle = productCountRepository.productsCountResponse.productsCount.text;
+                      subtitle = productCountRepository.response.content.getCountText;
                     }
                     return BottomButton(
                       action: () {

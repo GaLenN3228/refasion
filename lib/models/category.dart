@@ -1,21 +1,5 @@
 import 'package:refashioned_app/models/status.dart';
 
-class CategoryResponse {
-  final Status status;
-  final List<Category> categories;
-
-  const CategoryResponse({this.status, this.categories});
-
-  factory CategoryResponse.fromJson(Map<String, dynamic> json) {
-    final categories = [
-      for (final category in json['content']) Category.fromJson(category)
-    ];
-
-    return CategoryResponse(
-        status: Status.fromJson(json['status']), categories: categories);
-  }
-}
-
 class Category {
   final String id;
   final String name;

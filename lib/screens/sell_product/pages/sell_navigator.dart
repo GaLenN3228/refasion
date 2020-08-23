@@ -263,6 +263,7 @@ class _SellNavigatorState extends State<SellNavigator> {
 
   selectSubCategories(List<Category> categories) {
     sellPropertiesRepository = SellPropertiesRepository();
+    sellPropertiesRepository.getSellProperties();
   }
 
   addPhotos(List<String> photos) {}
@@ -288,7 +289,7 @@ class _SellNavigatorState extends State<SellNavigator> {
       );
 
     if (catalogRepository.loadingFailed ||
-        catalogRepository.catalogResponse.status.code != 200)
+        catalogRepository.response.status.code != 200)
       return Center(
         child: Text("Ошибка категорий",
             style: Theme.of(context).textTheme.bodyText1),
@@ -299,7 +300,7 @@ class _SellNavigatorState extends State<SellNavigator> {
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
           builder: (context) => _routeBuilder(context, routeSettings.name,
-              categories: catalogRepository.catalogResponse.categories),
+              categories: catalogRepository.response.content),
         );
       },
     );

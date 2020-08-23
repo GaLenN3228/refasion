@@ -26,7 +26,7 @@ class _CartPageContentState extends State<CartPageContent> {
   Widget build(BuildContext context) {
     final CartRepository cartRepository = context.watch<CartRepository>();
     if (widget.needUpdate) {
-      cartRepository.refreshData();
+      cartRepository.getCart();
       widget.needUpdate = false;
     }
     if (cartRepository.isLoading)
@@ -39,12 +39,12 @@ class _CartPageContentState extends State<CartPageContent> {
         child: Text("Ошибка"),
       );
 
-    if (cartRepository.cartResponse.status.code != 200)
+    if (cartRepository.getStatusCode != 200)
       return Center(
         child: Text("Иной статус"),
       );
 
-    final Cart cart = cartRepository.cartResponse.cart;
+    final Cart cart = cartRepository.response.content;
 
     return (cart.cartItems.isNotEmpty)
         ? ListView(

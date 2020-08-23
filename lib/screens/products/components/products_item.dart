@@ -65,7 +65,7 @@ class ProductsItem extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
                       onTap: () => {
-                        AddCartRepository(product.id).addListener(() {
+                        AddCartRepository()..addToCart(product.id)..addListener(() {
                           CartCountRepository.notify(context, Uri.parse(Url.cartItem));
                         })
                       },

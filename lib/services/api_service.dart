@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:refashioned_app/services/dio_client.dart';
-import 'package:refashioned_app/services/dio_cookies_manager.dart';
-
-import '../utils/url.dart';
+import 'package:refashioned_app/services/api/dio_client.dart';
+import 'package:refashioned_app/utils/url.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
@@ -33,10 +31,6 @@ class ApiService {
   static Future<Response> getCart() async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.get(Url.cart);
-  }
-
-  static Future<String> getCartCountFromCookies(Uri responseUri) async {
-    return await DioCookiesManager().getValue(CookiesValues.cartCount, responseUri);
   }
 
   static Future<Response> getContentCatalogMenu() async {
@@ -92,10 +86,10 @@ class ApiService {
     return dioClient.get(Url.search, queryParameters: queryParameters);
   }
 
-  static addToCart(String productId) async {
+  static Future<Response> addToCart(String productId) async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"product": productId};
-    await dioClient.post(Url.cartItem, data: body);
+    return dioClient.post(Url.cartItem, data: body);
   }
 
   static Future<Response> getQuickFilters() async {
@@ -113,13 +107,13 @@ class ApiService {
     return dioClient.get(Url.pickPoints);
   }
 
-  static Future<Response> authorization(String phone) async {
+  static Future<Response> sendPhone(String phone) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     var body = {"phone": phone};
     return dioClient.post(Url.authorization, data: body);
   }
 
-  static Future<Response> codeAuthorization(String phone, String hash, String code) async {
+  static Future<Response> sendCode(String phone, String hash, String code) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     var body = {"code": code};
     return dioClient.post(Url.codeAuthorization(phone, hash), data: body);
