@@ -17,12 +17,13 @@ import 'package:refashioned_app/screens/products/components/quick_filter_list.da
 import 'package:refashioned_app/screens/products/content/products.dart';
 
 class ProductsPage extends StatefulWidget {
-  final Function(Product) onPush;
+  final Function(Product, {dynamic callback}) onPush;
   final Function() onSearch;
   final Category topCategory;
   final SearchResult searchResult;
+  final Function({dynamic callback}) onFavouritesClick;
 
-  const ProductsPage({Key key, this.onPush, this.onSearch, this.topCategory, this.searchResult});
+  const ProductsPage({Key key, this.onPush, this.onSearch, this.topCategory, this.searchResult, this.onFavouritesClick});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -134,6 +135,7 @@ class _ProductsPageState extends State<ProductsPage> {
                 TopPanel(
                   canPop: true,
                   onSearch: widget.onSearch,
+                  onFavouritesClick: () => widget.onFavouritesClick(),
                 ),
                 QuickFilterList(
                     topCategory: widget.topCategory,
@@ -159,9 +161,11 @@ class _ProductsPageState extends State<ProductsPage> {
                   ),
                 ),
                 Expanded(
-                  child: ProductsPageContent(
-                    onPush: widget.onPush,
-                  ),
+                  child: ProductsPageContent(onPush: (product) {
+                    widget.onPush(product, callback: () {
+                      updateProducts(context);
+                    });
+                  }),
                 ),
               ],
             );

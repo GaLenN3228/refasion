@@ -15,7 +15,7 @@ class CatalogRepository extends BaseRepository<List<Category>> {
 
 class ProductsCountRepository extends BaseRepository<ProductsCount> {
   Future<void> getProductsCount(String newParameters) => apiCall(() async {
-        response =
-            BaseResponse.fromJson((await ApiService.getProductsCount(parameters: newParameters)).data, (contentJson) => ProductsCount.fromJson(contentJson));
+        response = BaseResponse.fromJson((await ApiService.getProductsCount(parameters: newParameters)).data,
+            (contentJson) => ProductsCount.fromJson(contentJson));
       });
 }

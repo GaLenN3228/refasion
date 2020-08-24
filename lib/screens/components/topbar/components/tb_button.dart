@@ -6,7 +6,7 @@ enum TBButtonType { text, icon, none }
 
 enum TBButtonAlign { left, right }
 
-enum TBIconType { back, share, favorites, filters, setttings, search, wardrobe }
+enum TBIconType { back, share, favorites_checked, favorites_unchecked, filters, setttings, search, wardrobe }
 
 class TBButton extends StatelessWidget {
   final TBButtonType type;
@@ -35,7 +35,9 @@ class TBButton extends StatelessWidget {
         return "assets/topbar/svg/back_44dp.svg";
       case TBIconType.share:
         return "assets/topbar/svg/share_44dp.svg";
-      case TBIconType.favorites:
+      case TBIconType.favorites_checked:
+        return "assets/topbar/svg/favorite_red_44dp.svg";
+      case TBIconType.favorites_unchecked:
         return "assets/topbar/svg/favorite_border_44dp.svg";
       case TBIconType.filters:
         return "assets/topbar/svg/filters_44dp.svg";
@@ -113,7 +115,6 @@ class TBButton extends StatelessWidget {
             padding: padding,
             child: SvgPicture.asset(
               asset(),
-              color: Colors.black,
               width: 44,
               height: 44,
             ),

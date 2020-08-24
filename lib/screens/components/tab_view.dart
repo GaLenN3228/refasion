@@ -57,14 +57,11 @@ class _TabViewState extends State<TabView> {
   @override
   Widget build(BuildContext context) {
     Widget content;
-
     switch (widget.tab) {
       case BottomTab.catalog:
         content = CupertinoPageScaffold(
-            child: ChangeNotifierProvider<FavouriteRepository>(
-          create: (_) => FavouriteRepository(),
           child: CatalogNavigator(navigatorKey: navigatorKeys[widget.tab], onPushPageOnTop: widget.pushPageOnTop),
-        ));
+        );
         break;
 
       case BottomTab.cart:

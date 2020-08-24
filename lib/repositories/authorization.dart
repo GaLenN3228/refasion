@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:refashioned_app/models/authorization.dart';
 import 'package:refashioned_app/models/base.dart';
 
@@ -22,5 +24,6 @@ class CodeAuthorizationRepository extends BaseRepository<Authorization> {
   Future<void> sendCode(String phone, String hash, String code) => apiCall(() async {
         response = BaseResponse.fromJson(
             (await ApiService.sendCode(phone, hash, code)).data, (contentJson) => Authorization.fromJson(contentJson));
+        if (response.getStatusCode == HttpStatus.ok) BaseRepository.setAuthorized(true);
       });
 }

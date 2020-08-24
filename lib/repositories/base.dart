@@ -97,6 +97,6 @@ class BaseRepository<T> with ChangeNotifier {
   static Future<void> setAuthorized(bool isAuthorized) async =>
       SharedPreferences.getInstance().then((prefs) => prefs.setBool(Prefs.is_authorized, isAuthorized));
 
-  static Future<void> isAuthorized() async =>
-      SharedPreferences.getInstance().then((prefs) => prefs.getBool(Prefs.is_authorized));
+  static Future<bool> isAuthorized() async =>
+      SharedPreferences.getInstance().then((prefs) => prefs.getBool(Prefs.is_authorized) ?? false );
 }

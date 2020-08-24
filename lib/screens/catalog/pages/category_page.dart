@@ -20,8 +20,10 @@ class CategoryPage extends StatefulWidget {
   final CategoryLevel level;
   final Function(Category, {dynamic callback}) onPush;
   final Function() onSearch;
+  final Function() onFavouritesClick;
 
-  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onSearch}) : super(key: key);
+  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onSearch, this.onFavouritesClick})
+      : super(key: key);
 
   @override
   _CategoryPageState createState() => _CategoryPageState();
@@ -101,10 +103,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
     return CupertinoPageScaffold(
       child: Column(
         children: [
-          TopPanel(
-            canPop: true,
-            onSearch: widget.onSearch,
-          ),
+          TopPanel(canPop: true, onSearch: widget.onSearch, onFavouritesClick: widget.onFavouritesClick),
           Expanded(
               child: Stack(children: [
             Expanded(

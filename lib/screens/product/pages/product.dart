@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
+import 'package:refashioned_app/repositories/base.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/catalog/components/measure_size.dart';
@@ -22,6 +25,7 @@ import 'package:refashioned_app/screens/product/components/related_products.dart
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 
 class ProductPage extends StatefulWidget {
   final Product product;
@@ -194,23 +198,40 @@ class _ProductPageState extends State<ProductPage> {
                 top: 0,
                 right: 0,
                 child: MeasureSize(
-                  onChange: (size, position) =>
-                      sizesRepository.update(WidgetKeys.topBar, size, position),
-                  child: RefashionedTopBar(
-                      leftButtonType: TBButtonType.icon,
-                      leftButtonIcon: TBIconType.back,
-                      leftButtonAction: () => Navigator.of(context).pop(),
-                      middleType: TBMiddleType.condensed,
-                      middleTitleText:
-                          product.brand.name + " • " + product.name,
-                      middleSubtitleText:
-                          product.currentPrice.toString() + " ₽",
-                      rightButtonType: TBButtonType.icon,
-                      rightButtonIcon: TBIconType.favorites,
-                      secondRightButtonType: TBButtonType.icon,
-                      secondRightButtonIcon: TBIconType.share,
-                      scrollController: scrollController,
-                      scrollPastOffset: productPageTitleBottomScrollOffset),
+                  onChange: (size, position) => sizesRepository.update(WidgetKeys.topBar, size, position),
+                  child:
+                      Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
+                    return RefashionedTopBar(
+                        leftButtonType: TBButtonType.icon,
+                        leftButtonIcon: TBIconType.back,
+                        leftButtonAction: () => Navigator.of(context).pop(),
+                        middleType: TBMiddleType.condensed,
+                        middleTitleText: product.brand.name + " • " + product.name,
+                        middleSubtitleText: product.currentPrice.toString() + " ₽",
+                        rightButtonType: TBButtonType.icon,
+                        rightButtonIcon:
+                            product.isFavourite ? TBIconType.favorites_checked : TBIconType.favorites_unchecked,
+                        rightButtonAction: () {
+                          BaseRepository.isAuthorized().then((isAuthorized) {
+                            isAuthorized
+                                ? product.isFavourite
+                                    ? addRemoveFavouriteRepository
+                                        .removeFromFavourites((product..isFavourite = false).id)
+                                    : addRemoveFavouriteRepository
+                                        .addToFavourites((product..isFavourite = true).id)
+                                : showCupertinoModalBottomSheet(
+                                    backgroundColor: Colors.white,
+                                    expand: false,
+                                    context: context,
+                                    useRootNavigator: true,
+                                    builder: (context, controller) => ProfilePage());
+                          });
+                        },
+                        secondRightButtonType: TBButtonType.icon,
+                        secondRightButtonIcon: TBIconType.share,
+                        scrollController: scrollController,
+                        scrollPastOffset: productPageTitleBottomScrollOffset);
+                  }),
                 ),
               ),
               Positioned(

@@ -1,42 +1,22 @@
+import 'package:refashioned_app/models/base.dart';
+import 'package:refashioned_app/models/favourite.dart';
 
 import '../services/api_service.dart';
 import 'base.dart';
 
-class FavouriteRepository extends BaseRepository {
+class AddRemoveFavouriteRepository extends BaseRepository {
+  Future<void> addToFavourites(String productId) => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.addToFavourites(productId)).data, null);
+      });
 
-  @override
-  Future<void> loadData() async {}
+  Future<void> removeFromFavourites(String productId) => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.removeFromFavourites(productId)).data, null);
+      });
+}
 
-  Future<void> getFavourites() async {
-    try {
-      await ApiService.getFavourites();
-
-      finishLoading();
-    } catch (err) {
-      print(err);
-      receivedError();
-    }
-  }
-
-  Future<void> addToFavourites(String productId) async {
-    try {
-      await ApiService.addToFavourites(productId);
-
-      finishLoading();
-    } catch (err) {
-      print(err);
-      receivedError();
-    }
-  }
-
-  Future<void> removeFromFavourites(String productId) async {
-    try {
-      await ApiService.removeFromFavourites(productId);
-
-      finishLoading();
-    } catch (err) {
-      print(err);
-      receivedError();
-    }
-  }
+class FavouritesRepository extends BaseRepository<List<Favourite>> {
+  Future<void> getFavourites() => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.getFavourites()).data,
+            (contentJson) => [for (final favourite in contentJson) Favourite.fromJson(favourite)]);
+      });
 }

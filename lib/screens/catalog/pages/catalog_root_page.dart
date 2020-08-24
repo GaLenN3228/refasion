@@ -10,8 +10,9 @@ class CatalogRootPage extends StatelessWidget {
   final List<Category> categories;
   final Function(Category) onPush;
   final Function() onSearch;
+  final Function() onFavouritesClick;
 
-  const CatalogRootPage({Key key, this.categories, this.onPush, this.onSearch})
+  const CatalogRootPage({Key key, this.categories, this.onPush, this.onSearch, this.onFavouritesClick})
       : super(key: key);
 
   Widget tabContent(BuildContext context, Category category) {
@@ -53,6 +54,7 @@ class CatalogRootPage extends StatelessWidget {
                 title: TopPanel(
                   onSearch: onSearch,
                   includeTopPadding: false,
+                  onFavouritesClick: onFavouritesClick,
                 ),
                 backgroundColor: Colors.white,
                 expandedHeight: 136.0 - MediaQuery.of(context).padding.top,

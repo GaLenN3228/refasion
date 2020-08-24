@@ -17,8 +17,9 @@ class Product {
   final String description;
   final List<Property> properties;
   final List<String> images;
+  bool isFavourite = false;
 
-  const Product(
+  Product(
       {this.id,
       this.article,
       this.name,
