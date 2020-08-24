@@ -12,9 +12,13 @@ class BaseRepository<T> with ChangeNotifier {
   final BuildContext context;
   BaseResponse<T> response;
 
+  ValueNotifier<Status> _statusNotifier;
+
   Status _status;
 
-  BaseRepository([this.context]);
+  BaseRepository([this.context]){
+    _statusNotifier = ValueNotifier(Status.loading);
+  }
 
   Future<void> apiCall(Future<void> Function() execute) async {
     startLoading();
@@ -45,17 +49,27 @@ class BaseRepository<T> with ChangeNotifier {
 
   bool get isLoaded => _status == Status.loaded;
 
+  ValueNotifier<Status> get statusNotifier => _statusNotifier;
+
   void startLoading() {
     _status = Status.loading;
+
+    _statusNotifier.value = _status;
   }
 
   void finishLoading() {
     _status = Status.loaded;
+
+    _statusNotifier.value = _status;
+
     notifyListeners();
   }
 
   void receivedError() {
     _status = Status.error;
+
+    _statusNotifier.value = _status;
+
     notifyListeners();
   }
 

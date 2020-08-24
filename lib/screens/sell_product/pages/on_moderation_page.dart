@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class OnModerationPage extends StatelessWidget {
@@ -12,16 +10,14 @@ class OnModerationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Column(
         children: <Widget>[
           RefashionedTopBar(
-            leftButtonType: TBButtonType.none,
-            middleType: TBMiddleType.title,
-            middleTitleText: "На модерации",
-            rightButtonType: TBButtonType.text,
-            rightButtonText: "Закрыть",
-            rightButtonAction: onClose,
-            bottomType: TBBottomType.none,
+            data: TopBarData.sellerPage(
+              titleText: "На модерации",
+              rightAction: onClose,
+            ),
           ),
           Expanded(
             child: Center(

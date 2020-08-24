@@ -12,7 +12,7 @@ class Url {
   static String productsRecommended(id) => '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';
 
   //SellProperties
-  static const properties = '$refashionedBaseUrl/catalog/properties/';
+  static const properties = '$refashionedBaseUrl/catalog/properties/all/';
 
   //Filters
   static const filters = '$refashionedBaseUrl/catalog/filters/';

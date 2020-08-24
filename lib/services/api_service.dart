@@ -4,7 +4,7 @@ import 'package:refashioned_app/utils/url.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -29,7 +29,8 @@ class ApiService {
   }
 
   static Future<Response> getCart() async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.get(Url.cart);
   }
 
@@ -43,14 +44,11 @@ class ApiService {
     return dioClient.get(Url.productsCount + (parameters ?? ''));
   }
 
-  static Future<Response> getSellProperties() async {
-    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    return dioClient.get(Url.properties);
-  }
+  static Future<Response> getSellProperties({String category}) async {
+    if (category == null) return null;
 
-  static Future<Response> getSellPropertyValues(String id) async {
-    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    return dioClient.get(Url.properties + id);
+    return DioClient().getClient(logging: LOG_ENABLE).then((dio) =>
+        dio.get(Url.properties, queryParameters: {"category": category}));
   }
 
   static Future<Response> getFilters() async {
@@ -74,7 +72,8 @@ class ApiService {
   }
 
   static Future<Response> selectCity(String city) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.post(Url.selectCity, data: city);
   }
 

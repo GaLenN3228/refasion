@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
-import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
-import 'package:refashioned_app/screens/catalog/components/measure_size.dart';
-import 'package:refashioned_app/screens/components/empty_page.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
-import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/screens/components/scaffold/data/children_data.dart';
+import 'package:refashioned_app/screens/components/scaffold/data/scaffold_data.dart';
+import 'package:refashioned_app/screens/components/scaffold/components/action.dart';
+import 'package:refashioned_app/screens/components/scaffold/scaffold.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/product/components/additional.dart';
 import 'package:refashioned_app/screens/product/components/buttons.dart';
 import 'package:refashioned_app/screens/product/components/delivery.dart';
@@ -41,158 +41,138 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  WidgetData productTitleWidgetData;
+
   ProductRepository productRepository;
-
-  SizesRepository sizesRepository;
-
-  ScrollController scrollController;
 
   @override
   void initState() {
+    productTitleWidgetData = WidgetData.create("productTitle");
+
     productRepository = ProductRepository();
     productRepository.addListener(repositoryListener);
     productRepository.getProduct(widget.product.id);
 
-    sizesRepository = Provider.of<SizesRepository>(context, listen: false);
-
-    scrollController = ScrollController();
-
     super.initState();
   }
 
-  repositoryListener() => setState(() {});
-
   @override
   void dispose() {
-    scrollController.dispose();
-
-    productRepository.removeListener(repositoryListener);
-
     productRepository.dispose();
 
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (productRepository.isLoading)
-      return EmptyPage(text: "Загружаем товар...");
+  Widget build(BuildContext context) => RefashionedScaffold(
+        state: productRepository.statusNotifier,
+        stateData: {
+          Status.error: () => ScaffoldData.simple(
+                childrenData:
+                    ScaffoldChildrenData.message("Ошибка при загрузке товара"),
+                onBack: () => Navigator.of(context).pop(),
+                bottomOverlay: ProductBottomButtons(),
+              ),
+          Status.loading: () => ScaffoldData.simple(
+                childrenData:
+                    ScaffoldChildrenData.message("Загружаем товар..."),
+                onBack: () => Navigator.of(context).pop(),
+                bottomOverlay: ProductBottomButtons(),
+              ),
+          Status.loaded: () {
+            final product = productRepository.productResponse.product;
 
-    if (productRepository.loadingFailed)
-      return EmptyPage(text: "Ошибка при загрузке товара");
-
-    final product = productRepository.response.content;
-
-    return StreamBuilder<Map<WidgetKeys, WidgetData>>(
-      stream: sizesRepository.data,
-      builder: (context, sizesSnapshot) {
-        if (!sizesSnapshot.hasData) return EmptyPage(text: "Нет размеров");
-
-        if (sizesSnapshot.hasError)
-          return EmptyPage(
-              text: "Ошибка размеров: " + sizesSnapshot.error.toString());
-
-        final data = sizesSnapshot.data;
-
-        final screenHeight = MediaQuery.of(context).size.height;
-
-        final productPageTitleData =
-            data[WidgetKeys.productPageTitle] ?? WidgetData();
-
-        final topBarData = data[WidgetKeys.topBar] ?? WidgetData();
-
-        final productPageButtonsData =
-            data[WidgetKeys.productPageButtons] ?? WidgetData();
-
-        final bottomNavigationData =
-            data[WidgetKeys.bottomNavigation] ?? WidgetData();
-
-        final productPageTitleTopOffset = productPageTitleData.position.dy;
-        final topBarBottomOffset =
-            topBarData.position.dy + topBarData.size.height;
-
-        final productPageTitleBottomScrollOffset = productPageTitleTopOffset -
-            topBarBottomOffset +
-            productPageTitleData.size.height / 2;
-
-        final bottomNavigationTopOffsetFromBottom =
-            screenHeight - bottomNavigationData.position.dy;
-
-        final buttonsTopOffsetFromBottom =
-            screenHeight - productPageButtonsData.position.dy;
-
-        return CupertinoPageScaffold(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Material(
-                color: Colors.white,
-                child: ListView(
-                  controller: scrollController,
-                  padding: EdgeInsets.only(
-                      top: topBarBottomOffset,
-                      bottom: buttonsTopOffsetFromBottom),
-                  children: <Widget>[
-                    ProductSlider(
-                      images: product.images,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: <Widget>[
-                          ProductPrice(
-                            currentPrice: product.currentPrice,
-                            discountPrice: product.discountPrice,
-                          ),
-                          MeasureSize(
-                            onChange: (size, position) =>
-                                sizesRepository.update(
-                                    WidgetKeys.productPageTitle,
-                                    size,
-                                    position),
-                            child: ProductTitle(
-                              name: product.name,
-                              brand: product.brand.name,
-                            ),
-                          ),
-                          ProductSeller(
-                            seller: product.seller,
-                          ),
-                          ProductDescription(
-                            description: product.description,
-                            properties: product.properties,
-                            article: product.article,
-                          ),
-                          ProductQuestions(),
-                          ProductDelivery(),
-                          ProductPayment(),
-                          ProductAdditional(),
-                          RelatedProducts(),
-                          Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "ВАМ МОЖЕТ ПОНРАВИТЬСЯ",
-                                  style: Theme.of(context).textTheme.headline2,
-                                ),
-                              ),
-                              ChangeNotifierProvider<
-                                  ProductRecommendedRepository>(
-                                create: (_) =>
-                                    ProductRecommendedRepository()..getProductRecommended(product.id),
-                                child: RecommendedProducts(
-                                  onProductPush: widget.onProductPush,
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+            return ScaffoldData(
+              topBarData: TopBarData(
+                leftButtonData: TBButtonData.back(
+                  onTap: () => Navigator.of(context).pop(),
+                ),
+                middleData: TBMiddleData.condensed(
+                  product.brand.name.toString() +
+                      " • " +
+                      product.name.toString(),
+                  product.currentPrice.toString() + " ₽",
+                ),
+                secondRightButtonData: TBButtonData(
+                  type: TBButtonType.icon,
+                  align: TBButtonAlign.right,
+                  icon: TBIconType.favorites,
+                ),
+                rightButtonData: TBButtonData(
+                  type: TBButtonType.icon,
+                  align: TBButtonAlign.right,
+                  icon: TBIconType.share,
                 ),
               ),
+              bottomOverlay: ProductBottomButtons(
+                productId: product.id,
+              ),
+              scrollActions: {
+                productTitleWidgetData: ScaffoldScrollAction(
+                  type: ScrollActionType.fadeTopBarMiddle,
+                ),
+              },
+              childrenData: ScaffoldChildrenData(
+                children: <Widget>[
+                  ProductSlider(
+                    images: product.images,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: <Widget>[
+                        ProductPrice(
+                          currentPrice: product.currentPrice,
+                          discountPrice: product.discountPrice,
+                        ),
+                        SizedBox(
+                          key: productTitleWidgetData.key,
+                          child: ProductTitle(
+                            name: product.name,
+                            brand: product.brand.name,
+                          ),
+                        ),
+                        ProductSeller(
+                          seller: product.seller,
+                        ),
+                        ProductDescription(
+                          description: product.description,
+                          properties: product.properties,
+                          article: product.article,
+                        ),
+                        ProductQuestions(),
+                        ProductDelivery(),
+                        ProductPayment(),
+                        ProductAdditional(),
+                        RelatedProducts(),
+                        Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "ВАМ МОЖЕТ ПОНРАВИТЬСЯ",
+                                style: Theme.of(context).textTheme.headline2,
+                              ),
+                            ),
+                            ChangeNotifierProvider<
+                                ProductRecommendedRepository>(
+                              create: (_) =>
+                                  ProductRecommendedRepository(product.id),
+                              child: RecommendedProducts(
+                                onProductPush: widget.onProductPush,
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        },
+      );
               Positioned(
                 left: 0,
                 top: 0,

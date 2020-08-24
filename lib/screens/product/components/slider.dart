@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/utils/colors.dart';
-import 'package:refashioned_app/utils/url.dart';
 
 class ProductSlider extends StatefulWidget {
   final List<String> images;
@@ -9,16 +8,13 @@ class ProductSlider extends StatefulWidget {
   const ProductSlider({Key key, this.images}) : super(key: key);
 
   @override
-  _ProductSliderState createState() {
-    return _ProductSliderState(images);
-  }
+  _ProductSliderState createState() => _ProductSliderState();
 }
 
 class _ProductSliderState extends State<ProductSlider> {
   int _current = 0;
-  final List<String> images;
 
-  _getImagesSlider() => images
+  _getImagesSlider() => widget.images
       .map((item) => Container(
             child: Container(
               margin: EdgeInsets.all(5.0),
@@ -27,10 +23,10 @@ class _ProductSliderState extends State<ProductSlider> {
           ))
       .toList();
 
-  _ProductSliderState(this.images);
-
   @override
   Widget build(BuildContext context) {
+    if (widget.images == null) return SizedBox();
+
     return Container(
       child: Column(
         children: <Widget>[
@@ -46,14 +42,15 @@ class _ProductSliderState extends State<ProductSlider> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: images
+            children: widget.images
                 .asMap()
                 .map((index, value) => MapEntry(
                     index,
                     Container(
                       width: 7.0,
                       height: 7.0,
-                      margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                      margin:
+                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: _current == index ? accentColor : lightGrayColor,

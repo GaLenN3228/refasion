@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/pick_point.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/sell_product/components/map.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class NewAddressPage extends StatelessWidget {
@@ -17,18 +17,25 @@ class NewAddressPage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Container(
         child: Column(
           children: [
             RefashionedTopBar(
-              leftButtonType: TBButtonType.icon,
-              leftButtonIcon: TBIconType.back,
-              leftButtonAction: () => Navigator.of(context).pop(),
-              middleType: TBMiddleType.title,
-              middleTitleText: "Новый адрес",
-              rightButtonType: TBButtonType.icon,
-              rightButtonIcon: TBIconType.filters,
-              bottomType: TBBottomType.none,
+              data: TopBarData(
+                leftButtonData: TBButtonData.back(
+                  onTap: () => Navigator.of(context).pop(),
+                ),
+                middleData: TBMiddleData(
+                  type: TBMiddleType.title,
+                  titleText: "Новый адрес",
+                ),
+                rightButtonData: TBButtonData(
+                  type: TBButtonType.icon,
+                  align: TBButtonAlign.right,
+                  icon: TBIconType.filters,
+                ),
+              ),
             ),
             SizedBox(
               height: 8,

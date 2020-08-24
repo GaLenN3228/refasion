@@ -12,6 +12,8 @@ class ProductSeller extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (seller == null) return SizedBox();
+
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return GestureDetector(

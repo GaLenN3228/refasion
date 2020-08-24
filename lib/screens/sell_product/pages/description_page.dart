@@ -1,19 +1,27 @@
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import 'package:refashioned_app/screens/sell_product/components/header.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class DescriptionPage extends StatefulWidget {
-  final Function(String) onPush;
-  final Function() onClose;
+  final String initialData;
 
-  const DescriptionPage({Key key, this.onPush, this.onClose}) : super(key: key);
+  final Function() onClose;
+  final Function(String) onUpdate;
+  final Function() onPush;
+
+  final FocusNode focusNode;
+
+  const DescriptionPage(
+      {Key key,
+      this.onPush,
+      this.onClose,
+      this.focusNode,
+      this.onUpdate,
+      this.initialData})
+      : super(key: key);
 
   @override
   _DescriptionPageState createState() => _DescriptionPageState();
@@ -29,7 +37,7 @@ class _DescriptionPageState extends State<DescriptionPage>
 
   @override
   void initState() {
-    textEditingController = TextEditingController();
+    textEditingController = TextEditingController(text: widget.initialData);
     canPush = false;
     keyboardVisible = false;
 
@@ -39,12 +47,19 @@ class _DescriptionPageState extends State<DescriptionPage>
     WidgetsBinding.instance.addObserver(this);
   }
 
-  textControllerListener() =>
-      setState(() => canPush = textEditingController.value.text.isNotEmpty);
+  textControllerListener() {
+    final newtext = textEditingController.text;
+    widget.onUpdate(newtext);
+
+    if (newtext.isNotEmpty != canPush)
+      setState(() => canPush = newtext.isNotEmpty);
+  }
 
   @override
   void dispose() {
     textEditingController.removeListener(textControllerListener);
+
+    textEditingController.dispose();
 
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -102,19 +117,16 @@ class _DescriptionPageState extends State<DescriptionPage>
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.white,
       child: Column(
         children: <Widget>[
           RefashionedTopBar(
-            leftButtonType: TBButtonType.icon,
-            leftButtonIcon: TBIconType.back,
-            leftButtonAction: () => Navigator.of(context).pop(),
-            middleType: TBMiddleType.title,
-            middleTitleText: "Добавить вещь",
-            rightButtonType: TBButtonType.text,
-            rightButtonText: "Закрыть",
-            rightButtonAction: widget.onClose,
-            bottomType: TBBottomType.header,
-            bootomHeaderText: "Опишите вещь",
+            data: TopBarData.sellerPage(
+              leftAction: () => Navigator.of(context).pop(),
+              titleText: "Добавить вещь",
+              rightAction: widget.onClose,
+              headerText: "Опишите вещь",
+            ),
           ),
           Expanded(
             child: Material(
@@ -123,7 +135,10 @@ class _DescriptionPageState extends State<DescriptionPage>
                 padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
                 child: TextField(
                   controller: textEditingController,
+                  expands: true,
+                  maxLines: null,
                   autofocus: true,
+                  focusNode: widget.focusNode,
                   style: Theme.of(context)
                       .textTheme
                       .headline1
@@ -145,7 +160,7 @@ class _DescriptionPageState extends State<DescriptionPage>
           BottomButton(
             title: "Продолжить".toUpperCase(),
             enabled: canPush,
-            action: () => widget.onPush(textEditingController.text),
+            action: () => widget.onPush(),
           ),
           AnimatedContainer(
             height: keyboardVisible ? bottomPadding : 0,

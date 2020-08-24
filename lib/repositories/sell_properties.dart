@@ -1,29 +1,41 @@
-import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import '../services/api_service.dart';
 import 'base.dart';
 
-class SellPropertiesRepository extends BaseRepository<List<SellProperty>> {
-  Future<void> getSellProperties() => apiCall(() async {
-    final sellPropertiesResponse = BaseResponse.fromJson((await ApiService.getSellProperties()).data,
-            (contentJson) => [for (final property in contentJson) SellProperty.fromJson(property)]);
+class SellPropertiesRepository extends BaseRepository {
+  SellPropertiesResponse response;
 
-    final valuesResponses = sellPropertiesResponse.content.map((sellProperty) async {
-      final valuesResponse = BaseResponse.fromJson((await ApiService.getSellPropertyValues(sellProperty.id)).data,
-              (contentJson) => [for (final filter in contentJson) SellPropertyValue.fromJson(filter)]);
-      if (valuesResponse.getStatusCode == 200) {
-        return SellProperty.clone(sellProperty, newValues: valuesResponse.content);
-      } else {
-        print("PropertyValuesRepository status code:");
-        print(valuesResponse.getStatusCode);
+  final String category;
+
+  SellPropertiesRepository({this.category});
+
+  @override
+  Future<void> loadData() async {
+    if (category == null || category.isEmpty) {
+      print("No category id");
+
+      receivedError();
+
+      return;
+    }
+
+    print("requesting properties for category: " + category);
+
+    ApiService.getSellProperties(category: category).then((requestResponse) {
+      response = SellPropertiesResponse.fromJson(requestResponse.data);
+
+      if (response.status.code == 200)
+        finishLoading();
+      else {
+        print("PropertiesRepository status code: " +
+            response.status.code.toString());
+
         receivedError();
-
-        return null;
       }
-    });
+    }).catchError((err) {
+      print("PropertiesRepository error: " + err.toString());
 
-    await Future.wait(valuesResponses).then((sellProperties) {
-      this.response = BaseResponse(status: sellPropertiesResponse.status, content: sellProperties);
+      receivedError();
     });
-  });
+  }
 }

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class SearchPanel extends StatelessWidget {
-  final Function(String) onUpdate;
+  final String initialQuery;
 
-  const SearchPanel({Key key, this.onUpdate}) : super(key: key);
+  final Function(String) onUpdate;
+  final FocusNode focusNode;
+
+  const SearchPanel({Key key, this.onUpdate, this.focusNode, this.initialQuery})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +35,10 @@ class SearchPanel extends StatelessWidget {
               ),
               Expanded(
                   child: TextField(
+                controller: TextEditingController(text: initialQuery),
                 autofocus: true,
                 autocorrect: false,
-                focusNode: FocusScopeNode(),
+                focusNode: focusNode ?? FocusNode(),
                 onChanged: (query) => onUpdate(query),
                 decoration: InputDecoration(
                   border: InputBorder.none,

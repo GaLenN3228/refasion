@@ -4,20 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import 'package:refashioned_app/screens/multi_selection_dialog/dialog.dart' as MultiSelectionDialog;
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
+import 'package:refashioned_app/screens/multi_selection_dialog/dialog.dart'
+    as MultiSelectionDialog;
 import 'package:refashioned_app/screens/multi_selection_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/sell_product/components/add_photo_description_item.dart';
 import 'package:refashioned_app/screens/sell_product/components/add_photo_item.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class PhotosPage extends StatefulWidget {
-  final Function() onPush;
-  final Function() onClose;
+  final List<String> initialData;
 
-  const PhotosPage({Key key, this.onPush, this.onClose}) : super(key: key);
+  final Function() onClose;
+  final Function(List<String>) onUpdate;
+  final Function() onPush;
+
+  const PhotosPage(
+      {Key key, this.onPush, this.onClose, this.onUpdate, this.initialData})
+      : super(key: key);
 
   @override
   _PhotosPageState createState() => _PhotosPageState();
@@ -68,21 +72,18 @@ class _PhotosPageState extends State<PhotosPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Stack(
         children: [
           Column(
             children: [
               RefashionedTopBar(
-                leftButtonType: TBButtonType.icon,
-                leftButtonIcon: TBIconType.back,
-                leftButtonAction: () => Navigator.of(context).pop(),
-                middleType: TBMiddleType.title,
-                middleTitleText: "Добавить вещь",
-                rightButtonType: TBButtonType.text,
-                rightButtonText: "Закрыть",
-                rightButtonAction: widget.onClose,
-                bottomType: TBBottomType.header,
-                bootomHeaderText: "Внешний вид",
+                data: TopBarData.sellerPage(
+                  leftAction: () => Navigator.of(context).pop(),
+                  titleText: "Добавить вещь",
+                  rightAction: widget.onClose,
+                  headerText: "Внешний вид",
+                ),
               ),
               StaggeredGridView.countBuilder(
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
@@ -110,9 +111,12 @@ class _PhotosPageState extends State<PhotosPage> {
                         style: Theme.of(context).textTheme.headline1,
                       ),
                     ),
-                    AddPhotoDescriptionItem(title: "Сфотографируйте все имеющиеся деффекты"),
-                    AddPhotoDescriptionItem(title: "Сделайте фото бирки и ото этикетки с размером"),
-                    AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
+                    AddPhotoDescriptionItem(
+                        title: "Сфотографируйте все имеющиеся деффекты"),
+                    AddPhotoDescriptionItem(
+                        title: "Сделайте фото бирки и ото этикетки с размером"),
+                    AddPhotoDescriptionItem(
+                        title: "Используйте нейтральный фон"),
                   ],
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
@@ -80,6 +81,7 @@ class _ProductsItemState extends State<ProductsItem> {
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
                       onTap: () => {
+                        HapticFeedback.mediumImpact();
                         AddCartRepository()
                           ..addToCart(widget.product.id)
                           ..addListener(() {
