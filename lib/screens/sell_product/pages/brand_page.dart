@@ -66,7 +66,7 @@ class _BrandPageState extends State<BrandPage> {
                   final repository = context.watch<SearchRepository>();
 
                   if (widget.initialQuery != null && repository != null) {
-                    repository.search(widget.initialQuery)
+                    repository.search(widget.initialQuery);
                   }
 
                   if (repository.isLoading)
@@ -91,11 +91,10 @@ class _BrandPageState extends State<BrandPage> {
 
                   if (results.isEmpty)
                     return Center(
-                      //TODO init local variable `search`
-//                      child: repository.query.isNotEmpty
-//                          ? Text("Ничего не найдено",
-//                              style: Theme.of(context).textTheme.bodyText1)
-//                          : SizedBox(),
+                      child: repository.query.isNotEmpty
+                          ? Text("Ничего не найдено",
+                              style: Theme.of(context).textTheme.bodyText1)
+                          : SizedBox(),
                     );
 
                   return ListView.separated(

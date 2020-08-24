@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
 import 'package:refashioned_app/repositories/products.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/products/components/products_item.dart';
 
@@ -42,12 +42,15 @@ class FavouritesPage extends StatelessWidget {
         child: Container(
             child: Column(children: [
       RefashionedTopBar(
-        leftButtonType: TBButtonType.icon,
-        leftButtonIcon: TBIconType.back,
-        leftButtonAction: () => Navigator.of(context).pop(),
-        middleType: TBMiddleType.title,
-        middleTitleText: "ИЗБРАННОЕ",
-        bottomType: TBBottomType.none,
+        data: TopBarData(
+          leftButtonData: TBButtonData.back(
+            onTap: () => Navigator.of(context).pop(),
+          ),
+          middleData: TBMiddleData(
+            type: TBMiddleType.title,
+            titleText: "ИЗБРАННОЕ",
+          ),
+        ),
       ),
       Expanded(
         child: StaggeredGridView.countBuilder(

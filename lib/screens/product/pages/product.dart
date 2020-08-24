@@ -25,7 +25,6 @@ import 'package:refashioned_app/screens/product/components/related_products.dart
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
 
 class ProductPage extends StatefulWidget {
   final Product product;
@@ -50,7 +49,6 @@ class _ProductPageState extends State<ProductPage> {
     productTitleWidgetData = WidgetData.create("productTitle");
 
     productRepository = ProductRepository();
-    productRepository.addListener(repositoryListener);
     productRepository.getProduct(widget.product.id);
 
     super.initState();
@@ -80,7 +78,7 @@ class _ProductPageState extends State<ProductPage> {
                 bottomOverlay: ProductBottomButtons(),
               ),
           Status.loaded: () {
-            final product = productRepository.productResponse.product;
+            final product = productRepository.response.content;
 
             return ScaffoldData(
               topBarData: TopBarData(
@@ -96,7 +94,7 @@ class _ProductPageState extends State<ProductPage> {
                 secondRightButtonData: TBButtonData(
                   type: TBButtonType.icon,
                   align: TBButtonAlign.right,
-                  icon: TBIconType.favorites,
+                  icon: TBIconType.favorites_unchecked,
                 ),
                 rightButtonData: TBButtonData(
                   type: TBButtonType.icon,
@@ -157,7 +155,7 @@ class _ProductPageState extends State<ProductPage> {
                             ChangeNotifierProvider<
                                 ProductRecommendedRepository>(
                               create: (_) =>
-                                  ProductRecommendedRepository(product.id),
+                                  ProductRecommendedRepository()..getProductRecommended(product.id),
                               child: RecommendedProducts(
                                 onProductPush: widget.onProductPush,
                               ),
@@ -173,62 +171,62 @@ class _ProductPageState extends State<ProductPage> {
           },
         },
       );
-              Positioned(
-                left: 0,
-                top: 0,
-                right: 0,
-                child: MeasureSize(
-                  onChange: (size, position) => sizesRepository.update(WidgetKeys.topBar, size, position),
-                  child:
-                      Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
-                    return RefashionedTopBar(
-                        leftButtonType: TBButtonType.icon,
-                        leftButtonIcon: TBIconType.back,
-                        leftButtonAction: () => Navigator.of(context).pop(),
-                        middleType: TBMiddleType.condensed,
-                        middleTitleText: product.brand.name + " • " + product.name,
-                        middleSubtitleText: product.currentPrice.toString() + " ₽",
-                        rightButtonType: TBButtonType.icon,
-                        rightButtonIcon:
-                            product.isFavourite ? TBIconType.favorites_checked : TBIconType.favorites_unchecked,
-                        rightButtonAction: () {
-                          BaseRepository.isAuthorized().then((isAuthorized) {
-                            isAuthorized
-                                ? product.isFavourite
-                                    ? addRemoveFavouriteRepository
-                                        .removeFromFavourites((product..isFavourite = false).id)
-                                    : addRemoveFavouriteRepository
-                                        .addToFavourites((product..isFavourite = true).id)
-                                : showCupertinoModalBottomSheet(
-                                    backgroundColor: Colors.white,
-                                    expand: false,
-                                    context: context,
-                                    useRootNavigator: true,
-                                    builder: (context, controller) => ProfilePage());
-                          });
-                        },
-                        secondRightButtonType: TBButtonType.icon,
-                        secondRightButtonIcon: TBIconType.share,
-                        scrollController: scrollController,
-                        scrollPastOffset: productPageTitleBottomScrollOffset);
-                  }),
-                ),
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: bottomNavigationTopOffsetFromBottom,
-                child: MeasureSize(
-                    onChange: (size, position) => sizesRepository.update(
-                        WidgetKeys.productPageButtons, size, position),
-                    child: ProductBottomButtons(
-                      productId: product.id,
-                    )),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+//              Positioned(
+//                left: 0,
+//                top: 0,
+//                right: 0,
+//                child: MeasureSize(
+//                  onChange: (size, position) => sizesRepository.update(WidgetKeys.topBar, size, position),
+//                  child:
+//                      Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
+//                    return RefashionedTopBar(
+//                        leftButtonType: TBButtonType.icon,
+//                        leftButtonIcon: TBIconType.back,
+//                        leftButtonAction: () => Navigator.of(context).pop(),
+//                        middleType: TBMiddleType.condensed,
+//                        middleTitleText: product.brand.name + " • " + product.name,
+//                        middleSubtitleText: product.currentPrice.toString() + " ₽",
+//                        rightButtonType: TBButtonType.icon,
+//                        rightButtonIcon:
+//                            product.isFavourite ? TBIconType.favorites_checked : TBIconType.favorites_unchecked,
+//                        rightButtonAction: () {
+//                          BaseRepository.isAuthorized().then((isAuthorized) {
+//                            isAuthorized
+//                                ? product.isFavourite
+//                                    ? addRemoveFavouriteRepository
+//                                        .removeFromFavourites((product..isFavourite = false).id)
+//                                    : addRemoveFavouriteRepository
+//                                        .addToFavourites((product..isFavourite = true).id)
+//                                : showCupertinoModalBottomSheet(
+//                                    backgroundColor: Colors.white,
+//                                    expand: false,
+//                                    context: context,
+//                                    useRootNavigator: true,
+//                                    builder: (context, controller) => ProfilePage());
+//                          });
+//                        },
+//                        secondRightButtonType: TBButtonType.icon,
+//                        secondRightButtonIcon: TBIconType.share,
+//                        scrollController: scrollController,
+//                        scrollPastOffset: productPageTitleBottomScrollOffset);
+//                  }),
+//                ),
+//              ),
+//              Positioned(
+//                left: 0,
+//                right: 0,
+//                bottom: bottomNavigationTopOffsetFromBottom,
+//                child: MeasureSize(
+//                    onChange: (size, position) => sizesRepository.update(
+//                        WidgetKeys.productPageButtons, size, position),
+//                    child: ProductBottomButtons(
+//                      productId: product.id,
+//                    )),
+//              ),
+//            ],
+//          ),
+//        );
+//      },
+//    );
+//  }
 }

@@ -424,7 +424,6 @@ class _SellNavigatorState extends State<SellNavigator> {
     sellPropertiesRepository =
         SellPropertiesRepository(category: topCategory.id);
     sellPropertiesRepository = SellPropertiesRepository();
-    sellPropertiesRepository.getSellProperties();
   }
 
   addPhotos(List<String> photos) {}

@@ -77,9 +77,7 @@ class ProfilePage extends StatelessWidget {
                     height: 45,
                     width: double.infinity,
                     borderRadius: 5,
-                    onClick: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewAddressPage()));
-                    },
+                    onClick: () {},
                   ),
                 )
               ]),

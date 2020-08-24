@@ -85,7 +85,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                 Tween(begin: Offset(0, 1), end: Offset.zero)
                                     .animate(animation),
                             child: SellNavigator(
-                              onClose: () => Navigator.of(context).pop(),
+                              onClose: () => Navigator.of(context).popUntil(ModalRoute.withName(SellNavigatorRoutes.photos)),
                             ),
                           ),
                         ),

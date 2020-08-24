@@ -81,7 +81,7 @@ class _ProductsItemState extends State<ProductsItem> {
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
                       onTap: () => {
-                        HapticFeedback.mediumImpact();
+                        HapticFeedback.mediumImpact(),
                         AddCartRepository()
                           ..addToCart(widget.product.id)
                           ..addListener(() {

@@ -57,7 +57,7 @@ class _StartupBuilderState extends State<StartupBuilder> {
             bool check = false;
             try {
               final cityId = sharedPreferences.getString("city_id");
-              check = citiesRepository.citiesResponse.content
+              check = citiesRepository.response.content
                   .checkSavedCity(cityId);
             } catch (err) {
               print("City Check Exception: " + err.toString());
@@ -78,7 +78,7 @@ class _StartupBuilderState extends State<StartupBuilder> {
 
   selectCity() {
     citiesRepository
-        .selectCity(citiesRepository.citiesResponse.content.selectedCity)
+        .selectCity(citiesRepository.response.content.selectedCity)
         .then((newCity) {
       if (newCity != null)
         setCityId(newCity.id).then((result) {
@@ -125,7 +125,7 @@ class _StartupBuilderState extends State<StartupBuilder> {
         Status.loading: () =>
             ScaffoldData.simple(childrenData: ScaffoldChildrenData.logo()),
         Status.loaded: () {
-          final citiesProvider = citiesRepository.citiesResponse.content;
+          final citiesProvider = citiesRepository.response.content;
 
           return ScaffoldData(
             topBarData: TopBarData(

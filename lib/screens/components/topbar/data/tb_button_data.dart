@@ -4,7 +4,7 @@ enum TBButtonType { text, icon, none }
 
 enum TBButtonAlign { left, right }
 
-enum TBIconType { back, share, favorites, filters, setttings, search, wardrobe }
+enum TBIconType { back, share, favorites_checked, favorites_unchecked, filters, setttings, search, wardrobe }
 
 class TBButtonData {
   final TBButtonType type;

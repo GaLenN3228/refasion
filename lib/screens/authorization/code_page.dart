@@ -150,10 +150,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                         });
                       } else if (codeAuthorizationRepository.getStatusCode == 200 ||
                           codeAuthorizationRepository.getStatusCode == 201) {
-                        scaffoldKey.currentState.showSnackBar(SnackBar(
-                          content: Text("Огонь! Нужны следующие скрины для авторизации"),
-                          duration: Duration(seconds: 4),
-                        ));
+                        Navigator.of(context)
+                            .popUntil(ModalRoute.withName("/authorization"));
                       }
                     });
                     codeAuthorizationRepository.sendCode(

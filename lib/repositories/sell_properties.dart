@@ -3,7 +3,6 @@ import '../services/api_service.dart';
 import 'base.dart';
 
 class SellPropertiesRepository extends BaseRepository {
-  SellPropertiesResponse response;
 
   final String category;
 
@@ -22,8 +21,6 @@ class SellPropertiesRepository extends BaseRepository {
     print("requesting properties for category: " + category);
 
     ApiService.getSellProperties(category: category).then((requestResponse) {
-      response = SellPropertiesResponse.fromJson(requestResponse.data);
-
       if (response.status.code == 200)
         finishLoading();
       else {

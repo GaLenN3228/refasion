@@ -117,6 +117,7 @@ class TopPanel extends StatelessWidget {
                           : showCupertinoModalBottomSheet(
                               backgroundColor: Colors.white,
                               expand: false,
+                          settings: RouteSettings(name: "/authorization"),
                               context: context,
                               useRootNavigator: true,
                               builder: (context, controller) => ProfilePage());
