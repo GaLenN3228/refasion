@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:refashioned_app/services/dio_cookies_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:refashioned_app/services/api/dio_cookies_manager.dart';
 
 class DioClient {
   Dio _dioClient;

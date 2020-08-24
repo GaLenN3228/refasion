@@ -30,8 +30,8 @@ class _QuickFilterListState extends State<QuickFilterList> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: widget.topCategory != null && widget.topCategory.children != null
-            ? quickFiltersRepository.quickFiltersResponse.content.length + 1
-            : quickFiltersRepository.quickFiltersResponse.content.length,
+            ? quickFiltersRepository.response.content.length + 1
+            : quickFiltersRepository.response.content.length,
         padding: widget.padding ?? EdgeInsets.zero,
         itemBuilder: (context, index) {
           return QuickFilterItem(
@@ -39,8 +39,8 @@ class _QuickFilterListState extends State<QuickFilterList> {
               isNavigationButton: widget.topCategory != null && widget.topCategory.children != null ? index == 0 : false,
               horizontalHeight: widget.horizontalHeight,
               filterValue: widget.topCategory != null && widget.topCategory.children != null
-                  ? ((index > 0) ? quickFiltersRepository.quickFiltersResponse.content.elementAt(index - 1) : null)
-                  : quickFiltersRepository.quickFiltersResponse.content.elementAt(index),
+                  ? ((index > 0) ? quickFiltersRepository.response.content.elementAt(index - 1) : null)
+                  : quickFiltersRepository.response.content.elementAt(index),
               onSelect: (urlParameter) {
                 setState(() {
                   quickFiltersRepository.update(urlParams: urlParameter);

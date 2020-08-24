@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/product_count.dart';
+import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/screens/catalog/components/category_brands.dart';
 import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
 import 'package:refashioned_app/screens/catalog/components/category_image.dart';
@@ -32,7 +32,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
 
   updateCount() {
     prepareParameters();
-    Provider.of<ProductCountRepository>(context, listen: false).update(newParameters: countParameters);
+    Provider.of<ProductsCountRepository>(context, listen: false).getProductsCount(countParameters);
   }
 
   prepareParameters() {
@@ -126,7 +126,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
                     bottom: 70,
                     child: Builder(
                       builder: (context) {
-                        final productCountRepository = context.watch<ProductCountRepository>();
+                        final productCountRepository = context.watch<ProductsCountRepository>();
 
                         String title = "";
                         String subtitle = "";
@@ -139,7 +139,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
                           subtitle = "Мы уже работаем над её исправлением";
                         } else {
                           title = "ПОКАЗАТЬ";
-                          subtitle = productCountRepository.productsCountResponse.productsCount.text;
+                          subtitle = productCountRepository.response.content.getCountText;
                         }
                         return BottomButton(
                           action: () {

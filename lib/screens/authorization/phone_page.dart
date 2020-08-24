@@ -146,7 +146,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
               ? () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
-                            create: (_) => AuthorizationRepository(phone.replaceAll("+", "").replaceAll(" ", "")),
+                            create: (_) => AuthorizationRepository()..sendPhoneAndGetCode(phone.replaceAll("+", "").replaceAll(" ", "")),
                             child: CodePage(phone: phone),
                           )));
                 }

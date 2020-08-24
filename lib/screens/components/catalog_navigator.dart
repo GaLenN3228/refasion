@@ -5,7 +5,6 @@ import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
-import 'package:refashioned_app/repositories/product_count.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
 import 'package:provider/provider.dart';
@@ -75,8 +74,8 @@ class CatalogNavigator extends StatelessWidget {
         );
 
       case CatalogNavigatorRoutes.category:
-        return ChangeNotifierProvider<ProductCountRepository>(create: (_) {
-          return ProductCountRepository(parameters: "?p=" + category.id);
+        return ChangeNotifierProvider<ProductsCountRepository>(create: (_) {
+          return ProductsCountRepository()..getProductsCount("?p=" + category.id);
         }, builder: (context, _) {
           return CategoryPage(
             onSearch: () => onPushPageOnTop(SearchPage()),
@@ -165,7 +164,7 @@ class CatalogNavigator extends StatelessWidget {
       );
 
     if (catalogRepository.loadingFailed ||
-        catalogRepository.catalogResponse.status.code != 200)
+        catalogRepository.getStatusCode != 200)
       return Center(
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
       );
@@ -176,7 +175,7 @@ class CatalogNavigator extends StatelessWidget {
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
           builder: (context) => _routeBuilder(context, routeSettings.name,
-              categories: catalogRepository.catalogResponse.categories),
+              categories: catalogRepository.response.content),
         );
       },
     );

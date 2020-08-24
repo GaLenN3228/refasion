@@ -42,9 +42,7 @@ class BrandPage extends StatelessWidget {
                     Provider.of<SearchRepository>(context, listen: false);
 
                 return SearchPanel(
-                  onUpdate: (query) => repository
-                    ..query = query
-                    ..refreshData(),
+                  onUpdate: (query) => repository.search(query),
                 );
               },
             ),
@@ -75,10 +73,11 @@ class BrandPage extends StatelessWidget {
 
                   if (results.isEmpty)
                     return Center(
-                      child: repository.query.isNotEmpty
-                          ? Text("Ничего не найдено",
-                              style: Theme.of(context).textTheme.bodyText1)
-                          : SizedBox(),
+                      //TODO init local variable `search`
+//                      child: repository.query.isNotEmpty
+//                          ? Text("Ничего не найдено",
+//                              style: Theme.of(context).textTheme.bodyText1)
+//                          : SizedBox(),
                     );
 
                   return ListView.separated(

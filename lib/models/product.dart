@@ -1,22 +1,8 @@
 import 'package:refashioned_app/models/property.dart';
 import 'package:refashioned_app/models/seller.dart';
-import 'package:refashioned_app/models/status.dart';
 
 import 'brand.dart';
 import 'category.dart';
-
-class ProductResponse {
-  final Status status;
-  final Product product;
-
-  const ProductResponse({this.status, this.product});
-
-  factory ProductResponse.fromJson(Map<String, dynamic> json) {
-    return ProductResponse(
-        status: Status.fromJson(json['status']),
-        product: Product.fromJson(json['content']));
-  }
-}
 
 class Product {
   final String id;
@@ -60,8 +46,7 @@ class Product {
         description: json['description'],
         properties: [
           if (json['properties'] != null)
-            for (final property in json['properties'])
-              Property.fromJson(property)
+            for (final property in json['properties']) Property.fromJson(property)
         ],
         images: [
           if (json['images'] != null)

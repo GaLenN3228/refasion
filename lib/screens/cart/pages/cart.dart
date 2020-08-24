@@ -23,7 +23,7 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<CartRepository>(
-      create: (_) => CartRepository(),
+      create: (_) => CartRepository()..getCart(),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(

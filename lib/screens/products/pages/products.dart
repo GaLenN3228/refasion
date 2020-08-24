@@ -42,6 +42,9 @@ class _ProductsPageState extends State<ProductsPage> {
     filtersRepository.addListener(repositoryListener);
     sortMethodsRepository.addListener(repositoryListener);
 
+    filtersRepository.getFilters();
+    sortMethodsRepository.getSortMethods();
+
     if (widget.searchResult != null) {
       initialParameters = "?p=" + widget.searchResult.id;
     } else {
@@ -67,18 +70,18 @@ class _ProductsPageState extends State<ProductsPage> {
     final quickFiltersRepository = Provider.of<QuickFiltersRepository>(context, listen: false);
     final quickFiltersParameters = quickFiltersRepository.getRequestParameters();
 
-    final filtersParameters = filtersRepository.isLoaded && filtersRepository.filtersResponse.status.code == 200
-        ? filtersRepository.filtersResponse.content
+    final filtersParameters = filtersRepository.isLoaded && filtersRepository.getStatusCode == 200
+        ? filtersRepository.response.content
             .fold("", (parameters, filter) => parameters + filter.getRequestParameters())
         : "";
 
-    final sortParameters = sortMethodsRepository.isLoaded && sortMethodsRepository.response.status.code == 200
+    final sortParameters = sortMethodsRepository.isLoaded && sortMethodsRepository.getStatusCode == 200
         ? sortMethodsRepository.response.content.getRequestParameters()
         : "";
 
     String newParameters = initialParameters + filtersParameters + sortParameters + quickFiltersParameters;
 
-    Provider.of<ProductsRepository>(context, listen: false).update(newParameters: newParameters);
+    Provider.of<ProductsRepository>(context, listen: false).getProducts(newParameters);
   }
 
   @override
@@ -88,8 +91,8 @@ class _ProductsPageState extends State<ProductsPage> {
           providers: [
             ChangeNotifierProvider<ProductsRepository>(
                 create: (_) =>
-                    ProductsRepository(parameters: initialParameters)),
-            ChangeNotifierProvider(create: (_) => QuickFiltersRepository())
+                    ProductsRepository()..getProducts(initialParameters)),
+            ChangeNotifierProvider(create: (_) => QuickFiltersRepository()..getQuickFilters())
           ],
           builder: (context, _) {
             if (filtersRepository.isLoading)
@@ -104,7 +107,7 @@ class _ProductsPageState extends State<ProductsPage> {
               return Center(
                 child: Text(
                   "Ошибка при загрузке фильтров. Статус " +
-                      filtersRepository.filtersResponse.status.code.toString(),
+                      filtersRepository.getStatusCode.toString(),
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               );
@@ -121,7 +124,7 @@ class _ProductsPageState extends State<ProductsPage> {
               return Center(
                 child: Text(
                   "Ошибка при загрузке методов сортировки. Статус " +
-                      filtersRepository.filtersResponse.status.code.toString(),
+                      filtersRepository.getStatusCode.toString(),
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               );
@@ -145,7 +148,7 @@ class _ProductsPageState extends State<ProductsPage> {
                     children: [
                       FiltersButton(
                         root: initialParameters,
-                        filters: filtersRepository.filtersResponse.content,
+                        filters: filtersRepository.response.content,
                         onApply: () => updateProducts(context),
                       ),
                       SortingButton(

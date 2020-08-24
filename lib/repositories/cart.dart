@@ -1,23 +1,10 @@
-import 'package:dio/dio.dart';
+import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/cart.dart';
-import '../services/api_service.dart';
+import 'file:///E:/Flutter/Production/Refashioned/ref_mobile_app/lib/services/api_service.dart';
 import 'base.dart';
 
-class CartRepository extends BaseRepository {
-  CartResponse cartResponse;
-
-  @override
-  Future<void> loadData() async {
-    try {
-      final Response cartResponse = await ApiService.getCart();
-
-      this.cartResponse = CartResponse.fromJson(cartResponse.data);
-
-      finishLoading();
-    } catch (err) {
-      print("CartRepository error:");
-      print(err);
-      receivedError();
-    }
-  }
+class CartRepository extends BaseRepository<Cart> {
+  Future<void> getCart() => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.getCart()).data, (contentJson) => Cart.fromJson(contentJson));
+      });
 }

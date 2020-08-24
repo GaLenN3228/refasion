@@ -28,9 +28,9 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
   }
 
   addToCart() {
-    addCartRepository = AddCartRepository(widget.productId);
-
+    addCartRepository = AddCartRepository();
     addCartRepository.addListener(repositoryListener);
+    addCartRepository.addToCart(widget.productId);
   }
 
   repositoryListener() {

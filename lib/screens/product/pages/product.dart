@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
-import 'package:refashioned_app/repositories/product.dart';
-import 'package:refashioned_app/repositories/product_recommended.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/catalog/components/measure_size.dart';
 import 'package:refashioned_app/screens/components/empty_page.dart';
@@ -46,9 +45,9 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   void initState() {
-    productRepository = ProductRepository(widget.product.id);
-
+    productRepository = ProductRepository();
     productRepository.addListener(repositoryListener);
+    productRepository.getProduct(widget.product.id);
 
     sizesRepository = Provider.of<SizesRepository>(context, listen: false);
 
@@ -78,7 +77,7 @@ class _ProductPageState extends State<ProductPage> {
     if (productRepository.loadingFailed)
       return EmptyPage(text: "Ошибка при загрузке товара");
 
-    final product = productRepository.productResponse.product;
+    final product = productRepository.response.content;
 
     return StreamBuilder<Map<WidgetKeys, WidgetData>>(
       stream: sizesRepository.data,
@@ -177,7 +176,7 @@ class _ProductPageState extends State<ProductPage> {
                               ChangeNotifierProvider<
                                   ProductRecommendedRepository>(
                                 create: (_) =>
-                                    ProductRecommendedRepository(product.id),
+                                    ProductRecommendedRepository()..getProductRecommended(product.id),
                                 child: RecommendedProducts(
                                   onProductPush: widget.onProductPush,
                                 ),

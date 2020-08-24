@@ -46,7 +46,7 @@ class _StartUpBuilderState extends State<StartUpBuilder> {
             final cityId = prefs.getString("city_id");
 
             final check =
-                citiesRepository.citiesResponse.content.checkSavedCity(cityId);
+                citiesRepository.response.content.checkSavedCity(cityId);
 
             if (check) return TabSwitcher();
           }

@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:refashioned_app/repositories/authorization.dart';
-import 'package:refashioned_app/repositories/code_authorization.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:provider/provider.dart';
 
@@ -69,11 +67,6 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
     if (authorizationRepository.loadingFailed)
       return Center(
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-      );
-
-    if (authorizationRepository.authorizationResponse.status.code != 200)
-      return Center(
-        child: Text("Статус", style: Theme.of(context).textTheme.bodyText1),
       );
 
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -148,22 +141,23 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                   enableActiveFill: false,
                   errorAnimationController: errorController,
                   onCompleted: (v) {
-                    var codeAuthorizationRepository = CodeAuthorizationRepository(authorizationRepository.phone,
-                        authorizationRepository.authorizationResponse.authorization.hash, v);
+                    var codeAuthorizationRepository = CodeAuthorizationRepository();
                     codeAuthorizationRepository.addListener(() {
-                      if (codeAuthorizationRepository.authorizationResponse.status.code == 400) {
+                      if (codeAuthorizationRepository.getStatusCode == 400) {
                         errorController.add(ErrorAnimationType.shake);
                         setState(() {
                           hasError = true;
                         });
-                      } else if (codeAuthorizationRepository.authorizationResponse.status.code == 200 ||
-                          codeAuthorizationRepository.authorizationResponse.status.code == 201) {
+                      } else if (codeAuthorizationRepository.getStatusCode == 200 ||
+                          codeAuthorizationRepository.getStatusCode == 201) {
                         scaffoldKey.currentState.showSnackBar(SnackBar(
                           content: Text("Огонь! Нужны следующие скрины для авторизации"),
                           duration: Duration(seconds: 4),
                         ));
                       }
                     });
+                    codeAuthorizationRepository.sendCode(
+                        authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
                   },
                   onChanged: (value) {
                     setState(() {
@@ -205,7 +199,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
               borderRadius: 5,
               onClick: () {
                 if (_start == 0) {
-                  authorizationRepository.refreshData();
+                  authorizationRepository.sendPhoneAndGetCode(authorizationRepository.getPhone);
                   _start = 59;
                   startTimer();
                 }

@@ -14,10 +14,10 @@ class RefashionApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<CatalogRepository>(
-            create: (_) => CatalogRepository(),
+            create: (_) => CatalogRepository()..getCatalog(),
           ),
           ChangeNotifierProvider<CitiesRepository>(
-            create: (_) => CitiesRepository(),
+            create: (_) => CitiesRepository()..getCities(),
           ),
           Provider<SizesRepository>(
             create: (_) => SizesRepository(),
@@ -42,6 +42,18 @@ ThemeData _materialTheme() {
             height: 1.2,
             fontWeight: FontWeight.w600),
         headline2: TextStyle(
+            fontSize: 16,
+            fontFamily: "SF UI Text",
+            color: primaryColor,
+            fontWeight: FontWeight.w600,
+            height: 1.2),
+        headline5: TextStyle(
+            fontSize: 16,
+            fontFamily: "SF UI Text",
+            color: primaryColor,
+            fontWeight: FontWeight.normal,
+            height: 1.2),
+        headline6: TextStyle(
             fontSize: 16,
             fontFamily: "SF UI Text",
             color: primaryColor,
