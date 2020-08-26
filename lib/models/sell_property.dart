@@ -1,20 +1,5 @@
 import 'package:refashioned_app/models/status.dart';
 
-class SellPropertiesResponse {
-  final Status status;
-  final SellPropertyProvider content;
-
-  const SellPropertiesResponse({this.status, this.content});
-
-  factory SellPropertiesResponse.fromJson(Map<String, dynamic> json) =>
-      SellPropertiesResponse(
-        status: Status.fromJson(json['status']),
-        content: json != null && json['content'] != null
-            ? SellPropertyProvider.fromJson(json['content'])
-            : null,
-      );
-}
-
 class SellPropertyProvider {
   final List<SellProperty> requiredProperties;
   final List<SellProperty> otherProperties;

@@ -16,7 +16,7 @@ class BaseRepository<T> with ChangeNotifier {
 
   Status _status;
 
-  BaseRepository([this.context]){
+  BaseRepository([this.context]) {
     _statusNotifier = ValueNotifier(Status.loading);
   }
 
@@ -73,9 +73,13 @@ class BaseRepository<T> with ChangeNotifier {
     notifyListeners();
   }
 
+  void abortLoading({String message}) {
+    throw Exception(message ?? "loading aborted");
+  }
+
   void checkStatusCode() {
     if (response == null) {
-      throw Exception("response == null, not processed");
+      abortLoading(message: "response == null, not processed");
     }
 
     switch (response.status.code) {
@@ -90,13 +94,14 @@ class BaseRepository<T> with ChangeNotifier {
 
       case HttpStatus.unauthorized:
         setAuthorized(false);
-        throw Exception("unauthorized, status code: ${response.getStatusCode.toString()}");
+        abortLoading(message: "unauthorized, status code: ${response.getStatusCode.toString()}");
         break;
 
       default:
-        throw Exception("response exception, status code: "
-            "${response.getStatusCode.toString()}, "
-            "error: ${response.errors != null ? response.errors.getErrors : "null"}");
+        abortLoading(
+            message: "response exception, status code: "
+                "${response.getStatusCode.toString()}, "
+                "error: ${response.errors != null ? response.errors.getErrors : "null"}");
         break;
     }
   }
@@ -112,5 +117,5 @@ class BaseRepository<T> with ChangeNotifier {
       SharedPreferences.getInstance().then((prefs) => prefs.setBool(Prefs.is_authorized, isAuthorized));
 
   static Future<bool> isAuthorized() async =>
-      SharedPreferences.getInstance().then((prefs) => prefs.getBool(Prefs.is_authorized) ?? false );
+      SharedPreferences.getInstance().then((prefs) => prefs.getBool(Prefs.is_authorized) ?? false);
 }
