@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/actions_provider.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_bottom.dart';
-import 'package:refashioned_app/screens/components/topbar/data/tb_bottom_data.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
-import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
+import 'package:refashioned_app/screens/components/topbar/components/tb_buttons.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_middle.dart';
-import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 
 class TBContent extends StatelessWidget {
   final TopBarData data;
@@ -17,9 +14,9 @@ class TBContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonWidth = data.middleData?.type != TBMiddleType.search
-        ? MediaQuery.of(context).size.width * 0.3
-        : null;
+    if (data == null) return SizedBox();
+
+    final searchInMiddle = data.middleData == null;
 
     return Column(
       children: [
@@ -30,50 +27,35 @@ class TBContent extends StatelessWidget {
           height: 44,
           child: Row(
             children: [
-              SizedBox(
-                width: buttonWidth,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TBButton(
-                      data: data.leftButtonData ?? TBButtonData.none(),
-                    ),
-                    TBButton(
-                      data: data.secondLeftButtonData ?? TBButtonData.none(),
-                    ),
-                  ],
-                ),
+              TBButtons(
+                align: TBButtonsAlign.left,
+                searchInMiddle: searchInMiddle,
+                leftButton: data.leftButtonData,
+                rightButton: data.secondLeftButtonData,
               ),
               Expanded(
                 child: TBMiddle(
-                  data: data.middleData ?? TBMiddleData.none(),
+                  data: data.middleData,
                   searchData: data.searchData,
                   scrollActionsProvider: scrollActionsProvider,
+                  showCancelSearchButton: data.secondRightButtonData == null &&
+                      data.rightButtonData == null,
                 ),
               ),
-              SizedBox(
-                width: buttonWidth,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TBButton(
-                      data: data.secondRightButtonData ?? TBButtonData.none(),
-                    ),
-                    TBButton(
-                      data: data.rightButtonData ?? TBButtonData.none(),
-                    ),
-                  ],
-                ),
+              TBButtons(
+                align: TBButtonsAlign.right,
+                searchInMiddle: searchInMiddle,
+                leftButton: data.secondRightButtonData,
+                rightButton: data.rightButtonData,
               ),
             ],
           ),
         ),
         TBBottom(
-          data: data.bottomData ?? TBBottomData.none(),
+          data: data.bottomData,
           searchData: data.searchData,
           scrollActionsProvider: scrollActionsProvider,
+          searchInMiddle: searchInMiddle,
         ),
       ],
     );

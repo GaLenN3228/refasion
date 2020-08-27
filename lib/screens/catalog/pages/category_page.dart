@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/product_count.dart';
 import 'package:refashioned_app/screens/catalog/components/category_brands.dart';
-import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/components/category_image.dart';
 import 'package:refashioned_app/screens/catalog/components/category_tile.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
@@ -119,7 +119,7 @@ class _CategoryPageState extends State<CategoryPage>
                     return widgets.elementAt(index);
                   },
                   separatorBuilder: (context, index) {
-                    return CategoryDivider();
+                    return ItemsDivider();
                   },
                 ),
                 (widget.level == CategoryLevel.category)

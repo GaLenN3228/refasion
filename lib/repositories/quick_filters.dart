@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/models/quick_filter.dart';
-
 import '../services/api_service.dart';
 import 'base.dart';
 
@@ -13,7 +11,8 @@ class QuickFiltersRepository extends BaseRepository {
     try {
       final Response filtersResponse = await ApiService.getQuickFilters();
 
-      this.quickFiltersResponse = QuickFiltersResponse.fromJson(filtersResponse.data);
+      this.quickFiltersResponse =
+          QuickFiltersResponse.fromJson(filtersResponse.data);
 
       finishLoading();
     } catch (err) {
@@ -24,13 +23,15 @@ class QuickFiltersRepository extends BaseRepository {
 
   update({String urlParams}) {
     if (urlParams != null && urlParams.isNotEmpty)
-      quickFiltersResponse.content.firstWhere((filterValue) => filterValue.urlParams == urlParams).update();
+      quickFiltersResponse.content
+          .firstWhere((filterValue) => filterValue.urlParams == urlParams)
+          .update();
   }
 
   String getRequestParameters() =>
       "&" +
-          quickFiltersResponse.content
-              .where((filter) => filter.selected)
-              .map((filter) => filter.urlParams)
-              .join('&');
+      quickFiltersResponse.content
+          .where((filter) => filter.selected)
+          .map((filter) => filter.urlParams)
+          .join('&');
 }

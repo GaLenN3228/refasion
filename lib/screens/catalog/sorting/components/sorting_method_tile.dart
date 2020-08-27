@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/models/sort.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class SortMethodTile extends StatelessWidget {
   final SortMethod method;
@@ -14,7 +14,7 @@ class SortMethodTile extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: onSelect,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.fromLTRB(20, 20, 15, 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -27,13 +27,9 @@ class SortMethodTile extends StatelessWidget {
                   .copyWith(fontWeight: FontWeight.w500),
             ),
             method.selected
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: SvgPicture.asset(
-                      "assets/small_done.svg",
-                      height: 12,
-                      color: Colors.black,
-                    ),
+                ? SVGIcon(
+                    icon: IconAsset.done,
+                    size: 26,
                   )
                 : SizedBox(),
           ],

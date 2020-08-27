@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
-import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/products/components/category_filter_item.dart';
 
 class CategoryFilterList extends StatelessWidget {
   final List<Category> values;
   final Function(String) onSelect;
 
-  const CategoryFilterList({Key key, this.values, this.onSelect}) : super(key: key);
+  const CategoryFilterList({Key key, this.values, this.onSelect})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class CategoryFilterList extends StatelessWidget {
           );
         },
         separatorBuilder: (context, index) {
-          return CategoryDivider();
+          return ItemsDivider();
         },
       ),
     );

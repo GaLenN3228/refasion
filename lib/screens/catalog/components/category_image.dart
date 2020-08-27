@@ -10,7 +10,7 @@ class CategoryImage extends StatelessWidget {
     return Stack(
       children: [
         Image.asset(
-          'assets/dresses.png',
+          'assets/images/png/dresses.png',
           height: 200,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/repositories/product_count.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filter_tile.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_title.dart';
 
@@ -102,7 +102,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
                               (entry) => Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (entry.key != 0) CategoryDivider(),
+                                  if (entry.key != 0) ItemsDivider(),
                                   FilterTile(
                                       filter: entry.value,
                                       onUpdate: () => updateCount(context)),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/add_cart.dart';
 import 'package:refashioned_app/repositories/cart_count.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/url.dart';
@@ -53,12 +53,11 @@ class ProductsItem extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.topRight,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 2, right: 2),
-                          child: SvgPicture.asset(
-                            'assets/favorite_border.svg',
-                            color: Colors.black,
-                            width: 40,
-                            height: 40,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 10),
+                          child: SVGIcon(
+                            icon: IconAsset.favoriteBorder,
+                            size: 26,
                           ),
                         ),
                       )),
@@ -73,12 +72,11 @@ class ProductsItem extends StatelessWidget {
                         });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 14, right: 14),
-                        child: SvgPicture.asset(
-                          'assets/bag.svg',
-                          color: Colors.black,
-                          width: 24,
-                          height: 24,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 10),
+                        child: SVGIcon(
+                          icon: IconAsset.cart,
+                          size: 26,
                         ),
                       ),
                     ),

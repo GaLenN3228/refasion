@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_image.dart';
 
 class ScaffoldChildrenData {
   final String message;
@@ -28,7 +28,9 @@ class ScaffoldChildrenData {
 
   factory ScaffoldChildrenData.logo() => ScaffoldChildrenData.single(
         Center(
-          child: SvgPicture.asset("assets/logo/svg/refashioned_logo.svg"),
+          child: SVGImage(
+            image: ImageAsset.refashionedLogo,
+          ),
         ),
       );
 

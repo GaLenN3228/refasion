@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/quick_filter.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/products/pages/category_filter_panel.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -44,23 +44,25 @@ class QuickFilterItem extends StatelessWidget {
                     context: context,
                     useRootNavigator: true,
                     builder: (context, controller) => CategoryFilterPanel(
-                        topCategory: topCategory, updateProducts: updateProducts)),
+                        topCategory: topCategory,
+                        updateProducts: updateProducts)),
                 child: Container(
                   height: horizontalHeight,
                   width: horizontalWidth,
                   decoration: ShapeDecoration(
                       color: accentColor,
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(width: horizontalBorderWidth, color: accentColor),
-                          borderRadius: BorderRadius.circular(horizontalCornerRadius))),
+                          side: BorderSide(
+                              width: horizontalBorderWidth, color: accentColor),
+                          borderRadius:
+                              BorderRadius.circular(horizontalCornerRadius))),
                   child: Center(
                       child: Padding(
-                    padding: const EdgeInsets.only(left: 7, right: 7),
-                    child: SvgPicture.asset(
-                      'assets/navigation.svg',
-                      color: Colors.black,
-                      width: 44,
-                      height: 44,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    child: SVGIcon(
+                      icon: IconAsset.categories,
+                      size: 22,
                     ),
                   )),
                 ))
@@ -71,17 +73,18 @@ class QuickFilterItem extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         side: BorderSide(
                             width: horizontalBorderWidth,
-                            color: filterValue.selected ? accentColor : Color(0xFFE6E6E6)),
-                        borderRadius: BorderRadius.circular(horizontalCornerRadius))),
+                            color: filterValue.selected
+                                ? accentColor
+                                : Color(0xFFE6E6E6)),
+                        borderRadius:
+                            BorderRadius.circular(horizontalCornerRadius))),
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       filterValue.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(fontWeight: FontWeight.w500, color: primaryColor),
+                      style: Theme.of(context).textTheme.bodyText1.copyWith(
+                          fontWeight: FontWeight.w500, color: primaryColor),
                     ),
                   ),
                 ),

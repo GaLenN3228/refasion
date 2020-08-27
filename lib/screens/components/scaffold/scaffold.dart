@@ -2,15 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/content.dart';
+import 'package:refashioned_app/screens/components/scaffold/data/scaffold_builder_data.dart';
 import 'package:refashioned_app/screens/components/scaffold/data/scaffold_data.dart';
 
 class RefashionedScaffold extends StatefulWidget {
+  final ScaffoldBuilderData builderData;
+
   final Map<Status, ScaffoldData Function()> stateData;
   final ValueNotifier<Status> state;
 
   final ScaffoldData data;
 
-  const RefashionedScaffold({Key key, this.stateData, this.state, this.data})
+  const RefashionedScaffold(
+      {Key key, this.stateData, this.state, this.data, this.builderData})
       : assert(data != null || stateData != null && state != null);
 
   @override
@@ -43,6 +47,8 @@ class _RefashionedScaffoldState extends State<RefashionedScaffold> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      ScaffoldContent(scaffoldData: currentData);
+  Widget build(BuildContext context) => ScaffoldContent(
+        scaffoldData: currentData,
+        scaffoldBuilderData: widget.builderData,
+      );
 }

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
-import 'package:refashioned_app/screens/product/pages/product.dart';
+import 'package:refashioned_app/screens/product/product.dart';
 
 class CartNavigatorRoutes {
   static const String cart = '/';

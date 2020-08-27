@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/sort.dart';
-import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/sorting/components/sorting_method_tile.dart';
 import 'package:refashioned_app/screens/catalog/sorting/components/sorting_title.dart';
 
@@ -29,7 +29,7 @@ class SortingPanel extends StatelessWidget {
             SortingTitle(),
           ]..addAll(sort.methods.asMap().entries.map((entry) => Column(
                 children: [
-                  if (entry.key != 0) CategoryDivider(),
+                  if (entry.key != 0) ItemsDivider(),
                   SortMethodTile(entry.value, () {
                     onSelect(entry.value.value);
                     Navigator.of(context).pop();

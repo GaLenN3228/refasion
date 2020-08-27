@@ -1,15 +1,25 @@
 class TBSearchData {
   final String hintText;
+
   final Function(String) onSearchUpdate;
-  final Function() onFocus;
-  final Function() onUnfocus;
+
   final bool autofocus;
 
-  const TBSearchData({
+  Function() _onFocus;
+  Function() _onUnfocus;
+
+  TBSearchData({
     this.onSearchUpdate,
     this.hintText,
-    this.onFocus,
-    this.onUnfocus,
     this.autofocus: false,
   });
+
+  setFunctions(Function() onFocus, Function() onUnfocus) {
+    _onFocus = onFocus;
+    _onUnfocus = onUnfocus;
+  }
+
+  Function() get onFocus => _onFocus ?? () {};
+
+  Function() get onUnfocus => _onUnfocus ?? () {};
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/models/cities.dart';
-import 'package:refashioned_app/utils/colors.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class CityTile extends StatelessWidget {
   final City city;
@@ -43,14 +42,9 @@ class CityTile extends StatelessWidget {
               valueListenable: city.selected,
               builder: (context, value, _) => !value
                   ? SizedBox()
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: SvgPicture.asset(
-                        "assets/done_19dp.svg",
-                        width: 17,
-                        height: 12,
-                        color: primaryColor,
-                      ),
+                  : SVGIcon(
+                      icon: IconAsset.done,
+                      size: 26,
                     ),
             )
           ],

@@ -43,7 +43,7 @@ class ProductSeller extends StatelessWidget {
                       height: 44,
                     )
                   : Image.asset(
-                      'assets/seller.png',
+                      'assets/images/png/seller.png',
                       fit: BoxFit.cover,
                       width: 44,
                       height: 44,

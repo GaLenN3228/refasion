@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 enum ButtonIconAlign { left, right }
@@ -37,23 +37,23 @@ class ButtonIcon extends StatelessWidget {
 
     switch (align) {
       case ButtonIconAlign.left:
-        padding = const EdgeInsets.only(right: 10);
+        padding = const EdgeInsets.only(right: 6);
         alignment = Alignment.centerLeft;
         break;
       case ButtonIconAlign.right:
-        padding = const EdgeInsets.only(left: 10);
+        padding = const EdgeInsets.only(left: 6);
         alignment = Alignment.centerRight;
         break;
     }
 
-    String asset;
+    IconAsset asset;
 
     switch (currentData.icon) {
       case ButtonIconType.arrow_right_long:
-        asset = "assets/button/svg/long_arrow_right_21dp.svg";
+        asset = IconAsset.forwardLong;
         break;
       default:
-        asset = "";
+        break;
     }
 
     Color iconColor;
@@ -79,11 +79,10 @@ class ButtonIcon extends StatelessWidget {
     return Container(
       alignment: alignment,
       padding: padding,
-      child: SvgPicture.asset(
-        asset,
+      child: SVGIcon(
+        icon: asset,
+        size: 25,
         color: iconColor,
-        width: 21,
-        height: 11,
       ),
     );
   }

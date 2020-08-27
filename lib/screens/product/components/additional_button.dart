@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/utils/colors.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class ProductAdditionalButton extends StatelessWidget {
   final String text;
@@ -14,12 +13,14 @@ class ProductAdditionalButton extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(text, style:Theme.of(context).textTheme.subtitle1),
-            SvgPicture.asset(
-              'assets/arrow_right.svg',
-              height: 12,
-              color: primaryColor,
-            )
+            Text(text, style: Theme.of(context).textTheme.subtitle1),
+            RotatedBox(
+              quarterTurns: 2,
+              child: SVGIcon(
+                icon: IconAsset.back,
+                size: 14,
+              ),
+            ),
           ],
         ),
         Container(

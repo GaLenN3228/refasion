@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/filter.dart';
-import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/tile_of_selectable_list.dart';
 
 class SelectableList extends StatelessWidget {
@@ -41,7 +41,7 @@ class SelectableList extends StatelessWidget {
               width: 5,
             );
           else
-            return CategoryDivider();
+            return ItemsDivider();
         },
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
-import 'package:refashioned_app/screens/components/empty_page.dart';
 
 class SellerPage extends StatelessWidget {
   final Seller seller;
@@ -12,8 +12,13 @@ class SellerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EmptyPage(
-      text: seller.name,
+    return CupertinoPageScaffold(
+      child: Center(
+        child: Text(
+          seller.name,
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
     );
   }
 }
