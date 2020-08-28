@@ -13,6 +13,7 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 import 'package:refashioned_app/screens/tab_switcher.dart';
+import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StartupBuilder extends StatefulWidget {
@@ -53,10 +54,10 @@ class _StartupBuilderState extends State<StartupBuilder> {
       case Status.loaded:
         await SharedPreferences.getInstance().then((newSharedPreferences) {
           sharedPreferences = newSharedPreferences;
-          if (sharedPreferences.containsKey("city_id")) {
+          if (sharedPreferences.containsKey(Prefs.city_id)) {
             bool check = false;
             try {
-              final cityId = sharedPreferences.getString("city_id");
+              final cityId = sharedPreferences.getString(Prefs.city_id);
               check = citiesRepository.response.content
                   .checkSavedCity(cityId);
             } catch (err) {
@@ -93,7 +94,7 @@ class _StartupBuilderState extends State<StartupBuilder> {
   }
 
   Future<bool> setCityId(String id) async =>
-      sharedPreferences?.setString("city_id", id);
+      sharedPreferences?.setString(Prefs.city_id, id);
 
   pushTabSwitcher() => Navigator.of(context).pushReplacement(
         PageRouteBuilder(

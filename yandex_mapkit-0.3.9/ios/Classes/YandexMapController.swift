@@ -88,6 +88,12 @@ public class YandexMapController: NSObject, FlutterPlatformView {
     case "moveToUser":
       moveToUser()
       result(nil)
+    case "changePlacemarksIcon":
+      changePlacemarksIcon(call)
+      result(nil)
+    case "changePlacemarkIcon":
+      changePlacemarkIcon(call)
+      result(nil)
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -121,15 +127,15 @@ public class YandexMapController: NSObject, FlutterPlatformView {
     let map = mapView.mapWindow.map
     map.setMapStyleWithStyle(params["style"] as! String)
   }
-    
+
   public func zoomIn() {
       zoom(1)
   }
-  
+
   public func zoomOut() {
       zoom(-1)
   }
-  
+
   private func zoom(_ step: Float) {
       let point = mapView.mapWindow.map.cameraPosition.target
       let zoom = mapView.mapWindow.map.cameraPosition.zoom
@@ -182,7 +188,7 @@ public class YandexMapController: NSObject, FlutterPlatformView {
 
     moveWithParams(params, cameraPosition)
   }
-    
+
   public func getTargetPoint() -> [String: Any] {
     let targetPoint = mapView.mapWindow.map.cameraPosition.target;
     let arguments: [String: Any] = [
@@ -192,7 +198,7 @@ public class YandexMapController: NSObject, FlutterPlatformView {
     ]
     return arguments
   }
-    
+
   public func addPlacemark(_ call: FlutterMethodCall) {
     let params = call.arguments as! [String: Any]
     let point = YMKPoint(latitude: params["latitude"] as! Double,
@@ -210,7 +216,7 @@ public class YandexMapController: NSObject, FlutterPlatformView {
       placemark.setIconWith(UIImage(named: pluginRegistrar.lookupKey(forAsset: iconName!))!)
     }
 
-    if let rawImageData = params["rawImageData"] as? FlutterStandardTypedData, 
+    if let rawImageData = params["rawImageData"] as? FlutterStandardTypedData,
       let image = UIImage(data: rawImageData.data) {
         placemark.setIconWith(image)
     }
@@ -235,7 +241,25 @@ public class YandexMapController: NSObject, FlutterPlatformView {
       placemarks.remove(at: placemarks.firstIndex(of: placemark!)!)
     }
   }
-  
+
+  public func changePlacemarksIcon(_ call: FlutterMethodCall) {
+    let params = call.arguments as! [String: Any]
+    for placemarkMapObject in placemarks {
+        if (params["hashCode"] != nil && placemarkMapObject.userData != params["hashCode"]){
+            placemarkMapObject.setIconWith(UIImage(named: pluginRegistrar.lookupKey(forAsset: params["icon"]!))!)
+        }
+    }
+  }
+
+  public func changePlacemarkIcon(_ call: FlutterMethodCall) {
+    let params = call.arguments as! [String: Any]
+    for placemarkMapObject in placemarks {
+        if (placemarkMapObject.userData != params["hashCode"]){
+            placemarkMapObject.setIconWith(UIImage(named: pluginRegistrar.lookupKey(forAsset: params["icon"]!))!)
+        }
+    }
+  }
+
   public func disableCameraTracking() {
     if mapCameraListener != nil {
       mapView.mapWindow.map.removeCameraListener(with: mapCameraListener)
@@ -253,20 +277,20 @@ public class YandexMapController: NSObject, FlutterPlatformView {
       mapCameraListener = MapCameraListener(controller: self, channel: methodChannel)
       mapView.mapWindow.map.addCameraListener(with: mapCameraListener)
     }
-    
+
     if cameraTarget != nil {
       let mapObjects = mapView.mapWindow.map.mapObjects
       mapObjects.remove(with: cameraTarget!)
       cameraTarget = nil
     }
-    
+
     let targetPoint = mapView.mapWindow.map.cameraPosition.target;
     if call.arguments != nil {
       let params = call.arguments as! [String: Any]
-      
+
       let mapObjects = mapView.mapWindow.map.mapObjects
       cameraTarget = mapObjects.addPlacemark(with: targetPoint)
-      
+
       let iconName = params["iconName"] as? String
 
       cameraTarget!.addTapListener(with: mapObjectTapListener)
@@ -291,7 +315,7 @@ public class YandexMapController: NSObject, FlutterPlatformView {
       iconStyle.scale = NSNumber(value: (Float)(params["scale"] as! Double))
       cameraTarget!.setIconStyleWith(iconStyle)
     }
-    
+
     let arguments: [String: Any] = [
       "hashCode": targetPoint.hashValue,
       "latitude": targetPoint.latitude,
@@ -346,7 +370,7 @@ public class YandexMapController: NSObject, FlutterPlatformView {
     polygonMapObject.isGeodesic = params["isGeodesic"] as! Bool
     polygons.append(polygonMapObject)
   }
-  
+
   public func removePolygon(_ call: FlutterMethodCall) {
     let params = call.arguments as! [String: Any]
     let hashCode = params["hashCode"] as! Int
@@ -406,7 +430,7 @@ public class YandexMapController: NSObject, FlutterPlatformView {
   }
 
   private func uiColor(fromInt value: Int64) -> UIColor {
-    return UIColor(red: CGFloat((value & 0xFF0000) >> 16) / 0xFF, 
+    return UIColor(red: CGFloat((value & 0xFF0000) >> 16) / 0xFF,
                    green: CGFloat((value & 0x00FF00) >> 8) / 0xFF,
                    blue: CGFloat(value & 0x0000FF) / 0xFF,
                    alpha: CGFloat((value & 0xFF000000) >> 24) / 0xFF)
@@ -414,7 +438,7 @@ public class YandexMapController: NSObject, FlutterPlatformView {
 
   internal class UserLocationObjectListener: NSObject, YMKUserLocationObjectListener {
     private let pluginRegistrar: FlutterPluginRegistrar!
-    
+
     private let iconName: String!
     private let arrowName: String!
     private let userArrowOrientation: Bool!
@@ -476,7 +500,7 @@ public class YandexMapController: NSObject, FlutterPlatformView {
       return true
     }
   }
-  
+
   internal class MapCameraListener: NSObject, YMKMapCameraListener {
     private let yandexMapController: YandexMapController!
     private let methodChannel: FlutterMethodChannel!
@@ -493,9 +517,9 @@ public class YandexMapController: NSObject, FlutterPlatformView {
                                           finished: Bool)
     {
       let targetPoint = cameraPosition.target
-      
+
       yandexMapController.cameraTarget?.geometry = targetPoint
-      
+
       let arguments: [String:Any?] = [
         "latitude": targetPoint.latitude,
         "longitude": targetPoint.longitude,

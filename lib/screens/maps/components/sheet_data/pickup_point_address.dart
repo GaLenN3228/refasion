@@ -1,11 +1,14 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 
 class PickupPointAddress extends StatelessWidget {
   final Function() onPush;
+  final PickPoint point;
 
-  const PickupPointAddress({Key key, this.onPush}) : super(key: key);
+  const PickupPointAddress({Key key, this.onPush, this.point}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,7 @@ class PickupPointAddress extends StatelessWidget {
             ),
           ),
         ),
-        height: 160,
+        height: 210,
         child: Column(
           children: [
             Column(
@@ -42,27 +45,65 @@ class PickupPointAddress extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.topLeft,
-              margin: const EdgeInsets.only(top: 14.0, left: 20),
+              margin: const EdgeInsets.only(top: 10.0, left: 20),
               child: Text(
-                "Откуда забрать вашу вещь?",
-                style: textTheme.subtitle1,
+                "Адрес пункта выдачи",
+                style: textTheme.headline1,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             Container(
               alignment: Alignment.topLeft,
-              margin: const EdgeInsets.only(top: 10.0, left: 20),
+              margin: const EdgeInsets.only(top: 20.0, left: 20),
               child: Text(
-                "Укажите на карте или введите адрес вручную",
-                style: textTheme.caption,
+                point.type.toUpperCase(),
+                style: textTheme.subtitle1,
               ),
             ),
+            Container(
+                margin: const EdgeInsets.only(top: 6, left: 20, right: 16),
+                child: Row(children: [
+                  Container(
+                      child: Text(
+                    "Адрес:",
+                    style: textTheme.bodyText2,
+                    maxLines: 1,
+                  )),
+                  Container(
+                      margin: const EdgeInsets.only(left: 4),
+                      child: Text(
+                        point.address,
+                        style: textTheme.subtitle1,
+                        maxLines: 1,
+                      )),
+                ])),
+            Container(
+                margin: const EdgeInsets.only(top: 4, left: 20, right: 16),
+                child: Row(children: [
+                  Container(
+                      child: Text(
+                    "Время работы:",
+                    style: textTheme.bodyText2,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  )),
+                  Expanded(
+                    child: Container(
+                        margin: const EdgeInsets.only(left: 4),
+                        child: Text(
+                          point.workSchedule,
+                          style: textTheme.subtitle1,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )),
+                  )
+                ])),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.only(left: 20, top: 22, right: 22),
               child: Button(
                 "ОТНЕСУ СЮДА",
-                buttonStyle: ButtonStyle.amber,
+                buttonStyle: ButtonStyle.dark,
                 height: 45,
                 width: double.infinity,
                 borderRadius: 5,

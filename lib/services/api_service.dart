@@ -4,7 +4,7 @@ import 'package:refashioned_app/utils/url.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = false;
+  static const LOG_ENABLE = true;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 

@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/pick_point.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 enum MarkerType { POINT_SMALL, POINT_MEDIUM, POINT_LARGE }
 
-class MapPage extends StatelessWidget {
+class MapPage extends StatefulWidget {
+  Function() showUserLocation;
+  final Function(PickPoint) onPointClick;
+
+  MapPage({Key key, this.onPointClick}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
-    return _LayersExample();
-  }
+  _MapPageState createState() => _MapPageState();
 }
 
-class _LayersExample extends StatefulWidget {
-  @override
-  _LayersExampleState createState() => _LayersExampleState();
-}
-
-class _LayersExampleState extends State<_LayersExample> {
+class _MapPageState extends State<MapPage> {
   YandexMapController controller;
   PermissionStatus _permissionStatus = PermissionStatus.unknown;
   List<Placemark> placeMarks = List();
@@ -28,13 +27,18 @@ class _LayersExampleState extends State<_LayersExample> {
 
   @override
   void initState() {
+    widget.showUserLocation = () {
+      showUserLocation();
+    };
+
     pickPointRepository = new PickPointRepository();
     pickPointRepository.addListener(() {
       showPickPoints();
     });
-    pickPointRepository.getPickPoints();
-    super.initState();
+
     _requestPermission();
+
+    super.initState();
   }
 
   Future<void> _requestPermission() async {
@@ -43,15 +47,18 @@ class _LayersExampleState extends State<_LayersExample> {
         await PermissionHandler().requestPermissions(permissions);
     setState(() {
       _permissionStatus = permissionRequestResult[PermissionGroup.location];
-      showUserLayer();
-      Future.delayed(const Duration(milliseconds: 1000), () {
-//        showUser();
-      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (controller != null) {
+      showUserIcon().then((value) {
+        moveToPoint().then((value) {
+          pickPointRepository.getPickPoints();
+        });
+      });
+    }
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -59,15 +66,12 @@ class _LayersExampleState extends State<_LayersExample> {
           Expanded(child: YandexMap(
             onMapCreated: (YandexMapController yandexMapController) async {
               controller = yandexMapController;
-              showUserLayer();
-              Future.delayed(const Duration(milliseconds: 1000), () {
-//                showUser();
-              });
+              setState(() {});
               controller.enableCameraTracking(null, (msg) {
-                if (msg['zoom'] >= 12 && markerType == MarkerType.POINT_SMALL) {
+                if (msg['zoom'] >= 11 && markerType == MarkerType.POINT_SMALL) {
                   markerType = MarkerType.POINT_MEDIUM;
                   controller.changePlacemarksIcon(selectedPlaceMark, 'assets/point_red_medium.png');
-                } else if (msg['zoom'] < 12 && markerType == MarkerType.POINT_MEDIUM) {
+                } else if (msg['zoom'] < 11 && markerType == MarkerType.POINT_MEDIUM) {
                   markerType = MarkerType.POINT_SMALL;
                   controller.changePlacemarksIcon(selectedPlaceMark, 'assets/point_red_small.png');
                 }
@@ -77,49 +81,57 @@ class _LayersExampleState extends State<_LayersExample> {
         ]);
   }
 
-  void showUser() async {
+  void showUserLocation() {
     if (_permissionStatus == PermissionStatus.granted) {
-      await controller.moveToUser();
-    } else {
-//      _showMessage(context, const Text('Location permission was NOT granted'));
+      controller.moveToUser();
+    }
+  }
+
+  Future<void> moveToPoint() async {
+    if (_permissionStatus == PermissionStatus.granted) {
+      await controller.move(
+          zoom: 10,
+          point: Point(latitude: 55.7522200, longitude: 37.6155600),
+          animation: const MapAnimation(smooth: true, duration: 2.0));
     }
   }
 
   void showPickPoints() {
     if (pickPointRepository.isLoaded) {
-      Future.delayed(const Duration(milliseconds: 1000), () {
-        pickPointRepository.response.content.where((element) => element.address.contains("Москва")).forEach((element) {
-          var _point = Point(latitude: double.parse(element.lat), longitude: double.parse(element.lon));
-          final Placemark _placemark = Placemark(
-            point: _point,
-            opacity: 0.8,
-            iconName: 'assets/point_red_small.png',
-            onTap: (Placemark placemark, double latitude, double longitude) => {
-              if (selectedPlaceMark != null){
-                  controller.changePlacemarkIcon(
-                      selectedPlaceMark,
-                      markerType == MarkerType.POINT_MEDIUM
-                          ? 'assets/point_red_medium.png'
-                          : 'assets/point_red_small.png')},
-              selectedPlaceMark = placemark,
-              controller.changePlacemarkIcon(placemark, 'assets/point_red_large.png')
-            },
-          );
-          placeMarks.add(_placemark);
-          controller.addPlacemark(_placemark);
-        });
+      pickPointRepository.response.content.where((element) => element.address.contains("Москва")).forEach((element) {
+        var _point = Point(latitude: double.parse(element.lat), longitude: double.parse(element.lon));
+        final Placemark _placemark = Placemark(
+          point: _point,
+          opacity: 0.8,
+          iconName: 'assets/point_red_small.png',
+          onTap: (Placemark placemark, double latitude, double longitude) => {
+            if (selectedPlaceMark != null)
+              {
+                controller.changePlacemarkIcon(
+                    selectedPlaceMark,
+                    markerType == MarkerType.POINT_MEDIUM
+                        ? 'assets/point_red_medium.png'
+                        : 'assets/point_red_small.png')
+              },
+            selectedPlaceMark = placemark,
+            controller.changePlacemarkIcon(placemark, 'assets/point_red_large.png'),
+            widget.onPointClick(pickPointRepository.response.content.firstWhere((element) =>
+                double.parse(element.lat) == selectedPlaceMark.point.latitude &&
+                double.parse(element.lon) == selectedPlaceMark.point.longitude))
+          },
+        );
+        placeMarks.add(_placemark);
+        controller.addPlacemark(_placemark);
       });
     }
   }
 
-  void showUserLayer() async {
+  Future<void> showUserIcon() async {
     if (_permissionStatus == PermissionStatus.granted) {
       await controller.showUserLayer(
           iconName: 'assets/user_location.png',
           arrowName: 'assets/user_location.png',
           accuracyCircleFillColor: Colors.green.withOpacity(0.5));
-    } else {
-//      _showMessage(context, const Text('Location permission was NOT granted'));
     }
   }
 
