@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/marketplace/components/border_button.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class AddressesPage extends StatelessWidget {
-  final String initialData;
+  final Address initialData;
 
   final Function() onClose;
-  final Function(String) onUpdate;
+  final Function(Address) onUpdate;
   final Function() onPush;
   final Function() onSkip;
 

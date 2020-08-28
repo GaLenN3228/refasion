@@ -2,6 +2,12 @@ class Url {
   //Base URLs
   static const refashionedBaseUrl = 'https://api.refashioned.ru/v1';
 
+  //Addresses
+  static const findAddressByCoordinates =
+      '$refashionedBaseUrl/geo/geocode/latlon/';
+  static const findAddressesByQuery =
+      '$refashionedBaseUrl/geo/geocode/suggestions/';
+
   //Categories
   static const categories = '$refashionedBaseUrl/catalog/categories/';
 

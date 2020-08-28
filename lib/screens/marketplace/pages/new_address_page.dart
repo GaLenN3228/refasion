@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/repositories/pick_point.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
@@ -10,7 +11,7 @@ import 'package:refashioned_app/screens/marketplace/components/map.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class NewAddressPage extends StatelessWidget {
-  final Function() onPush;
+  final Function(Address) onPush;
 
   const NewAddressPage({Key key, this.onPush}) : super(key: key);
   @override
@@ -100,7 +101,7 @@ class NewAddressPage extends StatelessWidget {
                               height: 45,
                               width: double.infinity,
                               borderRadius: 5,
-                              onClick: onPush,
+                              onClick: () => onPush(null),
                             ),
                           )
                         ],

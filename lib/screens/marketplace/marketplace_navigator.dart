@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/sell_property.dart';
@@ -109,7 +110,7 @@ class ProductData {
 
   List<String> photos;
 
-  String address;
+  Address address;
 
   String card;
 
@@ -117,7 +118,7 @@ class ProductData {
 
   updatePhotos(List<String> newPhotos) => photos = newPhotos;
 
-  updateAddress(String newAddress) => address = newAddress;
+  updateAddress(Address newAddress) => address = newAddress;
 
   updateCard(String newCard) => card = newCard;
 
@@ -223,6 +224,9 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           initialData: productData.category,
           onUpdate: () => productData.updateCategory(category),
           onPush: () {
+            sellPropertiesRepository =
+                SellPropertiesRepository(category: category.id);
+
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
@@ -380,7 +384,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           onUpdate: (address) => productData.updateAddress(address),
           onPush: () {
             Navigator.of(context).push(
-              CupertinoPageRoute(
+              MaterialWithModalsPageRoute(
                 builder: (context) => _routeBuilder(
                     context, MarketplaceNavigatorRoutes.newAddress),
                 settings:
@@ -402,7 +406,9 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.newAddress:
         return NewAddressPage(
-          onPush: () {
+          onPush: (address) {
+            productData.updateAddress(address);
+
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
@@ -428,19 +434,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         );
     }
   }
-
-  selectSubCategories(Category topCategory) => sellPropertiesRepository =
-      SellPropertiesRepository(category: topCategory.id);
-
-  addPhotos(List<String> photos) {}
-
-  selectPrice(int price) {}
-
-  selectBrand(Brand brand) {}
-
-  addDescription(String description) {}
-
-  selectPropertyValue(SellProperty sellPropery) {}
 
   @override
   Widget build(BuildContext context) {
