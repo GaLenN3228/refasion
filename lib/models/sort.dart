@@ -18,7 +18,6 @@ class Sort {
 
     final methods = [
       for (final sortMethod in json) SortMethod.fromJson(sortMethod)
-      //TODO: set newDefaultIndex here
     ];
 
     methods.elementAt(newDefaultIndex).selected = true;

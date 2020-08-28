@@ -68,10 +68,10 @@ class _MapPageState extends State<MapPage> {
               controller = yandexMapController;
               setState(() {});
               controller.enableCameraTracking(null, (msg) {
-                if (msg['zoom'] >= 11 && markerType == MarkerType.POINT_SMALL) {
+                if (msg['zoom'] >= 12 && markerType == MarkerType.POINT_SMALL) {
                   markerType = MarkerType.POINT_MEDIUM;
                   controller.changePlacemarksIcon(selectedPlaceMark, 'assets/point_red_medium.png');
-                } else if (msg['zoom'] < 11 && markerType == MarkerType.POINT_MEDIUM) {
+                } else if (msg['zoom'] < 12 && markerType == MarkerType.POINT_MEDIUM) {
                   markerType = MarkerType.POINT_SMALL;
                   controller.changePlacemarksIcon(selectedPlaceMark, 'assets/point_red_small.png');
                 }

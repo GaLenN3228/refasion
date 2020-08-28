@@ -66,10 +66,13 @@ class _ProductsPageState extends State<ProductsPage> {
   repositoryListener() => setState(() {});
 
   updateProducts(BuildContext context) {
-    if (widget.topCategory != null) initialParameters = widget.topCategory.getRequestParameters();
+    if (widget.topCategory != null)
+      initialParameters = widget.topCategory.getRequestParameters();
 
-    final quickFiltersRepository = Provider.of<QuickFiltersRepository>(context, listen: false);
-    final quickFiltersParameters = quickFiltersRepository.getRequestParameters();
+    final quickFiltersRepository =
+        Provider.of<QuickFiltersRepository>(context, listen: false);
+    final quickFiltersParameters =
+        quickFiltersRepository.getRequestParameters();
 
     final filtersParameters = filtersRepository.isLoaded && filtersRepository.getStatusCode == 200
         ? filtersRepository.response.content
@@ -80,7 +83,10 @@ class _ProductsPageState extends State<ProductsPage> {
         ? sortMethodsRepository.response.content.getRequestParameters()
         : "";
 
-    String newParameters = initialParameters + filtersParameters + sortParameters + quickFiltersParameters;
+    String newParameters = initialParameters +
+        filtersParameters +
+        sortParameters +
+        quickFiltersParameters;
 
     Provider.of<ProductsRepository>(context, listen: false).getProducts(newParameters);
   }
@@ -142,9 +148,11 @@ class _ProductsPageState extends State<ProductsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     updateProducts: () => updateProducts(context)),
                 ProductsTitle(
-                    categoryName: widget.searchResult != null ? widget.searchResult.name : widget.topCategory.name),
+                    categoryName: widget.searchResult != null
+                        ? widget.searchResult.name
+                        : widget.topCategory.name),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 15, 20, 8),
+                  padding: const EdgeInsets.fromLTRB(20, 15, 15, 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

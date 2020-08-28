@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/search.dart';
-import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/search/components/result_tile.dart';
 import 'package:refashioned_app/screens/catalog/search/components/search_top_panel.dart';
 
@@ -49,7 +49,7 @@ class _SearchPageState extends State<SearchPageContent> {
                       .elementAt(index),
                   onClick: widget.onClick,
                 ),
-                separatorBuilder: (context, _) => CategoryDivider(),
+                separatorBuilder: (context, _) => ItemsDivider(),
               ),
             )
         ],

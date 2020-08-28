@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:refashioned_app/services/api/dio_client.dart';
 import 'package:refashioned_app/utils/url.dart';
@@ -85,8 +87,23 @@ class ApiService {
     return dioClient.get(Url.search, queryParameters: queryParameters);
   }
 
-  static Future<Response> addToCart(String productId) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+  static Future<Response> findAddressesByQuery(String query) async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    final queryParameters = {'q': query};
+    return dioClient.get(Url.findAddressesByQuery,
+        queryParameters: queryParameters);
+  }
+
+  static Future<Response> findAddressByCoordinates(Point coordinates) async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    final queryParameters = {'lat': coordinates.x, 'lon': coordinates.y};
+    return dioClient.get(Url.findAddressByCoordinates,
+        queryParameters: queryParameters);
+  }
+
+  static addToCart(String productId) async {
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"product": productId};
     return dioClient.post(Url.cartItem, data: body);
   }

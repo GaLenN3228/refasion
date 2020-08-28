@@ -4,9 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/catalog/search/search_page_content.dart';
-import 'package:refashioned_app/screens/components/catalog_navigator.dart';
-import 'package:refashioned_app/screens/product/pages/product.dart';
-import 'package:refashioned_app/screens/product/pages/product.dart';
+import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
+import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
 
 class SearchPage extends StatelessWidget {

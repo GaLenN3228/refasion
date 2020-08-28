@@ -31,10 +31,7 @@ class TopBarData {
     this.bottomData,
     this.searchData,
     this.shouldElevateOnScroll: true,
-  }) : assert(leftButtonData != null ||
-            middleData != null ||
-            bottomData != null ||
-            rightButtonData != null);
+  });
 
   factory TopBarData.sellerPage(
           {Function() leftAction,
@@ -43,19 +40,16 @@ class TopBarData {
           String headerText}) =>
       TopBarData(
         leftButtonData: leftAction != null
-            ? TBButtonData.back(onTap: leftAction)
-            : TBButtonData.none(),
+            ? TBButtonData.icon(TBIconType.back, onTap: leftAction)
+            : null,
         middleData: titleText != null
             ? TBMiddleData.title(titleText)
             : TBMiddleData.none(),
         rightButtonData: rightAction != null
-            ? TBButtonData.close(onTap: rightAction)
-            : TBButtonData.none(),
+            ? TBButtonData.text("Закрыть", onTap: rightAction)
+            : null,
         bottomData: headerText != null
-            ? TBBottomData(
-                type: TBBottomType.header,
-                headerText: headerText,
-              )
+            ? TBBottomData(headerText: headerText)
             : TBBottomData.none(),
       );
 }

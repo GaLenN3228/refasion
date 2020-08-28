@@ -237,7 +237,7 @@ public class YandexMapController implements PlatformView, MethodChannel.MethodCa
     Map<String, Object> params = ((Map<String, Object>) call.arguments);
 
     for (PlacemarkMapObject placemarkMapObject : placemarks) {
-      if (params.get("hashCode") != null && !placemarkMapObject.getUserData().equals(params.get("hashCode")))
+      if (!placemarkMapObject.getUserData().equals(params.get("hashCode")))
         placemarkMapObject.setIcon(ImageProvider.fromAsset(mapView.getContext(), pluginRegistrar.lookupKeyForAsset(params.get("icon") + "")));
     }
   }

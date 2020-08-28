@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
-import 'package:refashioned_app/screens/sell_product/pages/new_address_page.dart';
+import 'package:refashioned_app/screens/marketplace/pages/new_address_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final Function(List<String>) onPush;
@@ -18,7 +18,8 @@ class ProfilePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
             child: Container(
               color: Colors.white,
               height: 240,
@@ -34,7 +35,8 @@ class ProfilePage extends StatelessWidget {
                       height: 3,
                       decoration: ShapeDecoration(
                           color: Colors.black.withOpacity(0.1),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100))),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100))),
                     ),
                   ],
                 ),
@@ -65,12 +67,14 @@ class ProfilePage extends StatelessWidget {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhonePage()));
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => PhonePage()));
                     },
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 40),
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 10, bottom: 40),
                   child: Button(
                     "ВОЙТИ ЧЕРЕЗ СБЕРБАНК ID",
                     buttonStyle: ButtonStyle.outline,
@@ -78,7 +82,8 @@ class ProfilePage extends StatelessWidget {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewAddressPage()));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => NewAddressPage()));
                     },
                   ),
                 )

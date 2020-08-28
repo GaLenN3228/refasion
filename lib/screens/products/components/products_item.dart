@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/add_cart.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart_count.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
@@ -52,27 +52,28 @@ class _ProductsItemState extends State<ProductsItem> {
                   Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
                     return GestureDetector(
                         onTap: () => {
-                          BaseRepository.isAuthorized().then((isAuthorized) {
-                            isAuthorized
-                                ? widget.product.isFavourite
-                                ? addRemoveFavouriteRepository.removeFromFavourites((widget.product..isFavourite = false).id)
-                                : addRemoveFavouriteRepository.addToFavourites((widget.product..isFavourite = true).id)
-                                : showCupertinoModalBottomSheet(
-                                backgroundColor: Colors.white,
-                                expand: false,
-                                context: context,
-                                useRootNavigator: true,
-                                builder: (context, controller) => ProfilePage());
-                          })
-                        },
+                              BaseRepository.isAuthorized().then((isAuthorized) {
+                                isAuthorized
+                                    ? widget.product.isFavourite
+                                        ? addRemoveFavouriteRepository
+                                            .removeFromFavourites((widget.product..isFavourite = false).id)
+                                        : addRemoveFavouriteRepository
+                                            .addToFavourites((widget.product..isFavourite = true).id)
+                                    : showCupertinoModalBottomSheet(
+                                        backgroundColor: Colors.white,
+                                        expand: false,
+                                        context: context,
+                                        useRootNavigator: true,
+                                        builder: (context, controller) => ProfilePage());
+                              })
+                            },
                         child: Align(
                           alignment: Alignment.topRight,
                           child: Padding(
-                            padding: const EdgeInsets.only(top: 10, right: 14),
-                            child: SvgPicture.asset(
-                              widget.product.isFavourite ? 'assets/favorite_red.svg' : 'assets/favorite_border.svg',
-                              width: 22,
-                              height: 22,
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                            child: SVGIcon(
+                              icon: IconAsset.favoriteBorder,
+                              size: 26,
                             ),
                           ),
                         ));
@@ -89,12 +90,10 @@ class _ProductsItemState extends State<ProductsItem> {
                           });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 14, right: 14),
-                        child: SvgPicture.asset(
-                          'assets/bag.svg',
-                          color: Colors.black,
-                          width: 24,
-                          height: 24,
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                        child: SVGIcon(
+                          icon: IconAsset.cart,
+                          size: 26,
                         ),
                       ),
                     ),

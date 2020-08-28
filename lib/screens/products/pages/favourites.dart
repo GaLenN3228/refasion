@@ -41,17 +41,17 @@ class FavouritesPage extends StatelessWidget {
     return CupertinoPageScaffold(
         child: Container(
             child: Column(children: [
-      RefashionedTopBar(
-        data: TopBarData(
-          leftButtonData: TBButtonData.back(
-            onTap: () => Navigator.of(context).pop(),
-          ),
-          middleData: TBMiddleData(
-            type: TBMiddleType.title,
-            titleText: "ИЗБРАННОЕ",
-          ),
-        ),
-      ),
+//      RefashionedTopBar(
+//        data: TopBarData(
+//          leftButtonData: TBButtonData.back(
+//            onTap: () => Navigator.of(context).pop(),
+//          ),
+//          middleData: TBMiddleData(
+//            type: TBMiddleType.title,
+//            titleText: "ИЗБРАННОЕ",
+//          ),
+//        ),
+//      ),
       Expanded(
         child: StaggeredGridView.countBuilder(
           shrinkWrap: true,

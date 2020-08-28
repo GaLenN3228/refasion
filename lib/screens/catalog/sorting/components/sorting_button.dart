@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/sort.dart';
 import 'package:refashioned_app/screens/catalog/sorting/sorting_panel.dart';
-
-import '../../../../utils/colors.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class SortingButton extends StatefulWidget {
   final Function() onUpdate;
@@ -19,20 +17,19 @@ class SortingButton extends StatefulWidget {
 class _SortingButtonState extends State<SortingButton> {
   onUpdate() => setState(() => widget.onUpdate());
 
-  showSorting(BuildContext context) {
-    showMaterialModalBottomSheet(
-        expand: false,
-        context: context,
-        useRootNavigator: true,
-        builder: (context, controller) => SortingPanel(widget.sort, onUpdate));
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () => showSorting(context),
+        onTap: () => showMaterialModalBottomSheet(
+              expand: false,
+              context: context,
+              useRootNavigator: true,
+              builder: (context, controller) =>
+                  SortingPanel(widget.sort, onUpdate),
+            ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               widget.sort.methods.elementAt(widget.sort.index)?.name ??
@@ -42,10 +39,9 @@ class _SortingButtonState extends State<SortingButton> {
                   .bodyText1
                   .copyWith(fontWeight: FontWeight.w500),
             ),
-            SvgPicture.asset(
-              "assets/sort.svg",
-              width: 24,
-              color: primaryColor,
+            SVGIcon(
+              icon: IconAsset.sort,
+              size: 16,
             ),
           ],
         ));

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import '../../../../utils/colors.dart';
 
 class SelectionMark extends StatelessWidget {
@@ -28,9 +28,10 @@ class SelectionMark extends StatelessWidget {
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(size / 4),
-            child: SvgPicture.asset(
-              'assets/small_selected.svg',
+            child: SVGIcon(
+              icon: IconAsset.done,
               color: selectedIconColor,
+              size: 14,
             ),
           ),
         ),

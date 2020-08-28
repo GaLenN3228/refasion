@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class ProductDelivery extends StatelessWidget {
-  Widget _deliveryItem(TextTheme textTheme, String assetName, String title, String subtitle) {
+  Widget _deliveryItem(
+      TextTheme textTheme, IconAsset icon, String title, String subtitle) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            width: 26,
-            alignment: Alignment.topLeft,
-            child: SvgPicture.asset(
-              assetName,
-              height: 16,
-              color: Colors.black,
-            ),
+          SVGIcon(
+            icon: icon,
+            size: 24,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(title, style: textTheme.subtitle1),
-              Text(subtitle, style: textTheme.bodyText2.copyWith(height: 1.7))
-            ],
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(title, style: textTheme.subtitle1),
+                  Text(subtitle,
+                      style: textTheme.bodyText2.copyWith(height: 1.7))
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -52,13 +54,18 @@ class ProductDelivery extends StatelessWidget {
             )
           ],
         ),
-        _deliveryItem(textTheme, 'assets/shipping.svg', "Курьером, завтра, 23 июня", "Бесплатно"),
         _deliveryItem(
-            textTheme,
-            'assets/position.svg',
-            "В пункт выдачи, завтра, 23 июня",
-            "Бесплатн"
-                "о"),
+          textTheme,
+          IconAsset.courierDelivery,
+          "Курьером, завтра, 23 июня",
+          "Бесплатно",
+        ),
+        _deliveryItem(
+          textTheme,
+          IconAsset.location,
+          "В пункт выдачи, завтра, 23 июня",
+          "Бесплатно",
+        ),
         Container(
           color: const Color(0xFFE6E6E6),
           margin: EdgeInsets.symmetric(vertical: 16),

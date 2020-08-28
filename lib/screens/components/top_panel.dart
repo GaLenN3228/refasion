@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/repositories/base.dart';
@@ -28,21 +29,19 @@ class TopPanel extends StatelessWidget {
       padding: EdgeInsets.only(top: includeTopPadding ? MediaQuery.of(context).padding.top : 4, bottom: 4),
       child: Row(
         children: [
-          SizedBox(
-            width: 4,
-          ),
           canPop
               ? GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () => Navigator.of(context).pop(),
-                  child: SvgPicture.asset(
-                    "assets/back.svg",
-                    color: Color(0xFF222222),
-                    width: 44,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: SVGIcon(
+                      icon: IconAsset.back,
+                    ),
                   ),
                 )
               : SizedBox(
-                  width: 16,
+                  width: 20,
                 ),
           Expanded(
             child: type == PanelType.search
@@ -54,12 +53,11 @@ class TopPanel extends StatelessWidget {
                     child: Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 10, 10, 10),
-                          child: SvgPicture.asset(
-                            'assets/small_search.svg',
+                          padding: const EdgeInsets.fromLTRB(12, 5, 5, 8),
+                          child: SVGIcon(
+                            icon: IconAsset.search,
+                            size: 20,
                             color: Color(0xFF8E8E93),
-                            width: 14,
-                            height: 14,
                           ),
                         ),
                         Expanded(
@@ -124,11 +122,9 @@ class TopPanel extends StatelessWidget {
               })
             },
             child: Padding(
-              padding: const EdgeInsets.only(left: 14, right: 18),
-              child: SvgPicture.asset(
-                'assets/favorite_border.svg',
-                width: 22,
-                height: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: SVGIcon(
+                icon: IconAsset.favoriteBorder,
               ),
             ),
           )
