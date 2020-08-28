@@ -70,13 +70,15 @@ class PickupPointAddress extends StatelessWidget {
                     style: textTheme.bodyText2,
                     maxLines: 1,
                   )),
-                  Container(
-                      margin: const EdgeInsets.only(left: 4),
-                      child: Text(
-                        point.address,
-                        style: textTheme.subtitle1,
-                        maxLines: 1,
-                      )),
+                  Expanded(
+                      child: Container(
+                          margin: const EdgeInsets.only(left: 4),
+                          child: Text(
+                            point.address,
+                            style: textTheme.subtitle1,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ))),
                 ])),
             Container(
                 margin: const EdgeInsets.only(top: 4, left: 20, right: 16),

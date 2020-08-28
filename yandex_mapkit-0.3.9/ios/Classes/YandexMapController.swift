@@ -245,8 +245,8 @@ public class YandexMapController: NSObject, FlutterPlatformView {
   public func changePlacemarksIcon(_ call: FlutterMethodCall) {
     let params = call.arguments as! [String: Any]
     for placemarkMapObject in placemarks {
-        if (params["hashCode"] != nil && placemarkMapObject.userData != params["hashCode"]){
-            placemarkMapObject.setIconWith(UIImage(named: pluginRegistrar.lookupKey(forAsset: params["icon"]!))!)
+        if (params["hashCode"] != nil && placemarkMapObject.userData as! Int != params["hashCode"]  as! Int){
+            placemarkMapObject.setIconWith(UIImage(named: pluginRegistrar.lookupKey(forAsset: params["icon"] as! String))!)
         }
     }
   }
@@ -254,8 +254,8 @@ public class YandexMapController: NSObject, FlutterPlatformView {
   public func changePlacemarkIcon(_ call: FlutterMethodCall) {
     let params = call.arguments as! [String: Any]
     for placemarkMapObject in placemarks {
-        if (placemarkMapObject.userData != params["hashCode"]){
-            placemarkMapObject.setIconWith(UIImage(named: pluginRegistrar.lookupKey(forAsset: params["icon"]!))!)
+        if (placemarkMapObject.userData as! Int != params["hashCode"]  as! Int){
+            placemarkMapObject.setIconWith(UIImage(named: pluginRegistrar.lookupKey(forAsset: params["icon"] as! String))!)
         }
     }
   }
