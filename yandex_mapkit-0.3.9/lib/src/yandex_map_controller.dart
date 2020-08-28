@@ -13,8 +13,7 @@ import 'polyline.dart';
 typedef CameraPositionCallback = void Function(dynamic msg);
 
 class YandexMapController extends ChangeNotifier {
-  YandexMapController._(MethodChannel channel)
-      : _channel = channel {
+  YandexMapController._(MethodChannel channel) : _channel = channel {
     _channel.setMethodCallHandler(_handleMethodCall);
   }
 
@@ -30,7 +29,7 @@ class YandexMapController extends ChangeNotifier {
   final List<Polyline> polylines = <Polyline>[];
   final List<Polygon> polygons = <Polygon>[];
   CameraPositionCallback _cameraPositionCallback;
-  
+
   static YandexMapController init(int id) {
     final MethodChannel methodChannel = MethodChannel('yandex_mapkit/yandex_map_$id');
 
@@ -51,15 +50,12 @@ class YandexMapController extends ChangeNotifier {
       @required String arrowName,
       bool userArrowOrientation = kUserArrowOrientation,
       Color accuracyCircleFillColor = kAccuracyCircleFillColor}) async {
-    await _channel.invokeMethod<void>(
-      'showUserLayer',
-      <String, dynamic>{
-        'iconName': iconName,
-        'arrowName': arrowName,
-        'userArrowOrientation': userArrowOrientation,
-        'accuracyCircleFillColor': accuracyCircleFillColor.value
-      }
-    );
+    await _channel.invokeMethod<void>('showUserLayer', <String, dynamic>{
+      'iconName': iconName,
+      'arrowName': arrowName,
+      'userArrowOrientation': userArrowOrientation,
+      'accuracyCircleFillColor': accuracyCircleFillColor.value
+    });
   }
 
   /// Hides an icon at current user location
@@ -77,91 +73,88 @@ class YandexMapController extends ChangeNotifier {
 
   /// Applies styling to the map
   Future<void> setMapStyle({@required String style}) async {
-    await _channel.invokeMethod<void>(
-        'setMapStyle',
-        <String, dynamic>{
-          'style': style
-        }
-    );
+    await _channel.invokeMethod<void>('setMapStyle', <String, dynamic>{'style': style});
   }
 
-  Future<void> move({
-    @required Point point,
-    double zoom = kZoom,
-    double azimuth = kAzimuth,
-    double tilt = kTilt,
-    MapAnimation animation
-  }) async {
-    await _channel.invokeMethod<void>(
-      'move',
-      <String, dynamic>{
-        'latitude': point.latitude,
-        'longitude': point.longitude,
-        'zoom': zoom,
-        'azimuth': azimuth,
-        'tilt': tilt,
-        'animate': animation != null,
-        'smoothAnimation': animation?.smooth,
-        'animationDuration': animation?.duration
-      }
-    );
+  Future<void> move(
+      {@required Point point,
+      double zoom = kZoom,
+      double azimuth = kAzimuth,
+      double tilt = kTilt,
+      MapAnimation animation}) async {
+    await _channel.invokeMethod<void>('move', <String, dynamic>{
+      'latitude': point.latitude,
+      'longitude': point.longitude,
+      'zoom': zoom,
+      'azimuth': azimuth,
+      'tilt': tilt,
+      'animate': animation != null,
+      'smoothAnimation': animation?.smooth,
+      'animationDuration': animation?.duration
+    });
   }
 
-  Future<void> setBounds({
-    @required Point southWestPoint,
-    @required Point northEastPoint,
-    MapAnimation animation
-  }) async {
-    await _channel.invokeMethod<void>(
-      'setBounds',
-      <String, dynamic>{
-        'southWestLatitude': southWestPoint.latitude,
-        'southWestLongitude': southWestPoint.longitude,
-        'northEastLatitude': northEastPoint.latitude,
-        'northEastLongitude': northEastPoint.longitude,
-        'animate': animation != null,
-        'smoothAnimation': animation?.smooth,
-        'animationDuration': animation?.duration
-      }
-    );
+  Future<void> setBounds(
+      {@required Point southWestPoint, @required Point northEastPoint, MapAnimation animation}) async {
+    await _channel.invokeMethod<void>('setBounds', <String, dynamic>{
+      'southWestLatitude': southWestPoint.latitude,
+      'southWestLongitude': southWestPoint.longitude,
+      'northEastLatitude': northEastPoint.latitude,
+      'northEastLongitude': northEastPoint.longitude,
+      'animate': animation != null,
+      'smoothAnimation': animation?.smooth,
+      'animationDuration': animation?.duration
+    });
   }
 
   /// Does nothing if passed `Placemark` is `null`
-  Future<void> addPlacemark(Placemark placemark) async {
+  void addPlacemark(Placemark placemark) {
     if (placemark != null) {
-      await _channel.invokeMethod<void>('addPlacemark', _placemarkParams(placemark));
+      _channel.invokeMethod<void>('addPlacemark', _placemarkParams(placemark));
       placemarks.add(placemark);
     }
   }
+
+//  Future<void> addPlacemarks(List<Placemark> placemarks) async {
+//    if (placemarks != null) {
+//      final List<Map<String, dynamic>> args = List();
+//      placemarks.forEach((Placemark element) {
+//        args.add(_placemarkParams(element));
+//      });
+//
+//      await _channel.invokeMethod<void>('addPlacemark', <String, dynamic>{'qwe': args});
+//      this.placemarks.addAll(placemarks);
+//    }
+//  }
 
   Future<void> disableCameraTracking() async {
     _cameraPositionCallback = null;
     await _channel.invokeMethod<void>('disableCameraTracking');
   }
 
-  Future<Point> enableCameraTracking(
-    Placemark placemark,
-    CameraPositionCallback callback
-  ) async {
+  Future<Point> enableCameraTracking(Placemark placemark, CameraPositionCallback callback) async {
     _cameraPositionCallback = callback;
-    
+
     final dynamic point = await _channel.invokeMethod<dynamic>(
-      'enableCameraTracking',
-      placemark != null ? _placemarkParams(placemark) : null
-    );
+        'enableCameraTracking', placemark != null ? _placemarkParams(placemark) : null);
     return Point(latitude: point['latitude'], longitude: point['longitude']);
   }
 
   // Does nothing if passed `Placemark` wasn't added before
   Future<void> removePlacemark(Placemark placemark) async {
     if (placemarks.remove(placemark)) {
-      await _channel.invokeMethod<void>(
-        'removePlacemark',
-        <String, dynamic>{
-          'hashCode': placemark.hashCode
-        }
-      );
+      await _channel.invokeMethod<void>('removePlacemark', <String, dynamic>{'hashCode': placemark.hashCode});
     }
+  }
+
+  Future<void> changePlacemarksIcon(Placemark exceptPlacemark, String icon) async {
+    await _channel
+        .invokeMethod<void>('changePlacemarksIcon', <String, dynamic>{'hashCode': exceptPlacemark != null ? exceptPlacemark.hashCode : null, 'icon': icon});
+  }
+
+  Future<void> changePlacemarkIcon(Placemark placemark, String icon) async {
+    await _channel
+        .invokeMethod<void>('changePlacemarkIcon', <String, dynamic>{'hashCode': placemark.hashCode, 'icon': icon});
   }
 
   /// Does nothing if passed `Polyline` is `null`
@@ -175,12 +168,7 @@ class YandexMapController extends ChangeNotifier {
   /// Does nothing if passed `Polyline` wasn't added before
   Future<void> removePolyline(Polyline polyline) async {
     if (polylines.remove(polyline)) {
-      await _channel.invokeMethod<void>(
-        'removePolyline',
-        <String, dynamic>{
-          'hashCode': polyline.hashCode
-        }
-      );
+      await _channel.invokeMethod<void>('removePolyline', <String, dynamic>{'hashCode': polyline.hashCode});
     }
   }
 
@@ -195,8 +183,7 @@ class YandexMapController extends ChangeNotifier {
   // Does nothing if passed `Polygon` wasn't added before
   Future<void> removePolygon(Polygon polygon) async {
     if (polygons.remove(polygon)) {
-      await _channel.invokeMethod<void>(
-          'removePolygon', <String, dynamic>{'hashCode': polygon.hashCode});
+      await _channel.invokeMethod<void>('removePolygon', <String, dynamic>{'hashCode': polygon.hashCode});
     }
   }
 
@@ -235,11 +222,11 @@ class YandexMapController extends ChangeNotifier {
     final double latitude = arguments['latitude'];
     final double longitude = arguments['longitude'];
 
-    final Placemark placemark = placemarks.
-      firstWhere((Placemark placemark) => placemark.hashCode == hashCode, orElse: () => null);
+    final Placemark placemark =
+        placemarks.firstWhere((Placemark placemark) => placemark.hashCode == hashCode, orElse: () => null);
 
     if (placemark != null) {
-      placemark.onTap(latitude, longitude);
+      placemark.onTap(placemark, latitude, longitude);
     }
   }
 
@@ -254,7 +241,7 @@ class YandexMapController extends ChangeNotifier {
       'anchorX': placemark.iconAnchor.latitude,
       'anchorY': placemark.iconAnchor.longitude,
       'scale': placemark.scale,
-      'zIndex' : placemark.zIndex,
+      'zIndex': placemark.zIndex,
       'opacity': placemark.opacity,
       'isDraggable': placemark.isDraggable,
       'iconName': placemark.iconName,
@@ -264,9 +251,9 @@ class YandexMapController extends ChangeNotifier {
   }
 
   Map<String, dynamic> _polylineParams(Polyline polyline) {
-    final List<Map<String, double>> coordinates = polyline.coordinates.map(
-      (Point p) => <String, double>{'latitude': p.latitude, 'longitude': p.longitude}
-    ).toList();
+    final List<Map<String, double>> coordinates = polyline.coordinates
+        .map((Point p) => <String, double>{'latitude': p.latitude, 'longitude': p.longitude})
+        .toList();
     return <String, dynamic>{
       'coordinates': coordinates,
       'strokeColor': polyline.strokeColor.value,
@@ -282,9 +269,9 @@ class YandexMapController extends ChangeNotifier {
   }
 
   Map<String, dynamic> _polygonParams(Polygon polygon) {
-    final List<Map<String, double>> coordinates = polygon.coordinates.map(
-      (Point p) => <String, double>{'latitude': p.latitude, 'longitude': p.longitude}
-    ).toList();
+    final List<Map<String, double>> coordinates = polygon.coordinates
+        .map((Point p) => <String, double>{'latitude': p.latitude, 'longitude': p.longitude})
+        .toList();
     return <String, dynamic>{
       'coordinates': coordinates,
       'strokeColor': polygon.strokeColor.value,

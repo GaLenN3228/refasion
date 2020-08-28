@@ -173,6 +173,41 @@ public class YandexMapController implements PlatformView, MethodChannel.MethodCa
     placemarks.add(placemark);
   }
 
+//  @SuppressWarnings("unchecked")
+//  private void addPlacemarks(MethodCall call) {
+//    List<Map<String, Object>> list = ((List<Map<String, Object>>) call.arguments);
+//    for (int i = 0; i < list.size(); i++) {
+//      Map<String, Object> params = list.get(i);
+//      Point point = new Point(((Double) params.get("latitude")), ((Double) params.get("longitude")));
+//      MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
+//      PlacemarkMapObject placemark = mapObjects.addPlacemark(point);
+//      String iconName = (String) params.get("iconName");
+//      byte[] rawImageData = (byte[]) params.get("rawImageData");
+//
+//      placemark.setUserData(params.get("hashCode"));
+//      placemark.setOpacity(((Double) params.get("opacity")).floatValue());
+//      placemark.setDraggable((Boolean) params.get("isDraggable"));
+//      placemark.addTapListener(yandexMapObjectTapListener);
+//
+//      if (iconName != null) {
+//        placemark.setIcon(ImageProvider.fromAsset(mapView.getContext(), pluginRegistrar.lookupKeyForAsset(iconName)));
+//      }
+//
+//      if (rawImageData != null) {
+//        Bitmap bitmapData = BitmapFactory.decodeByteArray(rawImageData, 0, rawImageData.length);
+//        placemark.setIcon(ImageProvider.fromBitmap(bitmapData));
+//      }
+//
+//      IconStyle iconStyle = new IconStyle();
+//      iconStyle.setAnchor(new PointF(((Double) params.get("anchorX")).floatValue(), ((Double) params.get("anchorY")).floatValue()));
+//      iconStyle.setZIndex(((Double) params.get("zIndex")).floatValue());
+//      iconStyle.setScale(((Double) params.get("scale")).floatValue());
+//      placemark.setIconStyle(iconStyle);
+//
+//      placemarks.add(placemark);
+//    }
+//  }
+
   private Map<String, Object> getTargetPoint() {
     Point point =  mapView.getMapWindow().getMap().getCameraPosition().getTarget();
     Map<String, Object> arguments = new HashMap<>();
@@ -196,6 +231,28 @@ public class YandexMapController implements PlatformView, MethodChannel.MethodCa
       }
     }
   }
+
+  @SuppressWarnings("unchecked")
+  private void changePlacemarksIcon(MethodCall call) {
+    Map<String, Object> params = ((Map<String, Object>) call.arguments);
+
+    for (PlacemarkMapObject placemarkMapObject : placemarks) {
+      if (params.get("hashCode") != null && !placemarkMapObject.getUserData().equals(params.get("hashCode")))
+        placemarkMapObject.setIcon(ImageProvider.fromAsset(mapView.getContext(), pluginRegistrar.lookupKeyForAsset(params.get("icon") + "")));
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void changePlacemarkIcon(MethodCall call) {
+    Map<String, Object> params = ((Map<String, Object>) call.arguments);
+
+    for (PlacemarkMapObject placemarkMapObject : placemarks) {
+      if (placemarkMapObject.getUserData().equals(params.get("hashCode"))) {
+        placemarkMapObject.setIcon(ImageProvider.fromAsset(mapView.getContext(), pluginRegistrar.lookupKeyForAsset(params.get("icon") + "")));
+      }
+    }
+  }
+
 
   @SuppressWarnings("unchecked")
   private void disableCameraTracking(MethodCall call) {
@@ -226,7 +283,7 @@ public class YandexMapController implements PlatformView, MethodChannel.MethodCa
     Point targetPoint =  mapView.getMapWindow().getMap().getCameraPosition().getTarget();
     if (call.arguments != null) {
       Map<String, Object> params = ((Map<String, Object>) call.arguments);
-      
+
       MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
       cameraTarget = mapObjects.addPlacemark(targetPoint);
       String iconName = (String) params.get("iconName");
@@ -343,7 +400,7 @@ public class YandexMapController implements PlatformView, MethodChannel.MethodCa
 
   private void moveToUser() {
     if (!hasLocationPermission()) return;
-    
+
     float currentZoom = mapView.getMap().getCameraPosition().getZoom();
     float tilt = mapView.getMap().getCameraPosition().getTilt();
     float azimuth = mapView.getMap().getCameraPosition().getAzimuth();
@@ -433,6 +490,10 @@ public class YandexMapController implements PlatformView, MethodChannel.MethodCa
         addPlacemark(call);
         result.success(null);
         break;
+//      case "addPlacemarks":
+//        addPlacemarks(call);
+//        result.success(null);
+//        break;
       case "removePlacemark":
         removePlacemark(call);
         result.success(null);
@@ -467,6 +528,14 @@ public class YandexMapController implements PlatformView, MethodChannel.MethodCa
         break;
       case "moveToUser":
         moveToUser();
+        result.success(null);
+        break;
+      case "changePlacemarksIcon":
+        changePlacemarksIcon(call);
+        result.success(null);
+        break;
+      case "changePlacemarkIcon":
+        changePlacemarkIcon(call);
         result.success(null);
         break;
       default:

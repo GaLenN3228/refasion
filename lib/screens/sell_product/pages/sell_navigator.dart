@@ -421,9 +421,8 @@ class _SellNavigatorState extends State<SellNavigator> {
   }
 
   selectSubCategories(Category topCategory) {
-    sellPropertiesRepository =
-        SellPropertiesRepository(category: topCategory.id);
     sellPropertiesRepository = SellPropertiesRepository();
+    sellPropertiesRepository.getProperties(topCategory.id);
   }
 
   addPhotos(List<String> photos) {}

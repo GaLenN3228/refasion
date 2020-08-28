@@ -23,7 +23,7 @@ class Placemark {
   final Point iconAnchor;
   final double opacity;
   final bool isDraggable;
-  final String iconName;
+  String iconName;
   final Function onTap;
 
   /// Provides ability to use binary image data as Placemark icon.
@@ -48,5 +48,5 @@ class Placemark {
   static const double kZIndex = 0.0;
   static const Point kIconAnchor = Point(latitude: 0.5, longitude: 0.5);
   static const double kOpacity = 0.5;
-  static void _kOnTap(double latitude, double longitude) => () { };
+  static void _kOnTap(Placemark placemark, double latitude, double longitude) => () { };
 }
