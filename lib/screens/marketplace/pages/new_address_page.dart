@@ -17,35 +17,35 @@ class NewAddressPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
-      child: Container(
-        child: Column(
-          children: [
-            RefashionedTopBar(
-              data: TopBarData(
-                leftButtonData: TBButtonData.icon(
-                  TBIconType.back,
-                  onTap: () => Navigator.of(context).pop(),
+      resizeToAvoidBottomInset: false,
+      child: Column(
+        children: [
+          RefashionedTopBar(
+            data: TopBarData(
+              leftButtonData: TBButtonData.icon(
+                TBIconType.back,
+                onTap: () => Navigator.of(context).pop(),
+              ),
+              middleData: TBMiddleData.title("Новый адрес"),
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Expanded(
+            child: MapsPickerPage(
+              onAddressPush: onAddressPush,
+              onSearchTap: (callback) => showCupertinoModalBottomSheet(
+                expand: true,
+                context: context,
+                builder: (context, controller) => AddressSearchPage(
+                  scrollController: controller,
+                  onSelect: callback,
                 ),
-                middleData: TBMiddleData.title("Новый адрес"),
               ),
             ),
-            SizedBox(
-              height: 8,
-            ),
-            Expanded(
-              child: MapsPickerPage(
-                onAddressPush: onAddressPush,
-                onSearchTap: ({callback}) => showCupertinoModalBottomSheet(
-                  expand: true,
-                  context: context,
-                  builder: (context, controller) => AddressSearchPage(
-                    onSelect: (newAddress) => callback(newAddress),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

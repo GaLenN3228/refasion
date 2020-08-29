@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:math';
+import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/cities.dart';
 
 class Address {
@@ -20,14 +22,35 @@ class Address {
   @override
   String toString() =>
       address.toString() +
-      "\n" +
-      "[" +
+      " [" +
       originalAddress.toString() +
-      "]" +
-      "\n" +
+      "] - " +
       coordinates?.x.toString() +
       ", " +
-      coordinates?.y.toString() +
-      "\n" +
-      city.toString();
+      coordinates?.y.toString();
+}
+
+class AddressesProvider {
+  final _addressesController = StreamController<List<Address>>();
+
+  Stream<List<Address>> addresses;
+
+  AddressesProvider() {
+    addresses = _addressesController.stream;
+  }
+
+  update(BaseResponse<List<Address>> newResponse) {
+    if (newResponse.status.code != 200) {
+      throwError({"status code": newResponse.status.code});
+    } else
+      _addressesController.add(newResponse.content);
+  }
+
+  throwError(Object error) => _addressesController.addError({"error": error});
+
+  clear() => _addressesController.add(List<Address>());
+
+  dispose() {
+    _addressesController.close();
+  }
 }

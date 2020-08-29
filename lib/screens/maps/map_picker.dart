@@ -13,12 +13,13 @@ import 'package:refashioned_app/screens/maps/components/sheet_data/pickup_point_
 
 class MapsPickerPage extends StatelessWidget {
   final Function(Address) onAddressPush;
-  final Function({Function(Address) callback}) onSearchTap;
+  final Function(Function(Address) callback) onSearchTap;
 
   MapsPickerPage({Key key, this.onAddressPush, this.onSearchTap})
       : super(key: key);
 
-  onSearchSelect(Address newAddress) => print(newAddress.toString());
+  onSearchSelect(Address newAddress) =>
+      print("address callback: " + newAddress.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -27,37 +28,37 @@ class MapsPickerPage extends StatelessWidget {
         showBottomSheet(context, point);
       },
     );
-    return CupertinoPageScaffold(
-        backgroundColor: Colors.white,
-        child: Expanded(
-          child: Stack(
-            children: [
-              Container(
-                  child: ChangeNotifierProvider<PickPointRepository>(
-                create: (_) => PickPointRepository(),
-                child: mapsPage,
-              )),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CompassButton(
-                      show: ValueNotifier(true),
-                    ),
-                    SearchButton(
-                      onTap: () => onSearchTap(callback: onSearchSelect),
-                    ),
-                    GeolocationButton(
-                      onTap: mapsPage.showUserLocation,
-                    ),
-                  ],
+    return Stack(
+      children: [
+        Container(
+            child: ChangeNotifierProvider<PickPointRepository>(
+          create: (_) => PickPointRepository(),
+          child: mapsPage,
+        )),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding:
+                EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CompassButton(
+                  show: ValueNotifier(true),
                 ),
-              )
-            ],
+                SearchButton(
+                  onTap: () => onSearchTap(onSearchSelect),
+                ),
+                GeolocationButton(
+                  onTap: mapsPage.showUserLocation,
+                ),
+              ],
+            ),
           ),
-        ));
+        )
+      ],
+    );
   }
 
   void showBottomSheet(BuildContext context, PickPoint point) {

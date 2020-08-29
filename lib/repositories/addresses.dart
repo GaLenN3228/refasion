@@ -18,17 +18,44 @@ class AddressRepository extends BaseRepository<Address> {
 }
 
 class AddressesRepository extends BaseRepository<List<Address>> {
-  Future<void> findAddressesByQuery(String query) => apiCall(
-        () async {
-          if (query == null) abortLoading(message: "No query");
+  final addressesProvider = AddressesProvider();
 
-          response = BaseResponse.fromJson(
-            (await ApiService.findAddressesByQuery(query)).data,
-            (contentJson) => [
-              if (contentJson != null)
-                for (final address in contentJson) Address.fromJson(address)
-            ],
-          );
-        },
-      );
+  String oldQuery;
+
+  findAddressesByQuery(String query) async {
+    if (query != oldQuery) {
+      if (query == null || query.isEmpty)
+        addressesProvider.clear();
+      else {
+        await apiCall(
+          () async {
+            try {
+              response = BaseResponse.fromJson(
+                (await ApiService.findAddressesByQuery(query)).data,
+                (contentJson) => contentJson.fold(
+                  List<Address>(),
+                  (list, address) {
+                    final newAddress = Address.fromJson(address);
+                    if (newAddress?.coordinates != null) list.add(newAddress);
+                    return list;
+                  },
+                ),
+              );
+              addressesProvider.update(response);
+            } catch (err) {
+              addressesProvider.throwError(err);
+            }
+          },
+        );
+      }
+      oldQuery = query;
+    }
+  }
+
+  @override
+  void dispose() {
+    addressesProvider.dispose();
+
+    super.dispose();
+  }
 }

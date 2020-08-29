@@ -27,7 +27,8 @@ class _ScaffoldChildrenState extends State<ScaffoldChildren> {
 
   @override
   initState() {
-    scrollController = ScrollController();
+    scrollController =
+        widget.scaffoldData.scrollController ?? ScrollController();
     scrollController.addListener(scrollListener);
 
     super.initState();
@@ -55,10 +56,13 @@ class _ScaffoldChildrenState extends State<ScaffoldChildren> {
           ScaffoldChildrenData childrenData;
 
           if (childrenDataSnapshot.hasError)
-            childrenData = ScaffoldChildrenData.message(
-                childrenDataSnapshot.error.toString());
+            childrenData = widget.scaffoldData
+                    ?.onStreamError(childrenDataSnapshot.error.toString()) ??
+                ScaffoldChildrenData.message(
+                    childrenDataSnapshot.error.toString());
           else if (!childrenDataSnapshot.hasData)
             childrenData = widget.scaffoldData.childrenData ??
+                widget.scaffoldData?.onStreamError("Не переданы данные") ??
                 ScaffoldChildrenData.message("Не переданы данные");
           else
             childrenData = childrenDataSnapshot.data;

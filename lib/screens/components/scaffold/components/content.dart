@@ -69,8 +69,7 @@ class _ScaffoldContentState extends State<ScaffoldContent>
     if (widget.scaffoldData.adjustToOverlays) {
       final topBarData = sizesProvider.getData("topBar");
 
-      final newTopBarBottomOffset =
-          topBarData != null ? topBarData.dy + topBarData.height : 0;
+      final newTopBarBottomOffset = topBarData != null ? topBarData.height : 0;
 
       final newBottomOverlayTopOffset =
           sizesProvider.getData("bottomOverlay")?.dy ?? 0;

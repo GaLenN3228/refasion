@@ -27,7 +27,15 @@ class ScaffoldData {
 
   final Map<WidgetData, ScaffoldScrollAction> scrollActions;
 
+  final ScaffoldChildrenData Function() onStreamEmpty;
+  final ScaffoldChildrenData Function(String) onStreamError;
+
+  final ScrollController scrollController;
+
   const ScaffoldData({
+    this.scrollController,
+    this.onStreamEmpty,
+    this.onStreamError,
     this.adjustToOverlays: true,
     this.childrenData,
     this.childrenDataStream,
