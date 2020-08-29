@@ -224,8 +224,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           initialData: productData.category,
           onUpdate: () => productData.updateCategory(category),
           onPush: () {
-            sellPropertiesRepository =
-                SellPropertiesRepository();
+            sellPropertiesRepository = SellPropertiesRepository();
             sellPropertiesRepository.getProperties(category.id);
 
             Navigator.of(context).push(
@@ -407,7 +406,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.newAddress:
         return NewAddressPage(
-          onPush: (address) {
+          onAddressPush: (address) {
             productData.updateAddress(address);
 
             Navigator.of(context).push(
