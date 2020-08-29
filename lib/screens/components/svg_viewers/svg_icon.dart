@@ -48,6 +48,8 @@ enum IconAsset {
   bank_card,
   courierDelivery,
   expressDelivery,
+  geolocation,
+  compass,
 }
 
 final assets = {
@@ -64,6 +66,7 @@ final assets = {
   IconAsset.categories: "categories.svg",
   IconAsset.cart: "cart.svg",
   IconAsset.close: "close.svg",
+  IconAsset.compass: "compass.svg",
   IconAsset.coupon: "coupon.svg",
   IconAsset.courierDelivery: "courier_devilery.svg",
   IconAsset.delete: "delete.svg",
@@ -75,6 +78,7 @@ final assets = {
   IconAsset.favoriteFilled: "favorite_filled.svg",
   IconAsset.filters: "filters.svg",
   IconAsset.forwardLong: "forward_long.svg",
+  IconAsset.geolocation: "geolocation.svg",
   IconAsset.hanger: "hanger.svg",
   IconAsset.home: "home.svg",
   IconAsset.image: "image.svg",
