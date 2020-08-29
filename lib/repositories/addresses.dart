@@ -1,67 +1,34 @@
 import 'dart:math';
 import 'package:refashioned_app/models/addresses.dart';
+import 'package:refashioned_app/models/base.dart';
 import '../services/api_service.dart';
 import 'base.dart';
 
-class AddressRepository extends BaseRepository {
-  AddressResponse response;
+class AddressRepository extends BaseRepository<Address> {
+  Future<void> findAddressByCoordinates(Point newCoordinates) => apiCall(
+        () async {
+          if (newCoordinates?.x == null || newCoordinates?.y == null)
+            abortLoading(message: "No coordinates");
 
-  Point _coordinates;
-
-  update(Point newCoordinates) async {
-    if (newCoordinates?.x != null || newCoordinates?.y != null) {
-      _coordinates = newCoordinates;
-      await loadData();
-    } else
-      print("no coordinates: " + newCoordinates.toString());
-  }
-
-  @override
-  Future<void> loadData() async {
-    try {
-      if (_coordinates != null) {
-        final requestResponse =
-            await ApiService.findAddressByCoordinates(_coordinates);
-
-        this.response = AddressResponse.fromJson(requestResponse.data);
-      }
-
-      finishLoading();
-    } catch (err) {
-      print("AddressRepository error:");
-      print(err);
-      receivedError();
-    }
-  }
+          response = BaseResponse.fromJson(
+              (await ApiService.findAddressByCoordinates(newCoordinates)).data,
+              (contentJson) => Address.fromJson(contentJson));
+        },
+      );
 }
 
-class AddressesRepository extends BaseRepository {
-  AddressesResponse response;
+class AddressesRepository extends BaseRepository<List<Address>> {
+  Future<void> findAddressesByQuery(String query) => apiCall(
+        () async {
+          if (query == null) abortLoading(message: "No query");
 
-  String _query;
-
-  update(String newQuery) async {
-    if (newQuery != null) {
-      _query = newQuery;
-      await loadData();
-    } else
-      print("no query: " + newQuery.toString());
-  }
-
-  @override
-  Future<void> loadData() async {
-    try {
-      if (_query != null) {
-        final requestResponse = await ApiService.findAddressesByQuery(_query);
-
-        this.response = AddressesResponse.fromJson(requestResponse.data);
-      }
-
-      finishLoading();
-    } catch (err) {
-      print("AddressesRepository error:");
-      print(err);
-      receivedError();
-    }
-  }
+          response = BaseResponse.fromJson(
+            (await ApiService.findAddressesByQuery(query)).data,
+            (contentJson) => [
+              if (contentJson != null)
+                for (final address in contentJson) Address.fromJson(address)
+            ],
+          );
+        },
+      );
 }
