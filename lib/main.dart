@@ -45,6 +45,8 @@ class RefashionApp extends StatelessWidget {
 
 ThemeData _materialTheme() {
   return ThemeData(
+      bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor: Colors.transparent),
       textTheme: TextTheme(
     headline1: TextStyle(
         fontSize: 16,
