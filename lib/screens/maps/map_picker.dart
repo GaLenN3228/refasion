@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/pick_point.dart';
-import 'package:refashioned_app/repositories/pick_point.dart';
 import 'package:refashioned_app/screens/maps/components/map.dart';
 import 'package:refashioned_app/screens/maps/components/map_bottom_sheet.dart';
 import 'package:refashioned_app/screens/maps/map_bottom_sheet_data_controller.dart';
@@ -77,9 +75,9 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
     );
 
     _onBottomSheetSizeChange = (size) {
-      if (_bottomSheetHeight == null) {
+//      if (_bottomSheetHeight == null) {
         _bottomSheetController.height = size.height;
-      }
+//      }
       _bottomSheetHeight = size.height;
     };
     _bottomSheetController = SolidController();
