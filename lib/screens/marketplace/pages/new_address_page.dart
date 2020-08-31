@@ -17,10 +17,9 @@ class NewAddressPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    var mapController = MapDataController(centerMarkerEnable: true, onSearchButtonClick: () {});
+    var mapController = MapDataController(centerMarkerEnable: false, onSearchButtonClick: () {}, pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
     var mapBottomSheetController = MapBottomSheetDataController(
         title: "Где хранится вещь?",
-        hint: "Укажите на карте или введите адрес вручную",
         onFinishButtonClick: (point) {
           print("${point.address} | ${point.workSchedule}");
         });

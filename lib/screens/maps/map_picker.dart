@@ -56,7 +56,8 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
       onMarkerClick: (point) {
         _pickPoint = point;
         if (_pickPoint != null) {
-          _bottomSheetController.show();
+          changeBottomSheetContent();
+          _bottomSheetController.height = _bottomSheetHeight;
         }
       },
       onMapTouch: (mapTouchStatus, {Future<Point> point}) {
@@ -64,7 +65,6 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
           case MapTouchStatus.STARTED:
             if (widget.mapDataController.centerMarkerEnable) startCenterMarkerAnimation();
             _bottomSheetController.hide();
-            changeBottomSheetContent();
             break;
 
           case MapTouchStatus.COMPLETED:
@@ -91,11 +91,14 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   void changeBottomSheetContent() {
     //delay to await bottom sheet animation
     Future.delayed(Duration(milliseconds: 100), () {
-      widget.mapBottomSheetDataController.title = "Адрес доставки";
-      widget.mapBottomSheetDataController.finishButtonText = "qewewew";
+      widget.mapBottomSheetDataController.type = _pickPoint.type;
+      widget.mapBottomSheetDataController.finishButtonText = "ЗАБРАТЬ ОТСЮДА";
       widget.mapBottomSheetDataController.isFinishButtonEnable = true;
-      widget.mapBottomSheetDataController.hint = null;
-      widget.mapBottomSheetDataController.address = "г.Москва, ул. Академика Янгеля, д. №1, кор. №1";
+      widget.mapBottomSheetDataController.workSchedule = _pickPoint.workSchedule;
+      widget.mapBottomSheetDataController.workScheduleTitle = "Время:";
+      widget.mapBottomSheetDataController.info = "Можете забрать в 18.00";
+      widget.mapBottomSheetDataController.address = _pickPoint.address;
+      widget.mapBottomSheetDataController.addressTitle = "Адрес:";
     });
   }
 
