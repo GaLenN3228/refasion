@@ -98,6 +98,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
       widget.mapBottomSheetDataController.workScheduleTitle = "Время:";
       widget.mapBottomSheetDataController.info = "Можете забрать в 18.00";
       widget.mapBottomSheetDataController.address = _pickPoint.address;
+      widget.mapBottomSheetDataController.hint = null;
       widget.mapBottomSheetDataController.addressTitle = "Адрес:";
     });
   }

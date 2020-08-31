@@ -20,6 +20,7 @@ class NewAddressPage extends StatelessWidget {
     var mapController = MapDataController(centerMarkerEnable: false, onSearchButtonClick: () {}, pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
     var mapBottomSheetController = MapBottomSheetDataController(
         title: "Где хранится вещь?",
+        hint: "Укажите на карте или введите адрес вручную",
         onFinishButtonClick: (point) {
           print("${point.address} | ${point.workSchedule}");
         });
