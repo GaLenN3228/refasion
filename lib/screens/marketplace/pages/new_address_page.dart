@@ -5,18 +5,28 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.da
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/screens/maps/map_bottom_sheet_data_controller.dart';
+import 'package:refashioned_app/screens/maps/map_data_controller.dart';
 import 'package:refashioned_app/screens/maps/map_picker.dart';
 
 class NewAddressPage extends StatelessWidget {
   final Function(Address) onPush;
 
   const NewAddressPage({Key key, this.onPush}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return CupertinoPageScaffold(
+    var mapController = MapDataController(centerMarkerEnable: true, onSearchButtonClick: () {}, pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
+    var mapBottomSheetController = MapBottomSheetDataController(
+        title: "Где хранится вещь?",
+        hint: "Укажите на карте или введите адрес вручную",
+        onFinishButtonClick: (point) {
+          print("${point.address} | ${point.workSchedule}");
+        });
+    return Scaffold(
       backgroundColor: Colors.white,
-      child: Container(
+      body: Container(
         child: Column(
           children: [
             RefashionedTopBar(
@@ -33,8 +43,10 @@ class NewAddressPage extends StatelessWidget {
               height: 8,
             ),
             Expanded(
-              child: MapsPickerPage()
-            )
+                child: MapsPickerPage(
+              mapDataController: mapController,
+              mapBottomSheetDataController: mapBottomSheetController,
+            ))
           ],
         ),
       ),

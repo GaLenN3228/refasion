@@ -1,20 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/pick_point.dart';
 import 'package:refashioned_app/screens/maps/components/map.dart';
-import 'package:refashioned_app/screens/maps/components/sheet_data/pickup_point_address.dart';
+import 'package:refashioned_app/screens/maps/components/map_bottom_sheet.dart';
+import 'package:refashioned_app/screens/maps/map_bottom_sheet_data_controller.dart';
 import 'package:refashioned_app/utils/colors.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
-class MapsPickerPage extends StatefulWidget {
-  final Function() onPush;
+import 'map_data_controller.dart';
 
-  MapsPickerPage({Key key, this.onPush}) : super(key: key);
+enum PickUpPointsCompany { BOXBERRY }
+
+class MapsPickerPage extends StatefulWidget {
+  final MapDataController mapDataController;
+  final MapBottomSheetDataController mapBottomSheetDataController;
+
+  MapsPickerPage({Key key, @required this.mapDataController, @required this.mapBottomSheetDataController})
+      : super(key: key);
 
   @override
   _MapsPickerPageState createState() => _MapsPickerPageState();
@@ -26,8 +33,11 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   Animation<double> _centerMarkerShadowAnimation;
   bool _centerMarkerRouteFlag = true;
 
-  SolidBottomSheet _solidBottomSheet;
+  SolidBottomSheet _bottomSheet;
   SolidController _bottomSheetController;
+  double _bottomSheetHeight;
+  final GlobalKey _bottomSheetKey = GlobalKey();
+  OnBottomSheetSizeChange _onBottomSheetSizeChange;
 
   PickPoint _pickPoint;
 
@@ -42,23 +52,54 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   @override
   void initState() {
     _mapPage = MapPage(
+      mapDataController: widget.mapDataController,
       onMarkerClick: (point) {
         _pickPoint = point;
         if (_pickPoint != null) {
           _bottomSheetController.show();
         }
       },
-      notifyCenterPoint: (centerMarkerAnimationStatus, {Future<Point> point}) {
-        animateCenterMarker(centerMarkerAnimationStatus);
+      onMapTouch: (mapTouchStatus, {Future<Point> point}) {
+        switch (mapTouchStatus) {
+          case MapTouchStatus.STARTED:
+            if (widget.mapDataController.centerMarkerEnable) startCenterMarkerAnimation();
+            _bottomSheetController.hide();
+            changeBottomSheetContent();
+            break;
+
+          case MapTouchStatus.COMPLETED:
+            if (widget.mapDataController.centerMarkerEnable) finishCenterMarkerAnimation();
+            _bottomSheetController.show();
+            _bottomSheetController.height = _bottomSheetHeight;
+            break;
+        }
       },
     );
+
+    _onBottomSheetSizeChange = (size) {
+      if (_bottomSheetHeight == null) {
+        _bottomSheetController.height = size.height;
+      }
+      _bottomSheetHeight = size.height;
+    };
     _bottomSheetController = SolidController();
-    _solidBottomSheet = _createSolidBottomSheet();
+    _bottomSheet = _createSolidBottomSheet();
+
     super.initState();
   }
 
+  void changeBottomSheetContent() {
+    //delay to await bottom sheet animation
+    Future.delayed(Duration(milliseconds: 100), () {
+      widget.mapBottomSheetDataController.title = "Адрес доставки";
+      widget.mapBottomSheetDataController.finishButtonText = "qewewew";
+      widget.mapBottomSheetDataController.isFinishButtonEnable = true;
+      widget.mapBottomSheetDataController.hint = null;
+      widget.mapBottomSheetDataController.address = "г.Москва, ул. Академика Янгеля, д. №1, кор. №1";
+    });
+  }
+
   void startCenterMarkerAnimation() {
-    _bottomSheetController.hide();
     setState(() {
       if (_centerMarkerController != null) {
         _centerMarkerController.reset();
@@ -82,7 +123,6 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   }
 
   void finishCenterMarkerAnimation() {
-    _bottomSheetController.show();
     setState(() {
       if (_centerMarkerAnimation != null && _centerMarkerShadowAnimation != null) {
         var centerMarkerCurrentValue = _centerMarkerAnimation.value.dy;
@@ -105,59 +145,61 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
 
   SolidBottomSheet _createSolidBottomSheet() {
     return SolidBottomSheet(
-        maxHeight: 160,
+        showOnAppear: true,
         canUserSwipe: false,
         draggableBody: false,
         controller: _bottomSheetController,
         headerBar: Stack(children: [
-          Align(
-              alignment: Alignment.center,
-              child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => {_mapPage.showUserLocation()},
-                  child: Container(
-                      margin: EdgeInsets.all(16),
-                      width: 170,
-                      height: 50,
-                      decoration: new BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(25),
-                            topRight: Radius.circular(25),
-                            bottomLeft: Radius.circular(25),
-                            bottomRight: Radius.circular(25)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            spreadRadius: 3,
-                            blurRadius: 6,
-                            offset: Offset(0, 3), // changes position of shadow
+          widget.mapDataController.onSearchButtonClick != null
+              ? Align(
+                  alignment: Alignment.center,
+                  child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => {widget.mapDataController.onSearchButtonClick()},
+                      child: Container(
+                          margin: EdgeInsets.all(16),
+                          width: 170,
+                          height: 50,
+                          decoration: new BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(25),
+                                topRight: Radius.circular(25),
+                                bottomLeft: Radius.circular(25),
+                                bottomRight: Radius.circular(25)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 3,
+                                blurRadius: 6,
+                                offset: Offset(0, 3), // changes position of shadow
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            "assets/icons/svg/search.svg",
-                            width: 24,
-                            height: 24,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 6),
-                            child: Text(
-                              "Искать по адресу",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "SF UI Text",
-                                  fontWeight: FontWeight.w600,
-                                  color: primaryColor,
-                                  height: 1.2),
-                            ),
-                          )
-                        ],
-                      )))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/icons/svg/search.svg",
+                                width: 24,
+                                height: 24,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 6),
+                                child: Text(
+                                  "Искать по адресу",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: "SF UI Text",
+                                      fontWeight: FontWeight.w600,
+                                      color: primaryColor,
+                                      height: 1.2),
+                                ),
+                              )
+                            ],
+                          ))))
+              : SizedBox(),
           Align(
               alignment: Alignment.centerRight,
               child: GestureDetector(
@@ -187,8 +229,18 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
                         ),
                       )))),
         ]),
-        body: PickupPointAddress(point: _pickPoint) // Your body here
-        );
+        body: ChangeNotifierProvider<MapBottomSheetDataController>(
+          create: (_) => widget.mapBottomSheetDataController,
+          child: MapBottomSheet(
+            bottomSheetKey: _bottomSheetKey,
+            onBottomSheetSizeChange: _onBottomSheetSizeChange,
+            onFinishButtonClick: () {
+              if (_pickPoint != null) {
+                widget.mapBottomSheetDataController.onFinishButtonClick(_pickPoint);
+              }
+            },
+          ),
+        ));
   }
 
   @override
@@ -200,80 +252,58 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: _solidBottomSheet,
+      bottomSheet: _bottomSheet,
       backgroundColor: Colors.white,
       body: Stack(
         children: [
           Container(
-              child: ChangeNotifierProvider<PickPointRepository>(
-            create: (_) => PickPointRepository(),
             child: _mapPage,
-          )),
-          Center(
-              child: Stack(children: [
-            (_centerMarkerAnimation != null)
-                ? SlideTransition(
-                    position: _centerMarkerAnimation,
-                    child: Center(
-                      child: Container(
-                          margin: EdgeInsets.only(bottom: 60),
-                          child: Image.asset(
-                            'assets/point_center.png',
-                            height: 72,
-                          )),
-                    ),
-                  )
-                : Center(
-                    child: Container(
-                        margin: EdgeInsets.only(bottom: 60),
-                        child: Image.asset(
-                          'assets/point_center.png',
-                          height: 72,
-                        )),
-                  ),
-            Center(
-                child: (_centerMarkerShadowAnimation != null)
-                    ? FadeTransition(
-                        opacity: _centerMarkerShadowAnimation,
-                        child: Container(
-                          margin: EdgeInsets.only(top: 6),
-                          child: Image.asset(
-                            'assets/marker_center_shadow.png',
-                            height: 14,
+          ),
+          widget.mapDataController.centerMarkerEnable
+              ? Center(
+                  child: Stack(children: [
+                  (_centerMarkerAnimation != null)
+                      ? SlideTransition(
+                          position: _centerMarkerAnimation,
+                          child: Center(
+                            child: Container(
+                                margin: EdgeInsets.only(bottom: 60),
+                                child: Image.asset(
+                                  'assets/point_center.png',
+                                  height: 72,
+                                )),
                           ),
-                        ))
-                    : Container(
-                        margin: EdgeInsets.only(top: 6),
-                        child: Image.asset(
-                          'assets/marker_center_shadow.png',
-                          height: 14,
+                        )
+                      : Center(
+                          child: Container(
+                              margin: EdgeInsets.only(bottom: 60),
+                              child: Image.asset(
+                                'assets/point_center.png',
+                                height: 72,
+                              )),
                         ),
-                      ))
-          ])),
+                  Center(
+                      child: (_centerMarkerShadowAnimation != null)
+                          ? FadeTransition(
+                              opacity: _centerMarkerShadowAnimation,
+                              child: Container(
+                                margin: EdgeInsets.only(top: 6),
+                                child: Image.asset(
+                                  'assets/marker_center_shadow.png',
+                                  height: 14,
+                                ),
+                              ))
+                          : Container(
+                              margin: EdgeInsets.only(top: 6),
+                              child: Image.asset(
+                                'assets/marker_center_shadow.png',
+                                height: 14,
+                              ),
+                            ))
+                ]))
+              : SizedBox(),
         ],
       ),
     );
-  }
-
-  void animateCenterMarker(CenterMarkerAnimationStatus centerMarkerAnimationStatus) {
-    switch (centerMarkerAnimationStatus) {
-      case CenterMarkerAnimationStatus.STARTED:
-        startCenterMarkerAnimation();
-        break;
-
-      case CenterMarkerAnimationStatus.COMPLETED:
-        finishCenterMarkerAnimation();
-        break;
-    }
-  }
-
-  void showBottomSheet(BuildContext context, PickPoint point) {
-//    showCupertinoModalBottomSheet(
-//        barrierColor: Colors.black.withAlpha(1),
-//        expand: false,
-//        elevation: 4,
-//        isDismissible: true,
-//        context: context,
-//        builder: (context, controller) => PickupPointAddress(point: point));
   }
 }

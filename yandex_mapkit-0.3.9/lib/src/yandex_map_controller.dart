@@ -149,7 +149,7 @@ class YandexMapController extends ChangeNotifier {
 
   Future<void> changePlacemarksIcon(Placemark exceptPlacemark, String icon) async {
     await _channel
-        .invokeMethod<void>('changePlacemarksIcon', <String, dynamic>{'hashCode': exceptPlacemark != null ? exceptPlacemark.hashCode : '', 'icon': icon});
+        .invokeMethod<void>('changePlacemarksIcon', <String, dynamic>{'hashCode': exceptPlacemark != null ? exceptPlacemark.hashCode : 0, 'icon': icon});
   }
 
   Future<void> changePlacemarkIcon(Placemark placemark, String icon) async {

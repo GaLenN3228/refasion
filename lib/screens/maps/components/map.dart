@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/pick_point.dart';
+import 'package:refashioned_app/screens/maps/map_data_controller.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 enum MarkerType { POINT_SMALL, POINT_MEDIUM, POINT_LARGE }
 
-enum CenterMarkerAnimationStatus { STARTED, COMPLETED }
+enum MapTouchStatus { STARTED, COMPLETED }
 
 class MapPage extends StatefulWidget {
+  final MapDataController mapDataController;
+
   _MapPageState _mapPageState;
   final Function(PickPoint) onMarkerClick;
-  final Function(CenterMarkerAnimationStatus, {Future<Point> point}) notifyCenterPoint;
+  final Function(MapTouchStatus, {Future<Point> point}) onMapTouch;
 
-  MapPage({Key key, this.onMarkerClick, this.notifyCenterPoint}) : super(key: key);
+  MapPage({Key key, this.onMarkerClick, this.onMapTouch, @required this.mapDataController}) : super(key: key);
 
   void showUserLocation() {
     _mapPageState._showUserLocation();
@@ -33,13 +36,20 @@ class _MapPageState extends State<MapPage> {
   Placemark selectedPlaceMark;
   PickPointRepository pickPointRepository;
   MarkerType markerType = MarkerType.POINT_SMALL;
-  bool _needNotifyCenterPoint = true;
+  bool _allowMapTouch = true;
 
   @override
   void initState() {
-    pickPointRepository = new PickPointRepository();
-    pickPointRepository.addListener(() {
-      showPickPoints();
+
+    if (widget.mapDataController.pickUpPointsCompany != null) {
+      pickPointRepository = new PickPointRepository();
+      pickPointRepository.addListener(() {
+        showPickPoints();
+      });
+    }
+
+    widget.mapDataController.addListener(() {
+      moveToPoint(15, widget.mapDataController.point.latitude, widget.mapDataController.point.longitude);
     });
 
     _requestPermission();
@@ -60,8 +70,8 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     if (controller != null) {
       showUserIcon().then((value) {
-        moveToPoint().then((value) {
-          pickPointRepository.getPickPoints();
+        moveToPoint(10, 55.7522200, 37.6155600).then((value) {
+          pickPointRepository?.getPickPoints();
         });
       });
     }
@@ -82,15 +92,15 @@ class _MapPageState extends State<MapPage> {
                   controller.changePlacemarksIcon(selectedPlaceMark, 'assets/marker_red_small.png');
                 }
 
-                if (_needNotifyCenterPoint) {
-                  if (widget.notifyCenterPoint != null) widget.notifyCenterPoint(CenterMarkerAnimationStatus.STARTED);
-                  _needNotifyCenterPoint = false;
+                if (_allowMapTouch) {
+                  if (widget.onMapTouch != null) widget.onMapTouch(MapTouchStatus.STARTED);
+                  _allowMapTouch = false;
                 }
 
                 if (msg['final']) {
-                  if (widget.notifyCenterPoint != null)
-                    widget.notifyCenterPoint(CenterMarkerAnimationStatus.COMPLETED, point: controller.getTargetPoint());
-                  _needNotifyCenterPoint = true;
+                  if (widget.onMapTouch != null)
+                    widget.onMapTouch(MapTouchStatus.COMPLETED, point: controller.getTargetPoint());
+                  _allowMapTouch = true;
                 }
               });
             },
@@ -100,19 +110,18 @@ class _MapPageState extends State<MapPage> {
 
   void _showUserLocation() async {
     if (_permissionStatus == PermissionStatus.granted) {
-      _needNotifyCenterPoint = false;
+      _allowMapTouch = false;
       await controller.moveToUser();
     }
   }
 
-  Future<void> moveToPoint() async {
+  Future<void> moveToPoint(double zoom, double latitude, double longitude) async {
     if (_permissionStatus == PermissionStatus.granted) {
-      _needNotifyCenterPoint = false;
-      await controller
-          .move(
-              zoom: 10,
-              point: Point(latitude: 55.7522200, longitude: 37.6155600),
-              animation: const MapAnimation(smooth: true, duration: 2.0));
+      _allowMapTouch = false;
+      await controller.move(
+          zoom: 10,
+          point: Point(latitude: latitude, longitude: longitude),
+          animation: const MapAnimation(smooth: true, duration: 2.0));
     }
   }
 
