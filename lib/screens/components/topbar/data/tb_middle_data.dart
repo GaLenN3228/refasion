@@ -7,10 +7,11 @@ class TBMiddleData {
     this.subtitleText,
   });
 
-  factory TBMiddleData.none() => TBMiddleData();
-
-  factory TBMiddleData.title(String text) => TBMiddleData(titleText: text);
+  factory TBMiddleData.title(String text) =>
+      text != null ? TBMiddleData(titleText: text) : null;
 
   factory TBMiddleData.condensed(String title, String subtitle) =>
-      TBMiddleData(titleText: title, subtitleText: subtitle);
+      title != null && subtitle != null
+          ? TBMiddleData(titleText: title, subtitleText: subtitle)
+          : null;
 }

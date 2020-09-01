@@ -79,13 +79,10 @@ class _TBSearchState extends State<TBSearch>
   }
 
   focus() {
-    print("focus textfield");
-
     if (!focusNode.hasFocus) focusNode.requestFocus();
   }
 
   unfocus() {
-    print("unfocus textfield");
     if (focusNode.hasFocus) focusNode.unfocus();
   }
 

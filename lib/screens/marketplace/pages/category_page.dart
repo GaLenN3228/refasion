@@ -30,11 +30,11 @@ class CategoryPage extends StatelessWidget {
         bottomPadding: 10,
         onPush: onPush,
         appBar: RefashionedTopBar(
-          data: TopBarData.sellerPage(
-            leftAction: () => Navigator.of(context).pop(),
-            titleText: "Добавить вещь",
-            rightAction: onClose,
-            headerText: "Выберите категорию",
+          data: TopBarData.simple(
+            onBack: () => Navigator.of(context).pop(),
+            middleText: "Добавить вещь",
+            onClose: onClose,
+            bottomText: "Выберите категорию",
           ),
         ),
       ),

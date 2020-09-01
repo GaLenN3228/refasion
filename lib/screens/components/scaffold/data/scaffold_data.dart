@@ -17,6 +17,8 @@ class ScaffoldData {
   final bool unfocusSearchOnAnyOtherScroll;
   final bool overrideRightButtonsWithCancelSearchButton;
 
+  final bool showSearchResults;
+
   final TopBarData topBarData;
   final Widget bottomOverlay;
 
@@ -25,13 +27,22 @@ class ScaffoldData {
 
   final Map<WidgetData, ScaffoldScrollAction> scrollActions;
 
+  final ScaffoldChildrenData Function() onStreamEmpty;
+  final ScaffoldChildrenData Function(String) onStreamError;
+
+  final ScrollController scrollController;
+
   const ScaffoldData({
+    this.scrollController,
+    this.onStreamEmpty,
+    this.onStreamError,
     this.adjustToOverlays: true,
     this.childrenData,
     this.childrenDataStream,
     this.scrollActions,
     this.topBarData,
     this.bottomOverlay,
+    this.showSearchResults: false,
     this.coveredWithBottomNav: true,
     this.resizeToAvoidBottomInset: false,
     this.raiseTopBarIfIsScrolled: true,

@@ -78,11 +78,11 @@ class _PhotosPageState extends State<PhotosPage> {
           Column(
             children: [
               RefashionedTopBar(
-                data: TopBarData.sellerPage(
-                  leftAction: () => Navigator.of(context).pop(),
-                  titleText: "Добавить вещь",
-                  rightAction: widget.onClose,
-                  headerText: "Внешний вид",
+                data: TopBarData.simple(
+                  onBack: () => Navigator.of(context).pop(),
+                  middleText: "Добавить вещь",
+                  onClose: widget.onClose,
+                  bottomText: "Внешний вид",
                 ),
               ),
               StaggeredGridView.countBuilder(

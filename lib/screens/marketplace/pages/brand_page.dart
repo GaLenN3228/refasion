@@ -41,11 +41,11 @@ class _BrandPageState extends State<BrandPage> {
         child: Column(
           children: <Widget>[
             RefashionedTopBar(
-              data: TopBarData.sellerPage(
-                leftAction: () => Navigator.of(context).pop(),
-                titleText: "Добавить вещь",
-                rightAction: widget.onClose,
-                headerText: "Выберите бренд",
+              data: TopBarData.simple(
+                onBack: () => Navigator.of(context).pop(),
+                middleText: "Добавить вещь",
+                onClose: widget.onClose,
+                bottomText: "Выберите бренд",
               ),
             ),
             Builder(

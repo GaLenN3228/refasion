@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/components/scaffold/data/children_data.dart';
@@ -63,8 +65,7 @@ class _ScaffoldChildrenContentState extends State<ScaffoldChildrenContent>
 
     final topPadding = AnimatedBuilder(
       animation: animation,
-      builder: (context, _) => Container(
-        // color: Colors.red,
+      builder: (context, _) => SizedBox(
         width: double.infinity,
         height: animation.value.top,
       ),
@@ -72,17 +73,17 @@ class _ScaffoldChildrenContentState extends State<ScaffoldChildrenContent>
 
     final bottomPadding = AnimatedBuilder(
       animation: animation,
-      builder: (context, _) => Container(
-        // color: Colors.red,
+      builder: (context, _) => SizedBox(
         width: double.infinity,
         height: animation.value.bottom != 0
-            ? screenHeight - animation.value.bottom
+            ? max(0, screenHeight - animation.value.bottom)
             : 0,
       ),
     );
 
     if (widget.data.child != null)
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           topPadding,
           Expanded(
