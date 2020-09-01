@@ -140,5 +140,6 @@ class MapBottomSheetData extends ChangeNotifier {
 
   set isFinishButtonEnable(bool value) {
     _isFinishButtonEnable = value;
+    notifyListeners();
   }
 }

@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/pick_point.dart';
+import 'package:refashioned_app/screens/maps/components/buttons/geolocation_button.dart';
+import 'package:refashioned_app/screens/maps/components/buttons/search_button.dart';
 import 'package:refashioned_app/screens/maps/components/map.dart';
 import 'package:refashioned_app/screens/maps/components/map_bottom_sheet.dart';
-import 'package:refashioned_app/screens/maps/map_bottom_sheet_data_controller.dart';
-import 'package:refashioned_app/utils/colors.dart';
+import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
-import 'map_data_controller.dart';
+import 'controllers/map_data_controller.dart';
 
 enum PickUpPointsCompany { BOXBERRY }
 
@@ -182,7 +182,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
                             child: Container(
                                 margin: EdgeInsets.only(bottom: 60),
                                 child: Image.asset(
-                                  'assets/point_center.png',
+                                  'assets/icons/png/marker_center.png',
                                   height: 72,
                                 )),
                           ),
@@ -191,7 +191,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
                           child: Container(
                               margin: EdgeInsets.only(bottom: 60),
                               child: Image.asset(
-                                'assets/point_center.png',
+                                'assets/icons/png/marker_center.png',
                                 height: 72,
                               )),
                         ),
@@ -202,14 +202,14 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
                               child: Container(
                                 margin: EdgeInsets.only(top: 6),
                                 child: Image.asset(
-                                  'assets/marker_center_shadow.png',
+                                  'assets/icons/png/marker_center_shadow.png',
                                   height: 14,
                                 ),
                               ))
                           : Container(
                               margin: EdgeInsets.only(top: 6),
                               child: Image.asset(
-                                'assets/marker_center_shadow.png',
+                                'assets/icons/png/marker_center_shadow.png',
                                 height: 14,
                               ),
                             ))
@@ -228,83 +228,11 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         controller: _bottomSheetController,
         headerBar: Stack(children: [
           widget.mapDataController.onSearchButtonClick != null
-              ? Align(
-                  alignment: Alignment.center,
-                  child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () => {widget.mapDataController.onSearchButtonClick()},
-                      child: Container(
-                          margin: EdgeInsets.all(16),
-                          width: 170,
-                          height: 50,
-                          decoration: new BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(25),
-                                topRight: Radius.circular(25),
-                                bottomLeft: Radius.circular(25),
-                                bottomRight: Radius.circular(25)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 3,
-                                blurRadius: 6,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                "assets/icons/svg/search.svg",
-                                width: 24,
-                                height: 24,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 6),
-                                child: Text(
-                                  "Искать по адресу",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontFamily: "SF UI Text",
-                                      fontWeight: FontWeight.w600,
-                                      color: primaryColor,
-                                      height: 1.2),
-                                ),
-                              )
-                            ],
-                          ))))
+              ? SearchButton(onSearchButtonClick: widget.mapDataController.onSearchButtonClick)
               : SizedBox(),
-          Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => {_mapPage.showUserLocation()},
-                  child: Container(
-                      margin: EdgeInsets.all(16),
-                      width: 50,
-                      height: 50,
-                      decoration: new BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            spreadRadius: 3,
-                            blurRadius: 6,
-                            offset: Offset(0, 3), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          "assets/show_location.svg",
-                          width: 22,
-                          height: 22,
-                        ),
-                      )))),
+          GeolocationButton(onGeolocationButtonClick: () {
+            _mapPage.showUserLocation();
+          }),
         ]),
         body: ChangeNotifierProvider<MapBottomSheetDataController>(
             create: (_) => widget.mapBottomSheetDataController,

@@ -1,53 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class SearchButton extends StatelessWidget {
-  final Function onTap;
+  final Function onSearchButtonClick;
 
-  const SearchButton({Key key, this.onTap}) : super(key: key);
+  const SearchButton({Key key, this.onSearchButtonClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-        child: Container(
-          height: 46,
-          decoration: ShapeDecoration(
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
-              shadows: [
-                BoxShadow(
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                  color: Colors.black.withOpacity(0.15),
-                )
-              ]),
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SVGIcon(
-                icon: IconAsset.search,
-                size: 24,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(
-                  "Искать по адресу",
-                  style: Theme.of(context).textTheme.subtitle1.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+    return Align(
+        alignment: Alignment.center,
+        child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () => {onSearchButtonClick()},
+            child: Container(
+                margin: EdgeInsets.all(16),
+                padding: EdgeInsets.only(left: 14, right: 18),
+                height: 50,
+                decoration: new BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 3,
+                      blurRadius: 6,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SVGIcon(
+                      icon: IconAsset.search,
+                      size: 24,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 6),
+                      child: Text(
+                        "Искать по адресу",
+                        style: TextStyle(
+                            fontSize: 12, fontFamily: "SF UI Text", fontWeight: FontWeight.w600, color: primaryColor),
+                      ),
+                    )
+                  ],
+                ))));
   }
 }

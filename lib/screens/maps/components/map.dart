@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:refashioned_app/models/pick_point.dart';
-import 'package:refashioned_app/screens/maps/map_data_controller.dart';
+import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 enum MarkerType { SMALL, MEDIUM, POINT_SELECTED }
@@ -9,10 +9,10 @@ enum MarkerType { SMALL, MEDIUM, POINT_SELECTED }
 enum MapTouchStatus { STARTED, COMPLETED }
 
 class MapPage extends StatefulWidget {
-  static const String MARKER_ICON_SMALL = 'assets/marker_red_small.png';
-  static const String MARKER_ICON_SELECTED = 'assets/marker_red_selected.png';
-  static const String MARKER_ICON_MEDIUM = 'assets/marker_red_medium.png';
-  static const String MARKER_ICON_USER_LOCATION = 'assets/marker_user_location.png';
+  static const String MARKER_ICON_SMALL = 'assets/icons/png/marker_red_small.png';
+  static const String MARKER_ICON_SELECTED = 'assets/icons/png/marker_red_selected.png';
+  static const String MARKER_ICON_MEDIUM = 'assets/icons/png/marker_red_medium.png';
+  static const String MARKER_ICON_USER_LOCATION = 'assets/icons/png/marker_user_location.png';
 
   _MapPageState _mapPageState;
 

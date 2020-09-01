@@ -7,8 +7,8 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.da
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
-import 'package:refashioned_app/screens/maps/map_bottom_sheet_data_controller.dart';
-import 'package:refashioned_app/screens/maps/map_data_controller.dart';
+import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
+import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
 import 'package:refashioned_app/screens/maps/map_picker.dart';
 import 'package:refashioned_app/screens/marketplace/pages/address_search_page.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
@@ -61,19 +61,7 @@ class NewAddressPage extends StatelessWidget {
     mapDataController = MapDataController(
         centerMarkerEnable: true,
         onSearchButtonClick: () {
-          if (_context != null)
-            showCupertinoModalBottomSheet(
-                expand: true,
-                context: _context,
-                builder: (context, controller) => AddressSearchPage(
-                    scrollController: controller,
-                    onSelect: (address) {
-                      _selectedAddress = address;
-                      mapDataController.pickPoint = PickPoint(
-                          address: address.address,
-                          latitude: address.coordinates.latitude,
-                          longitude: address.coordinates.longitude);
-                    }));
+          showBottomSheet();
         });
     mapBottomSheetDataController = MapBottomSheetDataController(
         mapBottomSheetDataPreview:
@@ -97,5 +85,21 @@ class NewAddressPage extends StatelessWidget {
             finishButtonText: "ПРИВЕЗТИ СЮДА",
             isFinishButtonEnable: false,
             address: "Не удалось определить точный адрес"));
+  }
+
+  void showBottomSheet() {
+    if (_context != null)
+      showCupertinoModalBottomSheet(
+          expand: true,
+          context: _context,
+          builder: (context, controller) => AddressSearchPage(
+              scrollController: controller,
+              onSelect: (address) {
+                _selectedAddress = address;
+                mapDataController.pickPoint = PickPoint(
+                    address: address.address,
+                    latitude: address.coordinates.latitude,
+                    longitude: address.coordinates.longitude);
+              }));
   }
 }

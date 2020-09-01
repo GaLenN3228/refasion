@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/screens/maps/map_bottom_sheet_data_controller.dart';
+import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
 
 typedef void OnBottomSheetSizeChange(Size size);
 
