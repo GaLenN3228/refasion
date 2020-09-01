@@ -160,8 +160,7 @@ class _MapBottomSheetState extends State<MapBottomSheet> {
                     ),
                   )
                 : SizedBox(),
-            mapBottomSheetDataController.currentBottomSheetData.onFinishButtonClick != null &&
-                    mapBottomSheetDataController.currentBottomSheetData.finishButtonText != null
+            mapBottomSheetDataController.currentBottomSheetData.finishButtonText != null
                 ? Padding(
                     padding: const EdgeInsets.only(left: 20, top: 22, right: 22),
                     child: Button(

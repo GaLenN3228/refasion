@@ -25,5 +25,6 @@ class MapDataController with ChangeNotifier {
 
   set pickPoint(PickPoint value) {
     _pickPoint = value;
+    notifyListeners();
   }
 }

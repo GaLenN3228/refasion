@@ -62,11 +62,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (controller != null) {
-      _showUserIcon().then((value) {
-        _moveToPoint(10, Point(latitude: 55.7522200, longitude: 37.6155600));
-      });
-    }
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,7 +69,7 @@ class _MapPageState extends State<MapPage> {
           Expanded(child: YandexMap(
             onMapCreated: (YandexMapController yandexMapController) async {
               controller = yandexMapController;
-              setState(() {});
+              _firstZoom();
               controller.enableCameraTracking(null, (msg) {
                 _changePlaceMarksIconsWithZoom(msg['zoom']);
                 _callOnMapTouchListener(msg['final']);
@@ -84,13 +79,20 @@ class _MapPageState extends State<MapPage> {
         ]);
   }
 
+  void _firstZoom() {
+    if (controller != null) {
+      _showUserIcon().then((value) {
+        _moveToPoint(10, Point(latitude: 55.7522200, longitude: 37.6155600));
+      });
+    }
+  }
+
   Future<void> _requestPermission() async {
     final List<PermissionGroup> permissions = <PermissionGroup>[PermissionGroup.location];
     final Map<PermissionGroup, PermissionStatus> permissionRequestResult =
         await PermissionHandler().requestPermissions(permissions);
-    setState(() {
-      _permissionStatus = permissionRequestResult[PermissionGroup.location];
-    });
+    _permissionStatus = permissionRequestResult[PermissionGroup.location];
+    _firstZoom();
   }
 
   void _changePlaceMarksIconsWithZoom(double zoom) {
@@ -109,7 +111,8 @@ class _MapPageState extends State<MapPage> {
       _allowMapTouchListener = false;
     }
     if (isFinal) {
-      if (widget.onMapTouch != null && !_fromControllerMove) widget.onMapTouch(MapTouchStatus.COMPLETED, point: controller.getTargetPoint());
+      if (widget.onMapTouch != null && !_fromControllerMove)
+        widget.onMapTouch(MapTouchStatus.COMPLETED, point: controller.getTargetPoint());
       _allowMapTouchListener = true;
       _fromControllerMove = false;
     }
@@ -136,13 +139,13 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> _addMarker(PickPoint pickPoint) async {
     final Placemark _placeMark = Placemark(
-      point: Point(latitude: double.parse(pickPoint.lat), longitude: double.parse(pickPoint.lon)),
+      point: Point(latitude: pickPoint.latitude, longitude: pickPoint.longitude),
       opacity: 0.8,
       iconName: MapPage.MARKER_ICON_SELECTED,
       onTap: (Placemark placeMark, double latitude, double longitude) {
         selectedPlaceMark = placeMark;
         _changeSelectedPlaceMarkIcon();
-        _moveToPoint(15, Point(latitude: double.parse(pickPoint.lat) - 0.003, longitude: double.parse(pickPoint.lon)));
+        _moveToPoint(15, Point(latitude: pickPoint.latitude - 0.003, longitude: pickPoint.longitude));
         widget.onMarkerClick(pickPoint);
       },
     );
@@ -151,7 +154,7 @@ class _MapPageState extends State<MapPage> {
 
   void _addMarkers(List<PickPoint> pickPoints) {
     pickPoints.forEach((element) {
-      var _point = Point(latitude: double.parse(element.lat), longitude: double.parse(element.lon));
+      var _point = Point(latitude: element.latitude, longitude: element.longitude);
       final Placemark _placeMark = Placemark(
         point: _point,
         opacity: 0.8,
@@ -161,10 +164,9 @@ class _MapPageState extends State<MapPage> {
           selectedPlaceMark = placeMark;
           _changeSelectedPlaceMarkIcon();
           var pickPoint = pickPoints.firstWhere((element) =>
-              double.parse(element.lat) == selectedPlaceMark.point.latitude &&
-              double.parse(element.lon) == selectedPlaceMark.point.longitude);
-          _moveToPoint(
-              15, Point(latitude: double.parse(pickPoint.lat) - 0.003, longitude: double.parse(pickPoint.lon)));
+              element.latitude == selectedPlaceMark.point.latitude &&
+              element.longitude == selectedPlaceMark.point.longitude);
+          _moveToPoint(15, Point(latitude: pickPoint.latitude - 0.003, longitude: pickPoint.longitude));
           widget.onMarkerClick(pickPoint);
         },
       );

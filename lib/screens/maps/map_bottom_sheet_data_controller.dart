@@ -17,12 +17,6 @@ class MapBottomSheetDataController with ChangeNotifier {
         _mapBottomSheetDataAddress = mapBottomSheetDataAddress,
         _mapBottomSheetDataNotFound = mapBottomSheetDataNotFound;
 
-  MapBottomSheetData get mapBottomSheetDataNotFound => _mapBottomSheetDataNotFound;
-
-  MapBottomSheetData get mapBottomSheetDataAddress => _mapBottomSheetDataAddress;
-
-  MapBottomSheetData get mapBottomSheetDataPreview => _mapBottomSheetDataPreview;
-
   MapBottomSheetData get currentBottomSheetData => _currentBottomSheetData;
 
   set setCurrentBottomSheetData(MapBottomSheetDataType mapBottomSheetDataType) {

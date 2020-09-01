@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/cities.dart';
+import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class Address {
   final String address;
@@ -15,7 +15,7 @@ class Address {
       address: json['address'],
       originalAddress: json['unrestricted_value'],
       coordinates: json['lat'] != null && json['lon'] != null
-          ? Point(num.tryParse(json['lat']), num.tryParse(json['lon']))
+          ? Point(latitude: num.tryParse(json['lat']), longitude: num.tryParse(json['lon']))
           : null,
       city: json['city'] != null ? City.fromJson(json['city']) : null);
 
@@ -25,9 +25,9 @@ class Address {
       " [" +
       originalAddress.toString() +
       "] - " +
-      coordinates?.x.toString() +
+      coordinates?.latitude.toString() +
       ", " +
-      coordinates?.y.toString();
+      coordinates?.longitude.toString();
 }
 
 class AddressesProvider {
