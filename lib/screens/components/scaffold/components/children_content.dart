@@ -83,6 +83,7 @@ class _ScaffoldChildrenContentState extends State<ScaffoldChildrenContent>
 
     if (widget.data.child != null)
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           topPadding,
           Expanded(
