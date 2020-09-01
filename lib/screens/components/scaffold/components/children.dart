@@ -62,8 +62,9 @@ class _ScaffoldChildrenState extends State<ScaffoldChildren> {
                     childrenDataSnapshot.error.toString());
           else if (!childrenDataSnapshot.hasData)
             childrenData = widget.scaffoldData.childrenData ??
-                widget.scaffoldData?.onStreamError("Не переданы данные") ??
-                ScaffoldChildrenData.message("Не переданы данные");
+                    widget.scaffoldData.onStreamError != null
+                ? widget.scaffoldData.onStreamError("Не переданы данные")
+                : ScaffoldChildrenData.message("Не переданы данные");
           else
             childrenData = childrenDataSnapshot.data;
 

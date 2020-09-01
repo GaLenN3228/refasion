@@ -121,11 +121,11 @@ class _DescriptionPageState extends State<DescriptionPage>
       child: Column(
         children: <Widget>[
           RefashionedTopBar(
-            data: TopBarData.sellerPage(
-              leftAction: () => Navigator.of(context).pop(),
-              titleText: "Добавить вещь",
-              rightAction: widget.onClose,
-              headerText: "Опишите вещь",
+            data: TopBarData.simple(
+              onBack: () => Navigator.of(context).pop(),
+              middleText: "Добавить вещь",
+              onClose: widget.onClose,
+              bottomText: "Опишите вещь",
             ),
           ),
           Expanded(

@@ -14,9 +14,9 @@ class OnModerationPage extends StatelessWidget {
       child: Column(
         children: <Widget>[
           RefashionedTopBar(
-            data: TopBarData.sellerPage(
-              titleText: "На модерации",
-              rightAction: onClose,
+            data: TopBarData.simple(
+              middleText: "На модерации",
+              onClose: onClose,
             ),
           ),
           Expanded(

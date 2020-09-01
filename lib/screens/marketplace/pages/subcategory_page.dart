@@ -31,11 +31,11 @@ class SubcategoryPage extends StatelessWidget {
         multiselection: true,
         onUpdate: (_) => onPush(),
         appBar: RefashionedTopBar(
-          data: TopBarData.sellerPage(
-            leftAction: () => Navigator.of(context).pop(),
-            titleText: "Добавить вещь",
-            rightAction: onClose,
-            headerText: "Выберите категорию",
+          data: TopBarData.simple(
+            onBack: () => Navigator.of(context).pop(),
+            middleText: "Добавить вещь",
+            onClose: onClose,
+            bottomText: "Выберите категорию",
           ),
         ),
       ),

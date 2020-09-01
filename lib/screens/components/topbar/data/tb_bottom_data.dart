@@ -3,7 +3,6 @@ class TBBottomData {
 
   const TBBottomData({this.headerText});
 
-  factory TBBottomData.none() => TBBottomData();
-
-  factory TBBottomData.header(String text) => TBBottomData(headerText: text);
+  factory TBBottomData.header(String text) =>
+      text != null ? TBBottomData(headerText: text) : null;
 }

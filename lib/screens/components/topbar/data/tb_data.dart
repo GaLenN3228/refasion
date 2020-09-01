@@ -33,23 +33,24 @@ class TopBarData {
     this.shouldElevateOnScroll: true,
   });
 
-  factory TopBarData.sellerPage(
-          {Function() leftAction,
-          Function() rightAction,
-          String titleText,
-          String headerText}) =>
-      TopBarData(
-        leftButtonData: leftAction != null
-            ? TBButtonData.icon(TBIconType.back, onTap: leftAction)
-            : null,
-        middleData: titleText != null
-            ? TBMiddleData.title(titleText)
-            : TBMiddleData.none(),
-        rightButtonData: rightAction != null
-            ? TBButtonData.text("Закрыть", onTap: rightAction)
-            : null,
-        bottomData: headerText != null
-            ? TBBottomData(headerText: headerText)
-            : TBBottomData.none(),
-      );
+  factory TopBarData.simple(
+          {Function() onBack,
+          Function() onClose,
+          String middleText,
+          String bottomText}) =>
+      onBack != null ||
+              onClose != null ||
+              middleText != null ||
+              bottomText != null
+          ? TopBarData(
+              leftButtonData: onBack != null
+                  ? TBButtonData.icon(TBIconType.back, onTap: onBack)
+                  : null,
+              middleData: TBMiddleData.title(middleText),
+              rightButtonData: onClose != null
+                  ? TBButtonData.text("Закрыть", onTap: onClose)
+                  : null,
+              bottomData: TBBottomData.header(bottomText),
+            )
+          : null;
 }
