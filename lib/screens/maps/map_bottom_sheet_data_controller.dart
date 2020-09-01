@@ -1,7 +1,47 @@
 import 'package:flutter/cupertino.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 
+enum MapBottomSheetDataType { PREVIEW, ADDRESS, NOT_FOUND }
+
 class MapBottomSheetDataController with ChangeNotifier {
+  final MapBottomSheetData _mapBottomSheetDataPreview;
+  final MapBottomSheetData _mapBottomSheetDataAddress;
+  final MapBottomSheetData _mapBottomSheetDataNotFound;
+  MapBottomSheetData _currentBottomSheetData;
+
+  MapBottomSheetDataController(
+      {MapBottomSheetData mapBottomSheetDataPreview,
+      MapBottomSheetData mapBottomSheetDataAddress,
+      MapBottomSheetData mapBottomSheetDataNotFound})
+      : _mapBottomSheetDataPreview = mapBottomSheetDataPreview,
+        _mapBottomSheetDataAddress = mapBottomSheetDataAddress,
+        _mapBottomSheetDataNotFound = mapBottomSheetDataNotFound;
+
+  MapBottomSheetData get mapBottomSheetDataNotFound => _mapBottomSheetDataNotFound;
+
+  MapBottomSheetData get mapBottomSheetDataAddress => _mapBottomSheetDataAddress;
+
+  MapBottomSheetData get mapBottomSheetDataPreview => _mapBottomSheetDataPreview;
+
+  MapBottomSheetData get currentBottomSheetData => _currentBottomSheetData;
+
+  set setCurrentBottomSheetData(MapBottomSheetDataType mapBottomSheetDataType) {
+    switch (mapBottomSheetDataType) {
+      case MapBottomSheetDataType.PREVIEW:
+        _currentBottomSheetData = _mapBottomSheetDataPreview;
+        break;
+      case MapBottomSheetDataType.ADDRESS:
+        _currentBottomSheetData = _mapBottomSheetDataAddress;
+        break;
+      case MapBottomSheetDataType.NOT_FOUND:
+        _currentBottomSheetData = _mapBottomSheetDataNotFound;
+        break;
+    }
+    notifyListeners();
+  }
+}
+
+class MapBottomSheetData extends ChangeNotifier {
   String _title;
   String _type;
   String _address;
@@ -11,10 +51,10 @@ class MapBottomSheetDataController with ChangeNotifier {
   String _info;
   String _hint;
   String _finishButtonText;
-  bool _isFinishButtonEnable = true;
+  bool _isFinishButtonEnable;
   final Function(PickPoint) _onFinishButtonClick;
 
-  MapBottomSheetDataController(
+  MapBottomSheetData(
       {String title,
       String type,
       String address,
@@ -34,7 +74,7 @@ class MapBottomSheetDataController with ChangeNotifier {
         _info = info,
         _hint = hint,
         _finishButtonText = finishButtonText,
-        _isFinishButtonEnable = isFinishButtonEnable,
+        _isFinishButtonEnable = isFinishButtonEnable ?? false,
         _onFinishButtonClick = onFinishButtonClick;
 
   String get title => _title;

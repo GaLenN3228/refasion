@@ -17,13 +17,25 @@ class NewAddressPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    var mapController = MapDataController(centerMarkerEnable: false, onSearchButtonClick: () {}, pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
+    var mapController = MapDataController(
+        centerMarkerEnable: false, onSearchButtonClick: () {}, pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
     var mapBottomSheetController = MapBottomSheetDataController(
-        title: "Где хранится вещь?",
-        hint: "Укажите на карте или введите адрес вручную",
-        onFinishButtonClick: (point) {
-          print("${point.address} | ${point.workSchedule}");
-        });
+        mapBottomSheetDataPreview:
+            MapBottomSheetData(title: "Где хранится вещь?", hint: "Укажите на карте или введите адрес вручную"),
+        mapBottomSheetDataAddress: MapBottomSheetData(
+            title: "Адрес доставки",
+            finishButtonText: "ПРИВЕЗТИ СЮДА",
+            onFinishButtonClick: (point) {
+              print("${point.address} | ${point.workSchedule}");
+            }),
+        mapBottomSheetDataNotFound: MapBottomSheetData(
+            title: "Адрес доставки",
+            finishButtonText: "ПРИВЕЗТИ СЮДА",
+            isFinishButtonEnable: false,
+            address: "Не удалось определить точный адрес",
+            onFinishButtonClick: (point) {
+              print("${point.address} | ${point.workSchedule}");
+            }));
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(

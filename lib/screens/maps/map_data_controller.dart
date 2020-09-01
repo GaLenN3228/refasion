@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/screens/maps/map_picker.dart';
-import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class MapDataController with ChangeNotifier {
-  Point _point;
+  PickPoint _pickPoint;
   final PickUpPointsCompany _pickUpPointsCompany;
   final bool _centerMarkerEnable;
   final Function() _onSearchButtonClick;
 
   MapDataController(
-      {Point point, PickUpPointsCompany pickUpPointsCompany, bool centerMarkerEnable, Function() onSearchButtonClick})
-      : _point = point,
+      {PickPoint pickPoint, PickUpPointsCompany pickUpPointsCompany, bool centerMarkerEnable, Function() onSearchButtonClick})
+      : _pickPoint = pickPoint,
         _pickUpPointsCompany = pickUpPointsCompany,
         _centerMarkerEnable = centerMarkerEnable ?? false,
         _onSearchButtonClick = onSearchButtonClick;
@@ -21,10 +21,9 @@ class MapDataController with ChangeNotifier {
 
   PickUpPointsCompany get pickUpPointsCompany => _pickUpPointsCompany;
 
-  Point get point => _point;
+  PickPoint get pickPoint => _pickPoint;
 
-  set point(Point value) {
-    _point = value;
-    notifyListeners();
+  set pickPoint(PickPoint value) {
+    _pickPoint = value;
   }
 }
