@@ -61,7 +61,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         switch (mapTouchStatus) {
           case MapTouchStatus.STARTED:
             if (widget.mapDataController.centerMarkerEnable) startCenterMarkerAnimation();
-            _bottomSheetController.height = 0;
+            hideBottomSheetWithHeight();
             break;
 
           case MapTouchStatus.COMPLETED:
@@ -70,9 +70,9 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
                 _selectedPickPoint = PickPoint(lat: point.latitude.toString(), lon: point.longitude.toString());
               });
               finishCenterMarkerAnimation();
-              if (widget.mapDataController.centerMarkerEnable) changeBottomSheetStateWithCenterMarker();
+              changeBottomSheetStateWithCenterMarker();
             }
-            _bottomSheetController.height = _bottomSheetHeight;
+            showBottomSheetWithHeight();
             break;
         }
       },
@@ -82,7 +82,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
       pickPointRepository = new PickPointRepository();
       pickPointRepository.getPickPoints();
       pickPointRepository.addListener(() {
-        _mapPage.addMarkers(pickPointRepository.response.content);
+        _mapPage.addMarkers(pickPointRepository.response.content.where((element) => element.address.contains("Москва")).toList());
       });
     }
 
@@ -113,12 +113,18 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
     super.initState();
   }
 
-  void showBottomSheetWithHeight() {
-    _bottomSheetController?.height = _bottomSheetHeight;
+  void showBottomSheetWithHeight({int duration}) {
+    Future.delayed(Duration(milliseconds: duration ?? 100), () {
+      _bottomSheetController?.height = _bottomSheetHeight;
+    });
+  }
+
+  void hideBottomSheetWithHeight() {
+    _bottomSheetController?.height = 0;
   }
 
   void changeBottomSheetStateWithCenterMarker() {
-    _bottomSheetController.hide();
+    hideBottomSheetWithHeight();
     //delay to await bottom sheet animation
     Future.delayed(Duration(milliseconds: 100), () {
       if (_selectedPickPoint != null) {
@@ -136,7 +142,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   }
 
   void changeBottomSheetStateWithPickPoint() {
-    _bottomSheetController.hide();
+    hideBottomSheetWithHeight();
     //delay to await bottom sheet animation
     Future.delayed(Duration(milliseconds: 100), () {
       if (_selectedPickPoint != null) {
@@ -144,12 +150,12 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
         widget.mapBottomSheetDataController.currentBottomSheetData.type = _selectedPickPoint.type;
       }
-      showBottomSheetWithHeight();
+      showBottomSheetWithHeight(duration: 150);
     });
   }
 
   void changeBottomSheetStateWithExternalPickPoint() {
-    _bottomSheetController.hide();
+    hideBottomSheetWithHeight();
     //delay to await bottom sheet animation
     Future.delayed(Duration(milliseconds: 100), () {
       widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.ADDRESS;

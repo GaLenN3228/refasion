@@ -18,7 +18,7 @@ class NewAddressPage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     var mapController = MapDataController(
-        centerMarkerEnable: false, onSearchButtonClick: () {}, pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
+        centerMarkerEnable: true, onSearchButtonClick: () {});
     var mapBottomSheetController = MapBottomSheetDataController(
         mapBottomSheetDataPreview:
             MapBottomSheetData(title: "Где хранится вещь?", hint: "Укажите на карте или введите адрес вручную"),

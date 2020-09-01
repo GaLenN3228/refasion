@@ -52,6 +52,7 @@ class _MapPageState extends State<MapPage> {
   Placemark selectedPlaceMark;
   MarkerType markersType = MarkerType.SMALL;
   bool _allowMapTouchListener = true;
+  bool _fromControllerMove = false;
 
   @override
   void initState() {
@@ -108,13 +109,15 @@ class _MapPageState extends State<MapPage> {
       _allowMapTouchListener = false;
     }
     if (isFinal) {
-      if (widget.onMapTouch != null) widget.onMapTouch(MapTouchStatus.COMPLETED, point: controller.getTargetPoint());
+      if (widget.onMapTouch != null && !_fromControllerMove) widget.onMapTouch(MapTouchStatus.COMPLETED, point: controller.getTargetPoint());
       _allowMapTouchListener = true;
+      _fromControllerMove = false;
     }
   }
 
   void _showUserLocation() async {
     if (_permissionStatus == PermissionStatus.granted) {
+      _fromControllerMove = true;
       _allowMapTouchListener = false;
       await controller.moveToUser();
     }
@@ -122,6 +125,7 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> _moveToPoint(double zoom, Point point) async {
     if (_permissionStatus == PermissionStatus.granted) {
+      _fromControllerMove = true;
       _allowMapTouchListener = false;
       await controller.move(
           zoom: zoom,
@@ -153,6 +157,7 @@ class _MapPageState extends State<MapPage> {
         opacity: 0.8,
         iconName: MapPage.MARKER_ICON_SMALL,
         onTap: (Placemark placeMark, double latitude, double longitude) {
+          _resetSelectedPlaceMarkIcon();
           selectedPlaceMark = placeMark;
           _changeSelectedPlaceMarkIcon();
           var pickPoint = pickPoints.firstWhere((element) =>
