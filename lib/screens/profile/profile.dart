@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/marketplace/pages/new_address_page.dart';
@@ -82,7 +83,7 @@ class ProfilePage extends StatelessWidget {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialWithModalsPageRoute(
                           builder: (context) => NewAddressPage()));
                     },
                   ),

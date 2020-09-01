@@ -21,11 +21,10 @@ class _ScaffoldSearchResultsState extends State<ScaffoldSearchResults>
 
   @override
   initState() {
-    animationController = createAnimAtionController();
-    animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
-
-    widget.scaffoldData.topBarData?.searchData
-        ?.setFunctions(showSearchResults, hideSearchResults);
+    if (widget.scaffoldData.showSearchResults) {
+      animationController = createAnimAtionController();
+      animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
+    }
 
     super.initState();
   }
@@ -38,7 +37,19 @@ class _ScaffoldSearchResultsState extends State<ScaffoldSearchResults>
   hideSearchResults() => animationController.reverse();
 
   @override
+  dispose() {
+    animationController?.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (!widget.scaffoldData.showSearchResults) return SizedBox();
+
+    widget.scaffoldData.topBarData?.searchData
+        ?.setFunctions(showSearchResults, hideSearchResults);
+
     return SlideTransition(
       position:
           Tween(begin: Offset(0, -1), end: Offset.zero).animate(animation),

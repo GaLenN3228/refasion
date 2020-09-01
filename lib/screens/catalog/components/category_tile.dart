@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/catalog/filters/components/selection_mark.dart';
+import 'package:refashioned_app/screens/components/checkbox/checkbox.dart';
 import '../../../models/category.dart';
 
 class CategoryTile extends StatelessWidget {
@@ -38,8 +38,8 @@ class CategoryTile extends StatelessWidget {
                           .bodyText1
                           .copyWith(fontWeight: FontWeight.w500),
                     ),
-                    SelectionMark(
-                      selected: selected,
+                    RefashionedCheckbox(
+                      value: selected,
                     )
                   ],
                 )),

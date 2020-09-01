@@ -15,8 +15,11 @@ class TBButtonData {
       {this.onTap, this.label, this.iconType, this.textColor, this.iconColor});
 
   factory TBButtonData.icon(TBIconType icon, {Function() onTap, Color color}) =>
-      TBButtonData(iconType: icon, onTap: onTap ?? () {}, iconColor: color);
+      icon != null
+          ? TBButtonData(
+              iconType: icon, onTap: onTap ?? () {}, iconColor: color)
+          : null;
 
   factory TBButtonData.text(String label, {Function() onTap, Color color}) =>
-      TBButtonData(label: label, onTap: onTap ?? () {});
+      label != null ? TBButtonData(label: label, onTap: onTap ?? () {}) : null;
 }

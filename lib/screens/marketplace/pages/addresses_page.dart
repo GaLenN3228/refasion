@@ -28,11 +28,11 @@ class AddressesPage extends StatelessWidget {
       child: Column(
         children: <Widget>[
           RefashionedTopBar(
-            data: TopBarData.sellerPage(
-              leftAction: () => Navigator.of(context).pop(),
-              titleText: "Добавить вещь",
-              rightAction: onClose,
-              headerText: "Укажите адрес",
+            data: TopBarData.simple(
+              onBack: () => Navigator.of(context).pop(),
+              middleText: "Добавить вещь",
+              onClose: onClose,
+              bottomText: "Укажите адрес",
             ),
           ),
           Expanded(

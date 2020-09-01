@@ -1,17 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/pick_point.dart';
+import 'package:refashioned_app/screens/maps/components/buttons/compass_button.dart';
+import 'package:refashioned_app/screens/maps/components/buttons/geolocation_button.dart';
+import 'package:refashioned_app/screens/maps/components/buttons/search_button.dart';
 import 'package:refashioned_app/screens/maps/components/map.dart';
 import 'package:refashioned_app/screens/maps/components/sheet_data/pickup_point_address.dart';
 
 class MapsPickerPage extends StatelessWidget {
-  final Function() onPush;
+  final Function(Address) onAddressPush;
+  final Function(Function(Address) callback) onSearchTap;
 
-  MapsPickerPage({Key key, this.onPush}) : super(key: key);
+  MapsPickerPage({Key key, this.onAddressPush, this.onSearchTap})
+      : super(key: key);
+
+  onSearchSelect(Address newAddress) =>
+      print("address callback: " + newAddress.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -20,30 +28,37 @@ class MapsPickerPage extends StatelessWidget {
         showBottomSheet(context, point);
       },
     );
-    return CupertinoPageScaffold(
-        backgroundColor: Colors.white,
-        child: Expanded(
-          child: Stack(
-            children: [
-              Container(
-                  child: ChangeNotifierProvider<PickPointRepository>(
-                create: (_) => PickPointRepository(),
-                child: mapsPage,
-              )),
-              Container(
-                  padding: EdgeInsets.only(bottom: 28, right: 8),
-                  alignment: Alignment.bottomRight,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () => {mapsPage.showUserLocation()},
-                    child: SvgPicture.asset(
-                      "assets/show_location.svg",
-                      width: 70,
-                    ),
-                  ))
-            ],
+    return Stack(
+      children: [
+        Container(
+            child: ChangeNotifierProvider<PickPointRepository>(
+          create: (_) => PickPointRepository(),
+          child: mapsPage,
+        )),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding:
+                EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CompassButton(
+                  show: ValueNotifier(true),
+                ),
+                SearchButton(
+                  onTap: () => onSearchTap(onSearchSelect),
+                ),
+                GeolocationButton(
+                  onTap: mapsPage.showUserLocation,
+                ),
+              ],
+            ),
           ),
-        ));
+        )
+      ],
+    );
   }
 
   void showBottomSheet(BuildContext context, PickPoint point) {

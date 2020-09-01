@@ -114,11 +114,11 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           RefashionedTopBar(
-            data: TopBarData.sellerPage(
-              leftAction: () => Navigator.of(context).pop(),
-              titleText: "Добавить вещь",
-              rightAction: widget.onClose,
-              headerText: "Укажите цену",
+            data: TopBarData.simple(
+              onBack: () => Navigator.of(context).pop(),
+              middleText: "Добавить вещь",
+              onClose: widget.onClose,
+              bottomText: "Укажите цену",
             ),
           ),
           Expanded(

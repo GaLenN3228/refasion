@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/filter.dart';
-import 'package:refashioned_app/screens/catalog/filters/components/selection_mark.dart';
-
+import 'package:refashioned_app/screens/components/checkbox/checkbox.dart';
 import '../../../../utils/colors.dart';
 
 class TileOfSelectableList extends StatelessWidget {
@@ -62,8 +61,8 @@ class TileOfSelectableList extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SelectionMark(
-                    selected: filterValue.selected,
+                  RefashionedCheckbox(
+                    value: filterValue.selected,
                   ),
                   SizedBox(
                     width: 11,

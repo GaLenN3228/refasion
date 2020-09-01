@@ -21,10 +21,10 @@ class SectionPage extends StatelessWidget {
       child: Column(
         children: [
           RefashionedTopBar(
-            data: TopBarData.sellerPage(
-              titleText: "Добавить вещь",
-              rightAction: onClose,
-              headerText: "Для кого ваша вещь?",
+            data: TopBarData.simple(
+              middleText: "Добавить вещь",
+              onClose: onClose,
+              bottomText: "Для кого ваша вещь?",
             ),
           ),
           Expanded(

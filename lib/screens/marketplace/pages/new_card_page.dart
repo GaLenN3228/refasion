@@ -17,9 +17,9 @@ class NewCardPage extends StatelessWidget {
             color: Colors.white,
             padding: const EdgeInsets.only(top: 5),
             child: RefashionedTopBar(
-              data: TopBarData.sellerPage(
-                titleText: "Новая карта",
-                leftAction: () => Navigator.of(context).pop(),
+              data: TopBarData.simple(
+                middleText: "Новая карта",
+                onBack: () => Navigator.of(context).pop(),
               ),
             ),
           ),
