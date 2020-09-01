@@ -41,6 +41,7 @@ enum IconAsset {
   message,
   cart,
   person,
+  personThin,
 
   box,
   coupon,
@@ -50,6 +51,7 @@ enum IconAsset {
   expressDelivery,
   geolocation,
   compass,
+  notifications,
 }
 
 final assets = {
@@ -87,7 +89,9 @@ final assets = {
   IconAsset.mapPin: "map_pin.svg",
   IconAsset.message: "message.svg",
   IconAsset.more: "more.svg",
+  IconAsset.notifications: "notifications.svg",
   IconAsset.person: "person.svg",
+  IconAsset.personThin: "person_thin.svg",
   IconAsset.search: "search.svg",
   IconAsset.settings: "settings.svg",
   IconAsset.settingsRounded: "settings_rounded.svg",
