@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/repositories/SearchGeneralRepository.dart';
@@ -10,20 +11,15 @@ class AddressRepository extends BaseRepository<Address> {
         () async {
           if (newCoordinates?.latitude == null || newCoordinates?.longitude == null) abortLoading(message: "No coordinates");
 
-          response = BaseResponse.fromJson((await ApiService.findAddressByCoordinates(newCoordinates)).data,
+          response = BaseResponse.fromJson(
+              (await ApiService.findAddressByCoordinates(newCoordinates)).data,
               (contentJson) => Address.fromJson(contentJson));
         },
       );
 }
 
 class AddressesRepository extends SearchGeneralRepository<List<Address>> {
-  final addressesProvider = AddressesProvider();
-
-  findAddressesByQuery(String query) => callSearchApi(query, () async {
-        if (searchStatus == SearchStatus.EMPTY_QUERY) {
-          addressesProvider.clear();
-          return;
-        }
+  update(String query) => callSearchApi(query, () async {
         response = BaseResponse.fromJson(
           (await ApiService.findAddressesByQuery(query)).data,
           (contentJson) => contentJson.fold(
@@ -35,12 +31,5 @@ class AddressesRepository extends SearchGeneralRepository<List<Address>> {
             },
           ),
         );
-        addressesProvider.update(response);
       });
-
-  @override
-  void dispose() {
-    addressesProvider.dispose();
-    super.dispose();
-  }
 }

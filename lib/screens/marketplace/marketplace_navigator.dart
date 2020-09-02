@@ -8,6 +8,7 @@ import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/sell_properties.dart';
+import 'package:refashioned_app/screens/marketplace/components/take_option_tile.dart';
 import 'package:refashioned_app/screens/marketplace/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/brand_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/cards_page.dart';
@@ -16,10 +17,12 @@ import 'package:refashioned_app/screens/marketplace/pages/description_page.dart'
 import 'package:refashioned_app/screens/marketplace/pages/new_address_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/on_moderation_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/photos_page.dart';
+import 'package:refashioned_app/screens/marketplace/pages/pickup_points_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/price_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/section_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/sell_property_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/subcategory_page.dart';
+import 'package:refashioned_app/screens/marketplace/pages/take_options_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/top_category_page.dart';
 
 class MarketplaceNavigatorRoutes {
@@ -35,6 +38,8 @@ class MarketplaceNavigatorRoutes {
   static const String cards = '/cards';
   static const String addresses = '/addresses';
   static const String newAddress = '/newAddress';
+  static const String takeOptions = '/takeOptions';
+  static const String pickUpPoints = '/pickUpPoints';
   static const String onModeration = '/onModeration';
 }
 
@@ -71,6 +76,7 @@ class MarketplaceNavigatorObserver extends NavigatorObserver {
         return false;
       }
       focusNode.requestFocus();
+
       return true;
     } else {
       return false;
@@ -112,6 +118,8 @@ class ProductData {
 
   Address address;
 
+  List<TakeOption> options;
+
   String card;
 
   updateCategory(Category newCategory) => category = newCategory;
@@ -119,6 +127,8 @@ class ProductData {
   updatePhotos(List<String> newPhotos) => photos = newPhotos;
 
   updateAddress(Address newAddress) => address = newAddress;
+
+  updateTakeOptions(List<TakeOption> newOptions) => options = newOptions;
 
   updateCard(String newCard) => card = newCard;
 
@@ -315,9 +325,9 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
               Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) =>
-                      _routeBuilder(context, MarketplaceNavigatorRoutes.brand),
+                      _routeBuilder(context, MarketplaceNavigatorRoutes.price),
                   settings:
-                      RouteSettings(name: MarketplaceNavigatorRoutes.brand),
+                      RouteSettings(name: MarketplaceNavigatorRoutes.price),
                 ),
               );
             });
@@ -412,12 +422,45 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.takeOptions),
+                settings:
+                    RouteSettings(name: MarketplaceNavigatorRoutes.takeOptions),
+              ),
+            );
+          },
+        );
+
+      case MarketplaceNavigatorRoutes.takeOptions:
+        return TakeOptionsPage(
+          address:
+              productData.address ?? Address(originalAddress: "Какой-то адрес"),
+          onPush: (options) {
+            productData.updateTakeOptions(options);
+
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(
                     context, MarketplaceNavigatorRoutes.onModeration),
                 settings: RouteSettings(
                     name: MarketplaceNavigatorRoutes.onModeration),
               ),
             );
           },
+          showPickUpPoints: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.pickUpPoints),
+                settings: RouteSettings(
+                    name: MarketplaceNavigatorRoutes.pickUpPoints),
+              ),
+            );
+          },
+        );
+
+      case MarketplaceNavigatorRoutes.pickUpPoints:
+        return PickUpPointsPage(
+          address: productData.address,
         );
 
       case MarketplaceNavigatorRoutes.onModeration:
