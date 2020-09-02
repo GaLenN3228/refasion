@@ -1,12 +1,15 @@
 import 'package:refashioned_app/models/errors.dart';
 import 'package:refashioned_app/models/status.dart';
 
+enum ContentStatus { EMPTY_QUERY, NOT_FOUND }
+
 class BaseResponse<T> {
   final Status status;
   final T content;
   final Errors errors;
+  ContentStatus contentStatus;
 
-  const BaseResponse({this.status, this.content, this.errors});
+  BaseResponse({this.status, this.content, this.errors});
 
   factory BaseResponse.fromJson(Map<String, dynamic> json, T Function(dynamic) contentParser) {
     return BaseResponse(

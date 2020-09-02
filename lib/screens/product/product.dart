@@ -52,7 +52,7 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   void initState() {
-    status = Status.loading;
+    status = Status.LOADING;
 
     productRepository = ProductRepository();
     productRepository.getProduct(widget.product.id);
@@ -76,7 +76,7 @@ class _ProductPageState extends State<ProductPage> {
 
   Widget updateTopBar(Status status) {
     switch (status) {
-      case Status.loaded:
+      case Status.LOADED:
         final product = productRepository.response.content;
 
         if (product == null)
@@ -136,21 +136,21 @@ class _ProductPageState extends State<ProductPage> {
 
   Widget updateContent(Status status) {
     switch (status) {
-      case Status.loading:
+      case Status.LOADING:
         return Center(
           child: Text(
             "Загружаем товар...",
             style: Theme.of(context).textTheme.bodyText1,
           ),
         );
-      case Status.error:
+      case Status.ERROR:
         return Center(
           child: Text(
             "Ошибка при загрузке товара",
             style: Theme.of(context).textTheme.bodyText1,
           ),
         );
-      case Status.loaded:
+      case Status.LOADED:
         final product = productRepository?.response?.content;
 
         if (product == null)

@@ -29,7 +29,7 @@ class _CitySelectorState extends State<CitySelector> {
 
   @override
   void initState() {
-    statusNotifier = ValueNotifier(Status.loading);
+    statusNotifier = ValueNotifier(Status.LOADING);
 
     citiesRepository = Provider.of<CitiesRepository>(context, listen: false);
 
@@ -41,16 +41,16 @@ class _CitySelectorState extends State<CitySelector> {
   citiesRepositoryStatusListener() async {
     final repositoryStatus = citiesRepository.statusNotifier.value;
     switch (repositoryStatus) {
-      case Status.error:
+      case Status.ERROR:
         print("bypassing city check error");
         pushTabSwitcher();
         break;
 
-      case Status.loading:
+      case Status.LOADING:
         statusNotifier.value = repositoryStatus;
         break;
 
-      case Status.loaded:
+      case Status.LOADED:
         await SharedPreferences.getInstance().then((newSharedPreferences) {
           sharedPreferences = newSharedPreferences;
           if (sharedPreferences.containsKey(Prefs.city_id)) {
@@ -70,7 +70,7 @@ class _CitySelectorState extends State<CitySelector> {
             statusNotifier.value = repositoryStatus;
         }).catchError((err) {
           print("Shared Prefs Exception: " + err.toString());
-          statusNotifier.value = Status.error;
+          statusNotifier.value = Status.ERROR;
         });
         break;
     }
@@ -120,15 +120,15 @@ class _CitySelectorState extends State<CitySelector> {
     return RefashionedScaffold(
       state: statusNotifier,
       stateData: {
-        Status.error: () => ScaffoldData.simple(
+        Status.ERROR: () => ScaffoldData.simple(
               adjustToOverlays: false,
               childrenData: ScaffoldChildrenData.logo(),
             ),
-        Status.loading: () => ScaffoldData.simple(
+        Status.LOADING: () => ScaffoldData.simple(
               adjustToOverlays: false,
               childrenData: ScaffoldChildrenData.logo(),
             ),
-        Status.loaded: () {
+        Status.LOADED: () {
           final citiesProvider = citiesRepository.response.content;
 
           return ScaffoldData(

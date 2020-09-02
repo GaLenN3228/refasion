@@ -6,7 +6,7 @@ import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum Status { loading, error, loaded }
+enum Status { LOADING, ERROR, LOADED }
 
 class BaseRepository<T> with ChangeNotifier {
   final BuildContext context;
@@ -17,7 +17,7 @@ class BaseRepository<T> with ChangeNotifier {
   Status _status;
 
   BaseRepository([this.context]) {
-    _statusNotifier = ValueNotifier(Status.loading);
+    _statusNotifier = ValueNotifier(Status.LOADING);
   }
 
   Future<void> apiCall(Future<void> Function() execute) async {
@@ -43,22 +43,22 @@ class BaseRepository<T> with ChangeNotifier {
     }
   }
 
-  bool get isLoading => _status == Status.loading;
+  bool get isLoading => _status == Status.LOADING;
 
-  bool get loadingFailed => _status == Status.error;
+  bool get loadingFailed => _status == Status.ERROR;
 
-  bool get isLoaded => _status == Status.loaded;
+  bool get isLoaded => _status == Status.LOADED;
 
   ValueNotifier<Status> get statusNotifier => _statusNotifier;
 
   void startLoading() {
-    _status = Status.loading;
+    _status = Status.LOADING;
 
     _statusNotifier.value = _status;
   }
 
   void finishLoading() {
-    _status = Status.loaded;
+    _status = Status.LOADED;
 
     _statusNotifier.value = _status;
 
@@ -66,7 +66,7 @@ class BaseRepository<T> with ChangeNotifier {
   }
 
   void receivedError() {
-    _status = Status.error;
+    _status = Status.ERROR;
 
     _statusNotifier.value = _status;
 
