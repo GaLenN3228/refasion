@@ -20,8 +20,6 @@ class NewAddressPage extends StatelessWidget {
   MapDataController mapDataController;
   MapBottomSheetDataController mapBottomSheetDataController;
 
-  Address _selectedAddress;
-
   NewAddressPage({Key key, this.onAddressPush}) : super(key: key) {
     initMapControllers();
   }
@@ -71,14 +69,11 @@ class NewAddressPage extends StatelessWidget {
             finishButtonText: "ПРИВЕЗТИ СЮДА",
             isFinishButtonEnable: true,
             onFinishButtonClick: (pickPoint) {
-              if (_selectedAddress != null && _selectedAddress.address == pickPoint.address)
-                onAddressPush(_selectedAddress);
-              else {
-                var address = Address(
-                    coordinates: Point(latitude: pickPoint.latitude, longitude: pickPoint.longitude),
-                    address: pickPoint.address);
-                onAddressPush(address);
-              }
+              onAddressPush(Address(
+                  coordinates: Point(latitude: pickPoint.latitude, longitude: pickPoint.longitude),
+                  address: pickPoint.address,
+                  originalAddress: pickPoint.originalAddress,
+                  city: pickPoint.city));
             }),
         mapBottomSheetDataNotFound: MapBottomSheetData(
             title: "Адрес доставки",
@@ -95,11 +90,12 @@ class NewAddressPage extends StatelessWidget {
           builder: (context, controller) => AddressSearchPage(
               scrollController: controller,
               onSelect: (address) {
-                _selectedAddress = address;
                 mapDataController.pickPoint = PickPoint(
                     address: address.address,
+                    originalAddress: address.address,
                     latitude: address.coordinates.latitude,
-                    longitude: address.coordinates.longitude);
+                    longitude: address.coordinates.longitude,
+                    city: address.city);
               }));
   }
 }
