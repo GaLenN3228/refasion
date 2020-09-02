@@ -97,6 +97,9 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
       });
     }
 
+    if (widget.mapDataController.pickPoint != null){
+      //TODO init if has default address
+    }
     widget.mapDataController.addListener(() {
       if (widget.mapDataController.pickPoint != null) {
         _selectedPickPoint = widget.mapDataController.pickPoint;

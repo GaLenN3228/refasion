@@ -25,7 +25,7 @@ class _PickUpPointsPageState extends State<PickUpPointsPage> {
   @override
   void initState() {
     mapDataController = MapDataController(
-      centerMarkerEnable: true,
+      pickUpPointsCompany: PickUpPointsCompany.BOXBERRY
     );
     mapBottomSheetDataController = MapBottomSheetDataController(
       mapBottomSheetDataPreview: MapBottomSheetData(
@@ -33,10 +33,7 @@ class _PickUpPointsPageState extends State<PickUpPointsPage> {
           hint: "Укажите на карте или введите адрес вручную"),
       mapBottomSheetDataAddress: MapBottomSheetData(
         title: "Адрес доставки",
-      ),
-      mapBottomSheetDataNotFound: MapBottomSheetData(
-          title: "Адрес доставки",
-          address: "Не удалось определить точный адрес"),
+      )
     );
 
     super.initState();
