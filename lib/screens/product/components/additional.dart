@@ -19,7 +19,7 @@ class ProductAdditional extends StatelessWidget {
           },
         ),
         ProductAdditionalButton(
-          text: "Все " + product.brand.name + " бренда " + product.brand.name,
+          text: "Все вещи бренда " + product.brand.name,
           onSubCategoryClick: () {
             onSubCategoryClick("?p=" + product.brand.id, product.brand.name);
           },
