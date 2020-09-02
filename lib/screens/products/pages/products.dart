@@ -26,7 +26,15 @@ class ProductsPage extends StatefulWidget {
   final String parameters;
   final String title;
 
-  const ProductsPage({Key key, this.onPush, this.onSearch, this.topCategory, this.searchResult, this.onFavouritesClick, this.parameters, this.title});
+  const ProductsPage(
+      {Key key,
+      this.onPush,
+      this.onSearch,
+      this.topCategory,
+      this.searchResult,
+      this.onFavouritesClick,
+      this.parameters,
+      this.title});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -79,12 +87,14 @@ class _ProductsPageState extends State<ProductsPage> {
     final quickFiltersParameters =
         quickFiltersRepository.getRequestParameters();
 
-    final filtersParameters = filtersRepository.isLoaded && filtersRepository.getStatusCode == 200
-        ? filtersRepository.response.content
-            .fold("", (parameters, filter) => parameters + filter.getRequestParameters())
+    final filtersParameters = filtersRepository.isLoaded &&
+            filtersRepository.getStatusCode == 200
+        ? filtersRepository.response.content.fold("",
+            (parameters, filter) => parameters + filter.getRequestParameters())
         : "";
 
-    final sortParameters = sortMethodsRepository.isLoaded && sortMethodsRepository.getStatusCode == 200
+    final sortParameters = sortMethodsRepository.isLoaded &&
+            sortMethodsRepository.getStatusCode == 200
         ? sortMethodsRepository.response.content.getRequestParameters()
         : "";
 
@@ -93,96 +103,107 @@ class _ProductsPageState extends State<ProductsPage> {
         sortParameters +
         quickFiltersParameters;
 
-    Provider.of<ProductsRepository>(context, listen: false).getProducts(newParameters);
+    Provider.of<ProductsRepository>(context, listen: false)
+        .getProducts(newParameters);
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<ProductsRepository>(
-                create: (_) =>
-                    ProductsRepository()..getProducts(initialParameters)),
-            ChangeNotifierProvider(create: (_) => QuickFiltersRepository()..getQuickFilters())
-          ],
-          builder: (context, _) {
-            if (filtersRepository.isLoading)
-              return Center(
-                child: Text(
-                  "Загружаем фильтры...",
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-              );
-
-            if (filtersRepository.loadingFailed)
-              return Center(
-                child: Text(
-                  "Ошибка при загрузке фильтров. Статус " +
-                      filtersRepository.getStatusCode.toString(),
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-              );
-
-            if (sortMethodsRepository.isLoading)
-              return Center(
-                child: Text(
-                  "Загружаем методы сортировки...",
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-              );
-
-            if (sortMethodsRepository.loadingFailed)
-              return Center(
-                child: Text(
-                  "Ошибка при загрузке методов сортировки. Статус " +
-                      filtersRepository.getStatusCode.toString(),
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-              );
-
-            return Column(
-              children: [
-                TopPanel(
-                  canPop: true,
-                  onSearch: widget.onSearch,
-                  onFavouritesClick: () => widget.onFavouritesClick(),
-                ),
-                QuickFilterList(
-                    topCategory: widget.topCategory,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    updateProducts: () => updateProducts(context)),
-                ProductsTitle(
-                    categoryName: (widget.searchResult != null)
-                        ? widget.searchResult.name
-                        : (widget.title != null) ? widget.title : widget.topCategory.name),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 15, 15, 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      FiltersButton(
-                        root: initialParameters,
-                        filters: filtersRepository.response.content,
-                        onApply: () => updateProducts(context),
-                      ),
-                      SortingButton(
-                        sort: sortMethodsRepository.response.content,
-                        onUpdate: () => updateProducts(context),
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: ProductsPageContent(onPush: (product) {
-                    widget.onPush(product, callback: () {
-                      updateProducts(context);
-                    });
-                  }),
-                ),
-              ],
+        providers: [
+          ChangeNotifierProvider<ProductsRepository>(
+              create: (_) =>
+                  ProductsRepository()..getProducts(initialParameters)),
+          ChangeNotifierProvider(
+              create: (_) => QuickFiltersRepository()..getQuickFilters())
+        ],
+        builder: (context, _) {
+          if (filtersRepository.isLoading)
+            return Center(
+              child: Text(
+                "Загружаем фильтры...",
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
             );
-          }),
+
+          if (filtersRepository.loadingFailed)
+            return Center(
+              child: Text(
+                "Ошибка при загрузке фильтров. Статус " +
+                    filtersRepository.getStatusCode.toString(),
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            );
+
+          if (sortMethodsRepository.isLoading)
+            return Center(
+              child: Text(
+                "Загружаем методы сортировки...",
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            );
+
+          if (sortMethodsRepository.loadingFailed)
+            return Center(
+              child: Text(
+                "Ошибка при загрузке методов сортировки. Статус " +
+                    filtersRepository.getStatusCode.toString(),
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            );
+
+          return Column(
+            children: [
+              TopPanel(
+                canPop: true,
+                onSearch: widget.onSearch,
+                onFavouritesClick: () => widget.onFavouritesClick(),
+              ),
+              QuickFilterList(
+                  topCategory: widget.topCategory,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  updateProducts: () => updateProducts(context)),
+              ProductsTitle(
+                  categoryName: (widget.searchResult != null)
+                      ? widget.searchResult.name
+                      : (widget.title != null)
+                          ? widget.title
+                          : widget.topCategory.name),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 15, 15, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    FiltersButton(
+                      root: initialParameters,
+                      filters: filtersRepository.response.content,
+                      onApply: () => updateProducts(context),
+                    ),
+                    SortingButton(
+                      sort: sortMethodsRepository.response.content,
+                      onUpdate: () => updateProducts(context),
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ProductsPageContent(
+                  onPush: (product) {
+                    widget.onPush(
+                      product,
+                      callback: () {
+                        updateProducts(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
