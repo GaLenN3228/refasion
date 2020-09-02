@@ -17,6 +17,7 @@ import 'package:refashioned_app/screens/marketplace/pages/description_page.dart'
 import 'package:refashioned_app/screens/marketplace/pages/new_address_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/on_moderation_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/photos_page.dart';
+import 'package:refashioned_app/screens/marketplace/pages/pickup_points_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/price_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/section_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/sell_property_page.dart';
@@ -38,6 +39,7 @@ class MarketplaceNavigatorRoutes {
   static const String addresses = '/addresses';
   static const String newAddress = '/newAddress';
   static const String takeOptions = '/takeOptions';
+  static const String pickUpPoints = '/pickUpPoints';
   static const String onModeration = '/onModeration';
 }
 
@@ -444,6 +446,21 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
               ),
             );
           },
+          showPickUpPoints: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.pickUpPoints),
+                settings: RouteSettings(
+                    name: MarketplaceNavigatorRoutes.pickUpPoints),
+              ),
+            );
+          },
+        );
+
+      case MarketplaceNavigatorRoutes.pickUpPoints:
+        return PickUpPointsPage(
+          address: productData.address,
         );
 
       case MarketplaceNavigatorRoutes.onModeration:

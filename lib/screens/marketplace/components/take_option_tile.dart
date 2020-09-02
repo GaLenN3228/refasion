@@ -8,9 +8,10 @@ class TakeOptionTile extends StatefulWidget {
   final TakeOption option;
   final ValueNotifier<bool> valueNotifier;
   final Function() onUpdate;
+  final Function() action;
 
   const TakeOptionTile(
-      {Key key, this.option, this.valueNotifier, this.onUpdate})
+      {Key key, this.option, this.valueNotifier, this.onUpdate, this.action})
       : super(key: key);
 
   @override
@@ -80,27 +81,33 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                     widget.option == TakeOption.office
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Показать на карте",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .copyWith(
-                                          decoration: TextDecoration.underline),
-                                ),
-                                RotatedBox(
-                                  quarterTurns: 2,
-                                  child: SVGIcon(
-                                    icon: IconAsset.back,
-                                    size: 14,
+                        ? GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap:
+                                widget.action != null ? widget.action : () {},
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Показать на карте",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(
+                                            decoration:
+                                                TextDecoration.underline),
                                   ),
-                                ),
-                              ],
+                                  RotatedBox(
+                                    quarterTurns: 2,
+                                    child: SVGIcon(
+                                      icon: IconAsset.back,
+                                      size: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                         : SizedBox(),
