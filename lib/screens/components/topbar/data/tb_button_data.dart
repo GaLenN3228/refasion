@@ -1,6 +1,15 @@
 import 'dart:ui';
 
-enum TBIconType { back, share, favorites, filters, setttings, search, hanger }
+enum TBIconType {
+  back,
+  share,
+  favorite,
+  favoriteFilled,
+  filters,
+  setttings,
+  search,
+  hanger
+}
 
 class TBButtonData {
   final Function() onTap;

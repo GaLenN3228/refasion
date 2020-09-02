@@ -16,8 +16,10 @@ class TBButton extends StatelessWidget {
         return IconAsset.back;
       case TBIconType.share:
         return IconAsset.share;
-      case TBIconType.favorites:
+      case TBIconType.favorite:
         return IconAsset.favoriteBorder;
+      case TBIconType.favoriteFilled:
+        return IconAsset.favoriteFilled;
       case TBIconType.filters:
         return IconAsset.filters;
       case TBIconType.setttings:
@@ -54,7 +56,10 @@ class TBButton extends StatelessWidget {
         onTap: data.onTap != null ? data.onTap : () {},
         child: Padding(
           padding: padding,
-          child: SVGIcon(icon: asset()),
+          child: SVGIcon(
+            icon: asset(),
+            color: data.iconColor,
+          ),
         ),
       );
     else
