@@ -12,7 +12,7 @@ class QuickFilterItem extends StatelessWidget {
   final double horizontalCornerRadius;
   final double horizontalBorderWidth;
   final QuickFilter filterValue;
-  final Function(String) onSelect;
+  final Function(String, List<int>) onSelect;
   final bool isNavigationButton;
   final Function() updateProducts;
   final Category topCategory;
@@ -34,7 +34,9 @@ class QuickFilterItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () => onSelect(filterValue.urlParams),
+        onTap: () => filterValue.values.id != null
+            ? onSelect(filterValue.values.id, null)
+            : onSelect(null, filterValue.values.price),
         child: isNavigationButton
             ? GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -43,23 +45,19 @@ class QuickFilterItem extends StatelessWidget {
                     expand: true,
                     context: context,
                     useRootNavigator: true,
-                    builder: (context, controller) => CategoryFilterPanel(
-                        topCategory: topCategory,
-                        updateProducts: updateProducts)),
+                    builder: (context, controller) =>
+                        CategoryFilterPanel(topCategory: topCategory, updateProducts: updateProducts)),
                 child: Container(
                   height: horizontalHeight,
                   width: horizontalWidth,
                   decoration: ShapeDecoration(
                       color: accentColor,
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              width: horizontalBorderWidth, color: accentColor),
-                          borderRadius:
-                              BorderRadius.circular(horizontalCornerRadius))),
+                          side: BorderSide(width: horizontalBorderWidth, color: accentColor),
+                          borderRadius: BorderRadius.circular(horizontalCornerRadius))),
                   child: Center(
                       child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                     child: SVGIcon(
                       icon: IconAsset.categories,
                       size: 22,
@@ -73,18 +71,17 @@ class QuickFilterItem extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         side: BorderSide(
                             width: horizontalBorderWidth,
-                            color: filterValue.selected
-                                ? accentColor
-                                : Color(0xFFE6E6E6)),
-                        borderRadius:
-                            BorderRadius.circular(horizontalCornerRadius))),
+                            color: filterValue.selected ? accentColor : Color(0xFFE6E6E6)),
+                        borderRadius: BorderRadius.circular(horizontalCornerRadius))),
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       filterValue.name,
-                      style: Theme.of(context).textTheme.bodyText1.copyWith(
-                          fontWeight: FontWeight.w500, color: primaryColor),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(fontWeight: FontWeight.w500, color: primaryColor),
                     ),
                   ),
                 ),

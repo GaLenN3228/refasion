@@ -66,9 +66,9 @@ class _CategoryPageState extends State<CategoryPage>
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CategoryImage(
-                  category: widget.topCategory,
-                ),
+//                CategoryImage(
+//                  category: widget.topCategory,
+//                ),
                 CategoryBrands()
               ],
             )

@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
-import 'package:refashioned_app/models/products.dart';
-import 'package:refashioned_app/repositories/products.dart';
-import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
-import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/products/components/products_item.dart';
 
@@ -18,40 +15,33 @@ class FavouritesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ProductsRepository productsRepository = context.watch<ProductsRepository>();
-    if (productsRepository.isLoading)
+    final FavouritesProductsRepository favouritesProductsRepository = context.watch<FavouritesProductsRepository>();
+    if (favouritesProductsRepository.isLoading)
       return Center(
         child: Text("Загрузка", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    if (productsRepository.loadingFailed)
+    if (favouritesProductsRepository.loadingFailed)
       return Center(
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    if (productsRepository.getStatusCode != 200)
+    if (favouritesProductsRepository.getStatusCode != 200)
       return Center(
         child: Text("Статус", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    final ProductsContent productsContent = productsRepository.response.content;
-
-    var favouriteProducts = productsContent.products.where((element) => element.isFavourite == true).toList();
+    var favouriteProducts = favouritesProductsRepository.response.content.products;
 
     return CupertinoPageScaffold(
         child: Container(
             child: Column(children: [
-//      RefashionedTopBar(
-//        data: TopBarData(
-//          leftButtonData: TBButtonData.back(
-//            onTap: () => Navigator.of(context).pop(),
-//          ),
-//          middleData: TBMiddleData(
-//            type: TBMiddleType.title,
-//            titleText: "ИЗБРАННОЕ",
-//          ),
-//        ),
-//      ),
+      RefashionedTopBar(
+        data: TopBarData.simple(
+          onBack: () => Navigator.of(context).pop(),
+          middleText: "ИЗБРАННОЕ",
+        ),
+      ),
       Expanded(
         child: StaggeredGridView.countBuilder(
           shrinkWrap: true,

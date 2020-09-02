@@ -41,8 +41,8 @@ class Product {
         currentPrice: json['current_price'],
         discountPrice: json['discount_price'],
         image: json['image'],
-        category: Category.fromJson(json['category']),
-        brand: Brand.fromJson(json['brand']),
+        category: json['category'] != null ? Category.fromJson(json['category']) : null,
+        brand: json['brand'] != null ? Brand.fromJson(json['brand']) : null,
         seller: json['seller'] != null ? Seller.fromJson(json['seller']) : null,
         description: json['description'],
         properties: [

@@ -10,11 +10,27 @@ class QuickFiltersRepository extends BaseRepository<List<QuickFilter>> {
             (contentJson) => [for (final filter in contentJson) QuickFilter.fromJson(filter)]);
       });
 
-  update({String urlParams}) {
-    if (urlParams != null && urlParams.isNotEmpty)
-      response.content.firstWhere((filterValue) => filterValue.urlParams == urlParams).update();
+  update({String id, List<int> price}) {
+    if (id != null && id.isNotEmpty)
+      response.content.firstWhere((filterValue) => filterValue.values.id == id).update();
+    else if (price != null) {
+      response.content.firstWhere((filterValue) => filterValue.values.price != null).update();
+    }
   }
 
-  String getRequestParameters() =>
-      "&" + response.content.where((filter) => filter.selected).map((filter) => filter.urlParams).join('&');
+  String getRequestParameters() {
+    String requestParameters;
+    requestParameters =
+        response.content
+            .where((filter) => filter.selected && filter.values.id != null)
+            .map((filter) => filter.values.id)
+            .join('&');
+    response.content.forEach((filter) {
+      if (filter.selected && filter.values.price != null) {
+        requestParameters += "&min_price=" + filter.values.price.first.toString();
+        requestParameters += "&max_price=" + filter.values.price.last.toString();
+      }
+    });
+    return requestParameters;
+  }
 }

@@ -6,7 +6,7 @@ import 'package:refashioned_app/utils/url.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = false;
+  static const LOG_ENABLE = true;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 
@@ -138,6 +138,11 @@ class ApiService {
   static Future<Response> getFavourites() async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.get(Url.wished);
+  }
+
+  static Future<Response> getFavouritesProducts() async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    return dioClient.get(Url.wishedProducts);
   }
 
   static Future<Response> addToFavourites(String productId) async {

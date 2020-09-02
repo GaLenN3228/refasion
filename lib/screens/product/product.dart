@@ -31,8 +31,9 @@ class ProductPage extends StatefulWidget {
 
   final Function(Product) onProductPush;
   final Function(Seller) onSellerPush;
+  final Function(String parameters, String title) onSubCategoryClick;
 
-  const ProductPage({this.product, this.onProductPush, this.onSellerPush})
+  const ProductPage({this.product, this.onProductPush, this.onSellerPush, this.onSubCategoryClick})
       : assert(product != null);
 
   @override
@@ -66,14 +67,12 @@ class _ProductPageState extends State<ProductPage> {
         state: productRepository.statusNotifier,
         stateData: {
           Status.error: () => ScaffoldData.simple(
-                childrenData:
-                    ScaffoldChildrenData.message("Ошибка при загрузке товара"),
+                childrenData: ScaffoldChildrenData.message("Ошибка при загрузке товара"),
                 onBack: () => Navigator.of(context).pop(),
                 bottomOverlay: ProductBottomButtons(),
               ),
           Status.loading: () => ScaffoldData.simple(
-                childrenData:
-                    ScaffoldChildrenData.message("Загружаем товар..."),
+                childrenData: ScaffoldChildrenData.message("Загружаем товар..."),
                 onBack: () => Navigator.of(context).pop(),
                 bottomOverlay: ProductBottomButtons(),
               ),
@@ -87,9 +86,7 @@ class _ProductPageState extends State<ProductPage> {
                   onTap: () => Navigator.of(context).pop(),
                 ),
                 middleData: TBMiddleData.condensed(
-                  product.brand.name.toString() +
-                      " • " +
-                      product.name.toString(),
+                  product.brand.name.toString() + " • " + product.name.toString(),
                   product.currentPrice.toString() + " ₽",
                 ),
                 secondRightButtonData: TBButtonData(
@@ -138,7 +135,10 @@ class _ProductPageState extends State<ProductPage> {
                         ProductQuestions(),
                         ProductDelivery(),
                         ProductPayment(),
-                        ProductAdditional(),
+                        ProductAdditional(
+                          product: product,
+                          onSubCategoryClick: widget.onSubCategoryClick,
+                        ),
                         RelatedProducts(),
                         Column(
                           children: [
@@ -149,10 +149,8 @@ class _ProductPageState extends State<ProductPage> {
                                 style: Theme.of(context).textTheme.headline2,
                               ),
                             ),
-                            ChangeNotifierProvider<
-                                ProductRecommendedRepository>(
-                              create: (_) =>
-                                  ProductRecommendedRepository()..getProductRecommended(product.id),
+                            ChangeNotifierProvider<ProductRecommendedRepository>(
+                              create: (_) => ProductRecommendedRepository()..getProductRecommended(product.id),
                               child: RecommendedProducts(
                                 onProductPush: widget.onProductPush,
                               ),

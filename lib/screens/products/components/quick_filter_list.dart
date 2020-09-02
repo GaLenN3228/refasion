@@ -41,9 +41,9 @@ class _QuickFilterListState extends State<QuickFilterList> {
               filterValue: widget.topCategory != null && widget.topCategory.children != null
                   ? ((index > 0) ? quickFiltersRepository.response.content.elementAt(index - 1) : null)
                   : quickFiltersRepository.response.content.elementAt(index),
-              onSelect: (urlParameter) {
+              onSelect: (urlParameter, prices) {
                 setState(() {
-                  quickFiltersRepository.update(urlParams: urlParameter);
+                  quickFiltersRepository.update(id: urlParameter, price: prices);
                 });
                 widget.updateProducts();
               },

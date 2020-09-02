@@ -90,7 +90,6 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
     widget.mapDataController.addListener(() {
       if (widget.mapDataController.pickPoint != null) {
         _selectedPickPoint = widget.mapDataController.pickPoint;
-        widget.mapBottomSheetDataController.currentBottomSheetData.address = widget.mapDataController.pickPoint.address;
         changeBottomSheetStateWithExternalPickPoint();
         _mapPage.moveToPoint(
             15,
@@ -165,6 +164,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomSheet: _bottomSheet,
       backgroundColor: Colors.white,
       body: Stack(

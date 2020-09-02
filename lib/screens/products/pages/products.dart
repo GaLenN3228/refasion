@@ -23,7 +23,10 @@ class ProductsPage extends StatefulWidget {
   final SearchResult searchResult;
   final Function({dynamic callback}) onFavouritesClick;
 
-  const ProductsPage({Key key, this.onPush, this.onSearch, this.topCategory, this.searchResult, this.onFavouritesClick});
+  final String parameters;
+  final String title;
+
+  const ProductsPage({Key key, this.onPush, this.onSearch, this.topCategory, this.searchResult, this.onFavouritesClick, this.parameters, this.title});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -48,6 +51,8 @@ class _ProductsPageState extends State<ProductsPage> {
 
     if (widget.searchResult != null) {
       initialParameters = "?p=" + widget.searchResult.id;
+    } else if (widget.parameters != null) {
+      initialParameters = widget.parameters;
     } else {
       initialParameters = widget.topCategory.getRequestParameters();
     }
@@ -148,9 +153,9 @@ class _ProductsPageState extends State<ProductsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     updateProducts: () => updateProducts(context)),
                 ProductsTitle(
-                    categoryName: widget.searchResult != null
+                    categoryName: (widget.searchResult != null)
                         ? widget.searchResult.name
-                        : widget.topCategory.name),
+                        : (widget.title != null) ? widget.title : widget.topCategory.name),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 15, 15, 8),
                   child: Row(
