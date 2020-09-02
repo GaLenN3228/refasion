@@ -57,11 +57,14 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final AuthorizationRepository authorizationRepository = context.watch<AuthorizationRepository>();
+    final AuthorizationRepository authorizationRepository =
+        context.watch<AuthorizationRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
-        key: scaffoldKey,
-        body: Stack(children: [
+      key: scaffoldKey,
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
           GestureDetector(
             onTap: () {
               if (Navigator.canPop(context)) {
@@ -71,12 +74,16 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
               }
             },
             child: Container(
-                padding: const EdgeInsets.only(right: 16.0, top: 60),
-                alignment: Alignment.topRight,
-                child: Text(
-                  "Закрыть",
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(color: Color(0xFF959595)),
-                )),
+              padding: const EdgeInsets.only(right: 16.0, top: 60),
+              alignment: Alignment.topRight,
+              child: Text(
+                "Закрыть",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    .copyWith(color: Color(0xFF959595)),
+              ),
+            ),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -92,21 +99,22 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                 ),
               ),
               Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(top: 16.0),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: "Код отправлен на ",
-                      style: textTheme.caption,
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: widget.phone,
-                          style: textTheme.caption,
-                        ),
-                      ],
-                    ),
-                  )),
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(top: 16.0),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "Код отправлен на ",
+                    style: textTheme.caption,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: widget.phone,
+                        style: textTheme.caption,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Container(
                 width: 230,
                 margin: const EdgeInsets.only(top: 28.0, left: 20, right: 20),
@@ -117,34 +125,44 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                   length: 4,
                   obsecureText: false,
                   animationType: AnimationType.fade,
+                  textInputType: TextInputType.number,
                   textStyle: TextStyle(
-                      color: hasError ? Colors.redAccent : Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                      color: hasError ? Colors.redAccent : Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                   pinTheme: PinTheme(
                       shape: PinCodeFieldShape.underline,
                       fieldHeight: 50,
                       fieldWidth: 40,
                       selectedColor: hasError ? Colors.redAccent : Colors.black,
-                      activeColor: hasError ? Colors.redAccent : Color(0xFFFAD24E),
-                      inactiveColor: hasError ? Colors.redAccent : Color(0xFFFAD24E)),
+                      activeColor:
+                          hasError ? Colors.redAccent : Color(0xFFFAD24E),
+                      inactiveColor:
+                          hasError ? Colors.redAccent : Color(0xFFFAD24E)),
                   animationDuration: Duration(milliseconds: 300),
                   enableActiveFill: false,
                   errorAnimationController: errorController,
                   onCompleted: (v) {
                     if (authorizationRepository.isLoaded) {
-                      var codeAuthorizationRepository = CodeAuthorizationRepository();
+                      var codeAuthorizationRepository =
+                          CodeAuthorizationRepository();
                       codeAuthorizationRepository.addListener(() {
                         if (codeAuthorizationRepository.getStatusCode == 400) {
                           errorController.add(ErrorAnimationType.shake);
                           setState(() {
                             hasError = true;
                           });
-                        } else if (codeAuthorizationRepository.getStatusCode == 200 ||
+                        } else if (codeAuthorizationRepository.getStatusCode ==
+                                200 ||
                             codeAuthorizationRepository.getStatusCode == 201) {
-                          Navigator.of(context).popUntil(ModalRoute.withName("/authorization"));
+                          Navigator.of(context)
+                              .popUntil(ModalRoute.withName("/authorization"));
                         }
                       });
                       codeAuthorizationRepository.sendCode(
-                          authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
+                          authorizationRepository.getPhone,
+                          authorizationRepository.response.content.hash,
+                          v);
                     }
                   },
                   onChanged: (value) {
@@ -167,7 +185,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                       child: Text(
                         "Некорректный код",
                         textAlign: TextAlign.center,
-                        style: textTheme.caption.copyWith(color: Colors.redAccent),
+                        style:
+                            textTheme.caption.copyWith(color: Colors.redAccent),
                       ))
                   : Container(
                       height: 16,
@@ -176,24 +195,29 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
             ],
           ),
           Container(
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+            margin:
+                const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
             alignment: Alignment.bottomCenter,
             child: Button(
               _start == 0 ? "ПОЛУЧИТЬ НОВЫЙ" : "ПОЛУЧИТЬ НОВЫЙ ЧЕРЕЗ 0:$_start",
 //          buttonStyle: phoneIsEmpty ? ButtonStyle.dark_gray : ButtonStyle.dark,
-              buttonStyle: _start == 0 ? ButtonStyle.dark : ButtonStyle.dark_gray,
+              buttonStyle:
+                  _start == 0 ? ButtonStyle.dark : ButtonStyle.dark_gray,
               height: 45,
               width: double.infinity,
               borderRadius: 5,
               onClick: () {
                 if (_start == 0 && authorizationRepository.isLoaded) {
-                  authorizationRepository.sendPhoneAndGetCode(authorizationRepository.getPhone);
+                  authorizationRepository
+                      .sendPhoneAndGetCode(authorizationRepository.getPhone);
                   _start = 59;
                   startTimer();
                 }
               },
             ),
-          )
-        ]));
+          ),
+        ],
+      ),
+    );
   }
 }
