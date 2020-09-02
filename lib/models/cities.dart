@@ -161,7 +161,7 @@ class CitiesProvider {
         _citiesController.add(_allCities);
       }
 
-      // if (!locatedCity.selected.value) select(locatedCity);
+      if (!locatedCity.selected.value) select(locatedCity);
     } else
       print("City " + newCity.toString() + " not found");
   }
