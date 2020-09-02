@@ -13,6 +13,7 @@ import 'package:refashioned_app/screens/components/scaffold/scaffold.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
+import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/product/components/additional.dart';
 import 'package:refashioned_app/screens/product/components/buttons.dart';
 import 'package:refashioned_app/screens/product/components/delivery.dart';
@@ -33,7 +34,11 @@ class ProductPage extends StatefulWidget {
   final Function(Seller) onSellerPush;
   final Function(String parameters, String title) onSubCategoryClick;
 
-  const ProductPage({this.product, this.onProductPush, this.onSellerPush, this.onSubCategoryClick})
+  const ProductPage(
+      {this.product,
+      this.onProductPush,
+      this.onSellerPush,
+      this.onSubCategoryClick})
       : assert(product != null);
 
   @override
@@ -41,131 +46,218 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  WidgetData productTitleWidgetData;
-
   ProductRepository productRepository;
+
+  Status status;
 
   @override
   void initState() {
-    productTitleWidgetData = WidgetData.create("productTitle");
+    status = Status.loading;
 
     productRepository = ProductRepository();
     productRepository.getProduct(widget.product.id);
 
+    productRepository.statusNotifier.addListener(repositoryStatusListener);
+
     super.initState();
   }
 
+  repositoryStatusListener() =>
+      setState(() => status = productRepository.statusNotifier.value);
+
   @override
   void dispose() {
+    productRepository.statusNotifier.removeListener(repositoryStatusListener);
+
     productRepository.dispose();
 
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) => RefashionedScaffold(
-        state: productRepository.statusNotifier,
-        stateData: {
-          Status.error: () => ScaffoldData.simple(
-                childrenData: ScaffoldChildrenData.message("Ошибка при загрузке товара"),
-                onBack: () => Navigator.of(context).pop(),
-                bottomOverlay: ProductBottomButtons(),
-              ),
-          Status.loading: () => ScaffoldData.simple(
-                childrenData: ScaffoldChildrenData.message("Загружаем товар..."),
-                onBack: () => Navigator.of(context).pop(),
-                bottomOverlay: ProductBottomButtons(),
-              ),
-          Status.loaded: () {
-            final product = productRepository.response.content;
+  Widget updateTopBar(Status status) {
+    switch (status) {
+      case Status.loaded:
+        final product = productRepository.response.content;
 
-            return ScaffoldData(
-              topBarData: TopBarData(
+        if (product == null)
+          return RefashionedTopBar(
+            data: TopBarData(
+              leftButtonData: TBButtonData.icon(
+                TBIconType.back,
+                onTap: Navigator.of(context).pop,
+              ),
+            ),
+          );
+
+        return Builder(
+          builder: (context) {
+            final isFavorite = true;
+
+            return RefashionedTopBar(
+              data: TopBarData(
                 leftButtonData: TBButtonData.icon(
                   TBIconType.back,
-                  onTap: () => Navigator.of(context).pop(),
+                  onTap: Navigator.of(context).pop,
                 ),
                 middleData: TBMiddleData.condensed(
-                  product.brand.name.toString() + " • " + product.name.toString(),
+                  product.brand.name.toString() +
+                      " • " +
+                      product.name.toString(),
                   product.currentPrice.toString() + " ₽",
                 ),
-                secondRightButtonData: TBButtonData(
-                  iconType: TBIconType.favorites,
-                ),
+                secondRightButtonData: isFavorite
+                    ? TBButtonData(
+                        iconType: TBIconType.favoriteFilled,
+                        iconColor: Color(0xFFD12C2A),
+                        onTap: () {},
+                      )
+                    : TBButtonData(
+                        iconType: TBIconType.favorite,
+                        onTap: () {},
+                      ),
                 rightButtonData: TBButtonData(
                   iconType: TBIconType.share,
                 ),
               ),
-              bottomOverlay: ProductBottomButtons(
-                productId: product.id,
-              ),
-              scrollActions: {
-                productTitleWidgetData: ScaffoldScrollAction(
-                  type: ScrollActionType.fadeTopBarMiddle,
-                ),
-              },
-              childrenData: ScaffoldChildrenData(
-                children: <Widget>[
-                  ProductSlider(
-                    images: product.images,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: <Widget>[
-                        ProductPrice(
-                          currentPrice: product.currentPrice,
-                          discountPrice: product.discountPrice,
-                        ),
-                        SizedBox(
-                          key: productTitleWidgetData.key,
-                          child: ProductTitle(
-                            name: product.name,
-                            brand: product.brand.name,
-                          ),
-                        ),
-                        ProductSeller(
-                          seller: product.seller,
-                        ),
-                        ProductDescription(
-                          description: product.description,
-                          properties: product.properties,
-                          article: product.article,
-                        ),
-                        ProductQuestions(),
-                        ProductDelivery(),
-                        ProductPayment(),
-                        ProductAdditional(
-                          product: product,
-                          onSubCategoryClick: widget.onSubCategoryClick,
-                        ),
-                        RelatedProducts(),
-                        Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "ВАМ МОЖЕТ ПОНРАВИТЬСЯ",
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
-                            ),
-                            ChangeNotifierProvider<ProductRecommendedRepository>(
-                              create: (_) => ProductRecommendedRepository()..getProductRecommended(product.id),
-                              child: RecommendedProducts(
-                                onProductPush: widget.onProductPush,
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             );
           },
-        },
-      );
+        );
+      default:
+        return RefashionedTopBar(
+          data: TopBarData(
+            leftButtonData: TBButtonData.icon(
+              TBIconType.back,
+              onTap: Navigator.of(context).pop,
+            ),
+          ),
+        );
+    }
+  }
+
+  Widget updateContent(Status status) {
+    switch (status) {
+      case Status.loading:
+        return Center(
+          child: Text(
+            "Загружаем товар...",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        );
+      case Status.error:
+        return Center(
+          child: Text(
+            "Ошибка при загрузке товара",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        );
+      case Status.loaded:
+        final product = productRepository?.response?.content;
+
+        if (product == null)
+          return Center(
+            child: Text(
+              "Нет продукта",
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          );
+
+        return Material(
+          color: Colors.white,
+          child: ListView(
+            padding: const EdgeInsets.only(bottom: 99.0 + 55.0),
+            children: <Widget>[
+              ProductSlider(
+                images: product.images,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: <Widget>[
+                    ProductPrice(
+                      currentPrice: product.currentPrice,
+                      discountPrice: product.discountPrice,
+                    ),
+                    ProductTitle(
+                      name: product.name,
+                      brand: product.brand.name,
+                    ),
+                    ProductSeller(
+                      seller: product.seller,
+                    ),
+                    ProductDescription(
+                      description: product.description,
+                      properties: product.properties,
+                      article: product.article,
+                    ),
+                    ProductQuestions(),
+                    ProductDelivery(),
+                    ProductPayment(),
+                    ProductAdditional(
+                      product: product,
+                      onSubCategoryClick: widget.onSubCategoryClick,
+                    ),
+                    RelatedProducts(),
+                    Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "ВАМ МОЖЕТ ПОНРАВИТЬСЯ",
+                            style: Theme.of(context).textTheme.headline2,
+                          ),
+                        ),
+                        ChangeNotifierProvider<ProductRecommendedRepository>(
+                          create: (_) => ProductRecommendedRepository()
+                            ..getProductRecommended(product.id),
+                          child: RecommendedProducts(
+                            onProductPush: widget.onProductPush,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      default:
+        return Center(
+          child: Text(
+            "Иной статус",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              updateTopBar(status),
+              Expanded(
+                child: updateContent(status),
+              ),
+            ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 99,
+            child: ProductBottomButtons(
+              productId: widget.product.id,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 //              Positioned(
 //                left: 0,
 //                top: 0,
