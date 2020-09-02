@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-enum ButtonDecorationType { black, accent, outlined, red }
+enum ButtonDecorationType { black, gray, accent, outlined, red }
 
 class ButtonContainerData {
   final ButtonDecorationType decorationType;
@@ -33,6 +33,12 @@ class ButtonContainer extends StatelessWidget {
       case ButtonDecorationType.black:
         return ShapeDecoration(
           color: primaryColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(newData.cornerRadius)),
+        );
+      case ButtonDecorationType.gray:
+        return ShapeDecoration(
+          color: Color(0xFFBFBFBF),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(newData.cornerRadius)),
         );
