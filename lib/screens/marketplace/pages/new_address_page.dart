@@ -92,7 +92,7 @@ class NewAddressPage extends StatelessWidget {
               onSelect: (address) {
                 mapDataController.pickPoint = PickPoint(
                     address: address.address,
-                    originalAddress: address.address,
+                    originalAddress: address.originalAddress,
                     latitude: address.coordinates.latitude,
                     longitude: address.coordinates.longitude,
                     city: address.city);
