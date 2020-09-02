@@ -15,7 +15,8 @@ class FavouritesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FavouritesProductsRepository favouritesProductsRepository = context.watch<FavouritesProductsRepository>();
+    final FavouritesProductsRepository favouritesProductsRepository =
+        context.watch<FavouritesProductsRepository>();
     if (favouritesProductsRepository.isLoading)
       return Center(
         child: Text("Загрузка", style: Theme.of(context).textTheme.bodyText1),
@@ -31,29 +32,35 @@ class FavouritesPage extends StatelessWidget {
         child: Text("Статус", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    var favouriteProducts = favouritesProductsRepository.response.content.products;
+    var favouriteProducts =
+        favouritesProductsRepository.response.content.products;
 
     return CupertinoPageScaffold(
-        child: Container(
-            child: Column(children: [
-      RefashionedTopBar(
-        data: TopBarData.simple(
-          onBack: () => Navigator.of(context).pop(),
-          middleText: "ИЗБРАННОЕ",
+      backgroundColor: Colors.white,
+      child: Container(
+        child: Column(
+          children: [
+            RefashionedTopBar(
+              data: TopBarData.simple(
+                onBack: () => Navigator.of(context).pop(),
+                middleText: "ИЗБРАННОЕ",
+              ),
+            ),
+            Expanded(
+              child: StaggeredGridView.countBuilder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 89),
+                crossAxisCount: 2,
+                itemCount: favouriteProducts.length,
+                itemBuilder: (BuildContext context, int index) => ProductsItem(
+                    product: favouriteProducts[index], onPush: onPush),
+                staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
+                mainAxisSpacing: 16.0,
+              ),
+            ),
+          ],
         ),
       ),
-      Expanded(
-        child: StaggeredGridView.countBuilder(
-          shrinkWrap: true,
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 89),
-          crossAxisCount: 2,
-          itemCount: favouriteProducts.length,
-          itemBuilder: (BuildContext context, int index) =>
-              ProductsItem(product: favouriteProducts[index], onPush: onPush),
-          staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
-          mainAxisSpacing: 16.0,
-        ),
-      )
-    ])));
+    );
   }
 }
