@@ -1,6 +1,5 @@
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/favourite.dart';
-import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
 
 import '../services/api_service.dart';

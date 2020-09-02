@@ -1,17 +1,13 @@
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/search_result.dart';
+import 'package:refashioned_app/repositories/SearchGeneralRepository.dart';
 
 import '../services/api_service.dart';
-import 'base.dart';
 
-class SearchRepository extends BaseRepository {
-  String _query;
-
-  String get query => _query;
-
-  Future<void> search(String query) => apiCall(() async {
-        _query = query;
+class SearchRepository extends SearchGeneralRepository<SearchResultContent> {
+  Future<void> search(String query) => callSearchApi(query, () async {
         response = BaseResponse.fromJson(
             (await ApiService.search(query)).data, (contentJson) => SearchResultContent.fromJson(contentJson));
+        if (response.content.results.isEmpty) searchStatus = SearchStatus.EMPTY_DATA;
       });
 }
