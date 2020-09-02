@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/pick_point.dart';
+import 'package:refashioned_app/repositories/addresses.dart';
 import 'package:refashioned_app/repositories/pick_point.dart';
 import 'package:refashioned_app/screens/maps/components/buttons/geolocation_button.dart';
 import 'package:refashioned_app/screens/maps/components/buttons/search_button.dart';
@@ -43,6 +44,8 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   PickPointRepository pickPointRepository;
   PickPoint _selectedPickPoint;
 
+  AddressRepository _addressRepository;
+
   void _centerMarkerAnimationListener(AnimationStatus status) {
     if (status == AnimationStatus.completed) {
       startCenterMarkerAnimation();
@@ -68,11 +71,11 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
             if (widget.mapDataController.centerMarkerEnable) {
               point.then((point) {
                 _selectedPickPoint = PickPoint(latitude: point.latitude, longitude: point.longitude);
+                _addressRepository.findAddressByCoordinates(point);
               });
-              finishCenterMarkerAnimation();
-              changeBottomSheetStateWithCenterMarker();
+            } else {
+              showBottomSheetWithHeight();
             }
-            showBottomSheetWithHeight();
             break;
         }
       },
@@ -84,6 +87,13 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
       pickPointRepository.addListener(() {
         _mapPage.addMarkers(
             pickPointRepository.response.content.where((element) => element.address.contains("Москва")).toList());
+      });
+    }
+
+    if (widget.mapDataController.centerMarkerEnable) {
+      _addressRepository = AddressRepository();
+      _addressRepository.addListener(() {
+        changeBottomSheetStateWithCenterMarker();
       });
     }
 
@@ -119,15 +129,17 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
     //delay to await bottom sheet animation
     Future.delayed(Duration(milliseconds: 100), () {
       if (_selectedPickPoint != null) {
-        bool addressFound = true;
-        if (addressFound) {
-          _selectedPickPoint.address = "Москва, ул. Ленина, д.20";
+        if (!_addressRepository.loadingFailed) {
+          _selectedPickPoint.address = _addressRepository.response.content.address;
+          _selectedPickPoint.originalAddress = _addressRepository.response.content.originalAddress;
+          _selectedPickPoint.city = _addressRepository.response.content.city;
           widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.ADDRESS;
           widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
         } else {
           widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.NOT_FOUND;
         }
       }
+      finishCenterMarkerAnimation();
       showBottomSheetWithHeight();
     });
   }

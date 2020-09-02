@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
 import 'package:refashioned_app/services/api/dio_client.dart';
 import 'package:refashioned_app/utils/url.dart';
+import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
@@ -96,7 +95,7 @@ class ApiService {
 
   static Future<Response> findAddressByCoordinates(Point coordinates) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    final queryParameters = {'lat': coordinates.x, 'lon': coordinates.y};
+    final queryParameters = {'lat': coordinates.latitude, 'lon': coordinates.longitude};
     return dioClient.get(Url.findAddressByCoordinates,
         queryParameters: queryParameters);
   }

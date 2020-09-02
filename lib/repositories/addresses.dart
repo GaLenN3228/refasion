@@ -1,16 +1,15 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/repositories/SearchGeneralRepository.dart';
+import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../services/api_service.dart';
 import 'base.dart';
 
 class AddressRepository extends BaseRepository<Address> {
   Future<void> findAddressByCoordinates(Point newCoordinates) => apiCall(
         () async {
-          if (newCoordinates?.x == null || newCoordinates?.y == null)
-            abortLoading(message: "No coordinates");
+          if (newCoordinates?.latitude == null || newCoordinates?.longitude == null) abortLoading(message: "No coordinates");
 
           response = BaseResponse.fromJson(
               (await ApiService.findAddressByCoordinates(newCoordinates)).data,
