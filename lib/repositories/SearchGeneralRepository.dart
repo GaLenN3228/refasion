@@ -6,9 +6,9 @@ enum SearchStatus { QUERY, EMPTY_QUERY, EMPTY_DATA }
 
 class SearchGeneralRepository<T> extends BaseRepository<T> {
   String query = "";
-  String previousQuery = "";
+  String previousQuery;
 
-  SearchStatus searchStatus = SearchStatus.QUERY;
+  SearchStatus searchStatus = SearchStatus.EMPTY_QUERY;
 
   Future<void> callSearchApi(String query, Future<void> execute()) async {
     this.query = query;
@@ -23,10 +23,13 @@ class SearchGeneralRepository<T> extends BaseRepository<T> {
         await execute();
       });
 
-      if (getStatusCode == HttpStatus.badRequest) {
+      if (getStatusCode == HttpStatus.badRequest)
         searchStatus = SearchStatus.EMPTY_DATA;
-        notifyListeners();
-      }
+      else
+        searchStatus = SearchStatus.QUERY;
+
+      notifyListeners();
+
       previousQuery = query;
     }
   }
