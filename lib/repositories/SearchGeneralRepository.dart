@@ -15,6 +15,7 @@ class SearchGeneralRepository<T> extends BaseRepository<T> {
     if (variousQueries()) {
       if (query == null || query.isEmpty) {
         searchStatus = SearchStatus.EMPTY_QUERY;
+        notifyListeners();
         return;
       }
 
@@ -24,6 +25,7 @@ class SearchGeneralRepository<T> extends BaseRepository<T> {
 
       if (getStatusCode == HttpStatus.badRequest) {
         searchStatus = SearchStatus.EMPTY_DATA;
+        notifyListeners();
       }
       previousQuery = query;
     }
