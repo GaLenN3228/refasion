@@ -46,7 +46,10 @@ class _TabSwitcherState extends State<TabSwitcher> {
         child: ChangeNotifierProvider<CartCountRepository>(
             create: (_) => CartCountRepository(),
             child: Stack(children: <Widget>[
-              TabView(BottomTab.home, currentTab),
+              TabView(
+                  BottomTab.home,
+                  currentTab
+              ),
               TabView(
                 BottomTab.catalog,
                 currentTab,
