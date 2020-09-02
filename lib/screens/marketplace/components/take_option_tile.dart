@@ -50,87 +50,88 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                child: SVGIcon(
-                  icon: icon,
-                  size: 24,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        widget.valueNotifier.value = !widget.valueNotifier.value;
+        widget.onUpdate();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                  child: SVGIcon(
+                    icon: icon,
+                    size: 24,
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                    widget.option == TakeOption.office
-                        ? GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap:
-                                widget.action != null ? widget.action : () {},
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Показать на карте",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .copyWith(
-                                            decoration:
-                                                TextDecoration.underline),
-                                  ),
-                                  RotatedBox(
-                                    quarterTurns: 2,
-                                    child: SVGIcon(
-                                      icon: IconAsset.back,
-                                      size: 14,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        subtitle,
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      widget.option == TakeOption.office
+                          ? GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap:
+                                  widget.action != null ? widget.action : () {},
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Показать на карте",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1
+                                          .copyWith(
+                                              decoration:
+                                                  TextDecoration.underline),
                                     ),
-                                  ),
-                                ],
+                                    RotatedBox(
+                                      quarterTurns: 2,
+                                      child: SVGIcon(
+                                        icon: IconAsset.back,
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        : SizedBox(),
-                  ],
+                            )
+                          : SizedBox(),
+                    ],
+                  ),
                 ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  widget.valueNotifier.value = !widget.valueNotifier.value;
-                  widget.onUpdate();
-                },
-                child: Padding(
+                Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: RefashionedCheckbox(
                     valueNotifier: widget.valueNotifier,
                   ),
-                ),
-              )
-            ],
-          ),
-        ],
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
