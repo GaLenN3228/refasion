@@ -2,12 +2,12 @@ import 'package:refashioned_app/models/cities.dart';
 
 class PickPoint {
   String address;
-  final String originalAddress;
+  String originalAddress;
   final double latitude;
   final double longitude;
   final String type;
   final String workSchedule;
-  final City city;
+  City city;
 
   PickPoint({this.address, this.originalAddress, this.latitude, this.longitude, this.type, this.workSchedule, this.city});
 
