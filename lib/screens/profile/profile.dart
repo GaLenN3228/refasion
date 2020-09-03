@@ -6,6 +6,7 @@ import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:refashioned_app/screens/profile/loginned_profile.dart';
+import 'package:refashioned_app/screens/profile/settings.dart';
 import 'package:refashioned_app/utils/colors.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -93,6 +94,7 @@ class ProfilePage extends StatelessWidget {
                 icon: '',
                 title: 'Настройки',
                 city: '',
+                route: SettingPage(),
               ),
               ProfileItem(
                 icon: '',

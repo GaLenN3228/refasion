@@ -4,13 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:refashioned_app/screens/profile/settings.dart';
 
 
 
 class AuthorizedProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
     return CupertinoPageScaffold(
       child: Column(
         children: [
@@ -141,7 +141,11 @@ class AuthorizedProfilePage extends StatelessWidget {
                 ),
                 Tapable(
                   padding: EdgeInsets.all(10),
-                  onTap: (){},
+                  onTap: (){
+                    Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => SettingForAuthUser(),
+                    ));
+                  },
                   child: Column(
                     children: [
                       SvgPicture.asset(
