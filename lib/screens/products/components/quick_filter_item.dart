@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/quick_filter.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/products/pages/category_filter_panel.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -12,7 +12,7 @@ class QuickFilterItem extends StatelessWidget {
   final double horizontalCornerRadius;
   final double horizontalBorderWidth;
   final QuickFilter filterValue;
-  final Function(String) onSelect;
+  final Function(String, List<int>) onSelect;
   final bool isNavigationButton;
   final Function() updateProducts;
   final Category topCategory;
@@ -34,7 +34,9 @@ class QuickFilterItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () => onSelect(filterValue.urlParams),
+        onTap: () => filterValue.values.id != null
+            ? onSelect(filterValue.values.id, null)
+            : onSelect(null, filterValue.values.price),
         child: isNavigationButton
             ? GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -43,8 +45,8 @@ class QuickFilterItem extends StatelessWidget {
                     expand: true,
                     context: context,
                     useRootNavigator: true,
-                    builder: (context, controller) => CategoryFilterPanel(
-                        topCategory: topCategory, updateProducts: updateProducts)),
+                    builder: (context, controller) =>
+                        CategoryFilterPanel(topCategory: topCategory, updateProducts: updateProducts)),
                 child: Container(
                   height: horizontalHeight,
                   width: horizontalWidth,
@@ -55,12 +57,10 @@ class QuickFilterItem extends StatelessWidget {
                           borderRadius: BorderRadius.circular(horizontalCornerRadius))),
                   child: Center(
                       child: Padding(
-                    padding: const EdgeInsets.only(left: 7, right: 7),
-                    child: SvgPicture.asset(
-                      'assets/navigation.svg',
-                      color: Colors.black,
-                      width: 44,
-                      height: 44,
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    child: SVGIcon(
+                      icon: IconAsset.categories,
+                      size: 22,
                     ),
                   )),
                 ))

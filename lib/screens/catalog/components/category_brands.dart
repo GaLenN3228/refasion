@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_image.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class CategoryBrands extends StatelessWidget {
   @override
@@ -8,25 +10,24 @@ class CategoryBrands extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Stack(
         children: [
-          SvgPicture.asset(
-            'assets/catalog_brands_background.svg',
+          SVGImage(
+            image: ImageAsset.catalogBrandsBackground,
             height: 36,
-            color: Color(0xFFFAD24E),
+            color: accentColor,
           ),
           Positioned(
-            left: 20,
+            left: 15,
             top: 0,
             bottom: 0,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SvgPicture.asset(
-                  'assets/small_star.svg',
-                  width: 14,
-                  color: Colors.black,
+                SVGIcon(
+                  icon: IconAsset.star,
+                  size: 24,
                 ),
                 SizedBox(
-                  width: 8,
+                  width: 4,
                 ),
                 Text(
                   "По брендам",

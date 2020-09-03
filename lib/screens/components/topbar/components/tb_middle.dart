@@ -1,36 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
+import 'package:refashioned_app/screens/components/scaffold/components/action.dart';
+import 'package:refashioned_app/screens/components/scaffold/components/actions_provider.dart';
+import 'package:refashioned_app/screens/components/topbar/components/search/tb_search.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-enum TBMiddleType { title, condensed, search, none }
-
 class TBMiddle extends StatefulWidget {
-  final TBMiddleType type;
-  final String titleText;
+  final TBMiddleData data;
+  final TBSearchData searchData;
+  final ScaffoldScrollActionsProvider scrollActionsProvider;
 
-  final String subtitleText;
+  final bool showCancelSearchButton;
 
-  final String searchHintText;
-  final Function(String) onSearchUpdate;
-  final Function() onSearchFocus;
-  final Function() onSearchUnfocus;
-
-  final TBSearchController searchController;
-
-  final ValueNotifier<bool> isElevated;
-  final ValueNotifier<bool> isScrolledPastOffset;
-
-  const TBMiddle(this.type,
-      {this.titleText,
-      this.searchHintText,
-      this.onSearchUpdate,
-      this.onSearchFocus,
-      this.onSearchUnfocus,
-      this.searchController,
-      this.subtitleText,
-      this.isElevated,
-      this.isScrolledPastOffset})
-      : assert(type != null);
+  const TBMiddle(
+      {Key key,
+      this.data,
+      this.scrollActionsProvider,
+      this.searchData,
+      this.showCancelSearchButton})
+      : super(key: key);
 
   @override
   _TBMiddleState createState() => _TBMiddleState();
@@ -38,63 +27,30 @@ class TBMiddle extends StatefulWidget {
 
 class _TBMiddleState extends State<TBMiddle>
     with SingleTickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> opacityAnimation;
-
-  @override
-  void initState() {
-    animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 200));
-
-    opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(animationController);
-
-    widget.isScrolledPastOffset?.addListener(elevationListener);
-
-    super.initState();
-  }
-
-  elevationListener() {
-    if (widget.isScrolledPastOffset.value)
-      animationController.forward();
-    else
-      animationController.reverse();
-  }
-
-  @override
-  void dispose() {
-    widget.isScrolledPastOffset?.removeListener(elevationListener);
-
-    animationController.dispose();
-
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    switch (widget.type) {
-      case TBMiddleType.title:
-        if (widget.titleText == null || widget.titleText.isEmpty)
-          return SizedBox();
+    if (widget.data == null && widget.searchData == null) return SizedBox();
 
-        return Text(
-          widget.titleText.toUpperCase(),
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headline1,
-        );
+    if (widget.data?.titleText != null && widget.data.titleText.isNotEmpty) {
+      if (widget.data?.subtitleText != null &&
+          widget.data.subtitleText.isNotEmpty) {
+        final animationController = widget.scrollActionsProvider
+            ?.getAction(ScrollActionType.fadeTopBarMiddle)
+            ?.animationController;
 
-      case TBMiddleType.condensed:
-        if ((widget.titleText == null || widget.titleText.isEmpty) &&
-            (widget.subtitleText == null || widget.subtitleText.isEmpty) &&
-            widget.isElevated != null) return SizedBox();
+        if (animationController == null) return SizedBox();
+
+        final animation =
+            Tween<double>(begin: 0, end: 1).animate(animationController);
 
         return FadeTransition(
-          opacity: opacityAnimation,
+          opacity: animation,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                widget.titleText,
+                widget.data.titleText,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -104,7 +60,7 @@ class _TBMiddleState extends State<TBMiddle>
                 overflow: TextOverflow.fade,
               ),
               Text(
-                widget.subtitleText,
+                widget.data.subtitleText,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -116,18 +72,20 @@ class _TBMiddleState extends State<TBMiddle>
             ],
           ),
         );
-
-      case TBMiddleType.search:
-        return TBSearch(
-          hintText: widget.searchHintText,
-          onSearchUpdate: widget.onSearchUpdate,
-          onFocus: widget.onSearchFocus,
-          onUnfocus: widget.onSearchUnfocus,
-          searchController: widget.searchController,
-          isScrolled: widget.isElevated,
+      } else
+        return Text(
+          widget.data.titleText.toUpperCase(),
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline1,
         );
-
-      default:
+    } else {
+      if (widget.searchData != null)
+        return TBSearch(
+          data: widget.searchData,
+          scrollActionsProvider: widget.scrollActionsProvider,
+          showCancelButton: widget.showCancelSearchButton,
+        );
+      else
         return SizedBox();
     }
   }

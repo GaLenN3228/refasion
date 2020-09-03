@@ -25,12 +25,12 @@ class ProductsPageContent extends StatelessWidget {
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    if (productsRepository.productsResponse.status.code != 200)
+    if (productsRepository.getStatusCode != 200)
       return Center(
         child: Text("Статус", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    final ProductsContent productsContent = productsRepository.productsResponse.productsContent;
+    final ProductsContent productsContent = productsRepository.response.content;
 
     return StaggeredGridView.countBuilder(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 89),

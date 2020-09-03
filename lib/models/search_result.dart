@@ -1,17 +1,5 @@
 import 'package:refashioned_app/models/status.dart';
 
-class SearchResultResponse {
-  final Status status;
-  final SearchResultContent content;
-
-  const SearchResultResponse({this.status, this.content});
-
-  factory SearchResultResponse.fromJson(Map<String, dynamic> json) {
-    return SearchResultResponse(
-        status: Status.fromJson(json['status']), content: SearchResultContent.fromJson(json['content']));
-  }
-}
-
 class SearchResultContent {
   final List<SearchResult> results;
 

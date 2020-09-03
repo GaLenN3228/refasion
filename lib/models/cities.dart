@@ -1,20 +1,7 @@
+import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/status.dart';
-import 'package:rxdart/subjects.dart';
-
-class CitiesResponse {
-  final Status status;
-  final CitiesProvider content;
-
-  const CitiesResponse({this.status, this.content});
-
-  factory CitiesResponse.fromJson(Map<String, dynamic> json) => CitiesResponse(
-        status: Status.fromJson(json['status']),
-        content: CitiesProvider.fromJson(json['content']),
-      );
-}
 
 class GeolocationResponse {
   final Status status;
@@ -53,12 +40,13 @@ class CitySelectResponse {
 class CitiesProvider {
   final _allCities = List<City>();
 
-  final cities = BehaviorSubject<List<City>>();
+  final _citiesController = StreamController<List<City>>();
+
+  Stream<List<City>> cities;
 
   City _selectedCity;
   City get selectedCity => _selectedCity;
 
-  int _allPinnedCount = 0;
   int _pinnedCount = 0;
   int get pinnedCount => _pinnedCount;
 
@@ -74,6 +62,8 @@ class CitiesProvider {
     _allCities.addAll([for (final city in json['other']) City.fromJson(city)]);
 
     // select(_allCities.first);
+
+    cities = _citiesController.stream;
 
     reset();
   }
@@ -105,7 +95,7 @@ class CitiesProvider {
 
       updatePinnedCount(newList);
 
-      cities.add(newList);
+      _citiesController.add(newList);
     } else
       reset();
   }
@@ -113,7 +103,7 @@ class CitiesProvider {
   reset() {
     _pinnedCount = _pinnedIDs.length;
 
-    cities.add(_allCities);
+    _citiesController.add(_allCities);
   }
 
   select(City newCity) {
@@ -168,10 +158,10 @@ class CitiesProvider {
 
         updatePinnedCount(_allCities);
 
-        cities.add(_allCities);
+        _citiesController.add(_allCities);
       }
 
-      // if (!locatedCity.selected.value) select(locatedCity);
+      if (!locatedCity.selected.value) select(locatedCity);
     } else
       print("City " + newCity.toString() + " not found");
   }

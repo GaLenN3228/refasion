@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/filter.dart';
-import 'package:refashioned_app/repositories/product_count.dart';
+import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import 'package:refashioned_app/screens/catalog/components/category_divider.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filter_tile.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_title.dart';
 
@@ -54,8 +54,8 @@ class _FiltersPanelState extends State<FiltersPanel> {
       countParameters = getParameters(widget.filters);
     });
 
-    Provider.of<ProductCountRepository>(context, listen: false)
-        .update(newParameters: countParameters);
+    Provider.of<ProductsCountRepository>(context, listen: false)
+        .getProductsCount(countParameters);
   }
 
   resetFilters(BuildContext context) async {
@@ -65,15 +65,15 @@ class _FiltersPanelState extends State<FiltersPanel> {
       countParameters = widget.root;
     });
 
-    Provider.of<ProductCountRepository>(context, listen: false)
-        .update(newParameters: countParameters);
+    Provider.of<ProductsCountRepository>(context, listen: false)
+        .getProductsCount(countParameters);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProductCountRepository>(
+    return ChangeNotifierProvider<ProductsCountRepository>(
       create: (_) {
-        return ProductCountRepository(parameters: countParameters);
+        return ProductsCountRepository()..getProductsCount(countParameters);
       },
       builder: (context, _) {
         return Stack(
@@ -102,7 +102,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
                               (entry) => Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (entry.key != 0) CategoryDivider(),
+                                  if (entry.key != 0) ItemsDivider(),
                                   FilterTile(
                                       filter: entry.value,
                                       onUpdate: () => updateCount(context)),
@@ -119,11 +119,11 @@ class _FiltersPanelState extends State<FiltersPanel> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: 0,
+              bottom: 64,
               child: Builder(
                 builder: (context) {
                   final productCountRepository =
-                      context.watch<ProductCountRepository>();
+                      context.watch<ProductsCountRepository>();
 
                   String title = "";
                   String subtitle = "";
@@ -137,7 +137,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
                   } else {
                     title = "ПОКАЗАТЬ";
                     subtitle = productCountRepository
-                        .productsCountResponse.productsCount.text;
+                        .response.content.getCountText;
                   }
                   return BottomButton(
                     action: () {

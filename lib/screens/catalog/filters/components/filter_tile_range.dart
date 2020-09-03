@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
-import 'package:refashioned_app/utils/colors.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class FilterTileRange extends StatefulWidget {
   final Filter filter;
@@ -40,14 +39,12 @@ class _FilterTileRangeState extends State<FilterTileRange> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SvgPicture.asset(
-                            'assets/info.svg',
-                            width: 15,
-                            height: 15,
-                            color: primaryColor,
+                          SVGIcon(
+                            icon: IconAsset.info,
+                            size: 26,
                           ),
                           SizedBox(
-                            width: 7,
+                            width: 4,
                           ),
                           Text(
                             "Таблица размеров",

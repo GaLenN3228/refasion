@@ -1,19 +1,5 @@
 import 'package:refashioned_app/models/status.dart';
 
-class SortMethodsResponse {
-  final Status status;
-  final Sort content;
-
-  const SortMethodsResponse({this.status, this.content});
-
-  factory SortMethodsResponse.fromJson(Map<String, dynamic> json) {
-    return SortMethodsResponse(
-      status: Status.fromJson(json['status']),
-      content: Sort.fromJson(json['content'] ?? []),
-    );
-  }
-}
-
 class Sort {
   final List<SortMethod> methods;
 
@@ -32,7 +18,6 @@ class Sort {
 
     final methods = [
       for (final sortMethod in json) SortMethod.fromJson(sortMethod)
-      //TODO: set newDefaultIndex here
     ];
 
     methods.elementAt(newDefaultIndex).selected = true;

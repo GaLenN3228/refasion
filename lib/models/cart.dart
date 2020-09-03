@@ -1,16 +1,4 @@
 import 'package:refashioned_app/models/cart_item.dart';
-import 'package:refashioned_app/models/status.dart';
-
-class CartResponse {
-  final Status status;
-  final Cart cart;
-
-  const CartResponse({this.status, this.cart});
-
-  factory CartResponse.fromJson(Map<String, dynamic> json) {
-    return CartResponse(status: Status.fromJson(json['status']), cart: Cart.fromJson(json['content']));
-  }
-}
 
 class Cart {
   final int productsCount;

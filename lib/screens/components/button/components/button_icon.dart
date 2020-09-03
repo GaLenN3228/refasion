@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 enum ButtonIconAlign { left, right }
@@ -8,46 +8,57 @@ enum ButtonIconType { none, arrow_right_long }
 
 enum ButtonIconColor { white, accent, black, darkGray }
 
-class ButtonIcon extends StatelessWidget {
+class ButtonIconData {
   final ButtonIconType icon;
-  final ButtonIconAlign align;
   final ButtonIconColor color;
 
-  ButtonIcon({this.icon, this.align, this.color})
-      : assert((icon != null && align != null && color != null) ||
-            icon == ButtonIconType.none);
+  ButtonIconData({this.icon: ButtonIconType.none, this.color})
+      : assert((icon != null && color != null) || icon == ButtonIconType.none);
+}
+
+class ButtonIcon extends StatelessWidget {
+  final ButtonIconData currentData;
+  final ButtonIconData nextData;
+
+  final ButtonIconAlign align;
+
+  final Animation<double> animation;
+
+  const ButtonIcon(
+      {this.currentData, this.nextData, this.animation, this.align})
+      : assert(currentData != null && align != null);
 
   @override
   Widget build(BuildContext context) {
-    if (icon == ButtonIconType.none) return SizedBox();
+    if (currentData.icon == ButtonIconType.none) return SizedBox();
 
     EdgeInsets padding;
     Alignment alignment;
 
     switch (align) {
       case ButtonIconAlign.left:
-        padding = const EdgeInsets.only(right: 10);
+        padding = const EdgeInsets.only(right: 6);
         alignment = Alignment.centerLeft;
         break;
       case ButtonIconAlign.right:
-        padding = const EdgeInsets.only(left: 10);
+        padding = const EdgeInsets.only(left: 6);
         alignment = Alignment.centerRight;
         break;
     }
 
-    String asset;
+    IconAsset asset;
 
-    switch (icon) {
+    switch (currentData.icon) {
       case ButtonIconType.arrow_right_long:
-        asset = "assets/button/svg/long_arrow_right_21dp.svg";
+        asset = IconAsset.forwardLong;
         break;
       default:
-        asset = "";
+        break;
     }
 
     Color iconColor;
 
-    switch (color) {
+    switch (currentData.color) {
       case ButtonIconColor.white:
         iconColor = Colors.white;
         break;
@@ -68,11 +79,10 @@ class ButtonIcon extends StatelessWidget {
     return Container(
       alignment: alignment,
       padding: padding,
-      child: SvgPicture.asset(
-        asset,
+      child: SVGIcon(
+        icon: asset,
+        size: 25,
         color: iconColor,
-        width: 21,
-        height: 11,
       ),
     );
   }

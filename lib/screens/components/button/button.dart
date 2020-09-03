@@ -4,32 +4,26 @@ import 'package:refashioned_app/screens/components/button/components/button_icon
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
 
 class ButtonData {
-  final String titleText;
-  final ButtonTitleColor titleColor;
+  final ButtonContainerData buttonContainerData;
 
-  final ButtonIconType leftIcon;
-  final ButtonIconColor leftIconColor;
+  final ButtonIconData leftIconData;
 
-  final ButtonIconType rightIcon;
-  final ButtonIconColor rightIconColor;
+  final ButtonIconData rightIconData;
 
-  final ButtonDecorationType decorationType;
+  final ButtonTitleData titleData;
 
   ButtonData(
-      {this.titleText,
-      this.titleColor,
-      this.leftIcon: ButtonIconType.none,
-      this.leftIconColor,
-      this.rightIcon: ButtonIconType.none,
-      this.rightIconColor,
-      this.decorationType})
-      : assert(decorationType != null &&
-            titleText != null &&
-            leftIcon != null &&
-            rightIcon != null);
+      {this.leftIconData,
+      this.rightIconData,
+      this.titleData,
+      this.buttonContainerData})
+      : assert(buttonContainerData != null &&
+            (titleData != null ||
+                leftIconData != null ||
+                rightIconData != null));
 }
 
-enum ButtonState { enabled, loading, done, error }
+enum ButtonState { enabled, loading, done, error, disabled }
 
 class RefashionedButton extends StatefulWidget {
   final ButtonData data;
@@ -39,49 +33,67 @@ class RefashionedButton extends StatefulWidget {
 
   final Function() onTap;
 
+  final bool animateContent;
+
   const RefashionedButton({
     this.states,
     this.data,
     this.statesData,
     this.onTap,
+    this.animateContent: true,
   }) : assert(data != null || (statesData != null && states != null));
 
   @override
   _RefashionedButtonState createState() => _RefashionedButtonState();
 }
 
-class _RefashionedButtonState extends State<RefashionedButton> {
-  ButtonData data;
+class _RefashionedButtonState extends State<RefashionedButton>
+    with SingleTickerProviderStateMixin {
+  AnimationController animationController;
+  Animation<double> animation;
+  Animation<double> animationIn;
+  Animation<double> animationOut;
 
-  ValueNotifier<ButtonContainerData> statesContainerData;
+  ButtonData currentData;
+  ButtonData nextData;
 
   @override
   initState() {
-    data = widget.states != null && widget.statesData != null
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+    animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
+    animationOut = CurvedAnimation(
+      parent: animation,
+      curve: Interval(0.0, 0.5, curve: Curves.easeIn),
+    );
+    animationIn = CurvedAnimation(
+      parent: animation,
+      curve: Interval(0.5, 1.0, curve: Curves.easeOut),
+    );
+
+    nextData = currentData = widget.states != null && widget.statesData != null
         ? widget.statesData[widget.states.value]
         : widget.data;
 
     widget.states?.addListener(buttonStateListener);
-
-    statesContainerData =
-        ValueNotifier(ButtonContainerData(decorationType: data.decorationType));
 
     super.initState();
   }
 
   buttonStateListener() {
     setState(
-        () => data = widget.statesData[widget.states.value] ?? widget.data);
+        () => nextData = widget.statesData[widget.states.value] ?? widget.data);
 
-    statesContainerData.value =
-        ButtonContainerData(decorationType: data.decorationType);
+    animationController
+        .forward(from: 0.0)
+        .then((_) => setState(() => currentData = nextData));
   }
 
   @override
   dispose() {
     widget.states?.removeListener(buttonStateListener);
 
-    statesContainerData.dispose();
+    animationController.dispose();
 
     super.dispose();
   }
@@ -92,27 +104,119 @@ class _RefashionedButtonState extends State<RefashionedButton> {
       behavior: HitTestBehavior.translucent,
       onTap: widget.onTap ?? () {},
       child: ButtonContainer(
-        statesData: statesContainerData,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            ButtonIcon(
-              icon: data.leftIcon,
-              align: ButtonIconAlign.left,
-              color: data.leftIconColor,
-            ),
-            ButtonTitle(
-              text: data.titleText,
-              type: data.titleColor,
-            ),
-            ButtonIcon(
-              icon: data.rightIcon,
-              align: ButtonIconAlign.right,
-              color: data.rightIconColor,
-            ),
-          ],
-        ),
+        currentData: currentData.buttonContainerData,
+        nextData: nextData.buttonContainerData,
+        animation: animation,
+        child: widget.animateContent
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  FadeTransition(
+                    opacity: Tween(begin: 1.0, end: 0.0).animate(animationOut),
+                    child: SlideTransition(
+                      position: Tween(begin: Offset.zero, end: Offset(-1, 0))
+                          .animate(animationOut),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          ButtonIcon(
+                            currentData: currentData.leftIconData != null
+                                ? ButtonIconData(
+                                    icon: currentData.leftIconData.icon,
+                                    color: currentData.leftIconData.color,
+                                  )
+                                : ButtonIconData(icon: ButtonIconType.none),
+                            align: ButtonIconAlign.left,
+                          ),
+                          ButtonTitle(
+                            currentData: ButtonTitleData(
+                              text: currentData.titleData.text,
+                              color: currentData.titleData.color,
+                            ),
+                          ),
+                          ButtonIcon(
+                            currentData: currentData.rightIconData != null
+                                ? ButtonIconData(
+                                    icon: currentData.rightIconData.icon,
+                                    color: currentData.rightIconData.color,
+                                  )
+                                : ButtonIconData(icon: ButtonIconType.none),
+                            align: ButtonIconAlign.right,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  FadeTransition(
+                    opacity: Tween(begin: 0.0, end: 1.0).animate(animationIn),
+                    child: SlideTransition(
+                      position: Tween(begin: Offset(1, 0), end: Offset.zero)
+                          .animate(animationIn),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          ButtonIcon(
+                            currentData: nextData.leftIconData != null
+                                ? ButtonIconData(
+                                    icon: nextData.leftIconData.icon,
+                                    color: nextData.leftIconData.color,
+                                  )
+                                : ButtonIconData(icon: ButtonIconType.none),
+                            align: ButtonIconAlign.left,
+                          ),
+                          ButtonTitle(
+                            currentData: ButtonTitleData(
+                              text: nextData.titleData.text,
+                              color: nextData.titleData.color,
+                            ),
+                          ),
+                          ButtonIcon(
+                            currentData: nextData.rightIconData != null
+                                ? ButtonIconData(
+                                    icon: nextData.rightIconData.icon,
+                                    color: nextData.rightIconData.color,
+                                  )
+                                : ButtonIconData(icon: ButtonIconType.none),
+                            align: ButtonIconAlign.right,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  ButtonIcon(
+                    currentData: currentData.leftIconData != null
+                        ? ButtonIconData(
+                            icon: currentData.leftIconData.icon,
+                            color: currentData.leftIconData.color,
+                          )
+                        : ButtonIconData(icon: ButtonIconType.none),
+                    align: ButtonIconAlign.left,
+                  ),
+                  ButtonTitle(
+                    currentData: ButtonTitleData(
+                      text: currentData.titleData.text,
+                      color: currentData.titleData.color,
+                    ),
+                  ),
+                  ButtonIcon(
+                    currentData: currentData.rightIconData != null
+                        ? ButtonIconData(
+                            icon: currentData.rightIconData.icon,
+                            color: currentData.rightIconData.color,
+                          )
+                        : ButtonIconData(icon: ButtonIconType.none),
+                    align: ButtonIconAlign.right,
+                  ),
+                ],
+              ),
       ),
     );
   }

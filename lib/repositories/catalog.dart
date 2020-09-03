@@ -1,30 +1,21 @@
 import 'package:dio/dio.dart';
+import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/products_count.dart';
 
 import '../services/api_service.dart';
 import 'base.dart';
 
-class CatalogRepository extends BaseRepository {
-  CategoryResponse catalogResponse;
-  ProductsCountResponse productsCountResponse;
+class CatalogRepository extends BaseRepository<List<Category>> {
+  Future<void> getCatalog() => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.getCategories()).data,
+            (contentJson) => [for (final category in contentJson) Category.fromJson(category)]);
+      });
+}
 
-  @override
-  Future<void> loadData() async {
-    try {
-      final Response catalogResponse = await ApiService.getCategories();
-      final Response productsCountResponse =
-          await ApiService.getProductsCount();
-
-      this.catalogResponse = CategoryResponse.fromJson(catalogResponse.data);
-      this.productsCountResponse =
-          ProductsCountResponse.fromJson(productsCountResponse.data);
-
-      finishLoading();
-    } catch (err) {
-      print("CatalogRepository error:");
-      print(err);
-      receivedError();
-    }
-  }
+class ProductsCountRepository extends BaseRepository<ProductsCount> {
+  Future<void> getProductsCount(String newParameters) => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.getProductsCount(parameters: newParameters)).data,
+            (contentJson) => ProductsCount.fromJson(contentJson));
+      });
 }

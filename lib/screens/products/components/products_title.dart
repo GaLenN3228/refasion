@@ -18,7 +18,7 @@ class ProductsTitle extends StatelessWidget {
     if (productsRepository.isLoading || productsRepository.loadingFailed)
       return Container();
 
-    final ProductsContent productsContent = productsRepository.productsResponse.productsContent;
+    final ProductsContent productsContent = productsRepository.response.content;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 24, 26, 0),

@@ -1,18 +1,28 @@
 import 'package:refashioned_app/models/status.dart';
 
-class SellPropertiesResponse {
-  final Status status;
-  final List<SellProperty> content;
+class SellPropertyProvider {
+  final List<SellProperty> requiredProperties;
+  final List<SellProperty> otherProperties;
 
-  const SellPropertiesResponse({this.status, this.content});
+  SellPropertyProvider({this.requiredProperties, this.otherProperties})
+      : assert(requiredProperties != null && otherProperties != null);
 
-  factory SellPropertiesResponse.fromJson(Map<String, dynamic> json) {
-    return SellPropertiesResponse(
-        status: Status.fromJson(json['status']),
-        content: [
-          if (json['content'] != null)
-            for (final filter in json['content']) SellProperty.fromJson(filter)
-        ]);
+  factory SellPropertyProvider.fromJson(List<dynamic> json) {
+    final requiredProperties = List<SellProperty>();
+    final otherProperties = List<SellProperty>();
+
+    for (final sellProperty in json) {
+      final property = SellProperty.fromJson(sellProperty);
+
+      if (property.isRequired)
+        requiredProperties.add(property);
+      else
+        otherProperties.add(property);
+    }
+
+    return SellPropertyProvider(
+        requiredProperties: requiredProperties,
+        otherProperties: otherProperties);
   }
 }
 
@@ -20,6 +30,7 @@ class SellProperty {
   final String id;
   final String name;
   final bool multiselection;
+  final bool isRequired;
   final String header;
 
   final List<SellPropertyValue> values;
@@ -28,7 +39,8 @@ class SellProperty {
   bool modified;
 
   SellProperty(
-      {this.previousValues,
+      {this.isRequired: false,
+      this.previousValues,
       this.multiselection: false,
       this.header,
       this.modified: false,
@@ -57,6 +69,7 @@ class SellProperty {
     final name = json['name'];
     final header = json['title'];
     final multiselection = json['allow_many'];
+    final isRequired = json['is_required'];
 
     return SellProperty(
         id: json['id'],
@@ -65,7 +78,10 @@ class SellProperty {
             ? header.toString()
             : name,
         multiselection: multiselection ?? false,
-        values: []);
+        isRequired: isRequired,
+        values: [
+          for (final value in json['values']) SellPropertyValue.fromJson(value)
+        ]);
   }
 
   isModified() {
@@ -113,27 +129,12 @@ class SellProperty {
       name.toString() +
       ", header: " +
       header.toString() +
+      ", required: " +
+      isRequired.toString() +
       ", multiselection: " +
       multiselection.toString() +
       ". Values: " +
       values.join(',');
-}
-
-class SellPropertyValuesResponse {
-  final Status status;
-  final List<SellPropertyValue> content;
-
-  const SellPropertyValuesResponse({this.status, this.content});
-
-  factory SellPropertyValuesResponse.fromJson(Map<String, dynamic> json) {
-    return SellPropertyValuesResponse(
-        status: Status.fromJson(json['status']),
-        content: [
-          if (json['content'] != null)
-            for (final filter in json['content'])
-              SellPropertyValue.fromJson(filter)
-        ]);
-  }
 }
 
 class SellPropertyValue {

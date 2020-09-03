@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CartPromo extends StatelessWidget {
@@ -10,7 +10,7 @@ class CartPromo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top:0),
+          margin: EdgeInsets.only(top: 0),
           color: Color(0xFFF5F5F5),
           height: 35,
           child: Row(
@@ -29,7 +29,7 @@ class CartPromo extends StatelessWidget {
                   child: TextField(
                       decoration: InputDecoration(
                           hintText: 'Промокод',
-                          enabledBorder:InputBorder.none,
+                          enabledBorder: InputBorder.none,
                           hintStyle: Theme.of(context).textTheme.subtitle2)),
                 ),
               ),
@@ -45,13 +45,16 @@ class CartPromo extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 11.0),
           child: Row(
             children: <Widget>[
-              Text("Посмотреть мои промокоды", style: Theme.of(context).textTheme.subtitle1),
+              Text("Посмотреть мои промокоды",
+                  style: Theme.of(context).textTheme.subtitle1),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: SvgPicture.asset(
-                  'assets/arrow_right.svg',
-                  height: 12,
-                  color: primaryColor,
+                child: RotatedBox(
+                  quarterTurns: 2,
+                  child: SVGIcon(
+                    icon: IconAsset.back,
+                    size: 14,
+                  ),
                 ),
               )
             ],

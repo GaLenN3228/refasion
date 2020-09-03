@@ -1,22 +1,8 @@
 import 'package:refashioned_app/models/property.dart';
 import 'package:refashioned_app/models/seller.dart';
-import 'package:refashioned_app/models/status.dart';
 
 import 'brand.dart';
 import 'category.dart';
-
-class ProductResponse {
-  final Status status;
-  final Product product;
-
-  const ProductResponse({this.status, this.product});
-
-  factory ProductResponse.fromJson(Map<String, dynamic> json) {
-    return ProductResponse(
-        status: Status.fromJson(json['status']),
-        product: Product.fromJson(json['content']));
-  }
-}
 
 class Product {
   final String id;
@@ -31,8 +17,9 @@ class Product {
   final String description;
   final List<Property> properties;
   final List<String> images;
+  bool isFavourite = false;
 
-  const Product(
+  Product(
       {this.id,
       this.article,
       this.name,
@@ -54,14 +41,13 @@ class Product {
         currentPrice: json['current_price'],
         discountPrice: json['discount_price'],
         image: json['image'],
-        category: Category.fromJson(json['category']),
-        brand: Brand.fromJson(json['brand']),
+        category: json['category'] != null ? Category.fromJson(json['category']) : null,
+        brand: json['brand'] != null ? Brand.fromJson(json['brand']) : null,
         seller: json['seller'] != null ? Seller.fromJson(json['seller']) : null,
         description: json['description'],
         properties: [
           if (json['properties'] != null)
-            for (final property in json['properties'])
-              Property.fromJson(property)
+            for (final property in json['properties']) Property.fromJson(property)
         ],
         images: [
           if (json['images'] != null)

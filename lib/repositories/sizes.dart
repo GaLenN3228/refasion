@@ -1,41 +1,110 @@
 import 'package:flutter/cupertino.dart';
-import 'package:rxdart/subjects.dart';
-
-enum WidgetKeys {
-  bottomNavigation,
-  topBar,
-  productPageButtons,
-  productPageTitle
-}
 
 class WidgetData {
-  final Size size;
+  final String name;
 
-  final Offset position;
+  final GlobalKey key;
 
-  const WidgetData({this.size: Size.zero, this.position: Offset.zero});
+  final double width;
+  final double height;
+  final double dx;
+  final double dy;
 
-  bool compareTo(WidgetData other) =>
-      size != other.size || position != other.position;
+  const WidgetData(
+      {this.name,
+      this.key,
+      this.width: 0,
+      this.height: 0,
+      this.dx: 0,
+      this.dy: 0})
+      : assert(name != null && key != null);
+
+  factory WidgetData.create(String name) =>
+      WidgetData(name: name, key: GlobalKey());
+
+  bool compareTo(WidgetData other) {
+    final diffWidth = width != other.width;
+    final diffHeight = height != other.height;
+    final diffDX = dx != other.dx;
+    final diffDY = dy != other.dy;
+
+    return diffWidth || diffHeight || diffDX || diffDY;
+  }
 
   @override
-  String toString() => size.toString() + ", " + position.toString();
+  String toString() =>
+      name.toString() +
+      ", " +
+      key.toString() +
+      ":\nw:" +
+      width.toString() +
+      ", h:" +
+      height.toString() +
+      ":\ndx:" +
+      dx.toString() +
+      ", dy:" +
+      dy.toString();
 }
 
-class SizesRepository {
-  final data = BehaviorSubject.seeded(Map<WidgetKeys, WidgetData>());
+class SizesProvider {
+  SizesProvider();
 
-  update(WidgetKeys key, Size size, Offset position) {
-    final newData = WidgetData(size: size, position: position);
+  final list = List<WidgetData>();
 
-    final newMap = data.value
-      ..update(key, (oldData) => newData.compareTo(oldData) ? newData : oldData,
-          ifAbsent: () => newData);
+  add(String name) {
+    final index = list.indexWhere((data) => data.name == name);
 
-    data.add(newMap);
+    if (index < 0)
+      list.add(WidgetData.create(name));
+    else
+      list
+        ..removeAt(index)
+        ..add(WidgetData.create(name));
   }
 
-  close() {
-    data.close();
+  WidgetData getData(String name) =>
+      list.firstWhere((data) => data.name.toLowerCase() == name.toLowerCase(),
+          orElse: () => null);
+
+  bool update(
+      {String name,
+      GlobalKey key,
+      double width,
+      double height,
+      double dx,
+      double dy}) {
+    if (name == null || key == null) {
+      print("name or key wasn't provided");
+
+      return false;
+    }
+
+    final index =
+        list.indexWhere((data) => data.name == name || data.key == key);
+
+    final newData = WidgetData(
+        name: name, key: key, width: width, height: height, dx: dx, dy: dy);
+
+    if (index < 0) {
+      list.add(newData);
+
+      return true;
+    } else {
+      final oldData = list.elementAt(index);
+
+      if (oldData.compareTo(newData)) {
+        list
+          ..removeAt(index)
+          ..add(newData);
+
+        return true;
+      }
+
+      return false;
+    }
   }
+
+  @override
+  String toString() =>
+      "Sizes Provider:\n" + list.map((data) => data.name).toList().join('\n');
 }

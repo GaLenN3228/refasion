@@ -18,6 +18,8 @@ class PriceFormatter extends TextInputFormatter {
 
   String currencyText() => ' ' + currencySymbolsMap[currency];
 
+  String format(String text) => text + currencyText();
+
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {

@@ -1,74 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/components/scaffold/components/actions_provider.dart';
+import 'package:refashioned_app/screens/components/topbar/components/search/tb_search.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_bottom_data.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_header.dart';
-import 'package:refashioned_app/screens/components/topbar/components/tb_search.dart';
-
-enum TBBottomType { search, header, headerAndSearch, none }
+import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 
 class TBBottom extends StatelessWidget {
-  final TBBottomType type;
-  final String headerText;
+  final TBBottomData data;
+  final TBSearchData searchData;
+  final ScaffoldScrollActionsProvider scrollActionsProvider;
 
-  final String searchHintText;
-  final Function(String) onSearchUpdate;
-  final Function() onSearchFocus;
-  final Function() onSearchUnfocus;
-
-  final TBSearchController searchController;
-
-  final ValueNotifier<bool> isElevated;
+  final bool searchInMiddle;
 
   const TBBottom(
-      {this.type,
-      this.headerText,
-      this.onSearchUpdate,
-      this.searchHintText,
-      this.onSearchFocus,
-      this.onSearchUnfocus,
-      this.searchController,
-      this.isElevated})
-      : assert(type != null);
+      {Key key,
+      this.data,
+      this.searchData,
+      this.scrollActionsProvider,
+      this.searchInMiddle})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    switch (type) {
-      case TBBottomType.search:
-        return TBSearch(
-          hintText: searchHintText,
-          onSearchUpdate: onSearchUpdate,
-          onFocus: onSearchFocus,
-          onUnfocus: onSearchUnfocus,
-          searchController: searchController,
-          isScrolled: isElevated,
-        );
+    if (data == null && searchData == null) return SizedBox();
 
-      case TBBottomType.header:
-        if (headerText == null || headerText.isEmpty) return SizedBox();
+    if (!searchInMiddle && searchData != null)
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+        child: TBSearch(
+          data: searchData,
+          scrollActionsProvider: scrollActionsProvider,
+        ),
+      );
 
-        return TBHeader(
-          text: headerText,
-        );
-
-      case TBBottomType.headerAndSearch:
-        if (headerText == null || headerText.isEmpty) return SizedBox();
-
-        return Column(
-          children: [
-            TBHeader(
-              text: headerText,
-            ),
-            TBSearch(
-              hintText: searchHintText,
-              onSearchUpdate: onSearchUpdate,
-              onFocus: onSearchFocus,
-              onUnfocus: onSearchUnfocus,
-              searchController: searchController,
-              isScrolled: isElevated,
-            ),
-          ],
-        );
-
-      default:
-        return SizedBox();
-    }
+    return TBHeader(
+      text: data.headerText,
+    );
   }
 }

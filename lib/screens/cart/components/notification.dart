@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class CartNotification extends StatelessWidget {
   final int sellerCounts;
@@ -7,31 +8,41 @@ class CartNotification extends StatelessWidget {
   const CartNotification(this.sellerCounts);
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-//    return sellerCounts > 1 ? Container(
-    return sellerCounts > 0 ? Container(
-      padding: EdgeInsets.all(16),
-      margin: EdgeInsets.only(top: 16),
-      color: Color.fromRGBO(250, 210, 78, 0.3),
+    if (sellerCounts == 0) return SizedBox();
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(15, 10, 20, 20),
+      decoration: ShapeDecoration(
+        color: accentColor.withOpacity(0.3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+          side: BorderSide(
+            color: accentColor,
+            width: 1,
+          ),
+        ),
+      ),
       child: Column(
         children: <Widget>[
           Row(
             children: <Widget>[
-              Image.asset(
-                'assets/box.png',
-                height: 32,
+              SVGIcon(
+                icon: IconAsset.box,
+                size: 40,
               ),
-              SizedBox(
-                width: 5,
-              ),
-              Text("x $sellerCounts", style: textTheme.headline2)
+              Text("x $sellerCounts",
+                  style: Theme.of(context).textTheme.headline2)
             ],
           ),
-          Text("Заказ приедет в нескольких посылках, "
-              "потому что товары находятся у разных продавцов.",
-          style: textTheme.bodyText1)
+          Padding(
+            padding: const EdgeInsets.only(left: 5),
+            child: Text(
+              "Заказ приедет в нескольких посылках. У каждой посылки свои сроки и стоимость доставки",
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          )
         ],
       ),
-    ) : Container();
+    );
   }
 }

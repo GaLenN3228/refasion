@@ -2,6 +2,12 @@ class Url {
   //Base URLs
   static const refashionedBaseUrl = 'https://api.refashioned.ru/v1';
 
+  //Addresses
+  static const findAddressByCoordinates =
+      '$refashionedBaseUrl/geo/geocode/latlon/';
+  static const findAddressesByQuery =
+      '$refashionedBaseUrl/geo/geocode/suggestions/';
+
   //Categories
   static const categories = '$refashionedBaseUrl/catalog/categories/';
 
@@ -12,7 +18,7 @@ class Url {
   static String productsRecommended(id) => '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';
 
   //SellProperties
-  static const properties = '$refashionedBaseUrl/catalog/properties/';
+  static const properties = '$refashionedBaseUrl/catalog/properties/all/';
 
   //Filters
   static const filters = '$refashionedBaseUrl/catalog/filters/';
@@ -46,4 +52,8 @@ class Url {
   //Authorization
   static const authorization = '$refashionedBaseUrl/users/authorization/';
   static String codeAuthorization(String phone, String hash) => '$authorization' + phone + '_' + hash + '/';
+
+  //Favourites
+  static const wished = '$refashionedBaseUrl/catalog/wished/';
+  static const wishedProducts = '$refashionedBaseUrl/catalog/wished/products';
 }

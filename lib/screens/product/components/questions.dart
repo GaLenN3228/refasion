@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:refashioned_app/screens/components/button.dart';
-import 'package:refashioned_app/utils/colors.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class ProductQuestions extends StatelessWidget {
   @override
@@ -46,10 +45,12 @@ class ProductQuestions extends StatelessWidget {
                 Text("3", style: textTheme.bodyText2),
               ],
             ),
-            trailing: SvgPicture.asset(
-              'assets/arrow_right.svg',
-              height: 12,
-              color: primaryColor,
+            trailing: RotatedBox(
+              quarterTurns: 2,
+              child: SVGIcon(
+                icon: IconAsset.back,
+                size: 14,
+              ),
             ),
           )
         ],
