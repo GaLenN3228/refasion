@@ -19,12 +19,13 @@ class QuickFiltersRepository extends BaseRepository<List<QuickFilter>> {
   }
 
   String getRequestParameters() {
-    String requestParameters;
-    requestParameters =
-        response.content
-            .where((filter) => filter.selected && filter.values.id != null)
-            .map((filter) => filter.values.id)
-            .join('&');
+    String requestParameters = "";
+    if (response.content.any((filter) => filter.selected && filter.values.id != null))
+      requestParameters = "&p=" +
+          response.content
+              .where((filter) => filter.selected && filter.values.id != null)
+              .map((filter) => filter.values.id)
+              .join('&');
     response.content.forEach((filter) {
       if (filter.selected && filter.values.price != null) {
         requestParameters += "&min_price=" + filter.values.price.first.toString();
