@@ -81,7 +81,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               ProfileItem(
-                icon: 'assets/position.svg',
+                icon: 'assets/icons/svg/position.svg',
                 title: 'Мой город',
                 city: 'Москва',
               ),

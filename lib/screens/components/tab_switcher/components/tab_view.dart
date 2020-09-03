@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
-import 'package:refashioned_app/screens/components/bottom_tab_button.dart';
-import 'package:refashioned_app/screens/components/catalog_navigator.dart';
+import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 
 final navigatorKeys = {

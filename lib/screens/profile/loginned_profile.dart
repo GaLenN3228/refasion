@@ -68,7 +68,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                 ),
                 Spacer(),
                 SvgPicture.asset(
-                  'assets/arrow_right.svg',
+                  'assets/icons/svg/arrow_right.svg',
                   height: 20,
                   color: Colors.white,
                 )
@@ -97,7 +97,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                    child: Column(
                       children: [
                         SvgPicture.asset(
-                          'assets/box.svg',
+                          'assets/icons/svg/box.svg',
                           height: 25,
                           color: Colors.black,
                         ),
@@ -113,7 +113,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/favorite.svg',
+                        'assets/icons/svg/favorite.svg',
                         height: 25,
                         color: Colors.black,
                       ),
@@ -129,7 +129,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/bell.svg',
+                        'assets/icons/svg/bell.svg',
                         height: 25,
                         color: Colors.black,
                       ),
@@ -149,7 +149,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/settings.svg',
+                        'assets/icons/svg/settings.svg',
                         height: 25,
                         color: Colors.black,
                       ),

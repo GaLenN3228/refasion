@@ -373,13 +373,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.3.2+1"
-  rxdart:
-    dependency: "direct main"
-    description:
-      name: rxdart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.24.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -420,6 +413,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  solid_bottom_sheet:
+    dependency: "direct main"
+    description:
+      name: solid_bottom_sheet
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.9"
   source_span:
     dependency: transitive
     description:
