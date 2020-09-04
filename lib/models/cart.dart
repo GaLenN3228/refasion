@@ -1,29 +1,32 @@
-import 'package:refashioned_app/models/cart_item.dart';
+import 'package:refashioned_app/screens/cart/cart/data/cart_data.dart';
 
 class Cart {
+  final String text;
   final int productsCount;
-  final String promoCode;
-  final int currentPriceAmount;
-  final int discountPriceAmount;
+  final int totalCurrentPrice;
+  final int totalDiscountPrice;
   final int totalDiscount;
-  final List<CartItem> cartItems;
+  final List<CartGroupData> groups;
 
   Cart(
-      {this.productsCount,
-      this.promoCode,
-      this.currentPriceAmount,
-      this.discountPriceAmount,
+      {this.text,
+      this.productsCount,
+      this.totalCurrentPrice,
+      this.totalDiscountPrice,
       this.totalDiscount,
-      this.cartItems});
+      this.groups});
 
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
+      text: json['text'],
       productsCount: json['products_count'],
-      promoCode: json['promocode'],
-      currentPriceAmount: json['total_current_price'],
-      discountPriceAmount: json['total_discount_price'],
+      totalCurrentPrice: json['total_current_price'],
+      totalDiscountPrice: json['total_discount_price'],
       totalDiscount: json['total_discount'],
-      cartItems: [if (json['items'] != null) for (final cartItem in json['items']) CartItem.fromJson(cartItem)],
+      groups: [
+        if (json['items'] != null)
+          for (final cartItem in json['items']) CartGroupData.fromJson(cartItem)
+      ],
     );
   }
 }

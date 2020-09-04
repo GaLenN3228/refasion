@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/cart/cart_navigator.dart';
+import 'package:refashioned_app/screens/cart/cart/cart_navigator.dart';
+import 'package:refashioned_app/screens/cart/delivery/data/delivery_option_data.dart';
+import 'package:refashioned_app/screens/cart/delivery/delivery_navigator.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 
@@ -67,8 +69,27 @@ class _TabViewState extends State<TabView> {
 
       case BottomTab.cart:
         content = CartNavigator(
-            navigatorKey: navigatorKeys[widget.tab],
-            needUpdate: currentTab == widget.tab);
+          navigatorKey: navigatorKeys[widget.tab],
+          pushDeliveryNavigator: (deliveryType, pickUpAddress) {
+            if (deliveryType != null &&
+                (pickUpAddress != null ||
+                    deliveryType != DeliveryType.PICKUP_ADDRESS))
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      SlideTransition(
+                    position: Tween(begin: Offset(0, 1), end: Offset.zero)
+                        .animate(animation),
+                    child: DeliveryNavigator(
+                      deliveryType: deliveryType,
+                      pickUpAddress: pickUpAddress,
+                      onClose: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ),
+              );
+          },
+        );
         break;
 
 //       case BottomTab.profile:
