@@ -18,10 +18,12 @@ class TopBarData {
   final TBSearchData searchData;
 
   final bool shouldElevateOnScroll;
+  final bool includeTopScreenPadding;
 
   final Color backgroundColor;
 
   const TopBarData({
+    this.includeTopScreenPadding: true,
     this.backgroundColor,
     this.leftButtonData,
     this.secondLeftButtonData,
@@ -37,7 +39,8 @@ class TopBarData {
           {Function() onBack,
           Function() onClose,
           String middleText,
-          String bottomText}) =>
+          String bottomText,
+          bool includeTopScreenPadding}) =>
       onBack != null ||
               onClose != null ||
               middleText != null ||
@@ -51,6 +54,7 @@ class TopBarData {
                   ? TBButtonData.text("Закрыть", onTap: onClose)
                   : null,
               bottomData: TBBottomData.header(bottomText),
+              includeTopScreenPadding: includeTopScreenPadding ?? true,
             )
           : null;
 }

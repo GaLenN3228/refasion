@@ -18,10 +18,36 @@ class TBContent extends StatelessWidget {
 
     final searchInMiddle = data.middleData == null;
 
+    var buttonsWidth;
+
+    if (!searchInMiddle) {
+      bool hasFirstIcon = false;
+      bool hasSecondIcon = false;
+      bool hasText = false;
+
+      hasFirstIcon = data.leftButtonData?.iconType != null ||
+          data.rightButtonData?.iconType != null;
+
+      hasSecondIcon = data.secondLeftButtonData?.iconType != null ||
+          data.secondRightButtonData?.iconType != null;
+
+      hasText = data.leftButtonData?.label != null ||
+          data.rightButtonData?.label != null;
+
+      if (hasFirstIcon && hasSecondIcon)
+        buttonsWidth = MediaQuery.of(context).size.width * 0.25;
+      else if (hasText)
+        buttonsWidth = MediaQuery.of(context).size.width * 0.225;
+      else if (hasFirstIcon || hasSecondIcon)
+        buttonsWidth = MediaQuery.of(context).size.width * 0.15;
+    }
+
     return Column(
       children: [
         SizedBox(
-          height: MediaQuery.of(context).padding.top,
+          height: data.includeTopScreenPadding
+              ? MediaQuery.of(context).padding.top
+              : null,
         ),
         SizedBox(
           height: 44,
@@ -29,9 +55,9 @@ class TBContent extends StatelessWidget {
             children: [
               TBButtons(
                 align: TBButtonsAlign.left,
-                searchInMiddle: searchInMiddle,
                 leftButton: data.leftButtonData,
                 rightButton: data.secondLeftButtonData,
+                buttonsWidth: buttonsWidth,
               ),
               Expanded(
                 child: TBMiddle(
@@ -44,9 +70,9 @@ class TBContent extends StatelessWidget {
               ),
               TBButtons(
                 align: TBButtonsAlign.right,
-                searchInMiddle: searchInMiddle,
                 leftButton: data.secondRightButtonData,
                 rightButton: data.rightButtonData,
+                buttonsWidth: buttonsWidth,
               ),
             ],
           ),
