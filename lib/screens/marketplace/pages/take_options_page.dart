@@ -187,16 +187,13 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
           Padding(
             padding: EdgeInsets.fromLTRB(
                 20, 20, 20, MediaQuery.of(context).padding.bottom),
-            child: SizedBox(
-              height: 45,
-              child: RefashionedButton(
-                states: buttonState,
-                statesData: buttonStatesData,
-                animateContent: false,
-                onTap: () {
-                  if (buttonState.value == ButtonState.enabled) onPush();
-                },
-              ),
+            child: RefashionedButton(
+              states: buttonState,
+              statesData: buttonStatesData,
+              animateContent: false,
+              onTap: () {
+                if (buttonState.value == ButtonState.enabled) onPush();
+              },
             ),
           ),
         ],
