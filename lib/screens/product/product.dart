@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
@@ -118,6 +119,7 @@ class _ProductPageState extends State<ProductPage> {
                         iconType: widget.product.isFavourite ? TBIconType.favoriteFilled : TBIconType.favorite,
                         iconColor: widget.product.isFavourite ?  Color(0xFFD12C2A): Color(0xFF000000),
                         onTap: () {
+                          HapticFeedback.heavyImpact();
                           BaseRepository.isAuthorized().then((isAuthorized) {
                             isAuthorized
                                 ? widget.product.isFavourite

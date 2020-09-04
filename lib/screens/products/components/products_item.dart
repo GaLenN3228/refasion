@@ -31,6 +31,7 @@ class _ProductsItemState extends State<ProductsItem> {
         child: GestureDetector(
           onTap: () => {
             widget.onPush(widget.product),
+            HapticFeedback.heavyImpact()
           },
           child: new Card(
             shadowColor: Colors.transparent,
