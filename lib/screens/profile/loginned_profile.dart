@@ -12,6 +12,7 @@ class AuthorizedProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Column(
         children: [
             _appBar(context),
@@ -68,7 +69,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                 ),
                 Spacer(),
                 SvgPicture.asset(
-                  'assets/icons/svg/arrow_right.svg',
+                  'assets/icons/svg/next.svg',
                   height: 20,
                   color: Colors.white,
                 )
@@ -113,7 +114,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/svg/favorite.svg',
+                        'assets/icons/svg/favorite_border.svg',
                         height: 25,
                         color: Colors.black,
                       ),
@@ -129,7 +130,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/svg/bell.svg',
+                        'assets/icons/svg/notifications.svg',
                         height: 25,
                         color: Colors.black,
                       ),
@@ -175,7 +176,7 @@ class AuthorizedProfilePage extends StatelessWidget {
       child:  Column(
           children: [
             SvgPicture.asset(
-              'assets/topbar/svg/hanger_44dp.svg',
+              'assets/icons/svg/hanger.svg',
               height: 70,
               color: Colors.black,
             ),

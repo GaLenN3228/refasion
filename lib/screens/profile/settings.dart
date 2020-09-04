@@ -31,7 +31,7 @@ class SettingPage extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         child: SvgPicture.asset(
-                            'assets/icons/svg/arrow_left.svg',
+                            'assets/icons/svg/back.svg',
                           height: 20,
                           color: Colors.black,
                         ),
@@ -121,7 +121,7 @@ class SettingForAuthUser extends StatelessWidget {
                         Navigator.pop(context);
                       },
                       child: SvgPicture.asset(
-                        'assets/icons/svg/arrow_left.svg',
+                        'assets/icons/svg/back.svg',
                         height: 20,
                         color: Colors.black,
                       ),

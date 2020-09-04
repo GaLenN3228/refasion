@@ -81,7 +81,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               ProfileItem(
-                icon: 'assets/icons/svg/position.svg',
+                icon: 'assets/icons/svg/location.svg',
                 title: 'Мой город',
                 city: 'Москва',
               ),
@@ -139,7 +139,7 @@ class ProfileItem extends StatelessWidget {
                 icon != ''
                     ? SvgPicture.asset(
                         icon,
-                        height: 20,
+                        height: 30,
                         color: primaryColor,
                       )
                     : Container(
