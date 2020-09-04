@@ -43,6 +43,8 @@ class BaseRepository<T> with ChangeNotifier {
     }
   }
 
+  Status get status => _status;
+
   bool get isLoading => _status == Status.LOADING;
 
   bool get loadingFailed => _status == Status.ERROR;
@@ -94,7 +96,9 @@ class BaseRepository<T> with ChangeNotifier {
 
       case HttpStatus.unauthorized:
         setAuthorized(false);
-        abortLoading(message: "unauthorized, status code: ${response.getStatusCode.toString()}");
+        abortLoading(
+            message:
+                "unauthorized, status code: ${response.getStatusCode.toString()}");
         break;
 
       default:
@@ -114,8 +118,20 @@ class BaseRepository<T> with ChangeNotifier {
   }
 
   static Future<void> setAuthorized(bool isAuthorized) async =>
-      SharedPreferences.getInstance().then((prefs) => prefs.setBool(Prefs.is_authorized, isAuthorized));
+      SharedPreferences.getInstance()
+          .then((prefs) => prefs.setBool(Prefs.is_authorized, isAuthorized));
 
-  static Future<bool> isAuthorized() async =>
-      SharedPreferences.getInstance().then((prefs) => prefs.getBool(Prefs.is_authorized) ?? false);
+  static Future<bool> isAuthorized() async => SharedPreferences.getInstance()
+      .then((prefs) => prefs.getBool(Prefs.is_authorized) ?? false);
+
+  String get message {
+    if (isLoading) return "Загрузка...";
+
+    if (loadingFailed) return "Ошибка: " + response?.errors.toString();
+
+    final statusCode = getStatusCode;
+    if (statusCode != 200) return "Статус: " + statusCode.toString();
+
+    return "Что произошло?";
+  }
 }
