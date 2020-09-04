@@ -86,7 +86,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
           });
         }
       },
-      onFavouritesClick: widget.onFavClick(),
+      onFavouritesClick: widget.onFavClick,
       onSearch: (query) {
         searchRepository.search(query);
         searchQuery = query;
