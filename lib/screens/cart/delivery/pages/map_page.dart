@@ -41,13 +41,34 @@ class _MapPageState extends State<MapPage> {
   initState() {
     switch (widget.deliveryOption) {
       case DeliveryType.PICKUP_ADDRESS:
-        //TODO: set initial PickPoint to widget.pickUpAddress
-        mapDataController =
-            MapDataController(centerMarkerEnable: true); //false?
+        final pickpoint = PickPoint(
+          address: widget.pickUpAddress.address,
+          originalAddress: widget.pickUpAddress.originalAddress,
+          latitude: widget.pickUpAddress.coordinates.latitude,
+          longitude: widget.pickUpAddress.coordinates.longitude,
+        );
+
+        mapDataController = MapDataController(
+            pickPoint:
+                pickpoint); //TODO: show marker and zoom in to initial pickpoint
+
         mapBottomSheetDataController = MapBottomSheetDataController(
           mapBottomSheetDataPreview: MapBottomSheetData(
             title: "Адрес самовывоза",
             hint: "Адрес: " + widget.pickUpAddress?.originalAddress.toString(),
+            finishButtonText: "Заберу отсюда".toUpperCase(),
+            isFinishButtonEnable: true,
+            onFinishButtonClick: (pickPoint) {
+              widget.onAddressPush(
+                Address(
+                    coordinates: Point(
+                        latitude: pickPoint.latitude,
+                        longitude: pickPoint.longitude),
+                    address: pickPoint.address,
+                    originalAddress: pickPoint.originalAddress,
+                    city: pickPoint.city),
+              );
+            },
           ),
         );
 
@@ -59,6 +80,7 @@ class _MapPageState extends State<MapPage> {
       case DeliveryType.PICKUP_POINT:
         mapDataController = MapDataController(
             pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
+
         mapBottomSheetDataController = MapBottomSheetDataController(
           mapBottomSheetDataPreview: MapBottomSheetData(
             title: "Куда доставить заказ?",
@@ -66,7 +88,7 @@ class _MapPageState extends State<MapPage> {
           ),
           mapBottomSheetDataAddress: MapBottomSheetData(
             title: "Адрес доставки",
-            finishButtonText: "ПРИВЕЗТИ СЮДА",
+            finishButtonText: "Привезти сюда".toUpperCase(),
             isFinishButtonEnable: true,
             onFinishButtonClick: (pickPoint) {
               widget.onAddressPush(
@@ -92,6 +114,7 @@ class _MapPageState extends State<MapPage> {
       case DeliveryType.EXPRESS_DEVILERY:
         mapDataController = MapDataController(
             centerMarkerEnable: true, onSearchButtonClick: showBottomSheet);
+
         mapBottomSheetDataController = MapBottomSheetDataController(
           mapBottomSheetDataPreview: MapBottomSheetData(
             title: "Куда доставить заказ?",
@@ -99,7 +122,7 @@ class _MapPageState extends State<MapPage> {
           ),
           mapBottomSheetDataAddress: MapBottomSheetData(
             title: "Адрес доставки",
-            finishButtonText: "ПРИВЕЗТИ СЮДА",
+            finishButtonText: "Привезти сюда".toUpperCase(),
             isFinishButtonEnable: true,
             onFinishButtonClick: (pickPoint) {
               widget.onAddressPush(
