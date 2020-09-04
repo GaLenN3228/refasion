@@ -15,6 +15,7 @@ class DeliveryNavigatorRoutes {
 
 class DeliveryNavigator extends StatefulWidget {
   final Function() onClose;
+  final Function() onAcceptPickUpAddress;
   final DeliveryType deliveryType;
   final Address pickUpAddress;
 
@@ -23,6 +24,7 @@ class DeliveryNavigator extends StatefulWidget {
     this.onClose,
     this.deliveryType,
     this.pickUpAddress,
+    this.onAcceptPickUpAddress,
   }) : super(key: key);
 
   @override
@@ -59,6 +61,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
         return MapPage(
           deliveryOption: widget.deliveryType,
           onClose: widget.onClose,
+          onAcceptPickUpAddress: widget.onClose,
           onAddressPush: (address) {
             Navigator.of(context).push(
               CupertinoPageRoute(

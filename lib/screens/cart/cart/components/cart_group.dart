@@ -14,7 +14,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 class CartGroup extends StatefulWidget {
   final CartGroupData data;
   final Function(Product) onProductPush;
-  final Function(DeliveryType, Address) onOptionPush;
+  final Function(DeliveryType, Address, Function()) onOptionPush;
 
   const CartGroup({Key key, this.data, this.onProductPush, this.onOptionPush})
       : super(key: key);
@@ -37,6 +37,13 @@ class _CartGroupState extends State<CartGroup> {
           onTap: () {
             final options = widget.data.availableDeliveryOptions;
 
+            final pickUpAddress = Address(
+              address: "Офис",
+              originalAddress:
+                  "пр-д Серебрякова, 4, строение 1, Москва, 129343",
+              coordinates: Point(latitude: 55.846703, longitude: 37.647508),
+            );
+
             if (options.isNotEmpty)
               showMaterialModalBottomSheet(
                 expand: false,
@@ -46,14 +53,11 @@ class _CartGroupState extends State<CartGroup> {
                   onPush: (deliveryType) {
                     Navigator.of(context).pop();
                     widget.onOptionPush(
-                        deliveryType,
-                        Address(
-                          address: "Офис",
-                          originalAddress:
-                              "пр-д Серебрякова, 4, строение 1, Москва, 129343",
-                          coordinates:
-                              Point(latitude: 55.846703, longitude: 37.647508),
-                        ));
+                      deliveryType,
+                      pickUpAddress,
+                      () => print("pickUpAddress accepted: " +
+                          pickUpAddress.toString()),
+                    );
                   },
                   options: options,
                 ),

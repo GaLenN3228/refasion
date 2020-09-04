@@ -18,13 +18,15 @@ class MapPage extends StatefulWidget {
 
   final Function(Address) onAddressPush;
   final Function() onClose;
+  final Function() onAcceptPickUpAddress;
 
   const MapPage(
       {Key key,
       this.onAddressPush,
       this.deliveryOption,
       this.onClose,
-      this.pickUpAddress})
+      this.pickUpAddress,
+      this.onAcceptPickUpAddress})
       : super(key: key);
 
   @override
@@ -58,17 +60,7 @@ class _MapPageState extends State<MapPage> {
             hint: "Адрес: " + widget.pickUpAddress?.originalAddress.toString(),
             finishButtonText: "Заберу отсюда".toUpperCase(),
             isFinishButtonEnable: true,
-            onFinishButtonClick: (pickPoint) {
-              widget.onAddressPush(
-                Address(
-                    coordinates: Point(
-                        latitude: pickPoint.latitude,
-                        longitude: pickPoint.longitude),
-                    address: pickPoint.address,
-                    originalAddress: pickPoint.originalAddress,
-                    city: pickPoint.city),
-              );
-            },
+            onFinishButtonClick: (_) => widget.onAcceptPickUpAddress(),
           ),
         );
 

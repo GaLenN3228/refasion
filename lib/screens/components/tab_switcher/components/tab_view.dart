@@ -70,7 +70,8 @@ class _TabViewState extends State<TabView> {
       case BottomTab.cart:
         content = CartNavigator(
           navigatorKey: navigatorKeys[widget.tab],
-          pushDeliveryNavigator: (deliveryType, pickUpAddress) {
+          pushDeliveryNavigator:
+              (deliveryType, pickUpAddress, onPickUpAddressAccept) {
             if (deliveryType != null &&
                 (pickUpAddress != null ||
                     deliveryType != DeliveryType.PICKUP_ADDRESS))
@@ -83,7 +84,11 @@ class _TabViewState extends State<TabView> {
                     child: DeliveryNavigator(
                       deliveryType: deliveryType,
                       pickUpAddress: pickUpAddress,
-                      onClose: () => Navigator.of(context).pop(),
+                      onClose: Navigator.of(context).pop,
+                      onAcceptPickUpAddress: () {
+                        Navigator.of(context).pop();
+                        onPickUpAddressAccept();
+                      },
                     ),
                   ),
                 ),

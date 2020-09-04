@@ -18,7 +18,7 @@ class CartPage extends StatefulWidget {
 
   final Function(Product) onProductPush;
 
-  final Function(DeliveryType, Address) onDeliveryOptionPush;
+  final Function(DeliveryType, Address, Function()) onDeliveryOptionPush;
 
   const CartPage(
       {Key key, this.needUpdate, this.onProductPush, this.onDeliveryOptionPush})

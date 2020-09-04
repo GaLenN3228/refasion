@@ -18,7 +18,7 @@ class CartNavigatorRoutes {
 
 class CartNavigator extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;
-  final Function(DeliveryType, Address) pushDeliveryNavigator;
+  final Function(DeliveryType, Address, Function()) pushDeliveryNavigator;
 
   const CartNavigator({Key key, this.navigatorKey, this.pushDeliveryNavigator})
       : super(key: key);
