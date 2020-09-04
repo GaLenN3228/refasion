@@ -13,11 +13,12 @@ enum SearchResultState { SHOW, HIDE, VISIBLE, COLLAPSE }
 
 class CatalogWrapperPage extends StatefulWidget {
   final Function(Product) pushPageOnTop;
+  final Function() onFavClick;
   final GlobalKey<NavigatorState> navigatorKey;
   final GlobalKey<NavigatorState> screenKey;
   final GlobalKey<NavigatorState> productKey;
 
-  CatalogWrapperPage({Key key, this.pushPageOnTop, this.navigatorKey, this.productKey, this.screenKey}) : super(key: key);
+  CatalogWrapperPage({Key key, this.pushPageOnTop, this.navigatorKey, this.productKey, this.screenKey, this.onFavClick}) : super(key: key);
 
   @override
   _CatalogWrapperPageState createState() => _CatalogWrapperPageState();
@@ -85,6 +86,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
           });
         }
       },
+      onFavouritesClick: widget.onFavClick(),
       onSearch: (query) {
         searchRepository.search(query);
         searchQuery = query;

@@ -5,14 +5,17 @@ import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart';
 import 'package:refashioned_app/screens/product_navigator.dart';
+import 'package:refashioned_app/screens/products/pages/favourites.dart';
 
 class ScreenNavigatorRoutes {
   static const String catalog = '/catalog';
   static const String product = '/product';
+  static const String fav = '/fav';
 }
 
 class ScreenNavigator extends StatelessWidget {
@@ -35,7 +38,12 @@ class ScreenNavigator extends StatelessWidget {
       case ScreenNavigatorRoutes.catalog:
         return ChangeNotifierProvider<SearchRepository>(
             create: (_) => SearchRepository(),
-            child: CatalogWrapperPage(navigatorKey: catalogKey, productKey: productKey, screenKey: screensKey, pushPageOnTop: (product){
+            child: CatalogWrapperPage(onFavClick: (){
+              return Navigator.of(context).push(
+                  CupertinoPageRoute(
+                      builder: (context) =>
+                          routeBuilder(context, ScreenNavigatorRoutes.fav, product: product)));
+            }, navigatorKey: catalogKey, productKey: productKey, screenKey: screensKey, pushPageOnTop: (product){
               return Navigator.of(context).push(
                   CupertinoPageRoute(
                   builder: (context) =>
@@ -46,6 +54,24 @@ class ScreenNavigator extends StatelessWidget {
         return ProductNavigator(product: product, productKey: productKey, screenKey: screensKey, pushPageOnTop: (p){
 
         },);
+
+      case ScreenNavigatorRoutes.fav:
+        return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<FavouritesProductsRepository>(
+                  create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
+              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+            ],
+            builder: (context, _) {
+              return FavouritesPage(
+                onPush: (product) => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) =>
+                        routeBuilder(context, ScreenNavigatorRoutes.product, product: product, category: category),
+                  ),
+                ),
+              );
+            });
 
       default:
         return CupertinoPageScaffold(

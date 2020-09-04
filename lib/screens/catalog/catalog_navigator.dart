@@ -149,23 +149,7 @@ class CatalogNavigator extends StatelessWidget {
           ),
         );
 
-      case CatalogNavigatorRoutes.favourites:
-        return MultiProvider(
-            providers: [
-              ChangeNotifierProvider<FavouritesProductsRepository>(
-                  create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
-            ],
-            builder: (context, _) {
-              return FavouritesPage(
-                onPush: (product) => Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) =>
-                        routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
-                  ),
-                ),
-              );
-            });
+
 
       default:
         return CupertinoPageScaffold(

@@ -72,7 +72,8 @@ class _ProductsItemState extends State<ProductsItem> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
                             child: SVGIcon(
-                              icon: IconAsset.favoriteBorder,
+                              color: widget.product.isFavourite ?  Color(0xFFD12C2A): Color(0xFF000000),
+                              icon: widget.product.isFavourite ? IconAsset.favoriteFilled : IconAsset.favoriteBorder,
                               size: 26,
                             ),
                           ),

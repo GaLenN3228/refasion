@@ -1,15 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/components/scaffold/data/children_data.dart';
 import 'package:refashioned_app/screens/components/scaffold/data/scaffold_data.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/action.dart';
 import 'package:refashioned_app/screens/components/scaffold/scaffold.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
@@ -26,6 +29,7 @@ import 'package:refashioned_app/screens/product/components/related_products.dart
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 
 class ProductPage extends StatefulWidget {
   final Product product;
@@ -96,7 +100,8 @@ class _ProductPageState extends State<ProductPage> {
           builder: (context) {
             final isFavorite = true;
 
-            return RefashionedTopBar(
+            return Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
+                    return RefashionedTopBar(
               data: TopBarData(
                 leftButtonData: TBButtonData.icon(
                   TBIconType.back,
@@ -110,9 +115,24 @@ class _ProductPageState extends State<ProductPage> {
                 ),
                 secondRightButtonData: isFavorite
                     ? TBButtonData(
-                        iconType: TBIconType.favoriteFilled,
-                        iconColor: Color(0xFFD12C2A),
-                        onTap: () {},
+                        iconType: widget.product.isFavourite ? TBIconType.favoriteFilled : TBIconType.favorite,
+                        iconColor: widget.product.isFavourite ?  Color(0xFFD12C2A): Color(0xFF000000),
+                        onTap: () {
+                          BaseRepository.isAuthorized().then((isAuthorized) {
+                            isAuthorized
+                                ? widget.product.isFavourite
+                                ? addRemoveFavouriteRepository
+                                .removeFromFavourites((widget.product..isFavourite = false).id)
+                                : addRemoveFavouriteRepository
+                                .addToFavourites((widget.product..isFavourite = true).id)
+                                : showCupertinoModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                expand: false,
+                                context: context,
+                                useRootNavigator: true,
+                                builder: (context, controller) => ProfilePage());
+                          });
+                        },
                       )
                     : TBButtonData(
                         iconType: TBIconType.favorite,
@@ -122,7 +142,7 @@ class _ProductPageState extends State<ProductPage> {
                   iconType: TBIconType.share,
                 ),
               ),
-            );
+            );});
           },
         );
       default:
