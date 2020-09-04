@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/catalog/components/category_root_card.dart';
-import 'package:refashioned_app/screens/components/top_panel.dart';
+import 'file:///E:/Flutter/Production/Refashioned/ref_mobile_app/lib/screens/components/top_panel/top_panel.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CatalogRootPage extends StatelessWidget {
@@ -40,9 +40,9 @@ class CatalogRootPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
-      child: DefaultTabController(
+      body: DefaultTabController(
         length: categories.length,
         initialIndex: max(
             0, categories.indexWhere((element) => element.children.isNotEmpty)),
@@ -52,15 +52,10 @@ class CatalogRootPage extends StatelessWidget {
               (BuildContext context, bool innerViewIsScrolled) {
             return <Widget>[
               SliverAppBar(
-                titleSpacing: 0.0,
-                title: TopPanel(
-                  onSearch: onSearch,
-                  includeTopPadding: false,
-                  onFavouritesClick: onFavouritesClick,
-                ),
                 backgroundColor: Colors.white,
                 brightness: Brightness.light,
-                expandedHeight: 136.0 - MediaQuery.of(context).padding.top,
+                expandedHeight: 0,
+                primary: false,
                 pinned: true,
                 floating: true,
                 flexibleSpace: Container(

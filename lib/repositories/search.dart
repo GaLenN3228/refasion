@@ -8,9 +8,5 @@ class SearchRepository extends SearchGeneralRepository<SearchResultContent> {
   Future<void> search(String query) => callSearchApi(query, () async {
         response = BaseResponse.fromJson(
             (await ApiService.search(query)).data, (contentJson) => SearchResultContent.fromJson(contentJson));
-        if (response.content.results.isEmpty) {
-          searchStatus = SearchStatus.EMPTY_DATA;
-          notifyListeners();
-        }
       });
 }

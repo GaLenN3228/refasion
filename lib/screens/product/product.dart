@@ -33,12 +33,15 @@ class ProductPage extends StatefulWidget {
   final Function(Product) onProductPush;
   final Function(Seller) onSellerPush;
   final Function(String parameters, String title) onSubCategoryClick;
+  final GlobalKey<NavigatorState> screenKey;
+  final GlobalKey<NavigatorState> productKey;
 
+  final Function(Product) pushPageOnTop;
   const ProductPage(
       {this.product,
       this.onProductPush,
       this.onSellerPush,
-      this.onSubCategoryClick})
+      this.onSubCategoryClick, this.screenKey, this.pushPageOnTop, this.productKey})
       : assert(product != null);
 
   @override
@@ -84,7 +87,7 @@ class _ProductPageState extends State<ProductPage> {
             data: TopBarData(
               leftButtonData: TBButtonData.icon(
                 TBIconType.back,
-                onTap: Navigator.of(context).pop,
+                onTap: Navigator.of(widget.screenKey.currentContext).pop,
               ),
             ),
           );
@@ -97,7 +100,7 @@ class _ProductPageState extends State<ProductPage> {
               data: TopBarData(
                 leftButtonData: TBButtonData.icon(
                   TBIconType.back,
-                  onTap: Navigator.of(context).pop,
+                  onTap: Navigator.of(widget.screenKey.currentContext).pop,
                 ),
                 middleData: TBMiddleData.condensed(
                   product.brand.name.toString() +
@@ -127,7 +130,7 @@ class _ProductPageState extends State<ProductPage> {
           data: TopBarData(
             leftButtonData: TBButtonData.icon(
               TBIconType.back,
-              onTap: Navigator.of(context).pop,
+              onTap: Navigator.of(widget.screenKey.currentContext).pop,
             ),
           ),
         );

@@ -5,6 +5,7 @@ import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/products/components/products_item.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class ProductsPageContent extends StatelessWidget {
   final Product product;
@@ -17,17 +18,15 @@ class ProductsPageContent extends StatelessWidget {
     final ProductsRepository productsRepository = context.watch<ProductsRepository>();
     if (productsRepository.isLoading)
       return Center(
-        child: Text("Загрузка", style: Theme.of(context).textTheme.bodyText1),
+        child: CircularProgressIndicator(
+          backgroundColor: accentColor,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
       );
 
     if (productsRepository.loadingFailed)
       return Center(
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-      );
-
-    if (productsRepository.getStatusCode != 200)
-      return Center(
-        child: Text("Статус", style: Theme.of(context).textTheme.bodyText1),
       );
 
     final ProductsContent productsContent = productsRepository.response.content;

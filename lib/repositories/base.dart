@@ -55,6 +55,8 @@ class BaseRepository<T> with ChangeNotifier {
     _status = Status.LOADING;
 
     _statusNotifier.value = _status;
+
+    notifyListeners();
   }
 
   void finishLoading() {
