@@ -7,7 +7,6 @@ import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/components/category_image.dart';
 import 'package:refashioned_app/screens/catalog/components/category_tile.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import 'file:///E:/Flutter/Production/Refashioned/ref_mobile_app/lib/screens/components/top_panel/top_panel.dart';
 import 'package:refashioned_app/screens/products/components/category_filter_item.dart';
 import '../../../models/category.dart';
 

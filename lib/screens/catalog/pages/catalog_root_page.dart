@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/catalog/components/category_root_card.dart';
-import 'file:///E:/Flutter/Production/Refashioned/ref_mobile_app/lib/screens/components/top_panel/top_panel.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CatalogRootPage extends StatelessWidget {
