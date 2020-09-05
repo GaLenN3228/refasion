@@ -61,6 +61,12 @@ class _MapPageState extends State<MapPage> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
