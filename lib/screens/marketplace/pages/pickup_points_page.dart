@@ -32,6 +32,7 @@ class _PickUpPointsPageState extends State<PickUpPointsPage> {
           title: "Где хранится вещь?",
           hint: "Укажите на карте или введите адрес вручную"),
       mapBottomSheetDataAddress: MapBottomSheetData(
+        isCancelPointEnable: true,
         title: "Адрес доставки",
       )
     );

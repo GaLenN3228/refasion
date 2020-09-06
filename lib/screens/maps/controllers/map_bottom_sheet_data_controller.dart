@@ -46,6 +46,7 @@ class MapBottomSheetData extends ChangeNotifier {
   String _hint;
   String _finishButtonText;
   bool _isFinishButtonEnable;
+  bool _isCancelPointEnable;
   final Function(PickPoint) _onFinishButtonClick;
 
   MapBottomSheetData(
@@ -59,6 +60,7 @@ class MapBottomSheetData extends ChangeNotifier {
       String hint,
       String finishButtonText,
       bool isFinishButtonEnable,
+      bool isCancelPointEnable,
       Function(PickPoint) onFinishButtonClick})
       : _title = title,
         _address = address,
@@ -69,6 +71,7 @@ class MapBottomSheetData extends ChangeNotifier {
         _hint = hint,
         _finishButtonText = finishButtonText,
         _isFinishButtonEnable = isFinishButtonEnable ?? false,
+        _isCancelPointEnable = isCancelPointEnable ?? false,
         _onFinishButtonClick = onFinishButtonClick;
 
   String get title => _title;
@@ -140,6 +143,13 @@ class MapBottomSheetData extends ChangeNotifier {
 
   set isFinishButtonEnable(bool value) {
     _isFinishButtonEnable = value;
+    notifyListeners();
+  }
+
+  bool get isCancelPointEnable => _isCancelPointEnable;
+
+  set isCancelPointEnable(bool value) {
+    _isCancelPointEnable = value;
     notifyListeners();
   }
 }
