@@ -9,7 +9,9 @@ import 'base.dart';
 class AddressRepository extends BaseRepository<Address> {
   Future<void> findAddressByCoordinates(Point newCoordinates) => apiCall(
         () async {
-          if (newCoordinates?.latitude == null || newCoordinates?.longitude == null) abortLoading(message: "No coordinates");
+          if (newCoordinates?.latitude == null ||
+              newCoordinates?.longitude == null)
+            abortLoading(message: "No coordinates");
 
           response = BaseResponse.fromJson(
               (await ApiService.findAddressByCoordinates(newCoordinates)).data,
@@ -26,7 +28,7 @@ class AddressesRepository extends SearchGeneralRepository<List<Address>> {
             List<Address>(),
             (list, address) {
               final newAddress = Address.fromJson(address);
-              if (newAddress?.coordinates != null) list.add(newAddress);
+              if (newAddress?.coordinates != null) list.update(newAddress);
               return list;
             },
           ),

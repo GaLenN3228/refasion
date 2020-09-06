@@ -62,9 +62,11 @@ class _CartPageState extends State<CartPage> {
     super.initState();
   }
 
-  onUpdate() => buttonState.value = buttonState.value == ButtonState.disabled
-      ? ButtonState.enabled
-      : ButtonState.disabled;
+  onUpdate() {
+    buttonState.value = buttonState.value == ButtonState.disabled
+        ? ButtonState.enabled
+        : ButtonState.disabled;
+  }
 
   @override
   void dispose() {
@@ -73,89 +75,86 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<CartRepository>(
-      create: (_) => CartRepository()..getCart(),
-      child: CupertinoPageScaffold(
-        backgroundColor: Colors.white,
-        child: Stack(
-          children: [
-            Column(
-              children: <Widget>[
-                RefashionedTopBar(
-                  data: TopBarData.simple(middleText: "Корзина"),
-                ),
-                Expanded(
-                  child: Builder(
-                    builder: (context) {
-                      final repository = context.watch<CartRepository>();
-
-                      if (repository.isLoaded) {
-                        final cart = repository.response.content;
-
-                        if (cart.groups.isEmpty)
-                          return Center(
-                            child: Text(
-                              "Здесь пусто",
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                          );
-
-                        return ListView(
-                          padding: EdgeInsets.fromLTRB(
-                              15, 0, 15, 99.0 + 55.0 + 20.0),
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 5, vertical: 20),
-                              child: Text(
-                                cart.text,
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
-                            ),
-                            for (final group in cart.groups)
-                              CartGroup(
-                                data: group,
-                                onOptionPush: widget.onDeliveryOptionPush,
-                              ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              child: CartPriceTotal(
-                                currentPriceAmount: cart.totalCurrentPrice,
-                                discountPriceAmount: cart.totalDiscountPrice,
-                              ),
-                            )
-                          ],
-                        );
-                      }
-
-                      return Center(
-                        child: Text(
-                          repository.message,
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 99,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: RefashionedButton(
-                  states: buttonState,
-                  statesData: buttonStatesData,
-                  animateContent: false,
-                  onTap: onUpdate,
-                ),
+    return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
+      child: Stack(
+        children: [
+          Column(
+            children: <Widget>[
+              RefashionedTopBar(
+                data: TopBarData.simple(middleText: "Корзина"),
               ),
-            )
-          ],
-        ),
+              Expanded(
+                child: Builder(
+                  builder: (context) {
+                    final repository = context.watch<CartRepository>();
+
+                    if (repository.isLoaded) {
+                      final cart = repository.response.content;
+
+                      if (cart.groups.isEmpty)
+                        return Center(
+                          child: Text(
+                            "Здесь пусто",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                        );
+
+                      return ListView(
+                        padding:
+                            EdgeInsets.fromLTRB(15, 0, 15, 99.0 + 55.0 + 20.0),
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 20),
+                            child: Text(
+                              cart.text,
+                              style: Theme.of(context).textTheme.headline2,
+                            ),
+                          ),
+                          for (final group in cart.groups)
+                            CartGroup(
+                              data: group,
+                              onOptionPush: widget.onDeliveryOptionPush,
+                              onProductPush: widget.onProductPush,
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: CartPriceTotal(
+                              currentPriceAmount: cart.totalCurrentPrice,
+                              discountPriceAmount: cart.totalDiscountPrice,
+                            ),
+                          )
+                        ],
+                      );
+                    }
+
+                    return Center(
+                      child: Text(
+                        repository.message,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    );
+                  },
+                ),
+              )
+            ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 99,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: RefashionedButton(
+                states: buttonState,
+                statesData: buttonStatesData,
+                animateContent: false,
+                onTap: onUpdate,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

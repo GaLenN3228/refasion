@@ -36,18 +36,21 @@ class _TabViewState extends State<TabView> {
     super.initState();
   }
 
-  tabListener() async {
+  tabListener() {
     final newTab = widget.currentTab.value;
-
-    final canPop =
-        await navigatorKeys[currentTab]?.currentState?.maybePop() ?? false;
 
     if (currentTab != newTab)
       setState(() => currentTab = newTab);
-    else if (canPop)
-      navigatorKeys[currentTab]
-          .currentState
-          .pushNamedAndRemoveUntil('/', (route) => false);
+    else {
+      final canPop = navigatorKeys[currentTab]?.currentState?.canPop() ?? false;
+
+      print(canPop);
+
+      if (canPop)
+        navigatorKeys[currentTab]
+            .currentState
+            .pushNamedAndRemoveUntil('/', (route) => false);
+    }
   }
 
   @override
@@ -57,19 +60,27 @@ class _TabViewState extends State<TabView> {
     super.dispose();
   }
 
+  changeTabTo(BottomTab newBottomTab) {
+    widget.currentTab.value = newBottomTab;
+    widget.currentTab.notifyListeners();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget content;
     switch (widget.tab) {
       case BottomTab.catalog:
         content = CatalogNavigator(
-            navigatorKey: navigatorKeys[widget.tab],
-            onPushPageOnTop: widget.pushPageOnTop);
+          navigatorKey: navigatorKeys[widget.tab],
+          onPushPageOnTop: widget.pushPageOnTop,
+          changeTabTo: changeTabTo,
+        );
         break;
 
       case BottomTab.cart:
         content = CartNavigator(
           navigatorKey: navigatorKeys[widget.tab],
+          changeTabTo: changeTabTo,
           pushDeliveryNavigator:
               (deliveryType, pickUpAddress, onPickUpAddressAccept) {
             if (deliveryType != null &&

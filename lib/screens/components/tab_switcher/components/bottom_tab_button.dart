@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/cart_count.dart';
+import 'package:refashioned_app/repositories/cart.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -77,12 +77,9 @@ class _BottomTabButtonState extends State<BottomTabButton> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        if (widget.tab != null && widget.currentTab != null) if (widget
-                .currentTab.value ==
-            widget.tab)
-          widget.currentTab.notifyListeners();
-        else
-          widget.currentTab.value = widget.tab;
+        widget.currentTab.value = widget.tab;
+        widget.currentTab.notifyListeners();
+
         if (widget.customOnPush != null) widget.customOnPush();
       },
       child: Column(
@@ -101,31 +98,37 @@ class _BottomTabButtonState extends State<BottomTabButton> {
                     )
                   : SizedBox(),
               (widget.tab == BottomTab.cart)
-                  ? Consumer<CartCountRepository>(
-                      builder: (context, model, child) => model.cartCount != "0"
-                          ? Positioned.fill(
-                              child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: Container(
-                                  width: 15,
-                                  height: 15,
-                                  decoration: new BoxDecoration(
-                                    color: accentColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Text(
-                                    model.cartCount,
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle1
-                                        .copyWith(
-                                            fontFamily: "SF Compact Display",
-                                            color:
-                                                selected ? primaryColor : null),
-                                  )),
-                            ))
-                          : SizedBox())
+                  ? Consumer<CartRepository>(
+                      builder: (context, model, child) {
+                        final count = model?.response?.content?.productsCount;
+
+                        if (count == null || count == 0) return SizedBox();
+
+                        return Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                              width: 15,
+                              height: 15,
+                              decoration: new BoxDecoration(
+                                color: accentColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                count.toString(),
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        fontFamily: "SF Compact Display",
+                                        color: selected ? primaryColor : null),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
                   : SizedBox()
             ]),
           ),

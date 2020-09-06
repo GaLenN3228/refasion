@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/models/product.dart';
-import 'package:refashioned_app/screens/cart/cart/components/product.dart';
+import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/screens/cart/cart/components/cart_product_tile.dart';
 import 'package:refashioned_app/screens/cart/cart/data/cart_data.dart';
 import 'package:refashioned_app/screens/cart/delivery/components/delivery_options_panel.dart';
 import 'package:refashioned_app/screens/cart/delivery/data/delivery_option_data.dart';
@@ -27,14 +29,19 @@ class _CartGroupState extends State<CartGroup> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        for (final product in widget.data.products)
-          CartProduct(
-            product: product,
-            onProductPush: () => widget.onProductPush(product),
+        for (final cartProduct in widget.data.products)
+          CartProductTile(
+            product: cartProduct.product,
+            onProductPush: () => widget.onProductPush(cartProduct.product),
           ),
         GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onTap: () {
+          onTap: () async {
+            final repository =
+                Provider.of<CartRepository>(context, listen: false);
+
+            await repository.getCartItemDeliveryTypes(widget.data.id);
+
             final options = widget.data.availableDeliveryOptions;
 
             final pickUpAddress = Address(

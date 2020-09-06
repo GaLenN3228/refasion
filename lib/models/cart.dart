@@ -29,4 +29,13 @@ class Cart {
       ],
     );
   }
+
+  CartProduct getProduct(String productId) => groups
+      .firstWhere((group) => group.getProduct(productId) != null,
+          orElse: () => null)
+      ?.getProduct(productId);
+
+  bool checkPresence(String productId) => getProduct(productId) != null;
+
+  String getProductItemId(String productId) => getProduct(productId)?.id;
 }

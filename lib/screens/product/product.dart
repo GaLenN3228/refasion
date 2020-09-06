@@ -5,11 +5,6 @@ import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/products.dart';
-import 'package:refashioned_app/repositories/sizes.dart';
-import 'package:refashioned_app/screens/components/scaffold/data/children_data.dart';
-import 'package:refashioned_app/screens/components/scaffold/data/scaffold_data.dart';
-import 'package:refashioned_app/screens/components/scaffold/components/action.dart';
-import 'package:refashioned_app/screens/components/scaffold/scaffold.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
@@ -33,12 +28,14 @@ class ProductPage extends StatefulWidget {
   final Function(Product) onProductPush;
   final Function(Seller) onSellerPush;
   final Function(String parameters, String title) onSubCategoryClick;
+  final Function() onCartPush;
 
   const ProductPage(
       {this.product,
       this.onProductPush,
       this.onSellerPush,
-      this.onSubCategoryClick})
+      this.onSubCategoryClick,
+      this.onCartPush})
       : assert(product != null);
 
   @override
@@ -252,6 +249,7 @@ class _ProductPageState extends State<ProductPage> {
             bottom: 99,
             child: ProductBottomButtons(
               productId: widget.product.id,
+              onCartPush: widget.onCartPush,
             ),
           ),
         ],

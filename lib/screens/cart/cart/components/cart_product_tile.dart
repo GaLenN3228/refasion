@@ -7,11 +7,11 @@ import 'package:refashioned_app/screens/cart/cart/components/size.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
-class CartProduct extends StatelessWidget {
+class CartProductTile extends StatelessWidget {
   final Product product;
   final Function() onProductPush;
 
-  const CartProduct({this.product, this.onProductPush});
+  const CartProductTile({this.product, this.onProductPush});
 
   final bool colored = false;
 

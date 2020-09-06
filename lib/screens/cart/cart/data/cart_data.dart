@@ -28,17 +28,25 @@ final _deliveryOptionsMockup = [
 class CartGroupData {
   final String deliveryObject;
   final String deliveryData;
-  final List<Product> products;
+  final List<CartProduct> products;
+  final String id;
 
-  CartGroupData({this.products, this.deliveryObject, this.deliveryData});
+  CartGroupData(
+      {this.id, this.products, this.deliveryObject, this.deliveryData});
 
   factory CartGroupData.fromJson(Map<String, dynamic> json) => CartGroupData(
+        id: json['id'],
         deliveryData: json['delivaery_data'],
         deliveryObject: json['delivery_object'],
         products: [
           for (final itemProduct in json['item_products'])
-            Product.fromJson(itemProduct['product'])
+            CartProduct.fromJson(itemProduct)
         ],
+      );
+
+  CartProduct getProduct(String productId) => products.firstWhere(
+        (cartProduct) => cartProduct.product.id == productId,
+        orElse: () => null,
       );
 
   List<DeliveryOptionData> _availableDeliveryOptions = _deliveryOptionsMockup;
@@ -52,4 +60,16 @@ class CartGroupData {
   DeliverySettings get deliveryPreset => _deliveryPreset;
 
   DeliverySettings newPreset;
+}
+
+class CartProduct {
+  final String id;
+  final Product product;
+
+  const CartProduct({this.id, this.product});
+
+  factory CartProduct.fromJson(Map<String, dynamic> json) => CartProduct(
+        id: json['item_id'],
+        product: Product.fromJson(json['product']),
+      );
 }
