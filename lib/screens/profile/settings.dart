@@ -1,15 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:refashioned_app/repositories/cities.dart';
-import 'package:refashioned_app/screens/authorization/phone_page.dart';
-import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
-import 'package:refashioned_app/screens/profile/loginned_profile.dart';
-import 'package:refashioned_app/utils/colors.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingPage extends StatelessWidget {
   @override
@@ -21,7 +14,7 @@ class SettingPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
              Padding(
-               padding: const EdgeInsets.only(top: 45, left: 20, right: 20),
+               padding: const EdgeInsets.only(top: 55, left: 20, right: 20),
                child: Row(
                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -131,6 +124,50 @@ class SettingForAuthUser extends StatelessWidget {
                   Container(),
                 ],
               ),
+            ),
+            Tapable(
+              padding: EdgeInsets.all(10),
+              onTap: (){
+              },
+              child: Container(
+                padding: EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/svg/location.svg',
+                      height: 30,
+                      color: Colors.black,
+                    ),
+                    Text('Мой город', style: textTheme.subtitle1,),
+                    Spacer(),
+                    Text(
+                      'Москва',
+                      style: textTheme.subtitle2,
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Divider(),
+            ),
+            Tapable(
+              padding: EdgeInsets.all(10),
+              onTap: (){
+              },
+              child: Container(
+                padding: EdgeInsets.only(top: 15, left: 10, bottom: 10),
+                child: Row(
+                  children: [
+                    Text('Пункты выдачи', style: textTheme.subtitle1,),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Divider(),
             ),
             Tapable(
               padding: EdgeInsets.all(10),

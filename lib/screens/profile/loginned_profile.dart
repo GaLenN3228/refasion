@@ -30,7 +30,7 @@ class AuthorizedProfilePage extends StatelessWidget {
       color: Colors.transparent,
       child: Container(
         color: Color(0xFF373A3F),
-        height: MediaQuery.of(context).size.height * 0.26,
+        height: MediaQuery.of(context).size.height * 0.24,
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
@@ -99,7 +99,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                       children: [
                         SvgPicture.asset(
                           'assets/icons/svg/box.svg',
-                          height: 25,
+                          height: 35,
                           color: Colors.black,
                         ),
                         Container(
@@ -115,7 +115,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/svg/favorite_border.svg',
-                        height: 25,
+                        height: 35,
                         color: Colors.black,
                       ),
                       Container(
@@ -131,7 +131,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/svg/notifications.svg',
-                        height: 25,
+                        height: 35,
                         color: Colors.black,
                       ),
                       Container(
@@ -151,7 +151,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                     children: [
                       SvgPicture.asset(
                         'assets/icons/svg/settings.svg',
-                        height: 25,
+                        height: 35,
                         color: Colors.black,
                       ),
                       Container(
@@ -173,33 +173,36 @@ class AuthorizedProfilePage extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Material(
       color: Colors.white,
-      child:  Column(
-          children: [
-            SvgPicture.asset(
-              'assets/icons/svg/hanger.svg',
-              height: 70,
-              color: Colors.black,
-            ),
-            Text('Ваш гардероб пуст', style: textTheme.headline1,),
-            Container(
-                padding: EdgeInsets.only(top: 10, bottom: 5),
-                child: Text('Вы еще не разместили ни одной вещи \n в вашем гардеробе', textAlign: TextAlign.center,)),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 20,
+      child:  Padding(
+        padding: const EdgeInsets.only(top: 80),
+        child: Column(
+            children: [
+              SvgPicture.asset(
+                'assets/icons/svg/hanger.svg',
+                height: 70,
+                color: Colors.black,
               ),
-              child: Button(
-                "РАЗМЕСТИТЬ ВЕЩЬ",
-                buttonStyle: ButtonStyle.dark,
-                height: 45,
-                width: 180,
-                borderRadius: 5,
-                onClick: () {
-                },
+              Text('Ваш гардероб пуст', style: textTheme.headline1,),
+              Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 5),
+                  child: Text('Вы еще не разместили ни одной вещи \n в вашем гардеробе', textAlign: TextAlign.center,)),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 20,
+                ),
+                child: Button(
+                  "РАЗМЕСТИТЬ ВЕЩЬ",
+                  buttonStyle: ButtonStyle.dark,
+                  height: 45,
+                  width: 180,
+                  borderRadius: 5,
+                  onClick: () {
+                  },
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+      ),
 
     );
   }
