@@ -6,7 +6,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 enum MarkerType { SMALL, MEDIUM, POINT_SELECTED }
 
-enum MapTouchStatus { STARTED, COMPLETED }
+enum MapCameraListenerStatus { STARTED, COMPLETED }
 
 class MapPage extends StatefulWidget {
   static const String MARKER_ICON_SMALL = 'assets/icons/png/marker_red_small.png';
@@ -14,13 +14,24 @@ class MapPage extends StatefulWidget {
   static const String MARKER_ICON_MEDIUM = 'assets/icons/png/marker_red_medium.png';
   static const String MARKER_ICON_USER_LOCATION = 'assets/icons/png/marker_user_location.png';
 
+  static const double ZOOM_TO_POINT_VALUE = 17;
+  static const double ZOOM_TO_BOUNDS_VALUE = 10;
+  static const double ZOOM_SELECTED_MARKER_DIFF = 0.0005;
+
   _MapPageState _mapPageState;
 
   final MapDataController mapDataController;
   final Function(PickPoint) onMarkerClick;
-  final Function(MapTouchStatus, {Future<Point> point}) onMapTouch;
+  final Function(MapCameraListenerStatus, {Future<Point> point}) onMapCameraListener;
+  final Function() mapCameraFirstInit;
 
-  MapPage({Key key, this.onMarkerClick, this.onMapTouch, @required this.mapDataController}) : super(key: key);
+  MapPage(
+      {Key key,
+      this.onMarkerClick,
+      @required this.onMapCameraListener,
+      @required this.mapDataController,
+      @required this.mapCameraFirstInit})
+      : super(key: key);
 
   void showUserLocation() {
     _mapPageState._showUserLocation();
@@ -38,6 +49,10 @@ class MapPage extends StatefulWidget {
     await _mapPageState._moveToPoint(zoom, point);
   }
 
+  void resetSelectedPlaceMark() {
+    _mapPageState._resetSelectedPlaceMark();
+  }
+
   @override
   _MapPageState createState() {
     _mapPageState = _MapPageState();
@@ -51,8 +66,8 @@ class _MapPageState extends State<MapPage> {
 
   Placemark selectedPlaceMark;
   MarkerType markersType = MarkerType.SMALL;
-  bool _allowMapTouchListener = true;
-  bool _fromControllerMove = false;
+  bool _allowStartMapCameraListener = true;
+  bool _allowFinishMapCameraListener = true;
 
   @override
   void initState() {
@@ -75,22 +90,14 @@ class _MapPageState extends State<MapPage> {
           Expanded(child: YandexMap(
             onMapCreated: (YandexMapController yandexMapController) async {
               controller = yandexMapController;
-              _firstZoom();
+              _mapCameraFirstInit();
               controller.enableCameraTracking(null, (msg) {
                 _changePlaceMarksIconsWithZoom(msg['zoom']);
-                _callOnMapTouchListener(msg['final']);
+                _callOnMapCameraListener(msg['final']);
               });
             },
           )),
         ]);
-  }
-
-  void _firstZoom() {
-    if (controller != null) {
-      _showUserIcon().then((value) {
-        _moveToPoint(10, Point(latitude: 55.7522200, longitude: 37.6155600));
-      });
-    }
   }
 
   Future<void> _requestPermission() async {
@@ -98,7 +105,15 @@ class _MapPageState extends State<MapPage> {
     final Map<PermissionGroup, PermissionStatus> permissionRequestResult =
         await PermissionHandler().requestPermissions(permissions);
     _permissionStatus = permissionRequestResult[PermissionGroup.location];
-    _firstZoom();
+    _mapCameraFirstInit();
+  }
+
+  void _mapCameraFirstInit() {
+    if (controller != null) {
+      _showUserIcon().then((value) {
+        widget.mapCameraFirstInit();
+      });
+    }
   }
 
   void _changePlaceMarksIconsWithZoom(double zoom) {
@@ -111,31 +126,29 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  void _callOnMapTouchListener(bool isFinal) {
-    if (_allowMapTouchListener) {
-      if (widget.onMapTouch != null) widget.onMapTouch(MapTouchStatus.STARTED);
-      _allowMapTouchListener = false;
+  void _callOnMapCameraListener(bool isFinal) {
+    if (_allowStartMapCameraListener) {
+      if (widget.onMapCameraListener != null) widget.onMapCameraListener(MapCameraListenerStatus.STARTED);
+      _allowStartMapCameraListener = false;
     }
     if (isFinal) {
-      if (widget.onMapTouch != null && !_fromControllerMove)
-        widget.onMapTouch(MapTouchStatus.COMPLETED, point: controller.getTargetPoint());
-      _allowMapTouchListener = true;
-      _fromControllerMove = false;
+      if (widget.onMapCameraListener != null && _allowFinishMapCameraListener)
+        widget.onMapCameraListener(MapCameraListenerStatus.COMPLETED, point: controller.getTargetPoint());
+      _allowStartMapCameraListener = true;
+      _allowFinishMapCameraListener = true;
     }
   }
 
   void _showUserLocation() async {
     if (_permissionStatus == PermissionStatus.granted) {
-      _fromControllerMove = true;
-      _allowMapTouchListener = false;
       await controller.moveToUser();
     }
   }
 
   Future<void> _moveToPoint(double zoom, Point point) async {
     if (_permissionStatus == PermissionStatus.granted) {
-      _fromControllerMove = true;
-      _allowMapTouchListener = false;
+      _allowFinishMapCameraListener = false;
+      _allowStartMapCameraListener = false;
       await controller.move(
           zoom: zoom,
           point: Point(latitude: point.latitude, longitude: point.longitude),
@@ -151,10 +164,12 @@ class _MapPageState extends State<MapPage> {
       onTap: (Placemark placeMark, double latitude, double longitude) {
         selectedPlaceMark = placeMark;
         _changeSelectedPlaceMarkIcon();
-        _moveToPoint(15, Point(latitude: pickPoint.latitude - 0.003, longitude: pickPoint.longitude));
+        _moveToPoint(
+            MapPage.ZOOM_TO_POINT_VALUE, Point(latitude: pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF, longitude: pickPoint.longitude));
         widget.onMarkerClick(pickPoint);
       },
     );
+    controller.addPlacemark(_placeMark);
     selectedPlaceMark = _placeMark;
   }
 
@@ -172,7 +187,8 @@ class _MapPageState extends State<MapPage> {
           var pickPoint = pickPoints.firstWhere((element) =>
               element.latitude == selectedPlaceMark.point.latitude &&
               element.longitude == selectedPlaceMark.point.longitude);
-          _moveToPoint(15, Point(latitude: pickPoint.latitude - 0.003, longitude: pickPoint.longitude));
+          _moveToPoint(
+              MapPage.ZOOM_TO_POINT_VALUE, Point(latitude: pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF, longitude: pickPoint.longitude));
           widget.onMarkerClick(pickPoint);
         },
       );
@@ -188,6 +204,11 @@ class _MapPageState extends State<MapPage> {
     if (selectedPlaceMark != null)
       controller.changePlacemarkIcon(
           selectedPlaceMark, markersType == MarkerType.MEDIUM ? MapPage.MARKER_ICON_MEDIUM : MapPage.MARKER_ICON_SMALL);
+  }
+
+  void _resetSelectedPlaceMark() {
+    _resetSelectedPlaceMarkIcon();
+    selectedPlaceMark = null;
   }
 
   Future<void> _showUserIcon() async {
