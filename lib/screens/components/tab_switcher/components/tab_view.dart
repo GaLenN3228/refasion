@@ -4,6 +4,7 @@ import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
+import 'package:refashioned_app/screens/home/home.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 
 final navigatorKeys = {
@@ -75,10 +76,14 @@ class _TabViewState extends State<TabView> {
         );
         break;
 
-       case BottomTab.profile:
+      case BottomTab.home:
+        content = CupertinoPageScaffold(
+          child: HomePage(),
+        );
+        break;
 
+       case BottomTab.profile:
          content = CupertinoPageScaffold(
-//           resizeToAvoidBottomInset: false,
            child: ProfilePage(),
          );
          break;

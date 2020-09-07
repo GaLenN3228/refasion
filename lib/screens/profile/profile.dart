@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:refashioned_app/screens/profile/loginned_profile.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
@@ -94,17 +97,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 ProfileItem(
-                  icon: 'assets/icons/svg/location.svg',
+                  icon: IconAsset.location,
                   title: 'Мой город',
                   city: 'Москва',
                 ),
                 ProfileItem(
-                  icon: '',
+                  icon: null,
                   title: 'Пункты выдачи',
                   city: '',
                 ),
                 ProfileItem(
-                  icon: '',
+                  icon: null,
                   title: 'Настройки',
                   city: '',
                   route: SettingPage(),
@@ -122,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
 class ProfileItem extends StatelessWidget {
   final String title;
-  final String icon;
+  final IconAsset icon;
   final String city;
   final Widget route;
 
@@ -146,9 +149,9 @@ class ProfileItem extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 20, top: 20),
             child: Row(
               children: [
-                icon != ''
-                    ? SvgPicture.asset(
-                        icon,
+                icon != null
+                    ? SVGIcon(
+                        icon: icon,
                         height: 30,
                         color: primaryColor,
                       )

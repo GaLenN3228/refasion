@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:refashioned_app/screens/maps/components/map.dart';
+import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
+import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
+import 'package:refashioned_app/screens/maps/map_picker.dart';
 
 class SettingPage extends StatelessWidget {
   @override
@@ -23,8 +27,8 @@ class SettingPage extends StatelessWidget {
                         onTap: (){
                           Navigator.pop(context);
                         },
-                        child: SvgPicture.asset(
-                            'assets/icons/svg/back.svg',
+                        child: SVGIcon(
+                            icon: IconAsset.back,
                           height: 20,
                           color: Colors.black,
                         ),
@@ -94,7 +98,31 @@ class SettingPage extends StatelessWidget {
 }
 
 
-class SettingForAuthUser extends StatelessWidget {
+class SettingForAuthUser extends StatefulWidget {
+  @override
+  _SettingForAuthUserState createState() => _SettingForAuthUserState();
+}
+
+class _SettingForAuthUserState extends State<SettingForAuthUser> {
+  MapBottomSheetDataController mapBottomSheetDataController;
+  MapDataController mapDataController;
+  @override
+  void initState() {
+    mapDataController = MapDataController(
+        pickUpPointsCompany: PickUpPointsCompany.BOXBERRY
+    );
+    mapBottomSheetDataController = MapBottomSheetDataController(
+        mapBottomSheetDataPreview: MapBottomSheetData(
+            title: "Где можно забрать вещь?",
+            hint: "Укажите на карте или введите адрес вручную"),
+        mapBottomSheetDataAddress: MapBottomSheetData(
+          isCancelPointEnable: true,
+          title: "Адрес доставки",
+        )
+    );
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -113,8 +141,8 @@ class SettingForAuthUser extends StatelessWidget {
                       onTap: (){
                         Navigator.pop(context);
                       },
-                      child: SvgPicture.asset(
-                        'assets/icons/svg/back.svg',
+                      child: SVGIcon(
+                        icon:  IconAsset.back,
                         height: 20,
                         color: Colors.black,
                       ),
@@ -133,8 +161,8 @@ class SettingForAuthUser extends StatelessWidget {
                 padding: EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
                 child: Row(
                   children: [
-                    SvgPicture.asset(
-                      'assets/icons/svg/location.svg',
+                    SVGIcon(
+                      icon: IconAsset.location,
                       height: 30,
                       color: Colors.black,
                     ),
@@ -155,6 +183,12 @@ class SettingForAuthUser extends StatelessWidget {
             Tapable(
               padding: EdgeInsets.all(10),
               onTap: (){
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) => MapsPickerPage(
+                    mapDataController: mapDataController,
+                    mapBottomSheetDataController: mapBottomSheetDataController,
+                  )
+                ));
               },
               child: Container(
                 padding: EdgeInsets.only(top: 15, left: 10, bottom: 10),

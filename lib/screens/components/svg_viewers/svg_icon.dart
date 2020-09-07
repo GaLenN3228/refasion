@@ -42,6 +42,7 @@ enum IconAsset {
   cart,
   person,
   personThin,
+  next,
 
   box,
   coupon,
@@ -56,6 +57,7 @@ enum IconAsset {
 
 final assets = {
   IconAsset.add: "add.svg",
+  IconAsset.next: "next.svg",
   IconAsset.addCircle: "add_circle.svg",
   IconAsset.addThin: "add_thin.svg",
   IconAsset.archive: "archive.svg",

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
@@ -68,8 +68,8 @@ class AuthorizedProfilePage extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                SvgPicture.asset(
-                  'assets/icons/svg/next.svg',
+                SVGIcon(
+                 icon:  IconAsset.next,
                   height: 20,
                   color: Colors.white,
                 )
@@ -97,8 +97,8 @@ class AuthorizedProfilePage extends StatelessWidget {
                    padding: EdgeInsets.all(10),
                    child: Column(
                       children: [
-                        SvgPicture.asset(
-                          'assets/icons/svg/box.svg',
+                        SVGIcon(
+                          icon: IconAsset.box,
                           height: 35,
                           color: Colors.black,
                         ),
@@ -113,8 +113,8 @@ class AuthorizedProfilePage extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   child: Column(
                     children: [
-                      SvgPicture.asset(
-                        'assets/icons/svg/favorite_border.svg',
+                      SVGIcon(
+                        icon: IconAsset.favoriteBorder,
                         height: 35,
                         color: Colors.black,
                       ),
@@ -129,8 +129,8 @@ class AuthorizedProfilePage extends StatelessWidget {
                   onTap: (){},
                   child: Column(
                     children: [
-                      SvgPicture.asset(
-                        'assets/icons/svg/notifications.svg',
+                      SVGIcon(
+                      icon: IconAsset.notifications,
                         height: 35,
                         color: Colors.black,
                       ),
@@ -149,8 +149,8 @@ class AuthorizedProfilePage extends StatelessWidget {
                   },
                   child: Column(
                     children: [
-                      SvgPicture.asset(
-                        'assets/icons/svg/settings.svg',
+                      SVGIcon(
+                        icon: IconAsset.settings,
                         height: 35,
                         color: Colors.black,
                       ),
@@ -177,8 +177,8 @@ class AuthorizedProfilePage extends StatelessWidget {
         padding: const EdgeInsets.only(top: 80),
         child: Column(
             children: [
-              SvgPicture.asset(
-                'assets/icons/svg/hanger.svg',
+              SVGIcon(
+                icon: IconAsset.location,
                 height: 70,
                 color: Colors.black,
               ),
