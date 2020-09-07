@@ -44,8 +44,6 @@ class _TabViewState extends State<TabView> {
     else {
       final canPop = navigatorKeys[currentTab]?.currentState?.canPop() ?? false;
 
-      print(canPop);
-
       if (canPop)
         navigatorKeys[currentTab]
             .currentState

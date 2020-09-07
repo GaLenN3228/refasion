@@ -11,36 +11,38 @@ class ApiService {
 
   //CART
 
+  static const LOG_CART = LOG_ENABLE;
+
   static Future<Response> getCart() async {
     Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
     return dioClient.get(Url.cart);
   }
 
   static addProductToCart(String productId) async {
     Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
     var body = {"product": productId};
     return dioClient.post(Url.cart, data: body);
   }
 
   static removeItemFromCart(String itemId) async {
     Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
     final id = itemId + "/";
     return dioClient.delete(Url.cartItemProduct + id);
   }
 
   static getCartItemDeliveryTypes(String itemId) async {
     Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
     final path = itemId + "/delivery-types/";
     return dioClient.get(Url.cartItem + path);
   }
 
   static setCartItemDeliveryType(String itemId, String deliveryObjectId) async {
     Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
     final path = itemId + "/delivery-types/";
     return dioClient.patch(Url.cartItem + path);
   }

@@ -75,8 +75,7 @@ class CartRepository extends BaseRepository<Cart> {
 
   Future<void> addToCart(String productId) async {
     await addProduct.update(productId);
-    if (addProduct.isLoaded && addProduct.response.status.code == 201)
-      await _update();
+    if (addProduct.response.status.code == 201) await _update();
   }
 
   Future<void> removeFromCart(String productId) async {
@@ -85,9 +84,7 @@ class CartRepository extends BaseRepository<Cart> {
     // print("removeFromCart productItemId: " + productItemId.toString());
     if (productItemId != null) {
       await removeItem.update(productItemId);
-      print(addProduct.response);
-      if (addProduct.isLoaded && addProduct.response.status.code == 201)
-        await _update();
+      if (removeItem.response.status.code == 204) await _update();
     }
   }
 

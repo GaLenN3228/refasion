@@ -69,7 +69,7 @@ class CartProduct {
   const CartProduct({this.id, this.product});
 
   factory CartProduct.fromJson(Map<String, dynamic> json) => CartProduct(
-        id: json['item_id'],
+        id: json['id'],
         product: Product.fromJson(json['product']),
       );
 }

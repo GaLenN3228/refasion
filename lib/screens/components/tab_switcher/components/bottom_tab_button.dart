@@ -111,7 +111,7 @@ class _BottomTabButtonState extends State<BottomTabButton> {
                               width: 15,
                               height: 15,
                               decoration: new BoxDecoration(
-                                color: accentColor,
+                                color: selected ? primaryColor : accentColor,
                                 shape: BoxShape.circle,
                               ),
                               child: Text(
@@ -122,7 +122,9 @@ class _BottomTabButtonState extends State<BottomTabButton> {
                                     .subtitle1
                                     .copyWith(
                                         fontFamily: "SF Compact Display",
-                                        color: selected ? primaryColor : null),
+                                        color: selected
+                                            ? accentColor
+                                            : primaryColor),
                               ),
                             ),
                           ),
