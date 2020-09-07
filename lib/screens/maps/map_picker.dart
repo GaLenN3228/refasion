@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,40 +48,44 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
 
   AddressRepository _addressRepository;
 
-  void _centerMarkerAnimationListener(AnimationStatus status) {
-    if (status == AnimationStatus.completed) {
-      startCenterMarkerAnimation();
-    }
-  }
-
   @override
   void initState() {
     _mapPage = MapPage(
-      mapDataController: widget.mapDataController,
-      onMarkerClick: (pickPoint) {
-        _selectedPickPoint = pickPoint;
-        if (widget.mapDataController.pickUpPointsCompany != null) changeBottomSheetStateWithPickPoint();
-      },
-      onMapTouch: (mapTouchStatus, {Future<Point> point}) {
-        switch (mapTouchStatus) {
-          case MapTouchStatus.STARTED:
-            if (widget.mapDataController.centerMarkerEnable) startCenterMarkerAnimation();
-            hideBottomSheetWithHeight();
-            break;
+        mapDataController: widget.mapDataController,
+        onMarkerClick: (pickPoint) {
+          _selectedPickPoint = pickPoint;
+          if (widget.mapDataController.pickUpPointsCompany != null) changeBottomSheetStateWithPickPoint();
+        },
+        onMapCameraListener: (mapTouchStatus, {Future<Point> point}) {
+          switch (mapTouchStatus) {
+            case MapCameraListenerStatus.STARTED:
+              if (widget.mapDataController.centerMarkerEnable) startCenterMarkerAnimation();
+              hideBottomSheetWithHeight();
+              break;
 
-          case MapTouchStatus.COMPLETED:
-            if (widget.mapDataController.centerMarkerEnable) {
-              point.then((point) {
-                _selectedPickPoint = PickPoint(latitude: point.latitude, longitude: point.longitude);
-                _addressRepository.findAddressByCoordinates(point);
-              });
-            } else {
-              showBottomSheetWithHeight();
-            }
-            break;
-        }
-      },
-    );
+            case MapCameraListenerStatus.COMPLETED:
+              if (widget.mapDataController.centerMarkerEnable) {
+                point.then((point) {
+                  _selectedPickPoint = PickPoint(latitude: point.latitude, longitude: point.longitude);
+                  _addressRepository.findAddressByCoordinates(point);
+                });
+              } else {
+                showBottomSheetWithHeight();
+              }
+              break;
+          }
+        },
+        mapCameraFirstInit: () {
+          if (widget.mapDataController.pickPoint != null) {
+            _mapPage.addMarker(widget.mapDataController.pickPoint).then((value) => _mapPage.moveToPoint(
+                MapPage.ZOOM_TO_POINT_VALUE,
+                Point(
+                    latitude: widget.mapDataController.pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF,
+                    longitude: widget.mapDataController.pickPoint.longitude)));
+          } else {
+            _mapPage.moveToPoint(MapPage.ZOOM_TO_BOUNDS_VALUE, Point(latitude: 55.7522200, longitude: 37.6155600));
+          }
+        });
 
     if (widget.mapDataController.pickUpPointsCompany != null) {
       pickPointRepository = new PickPointRepository();
@@ -97,17 +103,18 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
       });
     }
 
-    if (widget.mapDataController.pickPoint != null){
-      //TODO init if has default address
+    if (widget.mapDataController.pickPoint != null) {
+      changeBottomSheetStateWithExternalPickPoint();
+    } else {
+      widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.PREVIEW;
     }
     widget.mapDataController.addListener(() {
       if (widget.mapDataController.pickPoint != null) {
-        _selectedPickPoint = widget.mapDataController.pickPoint;
         changeBottomSheetStateWithExternalPickPoint();
         _mapPage.moveToPoint(
-            15,
+            MapPage.ZOOM_TO_POINT_VALUE,
             Point(
-                latitude: widget.mapDataController.pickPoint.latitude,
+                latitude: widget.mapDataController.pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF,
                 longitude: widget.mapDataController.pickPoint.longitude));
       }
     });
@@ -120,7 +127,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         _bottomSheetHeight = size.height;
       }
     };
-    widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.PREVIEW;
+
     _bottomSheetController = SolidController();
     _bottomSheet = _createSolidBottomSheet();
 
@@ -132,18 +139,20 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
     //delay to await bottom sheet animation
     Future.delayed(Duration(milliseconds: 100), () {
       if (_selectedPickPoint != null) {
-        if (!_addressRepository.loadingFailed) {
+        if (_addressRepository.isLoaded) {
           _selectedPickPoint.address = _addressRepository.response.content.address;
           _selectedPickPoint.originalAddress = _addressRepository.response.content.originalAddress;
           _selectedPickPoint.city = _addressRepository.response.content.city;
           widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.ADDRESS;
           widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
-        } else {
+          finishCenterMarkerAnimation();
+          showBottomSheetWithHeight();
+        } else if (_addressRepository.loadingFailed && _addressRepository.getStatusCode == HttpStatus.badRequest) {
           widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.NOT_FOUND;
+          finishCenterMarkerAnimation();
+          showBottomSheetWithHeight();
         }
       }
-      finishCenterMarkerAnimation();
-      showBottomSheetWithHeight();
     });
   }
 
@@ -156,18 +165,22 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
         widget.mapBottomSheetDataController.currentBottomSheetData.type = _selectedPickPoint.type;
       }
-      showBottomSheetWithHeight(duration: 150);
+      showBottomSheetWithHeight(delay: 150);
     });
   }
 
   void changeBottomSheetStateWithExternalPickPoint() {
+    _selectedPickPoint = widget.mapDataController.pickPoint;
+    widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.ADDRESS;
+    widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
+  }
+
+  void changeBottomSheetStateWithPreview() {
     hideBottomSheetWithHeight();
-    //delay to await bottom sheet animation
     Future.delayed(Duration(milliseconds: 100), () {
-      widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.ADDRESS;
-      widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
-      showBottomSheetWithHeight();
+      widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.PREVIEW;
     });
+    showBottomSheetWithHeight(delay: 150);
   }
 
   @override
@@ -195,19 +208,19 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
                           position: _centerMarkerAnimation,
                           child: Center(
                             child: Container(
-                                margin: EdgeInsets.only(bottom: 60),
+                                margin: EdgeInsets.only(bottom: 52),
                                 child: Image.asset(
                                   'assets/icons/png/marker_center.png',
-                                  height: 72,
+                                  height: 64,
                                 )),
                           ),
                         )
                       : Center(
                           child: Container(
-                              margin: EdgeInsets.only(bottom: 60),
+                              margin: EdgeInsets.only(bottom: 52),
                               child: Image.asset(
                                 'assets/icons/png/marker_center.png',
-                                height: 72,
+                                height: 64,
                               )),
                         ),
                   Center(
@@ -263,12 +276,17 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
                             .onFinishButtonClick(_selectedPickPoint);
                       }
                     },
+                    onCloseButtonClick: () {
+                      changeBottomSheetStateWithPreview();
+                      _mapPage.resetSelectedPlaceMark();
+                      _selectedPickPoint = null;
+                    },
                   ));
             }));
   }
 
-  void showBottomSheetWithHeight({int duration}) {
-    Future.delayed(Duration(milliseconds: duration ?? 100), () {
+  void showBottomSheetWithHeight({int delay}) {
+    Future.delayed(Duration(milliseconds: delay ?? 100), () {
       _bottomSheetController?.height = _bottomSheetHeight;
     });
   }
@@ -287,7 +305,11 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         duration: Duration(milliseconds: 800),
         vsync: this,
       );
-      _centerMarkerController.addStatusListener(_centerMarkerAnimationListener);
+      _centerMarkerController.addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          startCenterMarkerAnimation();
+        }
+      });
       _centerMarkerAnimation = Tween<Offset>(
               begin: Offset(0.0, (_centerMarkerRouteFlag) ? 0.0 : -0.03),
               end: Offset(0.0, (_centerMarkerRouteFlag) ? -0.03 : 0.0))
