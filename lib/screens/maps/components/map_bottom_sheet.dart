@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
 
 typedef void OnBottomSheetSizeChange(Size size);
@@ -11,8 +12,10 @@ class MapBottomSheet extends StatefulWidget {
   final GlobalKey bottomSheetKey;
   final OnBottomSheetSizeChange onBottomSheetSizeChange;
   final Function() onFinishButtonClick;
+  final Function() onCloseButtonClick;
 
-  const MapBottomSheet({Key key, this.bottomSheetKey, this.onBottomSheetSizeChange, this.onFinishButtonClick})
+  const MapBottomSheet(
+      {Key key, this.bottomSheetKey, this.onBottomSheetSizeChange, this.onFinishButtonClick, this.onCloseButtonClick})
       : super(key: key);
 
   @override
@@ -70,18 +73,43 @@ class _MapBottomSheetState extends State<MapBottomSheet> {
                 ),
               ],
             ),
-            mapBottomSheetDataController.currentBottomSheetData.title != null
-                ? Container(
-                    alignment: Alignment.topLeft,
-                    margin: const EdgeInsets.only(top: 10.0, left: 20),
-                    child: Text(
-                      mapBottomSheetDataController.currentBottomSheetData.title,
-                      style: textTheme.headline1,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )
-                : SizedBox(),
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                mapBottomSheetDataController.currentBottomSheetData.title != null
+                    ? Container(
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.only(left: 20),
+                        child: Text(
+                          mapBottomSheetDataController.currentBottomSheetData.title,
+                          style: textTheme.headline1,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )
+                    : SizedBox(),
+                mapBottomSheetDataController.currentBottomSheetData.isCancelPointEnable
+                    ? GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () => {widget.onCloseButtonClick()},
+                        child: Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(right: 20),
+                            width: 22,
+                            height: 22,
+                            decoration: new BoxDecoration(
+                              color: Color(0xFFBFBFBF),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Container(
+                                padding: EdgeInsets.all(4),
+                                child: SVGIcon(
+                                  icon: IconAsset.close,
+                                  color: Colors.white,
+                                ))))
+                    : SizedBox()
+              ]),
+            ),
             mapBottomSheetDataController.currentBottomSheetData.type != null
                 ? Container(
                     alignment: Alignment.topLeft,
