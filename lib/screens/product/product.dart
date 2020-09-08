@@ -31,6 +31,7 @@ import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPage extends StatefulWidget {
   final Product product;
@@ -42,11 +43,15 @@ class ProductPage extends StatefulWidget {
   final GlobalKey<NavigatorState> productKey;
 
   final Function(Product) pushPageOnTop;
+
   const ProductPage(
       {this.product,
       this.onProductPush,
       this.onSellerPush,
-      this.onSubCategoryClick, this.screenKey, this.pushPageOnTop, this.productKey})
+      this.onSubCategoryClick,
+      this.screenKey,
+      this.pushPageOnTop,
+      this.productKey})
       : assert(product != null);
 
   @override
@@ -70,8 +75,7 @@ class _ProductPageState extends State<ProductPage> {
     super.initState();
   }
 
-  repositoryStatusListener() =>
-      setState(() => status = productRepository.statusNotifier.value);
+  repositoryStatusListener() => setState(() => status = productRepository.statusNotifier.value);
 
   @override
   void dispose() {
@@ -92,7 +96,10 @@ class _ProductPageState extends State<ProductPage> {
             data: TopBarData(
               leftButtonData: TBButtonData.icon(
                 TBIconType.back,
-                onTap: Navigator.of(widget.screenKey.currentContext).pop,
+                onTap: Navigator.of(widget.productKey.currentState.canPop()
+                        ? widget.productKey.currentContext
+                        : widget.screenKey.currentContext)
+                    .pop,
               ),
             ),
           );
@@ -102,49 +109,52 @@ class _ProductPageState extends State<ProductPage> {
             final isFavorite = true;
 
             return Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
-                    return RefashionedTopBar(
-              data: TopBarData(
-                leftButtonData: TBButtonData.icon(
-                  TBIconType.back,
-                  onTap: Navigator.of(widget.screenKey.currentContext).pop,
+              return RefashionedTopBar(
+                data: TopBarData(
+                  leftButtonData: TBButtonData.icon(
+                    TBIconType.back,
+                    onTap: Navigator.of(widget.productKey.currentState.canPop()
+                            ? widget.productKey.currentContext
+                            : widget.screenKey.currentContext)
+                        .pop,
+                  ),
+                  middleData: TBMiddleData.condensed(
+                    product.brand.name.toString() + " • " + product.name.toString(),
+                    product.currentPrice.toString() + " ₽",
+                  ),
+                  secondRightButtonData: isFavorite
+                      ? TBButtonData(
+                          iconType: widget.product.isFavourite ? TBIconType.favoriteFilled : TBIconType.favorite,
+                          iconColor: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
+                          onTap: () {
+                            HapticFeedback.vibrate();
+                            BaseRepository.isAuthorized().then((isAuthorized) {
+                              isAuthorized
+                                  ? widget.product.isFavourite
+                                      ? addRemoveFavouriteRepository
+                                          .removeFromFavourites((widget.product..isFavourite = false).id)
+                                      : addRemoveFavouriteRepository
+                                          .addToFavourites((widget.product..isFavourite = true).id)
+                                  : showCupertinoModalBottomSheet(
+                                      backgroundColor: Colors.white,
+                                      expand: false,
+                                      context: context,
+                                      settings: RouteSettings(name: "/authorization"),
+                                      useRootNavigator: true,
+                                      builder: (context, controller) => ProfilePage());
+                            });
+                          },
+                        )
+                      : TBButtonData(
+                          iconType: TBIconType.favorite,
+                          onTap: () {},
+                        ),
+                  rightButtonData: TBButtonData(
+                    iconType: TBIconType.share,
+                  ),
                 ),
-                middleData: TBMiddleData.condensed(
-                  product.brand.name.toString() +
-                      " • " +
-                      product.name.toString(),
-                  product.currentPrice.toString() + " ₽",
-                ),
-                secondRightButtonData: isFavorite
-                    ? TBButtonData(
-                        iconType: widget.product.isFavourite ? TBIconType.favoriteFilled : TBIconType.favorite,
-                        iconColor: widget.product.isFavourite ?  Color(0xFFD12C2A): Color(0xFF000000),
-                        onTap: () {
-                          HapticFeedback.heavyImpact();
-                          BaseRepository.isAuthorized().then((isAuthorized) {
-                            isAuthorized
-                                ? widget.product.isFavourite
-                                ? addRemoveFavouriteRepository
-                                .removeFromFavourites((widget.product..isFavourite = false).id)
-                                : addRemoveFavouriteRepository
-                                .addToFavourites((widget.product..isFavourite = true).id)
-                                : showCupertinoModalBottomSheet(
-                                backgroundColor: Colors.white,
-                                expand: false,
-                                context: context,
-                                useRootNavigator: true,
-                                builder: (context, controller) => ProfilePage());
-                          });
-                        },
-                      )
-                    : TBButtonData(
-                        iconType: TBIconType.favorite,
-                        onTap: () {},
-                      ),
-                rightButtonData: TBButtonData(
-                  iconType: TBIconType.share,
-                ),
-              ),
-            );});
+              );
+            });
           },
         );
       default:
@@ -152,7 +162,10 @@ class _ProductPageState extends State<ProductPage> {
           data: TopBarData(
             leftButtonData: TBButtonData.icon(
               TBIconType.back,
-              onTap: Navigator.of(widget.screenKey.currentContext).pop,
+              onTap: Navigator.of(widget.productKey.currentState.canPop()
+                      ? widget.productKey.currentContext
+                      : widget.screenKey.currentContext)
+                  .pop,
             ),
           ),
         );
@@ -162,12 +175,12 @@ class _ProductPageState extends State<ProductPage> {
   Widget updateContent(Status status) {
     switch (status) {
       case Status.LOADING:
-        return Center(
-          child: Text(
-            "Загружаем товар...",
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-        );
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: accentColor,
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+            ),
+          );
       case Status.ERROR:
         return Center(
           child: Text(
@@ -232,8 +245,7 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                         ),
                         ChangeNotifierProvider<ProductRecommendedRepository>(
-                          create: (_) => ProductRecommendedRepository()
-                            ..getProductRecommended(product.id),
+                          create: (_) => ProductRecommendedRepository()..getProductRecommended(product.id),
                           child: RecommendedProducts(
                             onProductPush: widget.onProductPush,
                           ),
@@ -274,7 +286,7 @@ class _ProductPageState extends State<ProductPage> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: 99,
+            bottom: 60,
             child: ProductBottomButtons(
               productId: widget.product.id,
             ),

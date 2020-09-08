@@ -6,9 +6,10 @@ import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/marketplace/pages/new_address_page.dart';
 
 class ProfilePage extends StatelessWidget {
+  final GlobalKey<NavigatorState> screenKey;
   final Function(List<String>) onPush;
 
-  const ProfilePage({Key key, this.onPush}) : super(key: key);
+  const ProfilePage({Key key, this.onPush, this.screenKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +69,8 @@ class ProfilePage extends StatelessWidget {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => PhonePage()));
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => PhonePage()), ModalRoute.withName(ModalRoute.of(screenKey.currentContext).settings.name));
                     },
                   ),
                 ),

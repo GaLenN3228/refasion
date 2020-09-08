@@ -14,25 +14,31 @@ import 'package:provider/provider.dart';
 
 class ProductsItem extends StatefulWidget {
   final Product product;
+  final GlobalKey<NavigatorState> screenKey;
   final Function(Product) onPush;
 
-  const ProductsItem({Key key, this.product, this.onPush}) : super(key: key);
+  const ProductsItem({Key key, this.product, this.onPush, this.screenKey}) : super(key: key);
 
   @override
   _ProductsItemState createState() => _ProductsItemState();
 }
 
-class _ProductsItemState extends State<ProductsItem> {
+class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Padding(
         padding: const EdgeInsets.only(left: 2, right: 2),
         child: GestureDetector(
-          onTap: () => {
-            widget.onPush(widget.product),
-            HapticFeedback.heavyImpact()
-          },
+          onTap: () => {widget.onPush(widget.product), HapticFeedback.vibrate()},
           child: new Card(
             shadowColor: Colors.transparent,
             child: Column(children: [
@@ -52,33 +58,47 @@ class _ProductsItemState extends State<ProductsItem> {
                   ),
                   Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
                     return GestureDetector(
-                        onTap: () => {
-                              BaseRepository.isAuthorized().then((isAuthorized) {
-                                isAuthorized
-                                    ? widget.product.isFavourite
-                                        ? addRemoveFavouriteRepository
-                                            .removeFromFavourites((widget.product..isFavourite = false).id)
-                                        : addRemoveFavouriteRepository
-                                            .addToFavourites((widget.product..isFavourite = true).id)
-                                    : showCupertinoModalBottomSheet(
-                                        backgroundColor: Colors.white,
-                                        expand: false,
-                                        context: context,
-                                        useRootNavigator: true,
-                                        builder: (context, controller) => ProfilePage());
-                              })
-                            },
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                      onTap: () => {
+                        _controller.forward(),
+                        BaseRepository.isAuthorized().then((isAuthorized) {
+                          isAuthorized
+                              ? widget.product.isFavourite
+                                  ? addRemoveFavouriteRepository
+                                      .removeFromFavourites((widget.product..isFavourite = false).id)
+                                  : addRemoveFavouriteRepository
+                                      .addToFavourites((widget.product..isFavourite = true).id)
+                              : showCupertinoModalBottomSheet(
+                                  backgroundColor: Colors.white,
+                                  expand: false,
+                                  context: context,
+                                  settings: RouteSettings(name: "/authorization"),
+                                  useRootNavigator: true,
+                                  builder: (context, controller) => ProfilePage(screenKey: widget.screenKey,));
+                        })
+                      },
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: ScaleTransition(
+                            scale: Tween(begin: 1.0, end: 1.3)
+                                .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
+                                  ..addStatusListener((status) {
+                                    if (status == AnimationStatus.completed) {
+                                      setState(() {
+                                        _controller.reverse();
+                                      });
+                                    }
+                                  }),
                             child: SVGIcon(
-                              color: widget.product.isFavourite ?  Color(0xFFD12C2A): Color(0xFF000000),
+                              color: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
                               icon: widget.product.isFavourite ? IconAsset.favoriteFilled : IconAsset.favoriteBorder,
                               size: 26,
                             ),
                           ),
-                        ));
+                        ),
+                      ),
+                    );
                   }),
                   Align(
                     alignment: Alignment.bottomRight,

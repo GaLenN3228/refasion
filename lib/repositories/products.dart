@@ -23,7 +23,6 @@ class ProductsRepository extends BaseRepository<ProductsContent> {
             });
           }
         });
-        await Future.delayed(Duration(milliseconds: 1000));
       });
 }
 

@@ -8,6 +8,7 @@ import 'package:refashioned_app/screens/authorization/code_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 
 class PhonePage extends StatefulWidget {
+
   const PhonePage({Key key}) : super(key: key);
 
   @override
@@ -24,8 +25,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
   void initState() {
     phoneIsEmpty = false;
     textEditingController = TextEditingController();
-    maskFormatter = new MaskTextInputFormatter(
-        mask: '+7 ### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
+    maskFormatter = new MaskTextInputFormatter(mask: '+7 ### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
     textEditingController.addListener(textControllerListener);
 
     super.initState();
@@ -65,10 +65,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
             alignment: Alignment.topRight,
             child: Text(
               "Закрыть",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  .copyWith(color: Color(0xFF959595)),
+              style: Theme.of(context).textTheme.bodyText1.copyWith(color: Color(0xFF959595)),
             )),
       ),
       Column(
@@ -102,27 +99,17 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
               controller: textEditingController,
               keyboardType: TextInputType.phone,
               autofocus: true,
-              style:
-                  Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
+              style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
               cursorWidth: 2.0,
               cursorRadius: Radius.circular(2.0),
               cursorColor: Color(0xFFE6E6E6),
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(bottom: 10),
-                  border: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                  enabledBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                  border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
                   hintText: "Введите номер",
-                  hintStyle: Theme.of(context)
-                      .textTheme
-                      .subtitle1
-                      .copyWith(fontSize: 20)),
+                  hintStyle: Theme.of(context).textTheme.subtitle1.copyWith(fontSize: 20)),
             ),
           ),
           Container(
@@ -131,8 +118,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  text:
-                      "Нажмите кнопку Получить код, вы соглашаететсь\nс условиями ",
+                  text: "Нажмите кнопку Получить код, вы соглашаететсь\nс условиями ",
                   style: textTheme.caption,
                   children: <TextSpan>[
                     TextSpan(
@@ -159,11 +145,13 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
           borderRadius: 5,
           onClick: !phoneIsEmpty
               ? () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
-                            create: (_) => AuthorizationRepository()..sendPhoneAndGetCode(phone.replaceAll("+", "").replaceAll(" ", "")),
-                            child: CodePage(phone: phone),
-                          )));
+                  Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
+                                create: (_) => AuthorizationRepository()
+                                  ..sendPhoneAndGetCode(phone.replaceAll("+", "").replaceAll(" ", "")),
+                                child: CodePage(phone: phone),
+                              )));
                 }
               : () {},
         ),

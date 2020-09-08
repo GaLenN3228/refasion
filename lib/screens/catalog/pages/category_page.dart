@@ -107,6 +107,7 @@ class _CategoryPageState extends State<CategoryPage>
               .toList());
 
     return CupertinoPageScaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       child: Column(
         children: [
@@ -157,7 +158,7 @@ class _CategoryPageState extends State<CategoryPage>
                               },
                               title: title,
                               subtitle: subtitle,
-                              bottomPadding: 99,
+                              bottomPadding: 80,
                             );
                           },
                         ),

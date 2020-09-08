@@ -6,11 +6,10 @@ import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 
 class ProductNavigatorRoutes {
-  static const String product = '/product';
+  static const String product = '/';
 }
 
 class ProductNavigator extends StatelessWidget {
@@ -19,9 +18,7 @@ class ProductNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> productKey;
   final GlobalKey<NavigatorState> screenKey;
   final Product product;
-  final Function(Product) pushPageOnTop;
-
-  CatalogNavigator _catalogNavigator;
+  final Function(String, String) pushPageOnTop;
 
   Widget routeBuilder(BuildContext context, String route,
       {Category category,
@@ -36,7 +33,6 @@ class ProductNavigator extends StatelessWidget {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductPage(
-            pushPageOnTop: pushPageOnTop,
             screenKey: screenKey,
             productKey: productKey,
             product: product,
@@ -50,12 +46,7 @@ class ProductNavigator extends StatelessWidget {
 //                builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
 //              ),
 //            ),
-//            onSubCategoryClick: (parameters, title) => Navigator.of(context).push(
-//              MaterialWithModalsPageRoute(
-//                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
-//                    product: product, category: category, parameters: parameters, productTitle: title),
-//              ),
-//            ),
+           onSubCategoryClick: (parameters, title) => pushPageOnTop(parameters, title)
           );
         });
 

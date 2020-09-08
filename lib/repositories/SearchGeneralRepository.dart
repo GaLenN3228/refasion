@@ -13,6 +13,7 @@ class SearchGeneralRepository<T> extends BaseRepository<T> {
   Future<void> callSearchApi(String query, Future<void> execute()) async {
     this.query = query;
     if (variousQueries()) {
+      previousQuery = query;
       if (query == null || query.isEmpty) {
         searchStatus = SearchStatus.EMPTY_QUERY;
         notifyListeners();
@@ -29,7 +30,7 @@ class SearchGeneralRepository<T> extends BaseRepository<T> {
         searchStatus = SearchStatus.QUERY;
 
       notifyListeners();
-
+    } else {
       previousQuery = query;
     }
   }

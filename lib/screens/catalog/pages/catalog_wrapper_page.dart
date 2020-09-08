@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/search/components/result_tile.dart';
@@ -9,16 +10,17 @@ import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel.dart';
 
-enum SearchResultState { SHOW, HIDE, VISIBLE, COLLAPSE }
+enum SearchResultState { SHOW, HIDE, VISIBLE, NOT_FOUND }
 
 class CatalogWrapperPage extends StatefulWidget {
-  final Function(Product) pushPageOnTop;
   final Function() onFavClick;
   final GlobalKey<NavigatorState> navigatorKey;
   final GlobalKey<NavigatorState> screenKey;
   final GlobalKey<NavigatorState> productKey;
+  final CatalogNavigator catalogNavigator;
 
-  CatalogWrapperPage({Key key, this.pushPageOnTop, this.navigatorKey, this.productKey, this.screenKey, this.onFavClick}) : super(key: key);
+  CatalogWrapperPage({Key key, this.navigatorKey, this.productKey, this.screenKey, this.onFavClick, this.catalogNavigator})
+      : super(key: key);
 
   @override
   _CatalogWrapperPageState createState() => _CatalogWrapperPageState();
@@ -32,79 +34,61 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
   TopPanel _topPanel;
 
   String searchQuery = "";
-  CatalogNavigator _catalogNavigator;
 
   SearchResultState _searchResultState = SearchResultState.HIDE;
 
-  Function(bool) updateTopBar;
-
-  bool needShowTopBar = false;
+  SearchRepository searchRepository;
 
   @override
   void initState() {
     textEditController = TextEditingController();
     controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     offset = Tween<Offset>(begin: Offset(0.0, 0.0), end: Offset.zero).animate(controller);
-    updateTopBar = (show){
-//      Future.delayed(Duration(milliseconds: 100), (){
-//        if (show != needShowTopBar)
-//        setState(() {
-//          needShowTopBar = show;
-//        });
-//      });
-    };
+
+
+    _topPanel = TopPanel(
+      textEditController: textEditController,
+      type: PanelType.SEARCH_FOCUSED,
+      onPop: () {
+        setState(() {
+          searchQuery = "";
+          _searchResultState = SearchResultState.HIDE;
+          textEditController.text = "";
+          FocusScope.of(context).unfocus();
+          widget.navigatorKey.currentState.pop();
+        });
+      },
+      onCancelClick: () {
+        setState(() {
+          searchQuery = "";
+          _searchResultState = SearchResultState.HIDE;
+          textEditController.text = "";
+          FocusScope.of(context).unfocus();
+        });
+      },
+      onFavouritesClick: widget.onFavClick,
+      onSearch: (query) {
+        searchRepository?.search(query);
+        searchQuery = query;
+      },
+    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final SearchRepository searchRepository = context.watch<SearchRepository>();
-    _catalogNavigator = CatalogNavigator(updateTopBar: updateTopBar, navigatorKey: widget.navigatorKey, onPushPageOnTop: widget.pushPageOnTop, productKey: widget.productKey,);
-    _topPanel = TopPanel(
-      textEditController: textEditController,
-      type: PanelType.search,
-      canPop: true,
-      onPop: () {
-        if (_searchResultState == SearchResultState.VISIBLE) {
-          setState(() {
-            searchQuery = "";
-            _searchResultState = SearchResultState.HIDE;
-            FocusScope.of(context).unfocus();
-          });
-        } else if (_searchResultState == SearchResultState.COLLAPSE) {
-          setState(() {
-            searchQuery = "";
-            _searchResultState = SearchResultState.HIDE;
-            textEditController.text = "";
-            FocusScope.of(context).unfocus();
-            widget.navigatorKey.currentState.pop();
-          });
-        } else {
-          setState(() {
-            FocusScope.of(context).unfocus();
-            widget.navigatorKey.currentState.pop();
-          });
-        }
-      },
-      onFavouritesClick: widget.onFavClick,
-      onSearch: (query) {
-        searchRepository.search(query);
-        searchQuery = query;
-        if (_searchResultState == SearchResultState.COLLAPSE) {
-          _searchResultState = SearchResultState.SHOW;
-        }
-      },
-    );
-    if (searchRepository.response != null &&
+    searchRepository = context.watch<SearchRepository>();
+    if (searchQuery.isEmpty) {
+      searchRepository.response?.content?.results?.clear();
+      _searchResultState = SearchResultState.HIDE;
+    } else if (searchRepository.response != null &&
         searchRepository.response.content.results.isNotEmpty &&
         searchQuery.isNotEmpty &&
-        _searchResultState != SearchResultState.VISIBLE &&
-        _searchResultState != SearchResultState.COLLAPSE)
+        _searchResultState != SearchResultState.VISIBLE)
       _searchResultState = SearchResultState.SHOW;
-    else if (searchRepository.response == null ||
-        searchRepository.response.content.results.isEmpty ||
-        searchQuery.isEmpty) {
-      _searchResultState = SearchResultState.COLLAPSE;
+    else if ((searchRepository.response == null || searchRepository.response.content.results.isEmpty) &&
+        !searchRepository.isLoading) {
+      _searchResultState = SearchResultState.NOT_FOUND;
     }
     animateSearchResult();
     return Stack(
@@ -112,7 +96,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
         Container(
             margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 43),
             child: Stack(children: [
-              _catalogNavigator,
+              widget.catalogNavigator,
               _searchResultState == SearchResultState.VISIBLE
                   ? Container(
                       color: Colors.white,
@@ -127,13 +111,14 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
                             onClick: (searchResult) {
                               widget.navigatorKey.currentState.push(
                                 MaterialWithModalsPageRoute(
-                                  builder: (context) => _catalogNavigator.routeBuilder(
+                                  builder: (context) => widget.catalogNavigator.routeBuilder(
                                       context, CatalogNavigatorRoutes.products,
                                       searchResult: searchResult),
                                 ),
                               );
                               setState(() {
-                                _searchResultState = SearchResultState.COLLAPSE;
+                                searchQuery = "";
+                                _searchResultState = SearchResultState.HIDE;
                                 FocusScope.of(context).unfocus();
                               });
                             },
@@ -142,7 +127,13 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
                         ),
                       ),
                     )
-                  : SizedBox(),
+                  : _searchResultState == SearchResultState.NOT_FOUND
+                      ? Container(
+                          color: Colors.white,
+                          child: Center(
+                            child: Text("Не найдено, повторите запрос", style: Theme.of(context).textTheme.bodyText1),
+                          ))
+                      : SizedBox()
             ])),
         _topPanel
       ],
@@ -157,7 +148,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
       offset = Tween<Offset>(begin: Offset(0.0, -1.0), end: Offset.zero).animate(controller);
       controller.forward();
       _searchResultState = SearchResultState.VISIBLE;
-    } else if (_searchResultState == SearchResultState.HIDE || _searchResultState == SearchResultState.COLLAPSE) {
+    } else if (_searchResultState == SearchResultState.HIDE) {
       if (controller != null) {
         controller.reset();
       }

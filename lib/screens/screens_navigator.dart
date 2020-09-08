@@ -9,6 +9,7 @@ import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart';
+import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/product_navigator.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 
@@ -19,12 +20,13 @@ class ScreenNavigatorRoutes {
 }
 
 class ScreenNavigator extends StatelessWidget {
-
   GlobalKey<NavigatorState> catalogKey;
   GlobalKey<NavigatorState> productKey;
   GlobalKey<NavigatorState> screensKey;
 
   ProductNavigator _productNavigator;
+
+  CatalogNavigator _catalogNavigator;
 
   Widget routeBuilder(BuildContext context, String route,
       {Category category,
@@ -36,24 +38,39 @@ class ScreenNavigator extends StatelessWidget {
       SearchResult searchResult}) {
     switch (route) {
       case ScreenNavigatorRoutes.catalog:
-        return ChangeNotifierProvider<SearchRepository>(
-            create: (_) => SearchRepository(),
-            child: CatalogWrapperPage(onFavClick: (){
-              return Navigator.of(context).push(
-                  CupertinoPageRoute(
-                      builder: (context) =>
-                          routeBuilder(context, ScreenNavigatorRoutes.fav, product: product)));
-            }, navigatorKey: catalogKey, productKey: productKey, screenKey: screensKey, pushPageOnTop: (product){
-              return Navigator.of(context).push(
-                  CupertinoPageRoute(
-                  builder: (context) =>
-              routeBuilder(context, ScreenNavigatorRoutes.product, product: product)));
-            }));
+        return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
+              ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController())
+            ],
+            builder: (context, _) {
+              return CatalogWrapperPage(
+                catalogNavigator: _catalogNavigator,
+                onFavClick: () {
+                  return Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => routeBuilder(context, ScreenNavigatorRoutes.fav, product: product)));
+                },
+                navigatorKey: catalogKey,
+                productKey: productKey,
+                screenKey: screensKey,
+              );
+            });
 
       case ScreenNavigatorRoutes.product:
-        return ProductNavigator(product: product, productKey: productKey, screenKey: screensKey, pushPageOnTop: (p){
-
-        },);
+        return ProductNavigator(
+          product: product,
+          productKey: productKey,
+          screenKey: screensKey,
+          pushPageOnTop: (id, title) {
+            Navigator.of(context).pushAndRemoveUntil(
+                CupertinoPageRoute(
+                    builder: (context) => _catalogNavigator.routeBuilder(
+                        productKey.currentContext, CatalogNavigatorRoutes.products,
+                        parameters: id, productTitle: title),
+                    settings: RouteSettings(name: CatalogNavigatorRoutes.products)),
+                ModalRoute.withName(ModalRoute.of(productKey.currentContext).settings.name));
+          },
+        );
 
       case ScreenNavigatorRoutes.fav:
         return MultiProvider(
@@ -91,13 +108,22 @@ class ScreenNavigator extends StatelessWidget {
     productKey = GlobalKey<NavigatorState>();
     screensKey = GlobalKey<NavigatorState>();
 
+    _catalogNavigator = CatalogNavigator(
+        screenKey: catalogKey,
+        navigatorKey: catalogKey,
+        productKey: productKey,
+        onPushPageOnTop: (product) {
+          return Navigator.of(screensKey.currentContext).push(CupertinoPageRoute(
+              builder: (context) =>
+                  routeBuilder(screensKey.currentContext, ScreenNavigatorRoutes.product, product: product)));
+        });
+
     return Navigator(
       key: screensKey,
       initialRoute: ScreenNavigatorRoutes.catalog,
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
-          builder: (context) =>
-              routeBuilder(context, routeSettings.name),
+          builder: (context) => routeBuilder(context, routeSettings.name),
         );
       },
     );
