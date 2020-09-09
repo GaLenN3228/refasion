@@ -120,7 +120,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
                                         context, CatalogNavigatorRoutes.products,
                                         searchResult: searchResult),
                                   ),
-                                );
+                                ).then((value) => topPanelController.needShowBack = false);
                                 setState(() {
                                   searchQuery = "";
                                   _searchResultState = SearchResultState.HIDE;

@@ -146,14 +146,14 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> _moveToPoint(double zoom, Point point) async {
-    if (_permissionStatus == PermissionStatus.granted) {
+    // if (_permissionStatus == PermissionStatus.granted) {
       _allowFinishMapCameraListener = false;
       _allowStartMapCameraListener = false;
       await controller.move(
           zoom: zoom,
           point: Point(latitude: point.latitude, longitude: point.longitude),
           animation: const MapAnimation(smooth: true, duration: 2.0));
-    }
+    // }
   }
 
   Future<void> _addMarker(PickPoint pickPoint) async {
