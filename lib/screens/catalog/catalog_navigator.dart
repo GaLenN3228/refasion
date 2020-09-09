@@ -63,7 +63,7 @@ class CatalogNavigator extends StatelessWidget {
                     builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
                         category: category, parameters: parameters),
                   ),
-                ));
+                ).then((value) => topPanelController.needShow = true),);
 
       case CatalogNavigatorRoutes.categories:
         topPanelController.needShowBack = true;
@@ -89,7 +89,7 @@ class CatalogNavigator extends StatelessWidget {
                     builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
                         category: category, parameters: parameters),
                   ),
-                ));
+                ).then((value) => topPanelController.needShow = true),);
 
       case CatalogNavigatorRoutes.category:
         topPanelController.needShowBack = true;
@@ -114,7 +114,7 @@ class CatalogNavigator extends StatelessWidget {
                       builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
                           category: category, parameters: parameters),
                     ),
-                  ));
+                  ).then((value) => topPanelController.needShow = true),);
         });
 
       case CatalogNavigatorRoutes.products:
@@ -146,6 +146,7 @@ class CatalogNavigator extends StatelessWidget {
                     ),
                   )
                       .then((flag) {
+                topPanelController.needShow = true;
                     callback();
                   }));
         });
@@ -169,7 +170,7 @@ class CatalogNavigator extends StatelessWidget {
               ),
             ),
             onSubCategoryClick: (parameters, title) => Navigator.of(context).push(
-              MaterialWithModalsPageRoute(
+              CupertinoPageRoute(
                 builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.products,
                     product: product, category: category, parameters: parameters, productTitle: title),
               ),
@@ -189,6 +190,7 @@ class CatalogNavigator extends StatelessWidget {
         );
 
       case CatalogNavigatorRoutes.favourites:
+        topPanelController.needShow = false;
         return MultiProvider(
             providers: [
               ChangeNotifierProvider<FavouritesProductsRepository>(

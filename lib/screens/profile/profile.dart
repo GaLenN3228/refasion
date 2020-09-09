@@ -69,8 +69,8 @@ class ProfilePage extends StatelessWidget {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => PhonePage()), ModalRoute.withName(ModalRoute.of(screenKey.currentContext).settings.name));
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => PhonePage()));
                     },
                   ),
                 ),

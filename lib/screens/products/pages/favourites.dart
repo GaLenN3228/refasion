@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
@@ -19,11 +20,12 @@ class FavouritesPage extends StatefulWidget {
 }
 
 class _FavouritesPageState extends State<FavouritesPage> {
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
-      child: Stack(
+      body: Stack(
         children: [
           RefashionedTopBar(
             data: TopBarData.simple(
@@ -49,13 +51,14 @@ class _FavouritesPageState extends State<FavouritesPage> {
 
             return Container(
                 padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 50),
-                child: RefreshIndicator(
-                  color: Colors.black,
-                  displacement: 20,
+                child: SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: true,
+                  header: ClassicHeader(),
+                  controller: _refreshController,
                   onRefresh: () async {
-                    setState(() {
-                      favouritesProductsRepository.getFavouritesProducts();
-                    });
+                    await favouritesProductsRepository.getFavouritesProducts();
+                    _refreshController.refreshCompleted();
                   },
                   child: StaggeredGridView.countBuilder(
                     physics: AlwaysScrollableScrollPhysics(),
@@ -68,7 +71,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                     staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
                     mainAxisSpacing: 16.0,
                   ),
-                ));
+                ),);
           })
         ],
       ),
