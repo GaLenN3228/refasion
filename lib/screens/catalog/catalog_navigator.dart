@@ -10,7 +10,10 @@ import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/screens/catalog/search/search_page.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
+import 'package:refashioned_app/screens/products/pages/favourites.dart';
+import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
 import 'package:refashioned_app/screens/seller/seller_page.dart';
 
@@ -25,12 +28,10 @@ class CatalogNavigatorRoutes {
 }
 
 class CatalogNavigator extends StatelessWidget {
-  CatalogNavigator({this.navigatorKey, this.onPushPageOnTop, this.productKey, this.screenKey});
+  CatalogNavigator({this.navigatorKey, this.onPushPageOnTop});
 
   final GlobalKey<NavigatorState> navigatorKey;
-  final GlobalKey<NavigatorState> productKey;
-  final GlobalKey<NavigatorState> screenKey;
-  final Function(Product) onPushPageOnTop;
+  final Function(Widget) onPushPageOnTop;
 
   Widget routeBuilder(BuildContext context, String route,
       {Category category,
@@ -39,34 +40,35 @@ class CatalogNavigator extends StatelessWidget {
       Seller seller,
       String parameters,
       String productTitle,
-      SearchResult searchResult}) {
+        SearchResult searchResult}) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     switch (route) {
       case CatalogNavigatorRoutes.root:
-        topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
         return CatalogRootPage(
             categories: categories,
+            onSearch: () => onPushPageOnTop(SearchPage()),
             onPush: (category) {
               final newRoute =
                   category.children.isNotEmpty ? CatalogNavigatorRoutes.categories : CatalogNavigatorRoutes.category;
 
-              return Navigator.of(context)
-                  .push(
-                    CupertinoPageRoute(
-                        builder: (context) => routeBuilder(context, newRoute, category: category),
-                        settings: RouteSettings(name: newRoute)),
-                  )
-                  .then((flag) => topPanelController.needShow = false);
+              return Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => routeBuilder(context, newRoute, category: category),
+                ),
+              ).then((value) => topPanelController.needShowBack = false);
             },
-            onFavouritesClick: () => Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
-                      category: category, parameters: parameters),
-                  settings: RouteSettings(name: CatalogNavigatorRoutes.favourites),
-                )));
+            onFavouritesClick: () => Navigator.of(context).push(
+                  MaterialWithModalsPageRoute(
+                    builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                        category: category, parameters: parameters),
+                  ),
+                ));
 
       case CatalogNavigatorRoutes.categories:
-        topPanelController.needShow = true;
+        topPanelController.needShowBack = true;
         return CategoryPage(
+            onSearch: () => onPushPageOnTop(SearchPage()),
             topCategory: category,
             level: CategoryLevel.categories,
             onPush: (category, {callback}) {
@@ -83,64 +85,99 @@ class CatalogNavigator extends StatelessWidget {
                   .then((flag) => callback(category: category));
             },
             onFavouritesClick: () => Navigator.of(context).push(
-                  CupertinoPageRoute(
-                      builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
-                          category: category, parameters: parameters),
-                      settings: RouteSettings(name: CatalogNavigatorRoutes.favourites)),
+                  MaterialWithModalsPageRoute(
+                    builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                        category: category, parameters: parameters),
+                  ),
                 ));
 
       case CatalogNavigatorRoutes.category:
-        topPanelController.needShow = true;
+        topPanelController.needShowBack = true;
         return ChangeNotifierProvider<ProductsCountRepository>(create: (_) {
           return ProductsCountRepository()..getProductsCount("?p=" + category.id);
         }, builder: (context, _) {
           return CategoryPage(
+              onSearch: () => onPushPageOnTop(SearchPage()),
               topCategory: category,
               level: CategoryLevel.category,
               onPush: (_, {callback}) => Navigator.of(context)
                       .push(
-                    CupertinoPageRoute(
-                        builder: (context) =>
-                            routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
-                        settings: RouteSettings(name: CatalogNavigatorRoutes.products)),
+                    MaterialWithModalsPageRoute(
+                      builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
+                    ),
                   )
                       .then((flag) {
                     callback();
                   }),
               onFavouritesClick: () => Navigator.of(context).push(
-                    CupertinoPageRoute(
-                        builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
-                            category: category, parameters: parameters),
-                        settings: RouteSettings(name: CatalogNavigatorRoutes.favourites)),
+                    MaterialWithModalsPageRoute(
+                      builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                          category: category, parameters: parameters),
+                    ),
                   ));
         });
 
       case CatalogNavigatorRoutes.products:
-        topPanelController.needShow = true;
+        topPanelController.needShowBack = true;
         return ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductsPage(
-            screenKey: screenKey,
-              parameters: parameters,
-              searchResult: searchResult,
+            searchResult: searchResult,
+              onSearch: () => onPushPageOnTop(SearchPage()),
               topCategory: category,
               title: productTitle,
-              onPush: (product, {callback}) => onPushPageOnTop(product),
-              onFavouritesClick: ({callback}) => Navigator.of(context)
+              onPush: (product, {callback}) => Navigator.of(context)
                       .push(
                     CupertinoPageRoute(
-                        builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
-                            category: category, parameters: parameters),
-                        settings: RouteSettings(name: CatalogNavigatorRoutes.favourites)),
+                      builder: (context) =>
+                          routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                    ),
+                  )
+                      .then((flag) {
+                topPanelController.needShow = true;
+                    callback();
+                  }),
+              onFavouritesClick: ({callback}) => Navigator.of(context)
+                      .push(
+                    MaterialWithModalsPageRoute(
+                      builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                          category: category, parameters: parameters),
+                    ),
                   )
                       .then((flag) {
                     callback();
                   }));
         });
 
+      case CatalogNavigatorRoutes.product:
+        topPanelController.needShow = false;
+        return ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) {
+          return AddRemoveFavouriteRepository();
+        }, builder: (context, _) {
+          return ProductPage(
+            product: product,
+            onProductPush: (product) => Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) =>
+                    routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+              ),
+            ).then((value) => topPanelController.needShow = true),
+            onSellerPush: (seller) => Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
+              ),
+            ),
+            onSubCategoryClick: (parameters, title) => Navigator.of(context).push(
+              MaterialWithModalsPageRoute(
+                builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.products,
+                    product: product, category: category, parameters: parameters, productTitle: title),
+              ),
+            ),
+          );
+        });
+
       case CatalogNavigatorRoutes.seller:
-        topPanelController.needShow = true;
         return SellerPage(
           seller: seller,
           onProductPush: (product) => Navigator.of(context).push(
@@ -148,8 +185,26 @@ class CatalogNavigator extends StatelessWidget {
               builder: (context) =>
                   routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
             ),
-          ),
+          ).then((value) => topPanelController.needShow = true),
         );
+
+      case CatalogNavigatorRoutes.favourites:
+        return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<FavouritesProductsRepository>(
+                  create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
+              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+            ],
+            builder: (context, _) {
+              return FavouritesPage(
+                onPush: (product) => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) =>
+                        routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                  ),
+                ).then((value) => topPanelController.needShow = true),
+              );
+            });
 
       default:
         return CupertinoPageScaffold(

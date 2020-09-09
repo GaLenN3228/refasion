@@ -77,7 +77,7 @@ class _TopPanelState extends State<TopPanel> with SingleTickerProviderStateMixin
       child: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 4, bottom: 4),
         child: Stack(children: [
-          topPanelController.needShow
+          topPanelController.needShowBack
               ? Positioned(
                   left: 0,
                   child: SlideTransition(
@@ -105,7 +105,7 @@ class _TopPanelState extends State<TopPanel> with SingleTickerProviderStateMixin
               animation: animation,
               builder: (context, child) {
                 final value = animation.value;
-                var leftPadding = topPanelController.needShow ? 50.0 : 20.0;
+                var leftPadding = topPanelController.needShowBack ? 50.0 : 20.0;
                 final startPadding = EdgeInsets.only(left: leftPadding, right: 60);
                 final endPadding = EdgeInsets.only(left: 20, right: 90);
 

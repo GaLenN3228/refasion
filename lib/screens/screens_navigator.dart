@@ -56,21 +56,21 @@ class ScreenNavigator extends StatelessWidget {
               );
             });
 
-      case ScreenNavigatorRoutes.product:
-        return ProductNavigator(
-          product: product,
-          productKey: productKey,
-          screenKey: screensKey,
-          pushPageOnTop: (id, title) {
-            Navigator.of(context).pushAndRemoveUntil(
-                CupertinoPageRoute(
-                    builder: (context) => _catalogNavigator.routeBuilder(
-                        productKey.currentContext, CatalogNavigatorRoutes.products,
-                        parameters: id, productTitle: title),
-                    settings: RouteSettings(name: CatalogNavigatorRoutes.products)),
-                ModalRoute.withName(ModalRoute.of(productKey.currentContext).settings.name));
-          },
-        );
+      // case ScreenNavigatorRoutes.product:
+      //   return ProductNavigator(
+      //     product: product,
+      //     productKey: productKey,
+      //     screenKey: screensKey,
+      //     pushPageOnTop: (id, title) {
+      //       Navigator.of(context).pushAndRemoveUntil(
+      //           CupertinoPageRoute(
+      //               builder: (context) => _catalogNavigator.routeBuilder(
+      //                   productKey.currentContext, CatalogNavigatorRoutes.products,
+      //                   parameters: id, productTitle: title),
+      //               settings: RouteSettings(name: CatalogNavigatorRoutes.products)),
+      //           ModalRoute.withName(ModalRoute.of(productKey.currentContext).settings.name));
+      //     },
+      //   );
 
       case ScreenNavigatorRoutes.fav:
         return MultiProvider(
@@ -108,15 +108,13 @@ class ScreenNavigator extends StatelessWidget {
     productKey = GlobalKey<NavigatorState>();
     screensKey = GlobalKey<NavigatorState>();
 
-    _catalogNavigator = CatalogNavigator(
-        screenKey: catalogKey,
-        navigatorKey: catalogKey,
-        productKey: productKey,
-        onPushPageOnTop: (product) {
-          return Navigator.of(screensKey.currentContext).push(CupertinoPageRoute(
-              builder: (context) =>
-                  routeBuilder(screensKey.currentContext, ScreenNavigatorRoutes.product, product: product)));
-        });
+    // _catalogNavigator = CatalogNavigator(
+    //     navigatorKey: catalogKey,
+    //     onPushPageOnTop: (product) {
+    //       return Navigator.of(screensKey.currentContext).push(CupertinoPageRoute(
+    //           builder: (context) =>
+    //               routeBuilder(screensKey.currentContext, ScreenNavigatorRoutes.product, product: product)));
+    //     });
 
     return Navigator(
       key: screensKey,

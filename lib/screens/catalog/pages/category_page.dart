@@ -158,7 +158,7 @@ class _CategoryPageState extends State<CategoryPage>
                               },
                               title: title,
                               subtitle: subtitle,
-                              bottomPadding: 80,
+                              bottomPadding: MediaQuery.of(context).padding.bottom + 70,
                             );
                           },
                         ),

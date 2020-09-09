@@ -9,6 +9,7 @@ import 'package:refashioned_app/screens/catalog/search/components/result_tile.da
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel.dart';
+import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 
 enum SearchResultState { SHOW, HIDE, VISIBLE, NOT_FOUND }
 
@@ -19,7 +20,8 @@ class CatalogWrapperPage extends StatefulWidget {
   final GlobalKey<NavigatorState> productKey;
   final CatalogNavigator catalogNavigator;
 
-  CatalogWrapperPage({Key key, this.navigatorKey, this.productKey, this.screenKey, this.onFavClick, this.catalogNavigator})
+  CatalogWrapperPage(
+      {Key key, this.navigatorKey, this.productKey, this.screenKey, this.onFavClick, this.catalogNavigator})
       : super(key: key);
 
   @override
@@ -44,7 +46,6 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
     textEditController = TextEditingController();
     controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     offset = Tween<Offset>(begin: Offset(0.0, 0.0), end: Offset.zero).animate(controller);
-
 
     _topPanel = TopPanel(
       textEditController: textEditController,
@@ -91,53 +92,58 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
       _searchResultState = SearchResultState.NOT_FOUND;
     }
     animateSearchResult();
-    return Stack(
-      children: [
-        Container(
-            margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 43),
-            child: Stack(children: [
-              widget.catalogNavigator,
-              _searchResultState == SearchResultState.VISIBLE
-                  ? Container(
-                      color: Colors.white,
-                      child: SlideTransition(
-                        position: offset,
-                        child: ListView.separated(
-                          padding: EdgeInsets.zero,
-                          itemCount: searchRepository.response.content.results.length,
-                          itemBuilder: (context, index) => ResultTile(
-                            query: searchQuery,
-                            searchResult: searchRepository.response.content.results.elementAt(index),
-                            onClick: (searchResult) {
-                              widget.navigatorKey.currentState.push(
-                                MaterialWithModalsPageRoute(
-                                  builder: (context) => widget.catalogNavigator.routeBuilder(
-                                      context, CatalogNavigatorRoutes.products,
-                                      searchResult: searchResult),
-                                ),
-                              );
-                              setState(() {
-                                searchQuery = "";
-                                _searchResultState = SearchResultState.HIDE;
-                                FocusScope.of(context).unfocus();
-                              });
-                            },
+    return Consumer<TopPanelController>(builder: (context, topPanelController, child) {
+      return Stack(
+        children: [
+          Container(
+              margin: EdgeInsets.only(
+                  top: topPanelController.needShow
+                      ? MediaQuery.of(context).padding.top + 43
+                      : 0),
+              child: Stack(children: [
+                widget.catalogNavigator,
+                _searchResultState == SearchResultState.VISIBLE
+                    ? Container(
+                        color: Colors.white,
+                        child: SlideTransition(
+                          position: offset,
+                          child: ListView.separated(
+                            padding: EdgeInsets.zero,
+                            itemCount: searchRepository.response.content.results.length,
+                            itemBuilder: (context, index) => ResultTile(
+                              query: searchQuery,
+                              searchResult: searchRepository.response.content.results.elementAt(index),
+                              onClick: (searchResult) {
+                                widget.navigatorKey.currentState.push(
+                                  MaterialWithModalsPageRoute(
+                                    builder: (context) => widget.catalogNavigator.routeBuilder(
+                                        context, CatalogNavigatorRoutes.products,
+                                        searchResult: searchResult),
+                                  ),
+                                );
+                                setState(() {
+                                  searchQuery = "";
+                                  _searchResultState = SearchResultState.HIDE;
+                                  FocusScope.of(context).unfocus();
+                                });
+                              },
+                            ),
+                            separatorBuilder: (context, _) => ItemsDivider(),
                           ),
-                          separatorBuilder: (context, _) => ItemsDivider(),
                         ),
-                      ),
-                    )
-                  : _searchResultState == SearchResultState.NOT_FOUND
-                      ? Container(
-                          color: Colors.white,
-                          child: Center(
-                            child: Text("Не найдено, повторите запрос", style: Theme.of(context).textTheme.bodyText1),
-                          ))
-                      : SizedBox()
-            ])),
-        _topPanel
-      ],
-    );
+                      )
+                    : _searchResultState == SearchResultState.NOT_FOUND
+                        ? Container(
+                            color: Colors.white,
+                            child: Center(
+                              child: Text("Не найдено, повторите запрос", style: Theme.of(context).textTheme.bodyText1),
+                            ))
+                        : SizedBox()
+              ])),
+          topPanelController.needShow ? _topPanel : SizedBox()
+        ],
+      );
+    });
   }
 
   void animateSearchResult() {

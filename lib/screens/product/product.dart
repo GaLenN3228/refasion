@@ -39,8 +39,8 @@ class ProductPage extends StatefulWidget {
   final Function(Product) onProductPush;
   final Function(Seller) onSellerPush;
   final Function(String parameters, String title) onSubCategoryClick;
-  final GlobalKey<NavigatorState> screenKey;
-  final GlobalKey<NavigatorState> productKey;
+  // final GlobalKey<NavigatorState> screenKey;
+  // final GlobalKey<NavigatorState> productKey;
 
   final Function(Product) pushPageOnTop;
 
@@ -49,9 +49,10 @@ class ProductPage extends StatefulWidget {
       this.onProductPush,
       this.onSellerPush,
       this.onSubCategoryClick,
-      this.screenKey,
+      // this.screenKey,
       this.pushPageOnTop,
-      this.productKey})
+      // this.productKey
+      })
       : assert(product != null);
 
   @override
@@ -86,7 +87,7 @@ class _ProductPageState extends State<ProductPage> {
     super.dispose();
   }
 
-  Widget updateTopBar(Status status) {
+  Widget updateTopBar(Status status, BuildContext context) {
     switch (status) {
       case Status.LOADED:
         final product = productRepository.response.content;
@@ -96,9 +97,7 @@ class _ProductPageState extends State<ProductPage> {
             data: TopBarData(
               leftButtonData: TBButtonData.icon(
                 TBIconType.back,
-                onTap: Navigator.of(widget.productKey.currentState.canPop()
-                        ? widget.productKey.currentContext
-                        : widget.screenKey.currentContext)
+                onTap: Navigator.of(context)
                     .pop,
               ),
             ),
@@ -113,9 +112,7 @@ class _ProductPageState extends State<ProductPage> {
                 data: TopBarData(
                   leftButtonData: TBButtonData.icon(
                     TBIconType.back,
-                    onTap: Navigator.of(widget.productKey.currentState.canPop()
-                            ? widget.productKey.currentContext
-                            : widget.screenKey.currentContext)
+                    onTap: Navigator.of(context)
                         .pop,
                   ),
                   middleData: TBMiddleData.condensed(
@@ -162,9 +159,7 @@ class _ProductPageState extends State<ProductPage> {
           data: TopBarData(
             leftButtonData: TBButtonData.icon(
               TBIconType.back,
-              onTap: Navigator.of(widget.productKey.currentState.canPop()
-                      ? widget.productKey.currentContext
-                      : widget.screenKey.currentContext)
+              onTap: Navigator.of(context)
                   .pop,
             ),
           ),
@@ -270,14 +265,13 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
-      child: Stack(
+      body: Stack(
         children: [
           Column(
             children: [
-              updateTopBar(status),
+              updateTopBar(status, context),
               Expanded(
                 child: updateContent(status),
               ),
@@ -286,7 +280,7 @@ class _ProductPageState extends State<ProductPage> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: 60,
+            bottom: MediaQuery.of(context).padding.bottom + 60,
             child: ProductBottomButtons(
               productId: widget.product.id,
             ),

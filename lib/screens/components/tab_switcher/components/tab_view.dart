@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
+import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
+import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/screens_navigator.dart';
 
 final navigatorKeys = {
@@ -59,7 +61,23 @@ class _TabViewState extends State<TabView> {
     Widget content;
     switch (widget.tab) {
       case BottomTab.catalog:
-        content = ScreenNavigator();
+        var catalogNavigator = CatalogNavigator(
+            navigatorKey: navigatorKeys[currentTab]);
+        content = MultiProvider(
+            providers: [
+              ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
+              ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController())
+            ],
+            builder: (context, _) {
+              return CatalogWrapperPage(
+                catalogNavigator: catalogNavigator,
+                onFavClick: () {
+                  return Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => catalogNavigator.routeBuilder(context, ScreenNavigatorRoutes.fav)));
+                },
+                navigatorKey: navigatorKeys[currentTab],
+              );
+            });
         break;
 
       case BottomTab.cart:

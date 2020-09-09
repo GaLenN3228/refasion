@@ -33,8 +33,8 @@ class ProductNavigator extends StatelessWidget {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductPage(
-            screenKey: screenKey,
-            productKey: productKey,
+            // screenKey: screenKey,
+            // productKey: productKey,
             product: product,
             onProductPush: (product) => Navigator.of(context).push(
               CupertinoPageRoute(
