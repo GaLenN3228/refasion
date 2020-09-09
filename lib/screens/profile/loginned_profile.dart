@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
+import 'package:refashioned_app/screens/marketplace/pages/section_page.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
+import 'package:refashioned_app/services/api_service.dart';
 
 
 
@@ -120,7 +124,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                       ),
                       Container(
                           padding: EdgeInsets.only(top: 7),
-                          child: Text('Избранные', style: textTheme.bodyText1)),
+                          child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -170,6 +174,9 @@ class AuthorizedProfilePage extends StatelessWidget {
   }
 
   Widget _profileBody(context){
+    ApiService.getCategories();
+    List<Category> categories;
+    print('123123#!#! $categories');
     TextTheme textTheme = Theme.of(context).textTheme;
     return Material(
       color: Colors.white,
@@ -178,7 +185,7 @@ class AuthorizedProfilePage extends StatelessWidget {
         child: Column(
             children: [
               SVGIcon(
-                icon: IconAsset.location,
+                icon: IconAsset.hanger,
                 height: 70,
                 color: Colors.black,
               ),
@@ -188,7 +195,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                   child: Text('Вы еще не разместили ни одной вещи \n в вашем гардеробе', textAlign: TextAlign.center,)),
               Padding(
                 padding: const EdgeInsets.only(
-                  top: 20,
+                  top: 30,
                 ),
                 child: Button(
                   "РАЗМЕСТИТЬ ВЕЩЬ",
@@ -197,6 +204,11 @@ class AuthorizedProfilePage extends StatelessWidget {
                   width: 180,
                   borderRadius: 5,
                   onClick: () {
+                     Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => MarketplaceNavigator(),
+                      ),
+                    );
                   },
                 ),
               ),

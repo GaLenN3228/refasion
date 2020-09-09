@@ -141,14 +141,13 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-
     return CupertinoPageScaffold(
       child: Material(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 45, left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 55, left: 20, right: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
