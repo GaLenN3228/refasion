@@ -1,12 +1,9 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
-import 'package:refashioned_app/screens/marketplace/components/search_panel.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -162,23 +159,24 @@ class HomePage extends StatelessWidget {
 
 
   Widget _promosList(context){
+    CarouselController buttonCarouselController = CarouselController();
     return Material(
       child: Container(
         padding: EdgeInsets.only(left: 20),
-        height: MediaQuery.of(context).size.height * 0.278,
-        child: CustomScrollView(
-          scrollDirection: Axis.horizontal,
-          slivers: [
-            SliverToBoxAdapter(
-              child: Row(
-                children: [
-                  _promoListItem(context, 'Платья \nсо скидкой', 'до 90%'),
-                  _promoListItem(context, 'Платья \nсо скидкой', 'до 90%'),
-                  _promoListItem(context, 'Платья \nсо скидкой', 'до 90%'),
-                ],
-              ),
-            ),
+        child: CarouselSlider(
+          carouselController: buttonCarouselController,
+          items: [
+            _promoListItem(context, 'Платья \nсо скидкой', 'до 90%'),
+            _promoListItem(context, 'Платья \nсо скидкой', 'до 90%'),
+            _promoListItem(context, 'Платья \nсо скидкой', 'до 90%'),
           ],
+          options: CarouselOptions(
+            autoPlay: false,
+            enlargeCenterPage: true,
+            viewportFraction: 0.9,
+            aspectRatio: 2.0,
+            initialPage: 2,
+          ),
         ),
       ),
     );
@@ -188,10 +186,11 @@ class HomePage extends StatelessWidget {
   Widget _trendsNow(context){
     return Material(
       child: Container(
-        padding: EdgeInsets.only(left: 20, ),
-        height: MediaQuery.of(context).size.height * 0.3,
+        color: Color(0xFFF1F1F1),
+        height: MediaQuery.of(context).size.height * 0.25,
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
+     shrinkWrap: true,
           slivers: [
             SliverToBoxAdapter(
               child: Row(
@@ -199,12 +198,13 @@ class HomePage extends StatelessWidget {
                   _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽'),
                   _trendListItem(context, 'assets/images/png/shirt.png', '1 790 ₽'),
                   _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽' ),
-                  _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽'),
-                  _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽'),
+                  _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽' ),
+                  _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽' ),
                 ],
               ),
-            ),
+            )
           ],
+
         ),
       ),
     );
@@ -214,7 +214,7 @@ class HomePage extends StatelessWidget {
   Widget _trendListItem(context, String image, String price){
     TextTheme textTheme = Theme.of(context).textTheme;
     return  Container(
-      padding: EdgeInsets.only(right: 20),
+      padding: EdgeInsets.only(right: 20, left: 20),
       child: Tapable(
         onTap: (){},
         child: Column(

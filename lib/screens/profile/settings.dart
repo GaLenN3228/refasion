@@ -1,12 +1,24 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/main.dart';
+import 'package:refashioned_app/models/cities.dart';
+import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/screens/city_selector/city_selector.dart';
+import 'package:refashioned_app/screens/city_selector/city_tile.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/maps/components/map.dart';
 import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
 import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
 import 'package:refashioned_app/screens/maps/map_picker.dart';
+import 'package:refashioned_app/utils/prefs.dart';
+import 'package:refashioned_app/utils/url.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingPage extends StatelessWidget {
   @override
@@ -106,6 +118,7 @@ class SettingForAuthUser extends StatefulWidget {
 class _SettingForAuthUserState extends State<SettingForAuthUser> {
   MapBottomSheetDataController mapBottomSheetDataController;
   MapDataController mapDataController;
+
   @override
   void initState() {
     mapDataController = MapDataController(
@@ -123,9 +136,12 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
 
     super.initState();
   }
+
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+
     return CupertinoPageScaffold(
       child: Material(
         child: Column(
@@ -156,6 +172,10 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             Tapable(
               padding: EdgeInsets.all(10),
               onTap: (){
+                CitiesRepository().getCities();
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) => CitySelector(),
+                ));
               },
               child: Container(
                 padding: EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
