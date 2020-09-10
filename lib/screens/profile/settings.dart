@@ -12,6 +12,8 @@ import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
+import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/maps/components/map.dart';
 import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
 import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
@@ -29,28 +31,12 @@ class SettingPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             Padding(
-               padding: const EdgeInsets.only(top: 55, left: 20, right: 20),
-               child: Row(
-                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Tapable(
-                        onTap: (){
-                          Navigator.pop(context);
-                        },
-                        child: SVGIcon(
-                            icon: IconAsset.back,
-                          height: 20,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Text('НАСТРОЙКИ', style: textTheme.headline1,),
-                    Container(),
-                  ],
-                ),
-             ),
+            RefashionedTopBar(
+              data: TopBarData.simple(
+                onBack: () => Navigator.of(context).pop(),
+                middleText: "Настройки",
+              ),
+            ),
             Tapable(
               padding: EdgeInsets.all(10),
               onTap: (){
@@ -142,32 +128,21 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Material(
+        color: Colors.white,
         child: Column(
+
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 55, left: 20, right: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Tapable(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: SVGIcon(
-                        icon:  IconAsset.back,
-                        height: 20,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  Text('НАСТРОЙКИ', style: textTheme.headline1,),
-                  Container(),
-                ],
+            RefashionedTopBar(
+              data: TopBarData.simple(
+                onBack: () => Navigator.of(context).pop(),
+                middleText: "Настройки",
+
               ),
             ),
+
             Tapable(
               padding: EdgeInsets.all(10),
               onTap: (){

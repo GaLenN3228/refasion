@@ -206,7 +206,9 @@ class AuthorizedProfilePage extends StatelessWidget {
                   onClick: () {
                      Navigator.of(context).push(
                       CupertinoPageRoute(
-                        builder: (context) => MarketplaceNavigator(),
+                        builder: (context) => MarketplaceNavigator(
+                          onClose: Navigator.of(context).pop,
+                        ),
                       ),
                     );
                   },
