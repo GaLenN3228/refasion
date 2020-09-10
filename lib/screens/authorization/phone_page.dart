@@ -140,11 +140,11 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
         alignment: Alignment.bottomCenter,
         child: Button(
           "ПОЛУЧИТЬ КОД",
-          buttonStyle: phoneIsEmpty || (phone.length != null && phone.length < 16) ? ButtonStyle.dark_gray : ButtonStyle.dark,
+          buttonStyle: phoneIsEmpty || (phone != null && phone.length < 16) ? ButtonStyle.dark_gray : ButtonStyle.dark,
           height: 45,
           width: double.infinity,
           borderRadius: 5,
-          onClick: !phoneIsEmpty && phone.length == 16
+          onClick: !phoneIsEmpty && phone != null && phone.length == 16
               ? () {
                   Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
