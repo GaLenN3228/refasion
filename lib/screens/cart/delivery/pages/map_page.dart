@@ -1,22 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:refashioned_app/models/addresses.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/pick_point.dart';
-import 'package:refashioned_app/screens/cart/delivery/data/delivery_option_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
 import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
 import 'package:refashioned_app/screens/maps/map_picker.dart';
 import 'package:refashioned_app/screens/marketplace/pages/address_search_page.dart';
-import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class MapPage extends StatefulWidget {
   final DeliveryType deliveryOption;
-  final Address pickUpAddress;
+  final PickPoint pickUpAddress;
 
-  final Function(Address) onAddressPush;
+  final Function(PickPoint) onAddressPush;
   final Function() onClose;
   final Function() onAcceptPickUpAddress;
 
@@ -43,16 +41,9 @@ class _MapPageState extends State<MapPage> {
   initState() {
     switch (widget.deliveryOption) {
       case DeliveryType.PICKUP_ADDRESS:
-        final pickpoint = PickPoint(
-          address: widget.pickUpAddress.address,
-          originalAddress: widget.pickUpAddress.originalAddress,
-          latitude: widget.pickUpAddress.coordinates.latitude,
-          longitude: widget.pickUpAddress.coordinates.longitude,
-        );
+        print("pickPoint: " + widget.pickUpAddress.toString());
 
-        mapDataController = MapDataController(
-            pickPoint:
-                pickpoint); //TODO: show marker and zoom in to initial pickpoint
+        mapDataController = MapDataController(pickPoint: widget.pickUpAddress);
 
         mapBottomSheetDataController = MapBottomSheetDataController(
           mapBottomSheetDataPreview: MapBottomSheetData(
@@ -82,17 +73,7 @@ class _MapPageState extends State<MapPage> {
             title: "Адрес доставки",
             finishButtonText: "Привезти сюда".toUpperCase(),
             isFinishButtonEnable: true,
-            onFinishButtonClick: (pickPoint) {
-              widget.onAddressPush(
-                Address(
-                    coordinates: Point(
-                        latitude: pickPoint.latitude,
-                        longitude: pickPoint.longitude),
-                    address: pickPoint.address,
-                    originalAddress: pickPoint.originalAddress,
-                    city: pickPoint.city),
-              );
-            },
+            onFinishButtonClick: widget.onAddressPush,
           ),
         );
 
@@ -116,17 +97,7 @@ class _MapPageState extends State<MapPage> {
             title: "Адрес доставки",
             finishButtonText: "Привезти сюда".toUpperCase(),
             isFinishButtonEnable: true,
-            onFinishButtonClick: (pickPoint) {
-              widget.onAddressPush(
-                Address(
-                    coordinates: Point(
-                        latitude: pickPoint.latitude,
-                        longitude: pickPoint.longitude),
-                    address: pickPoint.address,
-                    originalAddress: pickPoint.originalAddress,
-                    city: pickPoint.city),
-              );
-            },
+            onFinishButtonClick: widget.onAddressPush,
           ),
           mapBottomSheetDataNotFound: MapBottomSheetData(
               title: "Адрес доставки",

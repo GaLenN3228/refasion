@@ -1,5 +1,6 @@
 import 'package:refashioned_app/models/base.dart';
-import 'package:refashioned_app/models/cart.dart';
+import 'package:refashioned_app/models/cart/cart.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/services/api_service.dart';
 import 'base.dart';
 
@@ -21,11 +22,15 @@ class RemoveItemFromCartRepository extends BaseRepository {
       );
 }
 
-class GetCartItemDeliveryTypesRepository extends BaseRepository {
+class GetCartItemDeliveryTypesRepository
+    extends BaseRepository<List<DeliveryData>> {
   Future<void> update(String itemId) => apiCall(
         () async {
           response = BaseResponse.fromJson(
-              (await ApiService.getCartItemDeliveryTypes(itemId)).data, null);
+              (await ApiService.getCartItemDeliveryTypes(itemId)).data,
+              (contentJson) => [
+                    for (final type in contentJson) DeliveryData.fromJson(type)
+                  ]);
         },
       );
 }
@@ -49,12 +54,18 @@ class CartRepository extends BaseRepository<Cart> {
   GetCartItemDeliveryTypesRepository getDeliveryTypes;
   SetCartItemDeliveryTypeRepository setDeliveryType;
 
+  List<String> selectedIDs;
+  List<String> pendingIDs;
+
   CartRepository() {
     addProduct = AddProductToCartRepository();
     removeItem = RemoveItemFromCartRepository();
 
     getDeliveryTypes = GetCartItemDeliveryTypesRepository();
     setDeliveryType = SetCartItemDeliveryTypeRepository();
+
+    selectedIDs = [];
+    pendingIDs = [];
 
     _update();
   }
@@ -70,6 +81,33 @@ class CartRepository extends BaseRepository<Cart> {
     super.dispose();
   }
 
+  bool select(String productId) {
+    final group = response?.content?.getGroup(productId);
+    if (group == null || group.products.isEmpty) return false;
+
+    final cartProduct = group.getProduct(productId);
+    final id = cartProduct.product.id;
+
+    if (group.deliveryData == null) {
+      if (!pendingIDs.contains(id)) pendingIDs.add(id);
+      return false;
+    }
+
+    cartProduct.update();
+
+    final selected = cartProduct.selected.value;
+    final wasSelected = selectedIDs.contains(id);
+
+    if (selected && !wasSelected)
+      selectedIDs.add(id);
+    else if (!selected && wasSelected) selectedIDs.remove(id);
+
+    if (cartProduct.selected.value && !selectedIDs.contains(id))
+      selectedIDs.add(id);
+
+    return true;
+  }
+
   bool checkPresence(String productId) =>
       response?.content?.checkPresence(productId) ?? false;
 
@@ -81,7 +119,6 @@ class CartRepository extends BaseRepository<Cart> {
   Future<void> removeFromCart(String productId) async {
     final productItemId = this.response?.content?.getProductItemId(productId);
 
-    // print("removeFromCart productItemId: " + productItemId.toString());
     if (productItemId != null) {
       await removeItem.update(productItemId);
       if (removeItem.response.status.code == 204) await _update();
@@ -90,13 +127,15 @@ class CartRepository extends BaseRepository<Cart> {
 
   Future<void> getCartItemDeliveryTypes(String itemId) async {
     await getDeliveryTypes.update(itemId);
-    // if (addProduct.isLoaded && addProduct.response.status.code == 201)
   }
 
   Future<void> _update() => apiCall(
         () async {
           response = BaseResponse.fromJson((await ApiService.getCart()).data,
               (contentJson) => Cart.fromJson(contentJson));
+
+          if (selectedIDs.isNotEmpty)
+            selectedIDs.forEach((productId) => select(productId));
         },
       );
 }

@@ -40,8 +40,25 @@ class _TabSwitcherState extends State<TabSwitcher> {
     super.initState();
   }
 
+  onTabRefresh() {
+    final canPop =
+        navigatorKeys[currentTab.value]?.currentState?.canPop() ?? false;
+
+    if (canPop)
+      navigatorKeys[currentTab.value]
+          .currentState
+          .pushNamedAndRemoveUntil('/', (route) => false);
+  }
+
   pushPageOnTop(Widget page) => Navigator.of(context)
       .push(CupertinoPageRoute(builder: (context) => page));
+
+  @override
+  void dispose() {
+    currentTab.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +69,27 @@ class _TabSwitcherState extends State<TabSwitcher> {
             !await navigatorKeys[currentTab.value].currentState.maybePop(),
         child: Stack(
           children: <Widget>[
-            TabView(BottomTab.home, currentTab),
+            TabView(
+              BottomTab.home,
+              currentTab,
+              onTabRefresh: onTabRefresh,
+            ),
             TabView(
               BottomTab.catalog,
               currentTab,
               pushPageOnTop: pushPageOnTop,
+              onTabRefresh: onTabRefresh,
             ),
-            TabView(BottomTab.cart, currentTab),
-            TabView(BottomTab.profile, currentTab),
+            TabView(
+              BottomTab.cart,
+              currentTab,
+              onTabRefresh: onTabRefresh,
+            ),
+            TabView(
+              BottomTab.profile,
+              currentTab,
+              onTabRefresh: onTabRefresh,
+            ),
             Positioned(
               left: 0,
               bottom: 0,
@@ -83,6 +113,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                         ),
                       ),
                     ),
+                    onTabRefresh,
                   ),
                 ),
               ),

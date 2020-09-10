@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/models/addresses.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/cart/cart/pages/cart_page.dart';
 import 'package:refashioned_app/screens/cart/cart/pages/checkout_page.dart';
-import 'package:refashioned_app/screens/cart/delivery/data/delivery_option_data.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 
@@ -19,7 +19,7 @@ class CartNavigatorRoutes {
 
 class CartNavigator extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;
-  final Function(DeliveryType, Address, Function()) pushDeliveryNavigator;
+  final Function(DeliveryType, PickPoint, Function()) pushDeliveryNavigator;
   final Function(BottomTab) changeTabTo;
 
   const CartNavigator(
@@ -39,6 +39,7 @@ class _CartNavigatorState extends State<CartNavigator> {
       case CartNavigatorRoutes.cart:
         return CartPage(
           onDeliveryOptionPush: widget.pushDeliveryNavigator,
+          onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
           onProductPush: (product) => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) => _routeBuilder(

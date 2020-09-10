@@ -1,4 +1,5 @@
-import 'package:refashioned_app/screens/cart/cart/data/cart_data.dart';
+import 'package:refashioned_app/models/cart/cart_item.dart';
+import 'package:refashioned_app/models/cart/cart_product.dart';
 
 class Cart {
   final String text;
@@ -6,7 +7,7 @@ class Cart {
   final int totalCurrentPrice;
   final int totalDiscountPrice;
   final int totalDiscount;
-  final List<CartGroupData> groups;
+  final List<CartItem> groups;
 
   Cart(
       {this.text,
@@ -25,15 +26,17 @@ class Cart {
       totalDiscount: json['total_discount'],
       groups: [
         if (json['items'] != null)
-          for (final cartItem in json['items']) CartGroupData.fromJson(cartItem)
+          for (final cartItem in json['items']) CartItem.fromJson(cartItem)
       ],
     );
   }
 
-  CartProduct getProduct(String productId) => groups
-      .firstWhere((group) => group.getProduct(productId) != null,
-          orElse: () => null)
-      ?.getProduct(productId);
+  CartItem getGroup(String productId) =>
+      groups.firstWhere((group) => group.getProduct(productId) != null,
+          orElse: () => null);
+
+  CartProduct getProduct(String productId) =>
+      getGroup(productId)?.getProduct(productId);
 
   bool checkPresence(String productId) => getProduct(productId) != null;
 

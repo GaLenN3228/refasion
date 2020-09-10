@@ -4,6 +4,7 @@ import 'package:refashioned_app/screens/components/scaffold/components/actions_p
 import 'package:refashioned_app/screens/components/topbar/components/search/decoration.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 
 class TBSearch extends StatefulWidget {
@@ -11,12 +12,14 @@ class TBSearch extends StatefulWidget {
   final ScaffoldScrollActionsProvider scrollActionsProvider;
 
   final bool showCancelButton;
+  final TBTheme theme;
 
   const TBSearch(
       {Key key,
       this.data,
       this.scrollActionsProvider,
-      this.showCancelButton: false})
+      this.showCancelButton: false,
+      this.theme})
       : super(key: key);
 
   @override
@@ -142,6 +145,7 @@ class _TBSearchState extends State<TBSearch>
                 child: child);
           },
           child: TBSearchDecoration(
+            theme: widget.theme,
             autofocus: widget.data.autofocus,
             hintText: widget.data.hintText,
             focusNode: focusNode,

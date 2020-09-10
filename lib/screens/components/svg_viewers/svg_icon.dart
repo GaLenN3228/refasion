@@ -40,6 +40,7 @@ enum IconAsset {
   addCircle,
   message,
   cart,
+  cartThin,
   person,
   personThin,
 
@@ -67,6 +68,7 @@ final assets = {
   IconAsset.catalog: "catalog.svg",
   IconAsset.categories: "categories.svg",
   IconAsset.cart: "cart.svg",
+  IconAsset.cartThin: "cart_thin.svg",
   IconAsset.close: "close.svg",
   IconAsset.compass: "compass.svg",
   IconAsset.coupon: "coupon.svg",

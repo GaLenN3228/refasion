@@ -1,30 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/components/checkbox/content.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
-class RefashionedCheckbox extends StatelessWidget {
-  final ValueNotifier<bool> valueNotifier;
+class RefashionedCheckbox extends StatefulWidget {
   final bool value;
 
   final double size;
+  final EdgeInsets padding;
+  final Function(bool) onUpdate;
 
   const RefashionedCheckbox(
-      {Key key, this.valueNotifier, this.value: false, this.size})
+      {Key key,
+      this.value: false,
+      this.size,
+      this.padding: EdgeInsets.zero,
+      this.onUpdate})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    if (valueNotifier != null)
-      return ValueListenableBuilder(
-        valueListenable: valueNotifier,
-        builder: (context, newvalue, child) => CheckboxContent(
-          value: newvalue,
-          size: size,
-        ),
-      );
+  _RefashionedCheckboxState createState() => _RefashionedCheckboxState();
+}
 
-    return CheckboxContent(
-      value: value,
-      size: size,
+class _RefashionedCheckboxState extends State<RefashionedCheckbox> {
+  bool value;
+
+  @override
+  initState() {
+    value = widget.value;
+
+    super.initState();
+  }
+
+  update() {
+    widget.onUpdate(!value);
+    setState(() => value = !value);
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final boxSize = widget.size ?? 20;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: update,
+      child: GestureDetector(
+        child: Padding(
+          padding: widget.padding,
+          child: value
+              ? Container(
+                  height: boxSize,
+                  width: boxSize,
+                  decoration: ShapeDecoration(
+                      color: primaryColor, shape: CircleBorder()),
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(boxSize / 4),
+                      child: SVGIcon(
+                        icon: IconAsset.done,
+                        color: accentColor,
+                        size: 14,
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  height: boxSize,
+                  width: boxSize,
+                  decoration: ShapeDecoration(
+                      shape: CircleBorder(
+                          side: BorderSide(
+                              width: 1, color: const Color(0xFFE6E6E6)))),
+                ),
+        ),
+      ),
     );
   }
 }

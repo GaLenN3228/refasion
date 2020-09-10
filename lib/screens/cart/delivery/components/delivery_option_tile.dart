@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/cart/delivery/data/delivery_option_data.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class DeliveryOptionTile extends StatelessWidget {
-  final DeliveryOptionData data;
+  final DeliveryData data;
 
   final Function(DeliveryType) onPush;
 
@@ -45,14 +45,14 @@ class DeliveryOptionTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    data.title,
+                    data.name,
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Text(
-                    data.subtitle,
+                    data.title,
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                 ],

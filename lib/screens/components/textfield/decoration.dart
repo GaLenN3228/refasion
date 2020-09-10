@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
-import 'package:refashioned_app/screens/components/topbar/components/search/textfield.dart';
-import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
+import 'package:refashioned_app/screens/components/textfield/textfield.dart';
 
 class TBSearchDecoration extends StatefulWidget {
   final bool autofocus;
@@ -12,18 +11,17 @@ class TBSearchDecoration extends StatefulWidget {
 
   final TextEditingController textController;
   final ValueNotifier<bool> hasText;
+  final IconAsset icon;
 
-  final TBTheme theme;
-
-  const TBSearchDecoration(
-      {Key key,
-      this.autofocus,
-      this.hintText,
-      this.focusNode,
-      this.textController,
-      this.hasText,
-      this.theme})
-      : super(key: key);
+  const TBSearchDecoration({
+    Key key,
+    this.autofocus,
+    this.hintText,
+    this.focusNode,
+    this.textController,
+    this.hasText,
+    this.icon,
+  }) : super(key: key);
 
   @override
   _TBSearchDecorationState createState() => _TBSearchDecorationState();
@@ -32,7 +30,7 @@ class TBSearchDecoration extends StatefulWidget {
 class _TBSearchDecorationState extends State<TBSearchDecoration> {
   @override
   Widget build(BuildContext context) => Container(
-        height: 35,
+        height: 45,
         decoration: ShapeDecoration(
             color: Color(0xFFF6F6F6),
             shape:
@@ -40,17 +38,20 @@ class _TBSearchDecorationState extends State<TBSearchDecoration> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 5, 5, 8),
-              child: SVGIcon(
-                icon: IconAsset.search,
-                size: 20,
-                color: Color(0xFF8E8E93),
-              ),
-            ),
+            widget.icon != null
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 5, 5, 8),
+                    child: SVGIcon(
+                      icon: widget.icon,
+                      size: 20,
+                      color: Color(0xFF8E8E93),
+                    ),
+                  )
+                : SizedBox(
+                    width: 10,
+                  ),
             Expanded(
               child: TBSearchTextField(
-                theme: widget.theme,
                 autofocus: widget.autofocus,
                 hintText: widget.hintText,
                 focusNode: widget.focusNode,

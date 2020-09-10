@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/screens/cart/delivery/components/delivery_option_tile.dart';
-import 'package:refashioned_app/screens/cart/delivery/data/delivery_option_data.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/sliding_panel_indicator.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class DeliveryOptionsPanel extends StatelessWidget {
-  final List<DeliveryOptionData> options;
+  final List<DeliveryData> options;
   final Function(DeliveryType) onPush;
 
   const DeliveryOptionsPanel({Key key, this.options, this.onPush})

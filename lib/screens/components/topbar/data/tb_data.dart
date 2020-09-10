@@ -1,10 +1,15 @@
-import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_bottom_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 
+enum TBType { CUPERTINO, MATERIAL }
+enum TBTheme { LIGHT, DARK }
+
 class TopBarData {
+  final TBType type;
+  final TBTheme theme;
+
   final TBButtonData leftButtonData;
   final TBButtonData secondLeftButtonData;
 
@@ -20,11 +25,10 @@ class TopBarData {
   final bool shouldElevateOnScroll;
   final bool includeTopScreenPadding;
 
-  final Color backgroundColor;
-
   const TopBarData({
+    this.theme: TBTheme.LIGHT,
+    this.type: TBType.CUPERTINO,
     this.includeTopScreenPadding: true,
-    this.backgroundColor,
     this.leftButtonData,
     this.secondLeftButtonData,
     this.middleData,
@@ -35,12 +39,13 @@ class TopBarData {
     this.shouldElevateOnScroll: true,
   });
 
-  factory TopBarData.simple(
-          {Function() onBack,
-          Function() onClose,
-          String middleText,
-          String bottomText,
-          bool includeTopScreenPadding}) =>
+  factory TopBarData.simple({
+    Function() onBack,
+    Function() onClose,
+    String middleText,
+    String bottomText,
+    bool includeTopScreenPadding,
+  }) =>
       onBack != null ||
               onClose != null ||
               middleText != null ||

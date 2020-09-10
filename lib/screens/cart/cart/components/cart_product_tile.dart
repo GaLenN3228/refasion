@@ -1,22 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/models/cart/cart_product.dart';
 import 'package:refashioned_app/screens/cart/cart/components/brand.dart';
 import 'package:refashioned_app/screens/cart/cart/components/price.dart';
 import 'package:refashioned_app/screens/cart/cart/components/size.dart';
-import 'package:refashioned_app/screens/components/checkbox/checkbox.dart';
+import 'package:refashioned_app/screens/components/checkbox/checkbox_listenable.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class CartProductTile extends StatelessWidget {
-  final Product product;
+  final CartProduct cartProduct;
   final Function() onProductPush;
+  final Function() onSelect;
 
-  const CartProductTile({this.product, this.onProductPush});
+  const CartProductTile({this.cartProduct, this.onProductPush, this.onSelect});
 
   final bool colored = false;
 
   @override
   Widget build(BuildContext context) {
+    final product = cartProduct.product;
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: onProductPush ?? () {},
@@ -28,9 +31,15 @@ class CartProductTile extends StatelessWidget {
             children: [
               Container(
                 color: colored ? Colors.pinkAccent : null,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: RefashionedCheckbox(),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: onSelect,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: RefashionedCheckboxListenable(
+                      valueNotifier: cartProduct.selected,
+                    ),
+                  ),
                 ),
               ),
               Container(

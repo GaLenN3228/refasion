@@ -20,6 +20,49 @@ class AddressRepository extends BaseRepository<Address> {
       );
 }
 
+class GetAddressRepository extends BaseRepository<UserAddress> {
+  Future<void> update(String id) => apiCall(
+        () async {
+          response = BaseResponse.fromJson(
+            (await ApiService.getAddress(id)).data,
+            (contentJson) => UserAddress.fromJson(contentJson),
+          );
+        },
+      );
+}
+
+class AddAddressRepository extends BaseRepository<UserAddress> {
+  Future<void> update(String json) => apiCall(
+        () async {
+          response = BaseResponse.fromJson(
+            (await ApiService.addAddress(json)).data,
+            (contentJson) => UserAddress.fromJson(contentJson),
+          );
+        },
+      );
+}
+
+class RemoveAddressRepository extends BaseRepository {
+  Future<void> update(String id) => apiCall(
+        () async {
+          response = BaseResponse.fromJson(
+              (await ApiService.removeAddress(id)).data, null);
+        },
+      );
+}
+
+class GetAddressesRepository extends BaseRepository<List<UserAddress>> {
+  Future<void> update() => apiCall(
+        () async {
+          response = BaseResponse.fromJson(
+            (await ApiService.getAddresses()).data,
+            (contentJson) =>
+                [for (final json in contentJson) UserAddress.fromJson(json)],
+          );
+        },
+      );
+}
+
 class AddressesRepository extends SearchGeneralRepository<List<Address>> {
   update(String query) => callSearchApi(query, () async {
         response = BaseResponse.fromJson(

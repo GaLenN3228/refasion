@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:refashioned_app/models/addresses.dart';
-import 'package:refashioned_app/screens/cart/delivery/data/delivery_option_data.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/screens/cart/delivery/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/cart/delivery/pages/map_page.dart';
 import 'package:refashioned_app/screens/cart/delivery/pages/recipient_info_page.dart';
@@ -17,7 +17,7 @@ class DeliveryNavigator extends StatefulWidget {
   final Function() onClose;
   final Function() onAcceptPickUpAddress;
   final DeliveryType deliveryType;
-  final Address pickUpAddress;
+  final PickPoint pickUpAddress;
 
   const DeliveryNavigator({
     Key key,
@@ -35,7 +35,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
   Widget _routeBuilder(
     BuildContext context,
     String route, {
-    Address address,
+    PickPoint address,
   }) {
     switch (route) {
       case DeliveryNavigatorRoutes.addresses:
@@ -66,8 +66,10 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
-                    context, DeliveryNavigatorRoutes.recipientInfo,
-                    address: address),
+                  context,
+                  DeliveryNavigatorRoutes.recipientInfo,
+                  address: address,
+                ),
                 settings: RouteSettings(
                   name: DeliveryNavigatorRoutes.recipientInfo,
                 ),
@@ -79,7 +81,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
       case DeliveryNavigatorRoutes.recipientInfo:
         return RecipientInfoPage(
           address: address,
-          deliveryOption: widget.deliveryType,
+          deliveryType: widget.deliveryType,
           onClose: widget.onClose,
         );
 

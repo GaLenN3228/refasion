@@ -7,3 +7,6 @@ const darkGrayColor = Color(0xFF959595);
 const lightGrayColor = Color(0xFFDADADA);
 
 const dialogColor = Color(0xFFFDFDFE);
+
+const darkBackground = Color(0xFF373A3F);
+const white = Color(0xFFFFFFFF);
