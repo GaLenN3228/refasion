@@ -20,7 +20,7 @@ class ProductsPage extends StatefulWidget {
   final Category topCategory;
   final SearchResult searchResult;
   final Function({dynamic callback}) onFavouritesClick;
-  final GlobalKey<NavigatorState> screenKey;
+  final GlobalKey<NavigatorState> productKey;
 
   final String parameters;
   final String title;
@@ -33,7 +33,7 @@ class ProductsPage extends StatefulWidget {
       this.searchResult,
       this.onFavouritesClick,
       this.parameters,
-      this.title, this.screenKey});
+      this.title, this.productKey});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -141,7 +141,7 @@ class _ProductsPageState extends State<ProductsPage> {
                     ),
                     Expanded(
                       child: ProductsPageContent(
-                        screenKey: widget.screenKey,
+                        productKey: widget.productKey,
                         onPush: (product) {
                           widget.onPush(
                             product,

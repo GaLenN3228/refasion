@@ -155,8 +155,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                         } else if (codeAuthorizationRepository.getStatusCode ==
                                 200 ||
                             codeAuthorizationRepository.getStatusCode == 201) {
-                          Navigator.of(context)
-                              .popUntil(ModalRoute.withName("/authorization"));
+                          Navigator.pop(context);
                         }
                       });
                       codeAuthorizationRepository.sendCode(

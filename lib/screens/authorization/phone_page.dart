@@ -8,8 +8,9 @@ import 'package:refashioned_app/screens/authorization/code_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 
 class PhonePage extends StatefulWidget {
+  final GlobalKey<NavigatorState> productKey;
 
-  const PhonePage({Key key}) : super(key: key);
+  const PhonePage({Key key, this.productKey}) : super(key: key);
 
   @override
   _PhonePageState createState() => _PhonePageState();
@@ -145,7 +146,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
           borderRadius: 5,
           onClick: !phoneIsEmpty
               ? () {
-                  Navigator.of(context).push(
+                  Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                           builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
                                 create: (_) => AuthorizationRepository()

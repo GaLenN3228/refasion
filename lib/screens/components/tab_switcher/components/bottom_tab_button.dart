@@ -103,7 +103,7 @@ class _BottomTabButtonState extends State<BottomTabButton> {
               (widget.tab == BottomTab.cart)
                   ? Consumer<CartCountRepository>(
                       builder: (context, model, child) => model.cartCount != "0"
-                          ? Positioned.fill(
+                          ? !selected ? Positioned.fill(
                               child: Align(
                               alignment: Alignment.bottomRight,
                               child: Container(
@@ -121,10 +121,29 @@ class _BottomTabButtonState extends State<BottomTabButton> {
                                         .subtitle1
                                         .copyWith(
                                             fontFamily: "SF Compact Display",
-                                            color:
-                                                selected ? primaryColor : null),
+                                            color: primaryColor),
                                   )),
-                            ))
+                            )): Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                                width: 15,
+                                height: 15,
+                                decoration: new BoxDecoration(
+                                  color: Colors.black,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  model.cartCount,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1
+                                      .copyWith(
+                                      fontFamily: "SF Compact Display",
+                                      color: accentColor),
+                                )),
+                          ))
                           : SizedBox())
                   : SizedBox()
             ]),

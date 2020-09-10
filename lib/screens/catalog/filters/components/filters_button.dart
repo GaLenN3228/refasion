@@ -9,14 +9,14 @@ class FiltersButton extends StatelessWidget {
   final String root;
   final List<Filter> filters;
 
-  const FiltersButton({Key key, this.onApply, this.root, this.filters})
-      : super(key: key);
+  const FiltersButton({Key key, this.onApply, this.root, this.filters}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => showCupertinoModalBottomSheet(
+              useRootNavigator: true,
               expand: true,
               context: context,
               builder: (context, controller) => FiltersPanel(
@@ -31,10 +31,7 @@ class FiltersButton extends StatelessWidget {
           children: [
             Text(
               "Фильтровать",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  .copyWith(fontWeight: FontWeight.w500),
+              style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
             ),
             RotatedBox(
               quarterTurns: 2,

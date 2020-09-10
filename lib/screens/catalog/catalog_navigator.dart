@@ -102,8 +102,10 @@ class CatalogNavigator extends StatelessWidget {
               level: CategoryLevel.category,
               onPush: (_, {callback}) => Navigator.of(context)
                       .push(
-                    MaterialWithModalsPageRoute(
+                    CupertinoPageRoute(
                       builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
+                      settings:
+                      RouteSettings(name: CatalogNavigatorRoutes.products),
                     ),
                   )
                       .then((flag) {
@@ -123,6 +125,7 @@ class CatalogNavigator extends StatelessWidget {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductsPage(
+            productKey: navigatorKey,
             searchResult: searchResult,
               onSearch: () => onPushPageOnTop(SearchPage()),
               topCategory: category,

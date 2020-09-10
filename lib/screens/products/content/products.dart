@@ -10,9 +10,9 @@ import 'package:refashioned_app/utils/colors.dart';
 class ProductsPageContent extends StatelessWidget {
   final Product product;
   final Function(Product) onPush;
-  final GlobalKey<NavigatorState> screenKey;
+  final GlobalKey<NavigatorState> productKey;
 
-  const ProductsPageContent({Key key, this.onPush, this.product, this.screenKey}) : super(key: key);
+  const ProductsPageContent({Key key, this.onPush, this.product, this.productKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class ProductsPageContent extends StatelessWidget {
       crossAxisCount: 2,
       itemCount: productsContent.products.length,
       itemBuilder: (BuildContext context, int index) =>
-          ProductsItem(screenKey: screenKey, product: productsContent.products[index], onPush: onPush),
+          ProductsItem(productKey: productKey, product: productsContent.products[index], onPush: onPush),
       staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
       mainAxisSpacing: 16.0,
     );

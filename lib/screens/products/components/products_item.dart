@@ -14,10 +14,10 @@ import 'package:provider/provider.dart';
 
 class ProductsItem extends StatefulWidget {
   final Product product;
-  final GlobalKey<NavigatorState> screenKey;
+  final GlobalKey<NavigatorState> productKey;
   final Function(Product) onPush;
 
-  const ProductsItem({Key key, this.product, this.onPush, this.screenKey}) : super(key: key);
+  const ProductsItem({Key key, this.product, this.onPush, this.productKey}) : super(key: key);
 
   @override
   _ProductsItemState createState() => _ProductsItemState();
@@ -71,9 +71,10 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                   backgroundColor: Colors.white,
                                   expand: false,
                                   context: context,
-                                  settings: RouteSettings(name: "/authorization"),
                                   useRootNavigator: true,
-                                  builder: (context, controller) => ProfilePage(screenKey: widget.screenKey,));
+                                  builder: (context, controller) {
+                                    return ProfilePage(productKey: widget.productKey);
+                                  });
                         })
                       },
                       child: Align(
