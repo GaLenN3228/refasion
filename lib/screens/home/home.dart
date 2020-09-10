@@ -162,7 +162,6 @@ class HomePage extends StatelessWidget {
     CarouselController buttonCarouselController = CarouselController();
     return Material(
       child: Container(
-        padding: EdgeInsets.only(left: 20),
         child: CarouselSlider(
           carouselController: buttonCarouselController,
           items: [
@@ -172,10 +171,6 @@ class HomePage extends StatelessWidget {
           ],
           options: CarouselOptions(
             autoPlay: false,
-            enlargeCenterPage: true,
-            viewportFraction: 0.9,
-            aspectRatio: 2.0,
-            initialPage: 2,
           ),
         ),
       ),
@@ -286,7 +281,7 @@ class HomePage extends StatelessWidget {
                 ),
                 Align(
                     alignment: Alignment.bottomRight,
-                    child: Image.asset('assets/images/png/promo_girl.png', scale: 0.1,)),
+                    child: Image.asset('assets/images/png/promo_girl.png', scale: 1.2,)),
               ],
             ),
           ),
