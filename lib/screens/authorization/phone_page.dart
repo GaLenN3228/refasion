@@ -119,7 +119,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  text: "Нажмите кнопку Получить код, вы соглашаететсь\nс условиями ",
+                  text: "Нажмите кнопку «Получить код», вы соглашаететсь\nс условиями ",
                   style: textTheme.caption,
                   children: <TextSpan>[
                     TextSpan(
