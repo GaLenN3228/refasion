@@ -99,9 +99,9 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: MultiProvider(
+    return Material(
+      color: Colors.white,
+      child: MultiProvider(
         providers: [
           ChangeNotifierProvider<ProductsRepository>(
               create: (_) => ProductsRepository()..getProducts(initialParameters)),

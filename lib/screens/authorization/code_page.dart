@@ -198,7 +198,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                 const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
             alignment: Alignment.bottomCenter,
             child: Button(
-              _start == 0 ? "ПОЛУЧИТЬ НОВЫЙ" : "ПОЛУЧИТЬ НОВЫЙ ЧЕРЕЗ 0:$_start",
+              _start == 0 ? "ПОЛУЧИТЬ НОВЫЙ КОД" : "ПОЛУЧИТЬ НОВЫЙ КОД ЧЕРЕЗ 0:$_start",
 //          buttonStyle: phoneIsEmpty ? ButtonStyle.dark_gray : ButtonStyle.dark,
               buttonStyle:
                   _start == 0 ? ButtonStyle.dark : ButtonStyle.dark_gray,

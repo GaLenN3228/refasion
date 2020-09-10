@@ -39,9 +39,9 @@ class CatalogRootPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: DefaultTabController(
+    return Material(
+      color: Colors.white,
+      child: DefaultTabController(
         length: categories.length,
         initialIndex: max(
             0, categories.indexWhere((element) => element.children.isNotEmpty)),
