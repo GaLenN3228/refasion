@@ -8,12 +8,7 @@ import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/products.dart';
-import 'package:refashioned_app/repositories/sizes.dart';
-import 'package:refashioned_app/screens/components/scaffold/data/children_data.dart';
-import 'package:refashioned_app/screens/components/scaffold/data/scaffold_data.dart';
-import 'package:refashioned_app/screens/components/scaffold/components/action.dart';
-import 'package:refashioned_app/screens/components/scaffold/scaffold.dart';
-import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
@@ -30,7 +25,6 @@ import 'package:refashioned_app/screens/product/components/related_products.dart
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPage extends StatefulWidget {
@@ -138,7 +132,7 @@ class _ProductPageState extends State<ProductPage> {
                                       context: context,
                                       settings: RouteSettings(name: "/authorization"),
                                       useRootNavigator: true,
-                                      builder: (context, controller) => ProfilePage());
+                                      builder: (context, controller) => AuthorizationSheet());
                             });
                           },
                         )

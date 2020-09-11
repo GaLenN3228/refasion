@@ -5,10 +5,10 @@ import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/add_cart.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart_count.dart';
+import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/url.dart';
 import 'package:provider/provider.dart';
 
@@ -73,7 +73,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                   context: context,
                                   useRootNavigator: true,
                                   builder: (context, controller) {
-                                    return ProfilePage(productKey: widget.productKey);
+                                    return AuthorizationSheet();
                                   });
                         })
                       },
