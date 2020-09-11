@@ -2,9 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/search.dart';
-import 'package:refashioned_app/screens/cart/cart_navigator.dart';
-import 'package:refashioned_app/repositories/base.dart';
-import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/screens/cart/cart/cart_navigator.dart';
 import 'package:refashioned_app/screens/cart/delivery/delivery_navigator.dart';
@@ -12,7 +9,6 @@ import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
-import 'package:refashioned_app/screens/screens_navigator.dart';
 import 'package:refashioned_app/screens/home/home.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 
@@ -29,8 +25,7 @@ class TabView extends StatefulWidget {
   final Function(Widget) pushPageOnTop;
   final Function() onTabRefresh;
 
-  const TabView(this.tab, this.currentTab,
-      {this.pushPageOnTop, this.onTabRefresh});
+  const TabView(this.tab, this.currentTab, {this.pushPageOnTop, this.onTabRefresh});
 
   @override
   _TabViewState createState() => _TabViewState();
@@ -50,8 +45,8 @@ class _TabViewState extends State<TabView> {
 
     switch (widget.tab) {
       case BottomTab.catalog:
-        var catalogNavigator = CatalogNavigator(navigatorKey: navigatorKeys[currentTab], ,
-          changeTabTo: changeTabTo);
+        var catalogNavigator =
+            CatalogNavigator(navigatorKey: navigatorKeys[widget.currentTab], changeTabTo: changeTabTo);
         content = MultiProvider(
             providers: [
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
@@ -62,13 +57,13 @@ class _TabViewState extends State<TabView> {
               return CatalogWrapperPage(
                 catalogNavigator: catalogNavigator,
                 onFavClick: () {
-                  return Navigator.of(navigatorKeys[currentTab].currentContext)
+                  return Navigator.of(navigatorKeys[widget.currentTab].currentContext)
                       .push(CupertinoPageRoute(
                           builder: (context) => catalogNavigator.routeBuilder(
-                              navigatorKeys[currentTab].currentContext, CatalogNavigatorRoutes.favourites)))
+                              navigatorKeys[widget.currentTab].currentContext, CatalogNavigatorRoutes.favourites)))
                       .then((value) => topPanelController.needShow = true);
                 },
-                navigatorKey: navigatorKeys[currentTab],
+                navigatorKey: navigatorKeys[widget.currentTab],
               );
             });
         break;
@@ -77,17 +72,12 @@ class _TabViewState extends State<TabView> {
         content = CartNavigator(
           navigatorKey: navigatorKeys[widget.tab],
           changeTabTo: changeTabTo,
-          pushDeliveryNavigator:
-              (deliveryType, pickUpAddress, onPickUpAddressAccept) {
-            if (deliveryType != null &&
-                (pickUpAddress != null ||
-                    deliveryType != DeliveryType.PICKUP_ADDRESS))
+          pushDeliveryNavigator: (deliveryType, pickUpAddress, onPickUpAddressAccept) {
+            if (deliveryType != null && (pickUpAddress != null || deliveryType != DeliveryType.PICKUP_ADDRESS))
               Navigator.of(context).push(
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      SlideTransition(
-                    position: Tween(begin: Offset(0, 1), end: Offset.zero)
-                        .animate(animation),
+                  pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                    position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
                     child: DeliveryNavigator(
                       deliveryType: deliveryType,
                       pickUpAddress: pickUpAddress,
@@ -110,11 +100,11 @@ class _TabViewState extends State<TabView> {
         );
         break;
 
-       case BottomTab.profile:
-         content = CupertinoPageScaffold(
-           child: ProfilePage(),
-         );
-         break;
+      case BottomTab.profile:
+        content = CupertinoPageScaffold(
+          child: ProfilePage(),
+        );
+        break;
 
       default:
         content = CupertinoPageScaffold(
@@ -128,7 +118,6 @@ class _TabViewState extends State<TabView> {
         break;
     }
 
-
     return ValueListenableBuilder(
       valueListenable: widget.currentTab,
       builder: (context, value, child) => Offstage(
@@ -139,5 +128,6 @@ class _TabViewState extends State<TabView> {
         child: content,
         resizeToAvoidBottomInset: false,
       ),
+    );
   }
 }

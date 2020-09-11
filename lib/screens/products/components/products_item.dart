@@ -4,13 +4,10 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart.dart';
-import 'package:refashioned_app/repositories/cart_count.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
-import 'package:refashioned_app/utils/url.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -40,9 +37,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
     return Padding(
       padding: const EdgeInsets.only(left: 2, right: 2),
       child: GestureDetector(
-        onTap: () => {
-          widget.onPush(widget.product), HapticFeedback.vibrate()
-        },
+        onTap: () => {widget.onPush(widget.product), HapticFeedback.vibrate()},
         child: new Card(
           shadowColor: Colors.transparent,
           child: Column(
@@ -62,62 +57,54 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                         fit: BoxFit.cover,
                       ),
                     ),
-                    Consumer<AddRemoveFavouriteRepository>(
-                      builder: (context, addRemoveFavouriteRepository, child) {
-                        return GestureDetector(
-                            onTap: () => {
-                              _controller.forward(),
-                                  BaseRepository.isAuthorized()
-                                      .then((isAuthorized) {
-                                    isAuthorized
-                                        ? widget.product.isFavourite
-                                            ? addRemoveFavouriteRepository
-                                                .removeFromFavourites(
-                                                    (widget.product
-                                                          ..isFavourite = false)
-                                                        .id)
-                                            : addRemoveFavouriteRepository
-                                                .addToFavourites((widget.product
-                                                      ..isFavourite = true)
-                                                    .id)
-                                        : showCupertinoModalBottomSheet(
-                                            backgroundColor: Colors.white,
-                                            expand: false,
-                                            context: context,
-                                            useRootNavigator: true,
-                                            builder: (context, controller) =>
-                                                AuthorizationSheet());
-                                  })
-                                },
-                        child: Align(
-                        alignment: Alignment.topRight,
-                        child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: ScaleTransition(
-                        scale: Tween(begin: 1.0, end: 1.3)
-                            .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
-                        ..addStatusListener((status) {
-                        if (status == AnimationStatus.completed) {
-                        setState(() {
-                        _controller.reverse();
-                        });
-                        }
-                        }),
-                        child: SVGIcon(
-                        color: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
-                        icon: widget.product.isFavourite ? IconAsset.favoriteFilled : IconAsset.favoriteBorder,
-                        size: 26,
-                        ),
-                        ),
-                        ),);
-                      },
-                    ),
+                    Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
+                      return GestureDetector(
+                          onTap: () => {
+                                _controller.forward(),
+                                BaseRepository.isAuthorized().then((isAuthorized) {
+                                  isAuthorized
+                                      ? widget.product.isFavourite
+                                          ? addRemoveFavouriteRepository
+                                              .removeFromFavourites((widget.product..isFavourite = false).id)
+                                          : addRemoveFavouriteRepository
+                                              .addToFavourites((widget.product..isFavourite = true).id)
+                                      : showCupertinoModalBottomSheet(
+                                          backgroundColor: Colors.white,
+                                          expand: false,
+                                          context: context,
+                                          useRootNavigator: true,
+                                          builder: (context, controller) => AuthorizationSheet());
+                                })
+                              },
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: ScaleTransition(
+                                scale: Tween(begin: 1.0, end: 1.3)
+                                    .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
+                                      ..addStatusListener((status) {
+                                        if (status == AnimationStatus.completed) {
+                                          setState(() {
+                                            _controller.reverse();
+                                          });
+                                        }
+                                      }),
+                                child: SVGIcon(
+                                  color: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
+                                  icon:
+                                      widget.product.isFavourite ? IconAsset.favoriteFilled : IconAsset.favoriteBorder,
+                                  size: 26,
+                                ),
+                              ),
+                            ),
+                          ));
+                    }),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Consumer<CartRepository>(
                         builder: (context, repository, child) {
-                          final isInCart =
-                              repository.checkPresence(widget.product.id);
+                          final isInCart = repository.checkPresence(widget.product.id);
 
                           return GestureDetector(
                             onTap: () {
@@ -128,8 +115,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                 repository.addToCart(widget.product.id);
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
                               child: SVGIcon(
                                 icon: IconAsset.cart,
                                 size: 26,
