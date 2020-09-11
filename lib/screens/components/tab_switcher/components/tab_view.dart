@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
+import 'package:refashioned_app/repositories/base.dart';
+import 'package:refashioned_app/screens/cart/pages/cart.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/screens_navigator.dart';
+import 'package:refashioned_app/screens/home/home.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 
 final navigatorKeys = {
   BottomTab.home: GlobalKey<NavigatorState>(),
@@ -39,14 +43,17 @@ class _TabViewState extends State<TabView> {
     super.initState();
   }
 
-  tabListener() async {
+  tabListener() {
     final newTab = widget.currentTab.value;
 
-    final canPop = await navigatorKeys[currentTab]?.currentState?.maybePop() ?? false;
-
-    if (currentTab != newTab)
-      setState(() => currentTab = newTab);
-    else if (canPop) navigatorKeys[currentTab].currentState.pushNamedAndRemoveUntil('/', (route) => false);
+    setState(() {
+      if (currentTab != newTab)
+        currentTab = newTab;
+      else
+        navigatorKeys[currentTab]
+            .currentState
+            .pushNamedAndRemoveUntil('/', (_) => false);
+    });
   }
 
   @override
@@ -59,6 +66,7 @@ class _TabViewState extends State<TabView> {
   @override
   Widget build(BuildContext context) {
     Widget content;
+
     switch (widget.tab) {
       case BottomTab.catalog:
         var catalogNavigator = CatalogNavigator(navigatorKey: navigatorKeys[currentTab]);
@@ -84,21 +92,30 @@ class _TabViewState extends State<TabView> {
         break;
 
       case BottomTab.cart:
-        content = CartNavigator(navigatorKey: navigatorKeys[widget.tab], needUpdate: currentTab == widget.tab);
+        content = CartNavigator(
+            navigatorKey: navigatorKeys[widget.tab],
+            needUpdate: currentTab == widget.tab);
         break;
 
-//       case BottomTab.profile:
-//         content = CupertinoPageScaffold(
-//           resizeToAvoidBottomInset: false,
-//           child: ProfilePage(),
-//         );
-//         break;
+      case BottomTab.home:
+        content = CupertinoPageScaffold(
+          child: HomePage(),
+        );
+        break;
+
+       case BottomTab.profile:
+         content = CupertinoPageScaffold(
+           child: ProfilePage(),
+         );
+         break;
 
       default:
-        content = Center(
-          child: Text(
-            "Вкладка " + widget.tab.toString(),
-            style: Theme.of(context).textTheme.bodyText1,
+        content = CupertinoPageScaffold(
+          child: Center(
+            child: Text(
+              "Вкладка " + widget.tab.toString(),
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           ),
         );
         break;
@@ -106,10 +123,7 @@ class _TabViewState extends State<TabView> {
 
     return Offstage(
       offstage: currentTab != widget.tab,
-      child: CupertinoPageScaffold(
-        child: content,
-        resizeToAvoidBottomInset: false,
-      ),
+      child: CupertinoPageScaffold(child: content),
     );
   }
 }
