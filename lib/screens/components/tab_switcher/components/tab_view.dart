@@ -46,7 +46,7 @@ class _TabViewState extends State<TabView> {
     switch (widget.tab) {
       case BottomTab.catalog:
         var catalogNavigator =
-            CatalogNavigator(navigatorKey: navigatorKeys[widget.currentTab], changeTabTo: changeTabTo);
+            CatalogNavigator(navigatorKey: navigatorKeys[widget.currentTab.value], changeTabTo: changeTabTo);
         content = MultiProvider(
             providers: [
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
@@ -57,13 +57,13 @@ class _TabViewState extends State<TabView> {
               return CatalogWrapperPage(
                 catalogNavigator: catalogNavigator,
                 onFavClick: () {
-                  return Navigator.of(navigatorKeys[widget.currentTab].currentContext)
+                  return Navigator.of(navigatorKeys[widget.currentTab.value].currentContext)
                       .push(CupertinoPageRoute(
                           builder: (context) => catalogNavigator.routeBuilder(
-                              navigatorKeys[widget.currentTab].currentContext, CatalogNavigatorRoutes.favourites)))
+                              navigatorKeys[widget.currentTab.value].currentContext, CatalogNavigatorRoutes.favourites)))
                       .then((value) => topPanelController.needShow = true);
                 },
-                navigatorKey: navigatorKeys[widget.currentTab],
+                navigatorKey: navigatorKeys[widget.currentTab.value],
               );
             });
         break;

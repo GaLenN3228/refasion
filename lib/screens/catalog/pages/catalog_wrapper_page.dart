@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:refashioned_app/models/product.dart';
-import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/search/components/result_tile.dart';
@@ -16,12 +14,10 @@ enum SearchResultState { SHOW, HIDE, VISIBLE, NOT_FOUND }
 class CatalogWrapperPage extends StatefulWidget {
   final Function() onFavClick;
   final GlobalKey<NavigatorState> navigatorKey;
-  final GlobalKey<NavigatorState> screenKey;
-  final GlobalKey<NavigatorState> productKey;
   final CatalogNavigator catalogNavigator;
 
   CatalogWrapperPage(
-      {Key key, this.navigatorKey, this.productKey, this.screenKey, this.onFavClick, this.catalogNavigator})
+      {Key key, this.navigatorKey, this.onFavClick, this.catalogNavigator})
       : super(key: key);
 
   @override
