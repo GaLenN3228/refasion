@@ -2,11 +2,20 @@ class Url {
   //Base URLs
   static const refashionedBaseUrl = 'https://api.refashioned.ru/v1';
 
-  //Addresses
+  //ADDRESSES
+
   static const findAddressByCoordinates =
       '$refashionedBaseUrl/geo/geocode/latlon/';
   static const findAddressesByQuery =
       '$refashionedBaseUrl/geo/geocode/suggestions/';
+  static const addresses = '$refashionedBaseUrl/geo/addresses/';
+
+  //CART
+
+  static const cart_demo = 'https://itlessons.ru/assets/refashioned-cart.json';
+  static const cart = '$refashionedBaseUrl/cart/';
+  static const cartItemProduct = '$refashionedBaseUrl/cart/item_product/';
+  static const cartItem = '$refashionedBaseUrl/cart/item/';
 
   //Categories
   static const categories = '$refashionedBaseUrl/catalog/categories/';
@@ -15,7 +24,8 @@ class Url {
   static const products = '$refashionedBaseUrl/catalog/products/';
   static const productsCount = '$refashionedBaseUrl/catalog/products/count/';
 
-  static String productsRecommended(id) => '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';
+  static String productsRecommended(id) =>
+      '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';
 
   //SellProperties
   static const properties = '$refashionedBaseUrl/catalog/properties/all/';
@@ -38,11 +48,6 @@ class Url {
   //Search
   static const search = '$refashionedBaseUrl/catalog/search/';
 
-  //Cart
-  static const cart_demo = 'https://itlessons.ru/assets/refashioned-cart.json';
-  static const cartItem = '$refashionedBaseUrl/cart/item/';
-  static const cart = '$refashionedBaseUrl/cart/';
-
   //Search catalogs, brands
   static const catalogSearch = '$refashionedBaseUrl/catalog/search/?q=';
 
@@ -51,7 +56,8 @@ class Url {
 
   //Authorization
   static const authorization = '$refashionedBaseUrl/users/authorization/';
-  static String codeAuthorization(String phone, String hash) => '$authorization' + phone + '_' + hash + '/';
+  static String codeAuthorization(String phone, String hash) =>
+      '$authorization' + phone + '_' + hash + '/';
 
   //Favourites
   static const wished = '$refashionedBaseUrl/catalog/wished/';

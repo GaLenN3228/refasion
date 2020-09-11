@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
@@ -16,7 +17,9 @@ import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CitySelector extends StatefulWidget {
-  const CitySelector();
+  final Function(City) onCitySelect;
+
+  const CitySelector({Key key, this.onCitySelect}) : super(key: key);
 
   @override
   _CitySelectorState createState() => _CitySelectorState();
@@ -42,8 +45,6 @@ class _CitySelectorState extends State<CitySelector> {
     final repositoryStatus = citiesRepository.statusNotifier.value;
     switch (repositoryStatus) {
       case Status.ERROR:
-        print("bypassing city check error");
-        pushTabSwitcher();
         break;
 
       case Status.LOADING:
@@ -57,8 +58,7 @@ class _CitySelectorState extends State<CitySelector> {
             bool check = false;
             try {
               final cityId = sharedPreferences.getString(Prefs.city_id);
-              check = citiesRepository.response.content
-                  .checkSavedCity(cityId);
+              check = citiesRepository.response.content.checkSavedCity(cityId);
             } catch (err) {
               print("City Check Exception: " + err.toString());
             }

@@ -11,6 +11,7 @@ import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/screens/catalog/search/search_page.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
@@ -28,7 +29,7 @@ class CatalogNavigatorRoutes {
 }
 
 class CatalogNavigator extends StatelessWidget {
-  CatalogNavigator({this.navigatorKey, this.onPushPageOnTop});
+  CatalogNavigator({this.navigatorKey, this.onPushPageOnTop, this.changeTabTo});
 
   final GlobalKey<NavigatorState> navigatorKey;
   final Function(Widget) onPushPageOnTop;
@@ -49,8 +50,9 @@ class CatalogNavigator extends StatelessWidget {
             categories: categories,
             onSearch: () => onPushPageOnTop(SearchPage()),
             onPush: (category) {
-              final newRoute =
-                  category.children.isNotEmpty ? CatalogNavigatorRoutes.categories : CatalogNavigatorRoutes.category;
+              final newRoute = category.children.isNotEmpty
+                  ? CatalogNavigatorRoutes.categories
+                  : CatalogNavigatorRoutes.category;
 
               return Navigator.of(context).push(
                 CupertinoPageRoute(
@@ -72,8 +74,9 @@ class CatalogNavigator extends StatelessWidget {
             topCategory: category,
             level: CategoryLevel.categories,
             onPush: (category, {callback}) {
-              final newRoute =
-                  category.children.isNotEmpty ? CatalogNavigatorRoutes.category : CatalogNavigatorRoutes.products;
+              final newRoute = category.children.isNotEmpty
+                  ? CatalogNavigatorRoutes.category
+                  : CatalogNavigatorRoutes.products;
 
               return Navigator.of(context)
                   .push(
@@ -94,7 +97,8 @@ class CatalogNavigator extends StatelessWidget {
       case CatalogNavigatorRoutes.category:
         topPanelController.needShowBack = true;
         return ChangeNotifierProvider<ProductsCountRepository>(create: (_) {
-          return ProductsCountRepository()..getProductsCount("?p=" + category.id);
+          return ProductsCountRepository()
+            ..getProductsCount("?p=" + category.id);
         }, builder: (context, _) {
           return CategoryPage(
               onSearch: () => onPushPageOnTop(SearchPage()),
@@ -161,6 +165,7 @@ class CatalogNavigator extends StatelessWidget {
         }, builder: (context, _) {
           return ProductPage(
             product: product,
+            onCartPush: () => changeTabTo(BottomTab.cart),
             onProductPush: (product) => Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) =>
@@ -235,7 +240,8 @@ class CatalogNavigator extends StatelessWidget {
         ),
       );
 
-    if (catalogRepository.loadingFailed || catalogRepository.getStatusCode != 200)
+    if (catalogRepository.loadingFailed ||
+        catalogRepository.getStatusCode != 200)
       return Center(
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
       );

@@ -9,14 +9,16 @@ class TBButtons extends StatelessWidget {
   final TBButtonData leftButton;
   final TBButtonData rightButton;
 
-  final bool searchInMiddle;
+  final double buttonsWidth;
+  final int maxButtonsCount;
 
   const TBButtons(
       {Key key,
       this.align,
       this.leftButton,
       this.rightButton,
-      this.searchInMiddle})
+      this.buttonsWidth,
+      this.maxButtonsCount: 0})
       : super(key: key);
 
   @override
@@ -24,9 +26,6 @@ class TBButtons extends StatelessWidget {
     final isText = leftButton?.label != null || rightButton?.label != null;
     final isIcon =
         leftButton?.iconType != null || rightButton?.iconType != null;
-
-    final buttonsWidth =
-        searchInMiddle ? null : MediaQuery.of(context).size.width * 0.3;
 
     if (leftButton == null && rightButton == null)
       return SizedBox(

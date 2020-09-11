@@ -1,22 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/screens/cart/pages/cart.dart';
+import 'package:refashioned_app/screens/cart/cart/pages/cart_page.dart';
+import 'package:refashioned_app/screens/cart/cart/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 
 class CartNavigatorRoutes {
   static const String cart = '/';
   static const String product = '/product';
   static const String seller = '/seller';
+  static const String checkout = '/checkout';
 }
 
 class CartNavigator extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;
-  final bool needUpdate;
+  final Function(DeliveryType, PickPoint, Function()) pushDeliveryNavigator;
+  final Function(BottomTab) changeTabTo;
 
-  const CartNavigator({Key key, this.navigatorKey, this.needUpdate: true}) : super(key: key);
+  const CartNavigator(
+      {Key key,
+      this.navigatorKey,
+      this.pushDeliveryNavigator,
+      this.changeTabTo})
+      : super(key: key);
 
   @override
   _CartNavigatorState createState() => _CartNavigatorState();
@@ -27,29 +38,45 @@ class _CartNavigatorState extends State<CartNavigator> {
     switch (route) {
       case CartNavigatorRoutes.cart:
         return CartPage(
-          needUpdate: widget.needUpdate,
+          onDeliveryOptionPush: widget.pushDeliveryNavigator,
+          onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
           onProductPush: (product) => Navigator.of(context).push(
             CupertinoPageRoute(
-              builder: (context) => _routeBuilder(context, CartNavigatorRoutes.product, product: product),
-              settings: RouteSettings(name: CartNavigatorRoutes.product),
+              builder: (context) => _routeBuilder(
+                context,
+                CartNavigatorRoutes.product,
+                product: product,
+              ),
+              settings: RouteSettings(
+                name: CartNavigatorRoutes.product,
+              ),
             ),
           ),
         );
 
       case CartNavigatorRoutes.product:
-        return ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) {
-          return AddRemoveFavouriteRepository();
-        }, builder: (context, _) {
-          return ProductPage(
+        return ChangeNotifierProvider<AddRemoveFavouriteRepository>(
+          create: (_) => AddRemoveFavouriteRepository(),
+          builder: (context, _) => ProductPage(
             product: product,
+            onCartPush: () => widget.changeTabTo(BottomTab.cart),
             onProductPush: (product) => Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, CartNavigatorRoutes.product, product: product),
-                settings: RouteSettings(name: CartNavigatorRoutes.product),
+                builder: (context) => _routeBuilder(
+                  context,
+                  CartNavigatorRoutes.product,
+                  product: product,
+                ),
+                settings: RouteSettings(
+                  name: CartNavigatorRoutes.product,
+                ),
               ),
             ),
-          );
-        });
+          ),
+        );
+
+      case CartNavigatorRoutes.checkout:
+        return CheckoutPage();
 
       default:
         return CupertinoPageScaffold(

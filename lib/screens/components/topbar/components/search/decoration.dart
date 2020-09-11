@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/components/search/textfield.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 
-class TBSearchDecoration extends StatelessWidget {
+class TBSearchDecoration extends StatefulWidget {
   final bool autofocus;
 
   final String hintText;
@@ -12,15 +13,23 @@ class TBSearchDecoration extends StatelessWidget {
   final TextEditingController textController;
   final ValueNotifier<bool> hasText;
 
+  final TBTheme theme;
+
   const TBSearchDecoration(
       {Key key,
       this.autofocus,
       this.hintText,
       this.focusNode,
       this.textController,
-      this.hasText})
+      this.hasText,
+      this.theme})
       : super(key: key);
 
+  @override
+  _TBSearchDecorationState createState() => _TBSearchDecorationState();
+}
+
+class _TBSearchDecorationState extends State<TBSearchDecoration> {
   @override
   Widget build(BuildContext context) => Container(
         height: 35,
@@ -41,11 +50,12 @@ class TBSearchDecoration extends StatelessWidget {
             ),
             Expanded(
               child: TBSearchTextField(
-                autofocus: autofocus,
-                hintText: hintText,
-                focusNode: focusNode,
-                textController: textController,
-                hasText: hasText,
+                theme: widget.theme,
+                autofocus: widget.autofocus,
+                hintText: widget.hintText,
+                focusNode: widget.focusNode,
+                textController: widget.textController,
+                hasText: widget.hasText,
               ),
             ),
             Padding(
@@ -54,12 +64,12 @@ class TBSearchDecoration extends StatelessWidget {
                 width: 14,
                 height: 14,
                 child: ValueListenableBuilder(
-                  valueListenable: hasText,
+                  valueListenable: widget.hasText,
                   builder: (context, value, child) =>
                       value ? child : SizedBox(),
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    onTap: () => textController.clear(),
+                    onTap: () => widget.textController.clear(),
                     child: Stack(
                       children: [
                         Container(

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/cart_count.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_navigation.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
@@ -41,8 +40,25 @@ class _TabSwitcherState extends State<TabSwitcher> {
     super.initState();
   }
 
+  onTabRefresh() {
+    final canPop =
+        navigatorKeys[currentTab.value]?.currentState?.canPop() ?? false;
+
+    if (canPop)
+      navigatorKeys[currentTab.value]
+          .currentState
+          .pushNamedAndRemoveUntil('/', (route) => false);
+  }
+
   pushPageOnTop(Widget page) => Navigator.of(context)
       .push(CupertinoPageRoute(builder: (context) => page));
+
+  @override
+  void dispose() {
+    currentTab.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,49 +67,58 @@ class _TabSwitcherState extends State<TabSwitcher> {
       child: WillPopScope(
         onWillPop: () async =>
             !await navigatorKeys[currentTab.value].currentState.maybePop(),
-        child: ChangeNotifierProvider<CartCountRepository>(
-          create: (_) => CartCountRepository(),
-          child: Stack(
-            children: <Widget>[
-              TabView(BottomTab.home, currentTab),
-              TabView(
-                BottomTab.catalog,
-                currentTab,
-                pushPageOnTop: pushPageOnTop,
-              ),
-              TabView(BottomTab.cart, currentTab),
-              TabView(BottomTab.profile, currentTab),
-              Positioned(
-                left: 0,
-                bottom: 0,
-                right: 0,
-                child: CollectWidgetsData(
-                  widgets: [bottomNavWidgetData],
-                  sizesProvider: sizesProvider,
-                  child: SizedBox(
-                    key: bottomNavWidgetData.key,
-                    child: BottomNavigation(
-                      currentTab,
-                      () => Navigator.of(context).push(
-                        PageRouteBuilder(
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  SlideTransition(
-                            position:
-                                Tween(begin: Offset(0, 1), end: Offset.zero)
-                                    .animate(animation),
-                            child: MarketplaceNavigator(
-                              onClose: () => Navigator.of(context).pop(),
-                            ),
+        child: Stack(
+          children: <Widget>[
+            TabView(
+              BottomTab.home,
+              currentTab,
+              onTabRefresh: onTabRefresh,
+            ),
+            TabView(
+              BottomTab.catalog,
+              currentTab,
+              pushPageOnTop: pushPageOnTop,
+              onTabRefresh: onTabRefresh,
+            ),
+            TabView(
+              BottomTab.cart,
+              currentTab,
+              onTabRefresh: onTabRefresh,
+            ),
+            TabView(
+              BottomTab.profile,
+              currentTab,
+              onTabRefresh: onTabRefresh,
+            ),
+            Positioned(
+              left: 0,
+              bottom: 0,
+              right: 0,
+              child: CollectWidgetsData(
+                widgets: [bottomNavWidgetData],
+                sizesProvider: sizesProvider,
+                child: SizedBox(
+                  key: bottomNavWidgetData.key,
+                  child: BottomNavigation(
+                    currentTab,
+                    () => Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            SlideTransition(
+                          position: Tween(begin: Offset(0, 1), end: Offset.zero)
+                              .animate(animation),
+                          child: MarketplaceNavigator(
+                            onClose: () => Navigator.of(context).pop(),
                           ),
                         ),
                       ),
                     ),
+                    onTabRefresh,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

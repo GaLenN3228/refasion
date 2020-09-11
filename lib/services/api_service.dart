@@ -5,9 +5,96 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
+
+  //ADDRESSES
+
+  static const LOG_ADDRESSES = true;
+
+  static Future<Response> findAddressesByQuery(String query) async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ADDRESSES);
+    final queryParameters = {'q': query};
+    return dioClient.get(Url.findAddressesByQuery,
+        queryParameters: queryParameters);
+  }
+
+  static Future<Response> findAddressByCoordinates(Point coordinates) async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ADDRESSES);
+    final queryParameters = {
+      'lat': coordinates.latitude,
+      'lon': coordinates.longitude
+    };
+    return dioClient.get(Url.findAddressByCoordinates,
+        queryParameters: queryParameters);
+  }
+
+  static getAddresses() async {
+    Dio dioClient = await DioClient()
+        .getClient(manageCookies: true, logging: LOG_ADDRESSES);
+    return dioClient.get(Url.addresses);
+  }
+
+  static getAddress(String id) async {
+    Dio dioClient = await DioClient()
+        .getClient(manageCookies: true, logging: LOG_ADDRESSES);
+    final path = id + "/";
+    return dioClient.get(Url.addresses + path);
+  }
+
+  static addAddress(String json) async {
+    Dio dioClient = await DioClient()
+        .getClient(manageCookies: true, logging: LOG_ADDRESSES);
+    return dioClient.post(Url.addresses, data: json);
+  }
+
+  static removeAddress(String id) async {
+    Dio dioClient = await DioClient()
+        .getClient(manageCookies: true, logging: LOG_ADDRESSES);
+    final path = id + "/";
+    return dioClient.delete(Url.addresses + path);
+  }
+
+  //CART
+
+  static const LOG_CART = true;
+
+  static Future<Response> getCart() async {
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
+    return dioClient.get(Url.cart);
+  }
+
+  static addProductToCart(String productId) async {
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
+    final body = {"product": productId};
+    return dioClient.post(Url.cart, data: body);
+  }
+
+  static removeItemFromCart(String itemId) async {
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
+    final id = itemId + "/";
+    return dioClient.delete(Url.cartItemProduct + id);
+  }
+
+  static getCartItemDeliveryTypes(String itemId) async {
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
+    final path = itemId + "/delivery-types/";
+    return dioClient.get(Url.cartItem + path);
+  }
+
+  static setCartItemDeliveryType(String itemId, String deliveryObjectId) async {
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_CART);
+    final path = itemId + "/delivery-types/";
+    return dioClient.patch(Url.cartItem + path);
+  }
+
+  //
 
   static Future<Response> getCategories() async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
@@ -27,12 +114,6 @@ class ApiService {
   static Future<Response> getProduct(String id) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.products + id + "/");
-  }
-
-  static Future<Response> getCart() async {
-    Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
-    return dioClient.get(Url.cart);
   }
 
   static Future<Response> getContentCatalogMenu() async {
@@ -86,27 +167,6 @@ class ApiService {
     return dioClient.get(Url.search, queryParameters: queryParameters);
   }
 
-  static Future<Response> findAddressesByQuery(String query) async {
-    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    final queryParameters = {'q': query};
-    return dioClient.get(Url.findAddressesByQuery,
-        queryParameters: queryParameters);
-  }
-
-  static Future<Response> findAddressByCoordinates(Point coordinates) async {
-    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    final queryParameters = {'lat': coordinates.latitude, 'lon': coordinates.longitude};
-    return dioClient.get(Url.findAddressByCoordinates,
-        queryParameters: queryParameters);
-  }
-
-  static addToCart(String productId) async {
-    Dio dioClient =
-        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
-    var body = {"product": productId};
-    return dioClient.post(Url.cartItem, data: body);
-  }
-
   static Future<Response> getQuickFilters() async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.quick_filters);
@@ -128,30 +188,36 @@ class ApiService {
     return dioClient.post(Url.authorization, data: body);
   }
 
-  static Future<Response> sendCode(String phone, String hash, String code) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+  static Future<Response> sendCode(
+      String phone, String hash, String code) async {
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"code": code};
     return dioClient.post(Url.codeAuthorization(phone, hash), data: body);
   }
 
   static Future<Response> getFavourites() async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.get(Url.wished);
   }
 
   static Future<Response> getFavouritesProducts() async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     return dioClient.get(Url.wishedProducts);
   }
 
   static Future<Response> addToFavourites(String productId) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"product": productId};
     return dioClient.post(Url.wished, data: body);
   }
 
   static Future<Response> removeFromFavourites(String productId) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"product": productId};
     return dioClient.delete(Url.wished, data: body);
   }

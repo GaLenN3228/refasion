@@ -4,9 +4,10 @@ import 'package:refashioned_app/screens/components/tab_switcher/components/botto
 import 'package:refashioned_app/utils/colors.dart';
 
 class BottomNavigation extends StatefulWidget {
-  BottomNavigation(this.currentTab, this.onFAB);
+  BottomNavigation(this.currentTab, this.onFAB, this.onTabRefresh);
   final ValueNotifier<BottomTab> currentTab;
   final Function() onFAB;
+  final Function() onTabRefresh;
 
   @override
   _BottomNavigationState createState() => _BottomNavigationState();
@@ -34,22 +35,27 @@ class _BottomNavigationState extends State<BottomNavigation> {
                 BottomTabButton(
                   BottomTab.home,
                   currentTab: widget.currentTab,
+                  onTabRefresh: widget.onTabRefresh,
                 ),
                 BottomTabButton(
                   BottomTab.catalog,
                   currentTab: widget.currentTab,
+                  onTabRefresh: widget.onTabRefresh,
                 ),
                 BottomTabButton(
                   null,
                   customOnPush: widget.onFAB,
+                  onTabRefresh: widget.onTabRefresh,
                 ),
                 BottomTabButton(
                   BottomTab.cart,
                   currentTab: widget.currentTab,
+                  onTabRefresh: widget.onTabRefresh,
                 ),
                 BottomTabButton(
                   BottomTab.profile,
                   currentTab: widget.currentTab,
+                  onTabRefresh: widget.onTabRefresh,
                 ),
               ],
             ),

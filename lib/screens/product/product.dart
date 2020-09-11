@@ -33,20 +33,14 @@ class ProductPage extends StatefulWidget {
   final Function(Product) onProductPush;
   final Function(Seller) onSellerPush;
   final Function(String parameters, String title) onSubCategoryClick;
-  // final GlobalKey<NavigatorState> screenKey;
-  // final GlobalKey<NavigatorState> productKey;
-
-  final Function(Product) pushPageOnTop;
+  final Function() onCartPush;
 
   const ProductPage(
       {this.product,
       this.onProductPush,
       this.onSellerPush,
       this.onSubCategoryClick,
-      // this.screenKey,
-      this.pushPageOnTop,
-      // this.productKey
-      })
+      this.onCartPush})
       : assert(product != null);
 
   @override
@@ -277,68 +271,11 @@ class _ProductPageState extends State<ProductPage> {
             bottom: MediaQuery.of(context).padding.bottom + 60,
             child: ProductBottomButtons(
               productId: widget.product.id,
+              onCartPush: widget.onCartPush,
             ),
           ),
         ],
       ),
     );
   }
-//              Positioned(
-//                left: 0,
-//                top: 0,
-//                right: 0,
-//                child: MeasureSize(
-//                  onChange: (size, position) => sizesRepository.update(WidgetKeys.topBar, size, position),
-//                  child:
-//                      Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
-//                    return RefashionedTopBar(
-//                        leftButtonType: TBButtonType.icon,
-//                        leftButtonIcon: TBIconType.back,
-//                        leftButtonAction: () => Navigator.of(context).pop(),
-//                        middleType: TBMiddleType.condensed,
-//                        middleTitleText: product.brand.name + " • " + product.name,
-//                        middleSubtitleText: product.currentPrice.toString() + " ₽",
-//                        rightButtonType: TBButtonType.icon,
-//                        rightButtonIcon:
-//                            product.isFavourite ? TBIconType.favorites_checked : TBIconType.favorites_unchecked,
-//                        rightButtonAction: () {
-//                          BaseRepository.isAuthorized().then((isAuthorized) {
-//                            isAuthorized
-//                                ? product.isFavourite
-//                                    ? addRemoveFavouriteRepository
-//                                        .removeFromFavourites((product..isFavourite = false).id)
-//                                    : addRemoveFavouriteRepository
-//                                        .addToFavourites((product..isFavourite = true).id)
-//                                : showCupertinoModalBottomSheet(
-//                                    backgroundColor: Colors.white,
-//                                    expand: false,
-//                                    context: context,
-//                                    useRootNavigator: true,
-//                                    builder: (context, controller) => ProfilePage());
-//                          });
-//                        },
-//                        secondRightButtonType: TBButtonType.icon,
-//                        secondRightButtonIcon: TBIconType.share,
-//                        scrollController: scrollController,
-//                        scrollPastOffset: productPageTitleBottomScrollOffset);
-//                  }),
-//                ),
-//              ),
-//              Positioned(
-//                left: 0,
-//                right: 0,
-//                bottom: bottomNavigationTopOffsetFromBottom,
-//                child: MeasureSize(
-//                    onChange: (size, position) => sizesRepository.update(
-//                        WidgetKeys.productPageButtons, size, position),
-//                    child: ProductBottomButtons(
-//                      productId: product.id,
-//                    )),
-//              ),
-//            ],
-//          ),
-//        );
-//      },
-//    );
-//  }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/components/checkbox/checkbox.dart';
+import 'package:refashioned_app/screens/components/checkbox/checkbox_listenable.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 enum TakeOption { pickup, courier, office }
@@ -124,7 +124,7 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: RefashionedCheckbox(
+                  child: RefashionedCheckboxListenable(
                     valueNotifier: widget.valueNotifier,
                   ),
                 )

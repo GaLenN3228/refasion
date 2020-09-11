@@ -5,6 +5,9 @@ import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/screens/cart/pages/cart.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/screens/cart/cart/cart_navigator.dart';
+import 'package:refashioned_app/screens/cart/delivery/delivery_navigator.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
@@ -24,43 +27,21 @@ class TabView extends StatefulWidget {
   final BottomTab tab;
   final ValueNotifier<BottomTab> currentTab;
   final Function(Widget) pushPageOnTop;
+  final Function() onTabRefresh;
 
-  const TabView(this.tab, this.currentTab, {this.pushPageOnTop});
+  const TabView(this.tab, this.currentTab,
+      {this.pushPageOnTop, this.onTabRefresh});
 
   @override
   _TabViewState createState() => _TabViewState();
 }
 
 class _TabViewState extends State<TabView> {
-  BottomTab currentTab;
-
-  @override
-  void initState() {
-    currentTab = widget.currentTab.value;
-
-    widget.currentTab?.addListener(tabListener);
-
-    super.initState();
-  }
-
-  tabListener() {
-    final newTab = widget.currentTab.value;
-
-    setState(() {
-      if (currentTab != newTab)
-        currentTab = newTab;
-      else
-        navigatorKeys[currentTab]
-            .currentState
-            .pushNamedAndRemoveUntil('/', (_) => false);
-    });
-  }
-
-  @override
-  void dispose() {
-    widget.currentTab?.removeListener(tabListener);
-
-    super.dispose();
+  changeTabTo(BottomTab newBottomTab) {
+    if (newBottomTab == widget.tab && widget.onTabRefresh != null)
+      widget.onTabRefresh();
+    else
+      widget.currentTab.value = newBottomTab;
   }
 
   @override
@@ -69,7 +50,8 @@ class _TabViewState extends State<TabView> {
 
     switch (widget.tab) {
       case BottomTab.catalog:
-        var catalogNavigator = CatalogNavigator(navigatorKey: navigatorKeys[currentTab]);
+        var catalogNavigator = CatalogNavigator(navigatorKey: navigatorKeys[currentTab], ,
+          changeTabTo: changeTabTo);
         content = MultiProvider(
             providers: [
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
@@ -93,8 +75,33 @@ class _TabViewState extends State<TabView> {
 
       case BottomTab.cart:
         content = CartNavigator(
-            navigatorKey: navigatorKeys[widget.tab],
-            needUpdate: currentTab == widget.tab);
+          navigatorKey: navigatorKeys[widget.tab],
+          changeTabTo: changeTabTo,
+          pushDeliveryNavigator:
+              (deliveryType, pickUpAddress, onPickUpAddressAccept) {
+            if (deliveryType != null &&
+                (pickUpAddress != null ||
+                    deliveryType != DeliveryType.PICKUP_ADDRESS))
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      SlideTransition(
+                    position: Tween(begin: Offset(0, 1), end: Offset.zero)
+                        .animate(animation),
+                    child: DeliveryNavigator(
+                      deliveryType: deliveryType,
+                      pickUpAddress: pickUpAddress,
+                      onClose: Navigator.of(context).pop,
+                      onAcceptPickUpAddress: () {
+                        Navigator.of(context).pop();
+                        onPickUpAddressAccept();
+                      },
+                    ),
+                  ),
+                ),
+              );
+          },
+        );
         break;
 
       case BottomTab.home:
@@ -121,9 +128,16 @@ class _TabViewState extends State<TabView> {
         break;
     }
 
-    return Offstage(
-      offstage: currentTab != widget.tab,
-      child: CupertinoPageScaffold(child: content),
-    );
+
+    return ValueListenableBuilder(
+      valueListenable: widget.currentTab,
+      builder: (context, value, child) => Offstage(
+        offstage: value != widget.tab,
+        child: child,
+      ),
+      child: CupertinoPageScaffold(
+        child: content,
+        resizeToAvoidBottomInset: false,
+      ),
   }
 }
