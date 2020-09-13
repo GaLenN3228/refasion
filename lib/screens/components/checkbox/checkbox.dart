@@ -32,7 +32,7 @@ class _RefashionedCheckboxState extends State<RefashionedCheckbox> {
   }
 
   update() {
-    widget.onUpdate(!value);
+    widget.onUpdate?.call(!value);
     setState(() => value = !value);
   }
 
