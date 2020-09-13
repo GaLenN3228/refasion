@@ -10,11 +10,12 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
-            _appBar(context),
+            // _appBar(context),
             Expanded(
               child: CustomScrollView(
                 slivers: [

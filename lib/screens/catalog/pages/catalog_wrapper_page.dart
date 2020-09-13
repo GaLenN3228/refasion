@@ -6,19 +6,17 @@ import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/search/components/result_tile.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 
 enum SearchResultState { SHOW, HIDE, VISIBLE, NOT_FOUND }
 
 class CatalogWrapperPage extends StatefulWidget {
-  final Function() onFavClick;
-  final GlobalKey<NavigatorState> navigatorKey;
-  final CatalogNavigator catalogNavigator;
-
-  CatalogWrapperPage(
-      {Key key, this.navigatorKey, this.onFavClick, this.catalogNavigator})
-      : super(key: key);
+  TabSwitcher tabSwitcher;
+  CatalogNavigator catalogNavigator;
 
   @override
   _CatalogWrapperPageState createState() => _CatalogWrapperPageState();
@@ -37,8 +35,15 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
 
   SearchRepository searchRepository;
 
+  BottomTab previousTab;
+
   @override
   void initState() {
+    widget.catalogNavigator = CatalogNavigator();
+    widget.tabSwitcher = TabSwitcher(
+      catalogNavigator: widget.catalogNavigator,
+    );
+
     textEditController = TextEditingController();
     controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     offset = Tween<Offset>(begin: Offset(0.0, 0.0), end: Offset.zero).animate(controller);
@@ -52,7 +57,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
           _searchResultState = SearchResultState.HIDE;
           textEditController.text = "";
           FocusScope.of(context).unfocus();
-          widget.navigatorKey.currentState.pop();
+          navigatorKeys[BottomTab.catalog].currentState.pop();
         });
       },
       onCancelClick: () {
@@ -63,7 +68,14 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
           FocusScope.of(context).unfocus();
         });
       },
-      onFavouritesClick: widget.onFavClick,
+      onFavouritesClick: () {
+        var topPanelController = Provider.of<TopPanelController>(context, listen: false);
+        return Navigator.of(navigatorKeys[BottomTab.catalog].currentContext)
+            .push(CupertinoPageRoute(
+                builder: (context) => widget.tabSwitcher.catalogNavigator
+                    .routeBuilder(navigatorKeys[BottomTab.catalog].currentContext, CatalogNavigatorRoutes.favourites)))
+            .then((value) => topPanelController.needShow = true);
+      },
       onSearch: (query) {
         searchRepository?.search(query);
         searchQuery = query;
@@ -92,12 +104,9 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
       return Stack(
         children: [
           Container(
-              margin: EdgeInsets.only(
-                  top: topPanelController.needShow
-                      ? MediaQuery.of(context).padding.top + 43
-                      : 0),
+              margin: EdgeInsets.only(top: topPanelController.needShow ? MediaQuery.of(context).padding.top + 43 : 0),
               child: Stack(children: [
-                widget.catalogNavigator,
+                widget.tabSwitcher,
                 _searchResultState == SearchResultState.VISIBLE
                     ? Container(
                         color: Colors.white,
@@ -110,13 +119,21 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
                               query: searchQuery,
                               searchResult: searchRepository.response.content.results.elementAt(index),
                               onClick: (searchResult) {
-                                widget.navigatorKey.currentState.push(
-                                  MaterialWithModalsPageRoute(
-                                    builder: (context) => widget.catalogNavigator.routeBuilder(
-                                        context, CatalogNavigatorRoutes.products,
-                                        searchResult: searchResult),
-                                  ),
-                                ).then((value) => topPanelController.needShowBack = false);
+                                previousTab = widget.tabSwitcher.currentTab.value;
+                                navigatorKeys[BottomTab.catalog]
+                                    .currentState
+                                    .push(
+                                      MaterialWithModalsPageRoute(
+                                        builder: (context) => widget.catalogNavigator.routeBuilder(
+                                            context, CatalogNavigatorRoutes.products,
+                                            searchResult: searchResult),
+                                      ),
+                                    )
+                                    .then((value) => {
+                                          topPanelController.needShowBack = false,
+                                          if (previousTab != null) widget.tabSwitcher.currentTab.value = previousTab
+                                        });
+                                widget.tabSwitcher.currentTab.value = BottomTab.catalog;
                                 setState(() {
                                   searchQuery = "";
                                   _searchResultState = SearchResultState.HIDE;

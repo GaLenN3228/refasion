@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/cart.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
+import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 void main() => runApp(RefashionApp());
@@ -35,6 +37,10 @@ class RefashionApp extends StatelessWidget {
           ChangeNotifierProvider<CartRepository>(
             create: (_) => CartRepository(),
           ),
+          ChangeNotifierProvider<TopPanelController>(
+              create: (_) => TopPanelController()
+          ),
+          ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
           Provider<SizesProvider>(
             create: (_) => SizesProvider(),
           ),

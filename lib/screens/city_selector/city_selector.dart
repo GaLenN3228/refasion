@@ -4,11 +4,15 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/city_selector/city_tile.dart';
 import 'package:refashioned_app/screens/components/scaffold/data/children_data.dart';
 import 'package:refashioned_app/screens/components/scaffold/data/scaffold_data.dart';
 import 'package:refashioned_app/screens/components/scaffold/scaffold.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
+import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
@@ -95,15 +99,17 @@ class _CitySelectorState extends State<CitySelector> {
   Future<bool> setCityId(String id) async =>
       sharedPreferences?.setString(Prefs.city_id, id);
 
-  pushTabSwitcher() => Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              FadeTransition(
-            opacity: animation,
-            child: TabSwitcher(),
-          ),
-        ),
-      );
+  pushTabSwitcher() {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            FadeTransition(
+              opacity: animation,
+              child: CatalogWrapperPage(),
+            ),
+      ),
+    );
+  }
 
   @override
   void dispose() {

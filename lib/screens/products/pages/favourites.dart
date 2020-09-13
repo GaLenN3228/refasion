@@ -52,7 +52,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
             return Container(
                 padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 50),
                 child: SmartRefresher(
-                  enablePullDown: true,
+                  enablePullDown: false,
                   enablePullUp: true,
                   header: ClassicHeader(),
                   controller: _refreshController,

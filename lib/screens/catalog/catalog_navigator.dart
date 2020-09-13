@@ -31,9 +31,9 @@ class CatalogNavigatorRoutes {
 class CatalogNavigator extends StatelessWidget {
   CatalogNavigator({this.navigatorKey, this.onPushPageOnTop, this.changeTabTo});
 
-  final Function(BottomTab) changeTabTo;
+  Function(BottomTab) changeTabTo;
 
-  final GlobalKey<NavigatorState> navigatorKey;
+  GlobalKey<NavigatorState> navigatorKey;
   final Function(Widget) onPushPageOnTop;
 
   Widget routeBuilder(BuildContext context, String route,

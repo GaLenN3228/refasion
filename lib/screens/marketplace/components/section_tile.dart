@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class SectionTile extends StatelessWidget {
@@ -7,6 +8,7 @@ class SectionTile extends StatelessWidget {
   final Category section;
 
   const SectionTile({Key key, this.onPush, this.section}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -19,8 +21,11 @@ class SectionTile extends StatelessWidget {
           Container(
             width: 60,
             height: 60,
-            decoration:
-                ShapeDecoration(shape: CircleBorder(), color: primaryColor),
+            decoration: ShapeDecoration(shape: CircleBorder()),
+            child: SVGIcon(
+              icon: SectionTile.getSectionIcon(section),
+              size: 60,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 13),
@@ -32,5 +37,18 @@ class SectionTile extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static IconAsset getSectionIcon(Category category) {
+    switch (category.name) {
+      case "Женщинам":
+        return IconAsset.marketPlaceCategory3;
+      case "Мужчинам":
+        return IconAsset.marketPlaceCategory2;
+      case "Детям":
+        return IconAsset.marketPlaceCategory1;
+      default:
+        return IconAsset.marketPlaceCategory3;
+    }
   }
 }

@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 import 'package:refashioned_app/services/api/dio_client.dart';
 import 'package:refashioned_app/utils/url.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = false;
-
-  static Map<String, String> header = {"Content-Type": "application/json"};
+  static const LOG_ENABLE = true;
 
   //ADDRESSES
 
@@ -169,7 +168,7 @@ class ApiService {
 
   static Future<Response> getQuickFilters() async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    return dioClient.get(Url.quick_filters);
+    return dioClient.get(Url.quickFilters);
   }
 
   static Future<Response> getProductRecommended(String id) async {
@@ -220,5 +219,24 @@ class ApiService {
         await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"product": productId};
     return dioClient.delete(Url.wished, data: body);
+  }
+
+  static Future<Response> addProducts(ProductData productData) async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    var body = {
+      "name": productData.description,
+      "description": productData.description,
+      // "property_values": [
+      //   "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      // ],
+      "brand": productData.brand.id,
+      "category": productData.category.id,
+      "current_price": productData.price,
+      "discount_price": productData.price,
+      // "size": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "seller": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "is_published": true
+    };
+    return dioClient.post(Url.addProduct, data: body);
   }
 }

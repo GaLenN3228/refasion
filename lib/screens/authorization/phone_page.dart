@@ -51,6 +51,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
+        backgroundColor: Colors.white,
         body: Stack(children: [
       GestureDetector(
         onTap: () {

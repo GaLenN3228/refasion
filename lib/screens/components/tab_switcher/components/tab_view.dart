@@ -24,8 +24,9 @@ class TabView extends StatefulWidget {
   final ValueNotifier<BottomTab> currentTab;
   final Function(Widget) pushPageOnTop;
   final Function() onTabRefresh;
+  final CatalogNavigator catalogNavigator;
 
-  const TabView(this.tab, this.currentTab, {this.pushPageOnTop, this.onTabRefresh});
+  TabView(this.tab, this.currentTab, {this.pushPageOnTop, this.onTabRefresh, this.catalogNavigator});
 
   @override
   _TabViewState createState() => _TabViewState();
@@ -45,27 +46,9 @@ class _TabViewState extends State<TabView> {
 
     switch (widget.tab) {
       case BottomTab.catalog:
-        var catalogNavigator =
-            CatalogNavigator(navigatorKey: navigatorKeys[widget.currentTab.value], changeTabTo: changeTabTo);
-        content = MultiProvider(
-            providers: [
-              ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
-              ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController())
-            ],
-            builder: (context, _) {
-              var topPanelController = Provider.of<TopPanelController>(context, listen: false);
-              return CatalogWrapperPage(
-                catalogNavigator: catalogNavigator,
-                onFavClick: () {
-                  return Navigator.of(navigatorKeys[widget.currentTab.value].currentContext)
-                      .push(CupertinoPageRoute(
-                          builder: (context) => catalogNavigator.routeBuilder(
-                              navigatorKeys[widget.currentTab.value].currentContext, CatalogNavigatorRoutes.favourites)))
-                      .then((value) => topPanelController.needShow = true);
-                },
-                navigatorKey: navigatorKeys[widget.currentTab.value],
-              );
-            });
+        widget.catalogNavigator.navigatorKey = navigatorKeys[widget.currentTab.value];
+        widget.catalogNavigator.changeTabTo = changeTabTo;
+        content = widget.catalogNavigator;
         break;
 
       case BottomTab.cart:

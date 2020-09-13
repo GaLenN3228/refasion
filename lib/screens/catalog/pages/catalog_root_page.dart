@@ -28,7 +28,7 @@ class CatalogRootPage extends StatelessWidget {
       padding: const EdgeInsets.only(top: 7.5, bottom: 89 + 7.5),
       key: PageStorageKey<String>(category.name),
       //null element is for the Brands card
-      children: [null, ...category.children]
+      children: category.children
           .map((category) => CategoryRootCard(
                 category: category,
                 onPush: () => onPush(category),

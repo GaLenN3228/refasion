@@ -19,33 +19,24 @@ class CategoryPage extends StatefulWidget {
   final Function() onSearch;
   final Function() onFavouritesClick;
 
-  const CategoryPage(
-      {Key key,
-      this.topCategory,
-      this.onPush,
-      this.level,
-      this.onSearch,
-      this.onFavouritesClick})
+  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onSearch, this.onFavouritesClick})
       : super(key: key);
 
   @override
   _CategoryPageState createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage>
-    with WidgetsBindingObserver {
+class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver {
   String countParameters;
 
   updateCount() {
     prepareParameters();
-    Provider.of<ProductsCountRepository>(context, listen: false)
-        .getProductsCount(countParameters);
+    Provider.of<ProductsCountRepository>(context, listen: false).getProductsCount(countParameters);
   }
 
   prepareParameters() {
-    final selectedIdList = widget.topCategory.children
-        .where((category) => category.selected)
-        .map((category) => category.id);
+    final selectedIdList =
+        widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
 
     if (selectedIdList.isNotEmpty && widget.level == CategoryLevel.category)
       countParameters = "?p=" + selectedIdList.join(',');
@@ -67,6 +58,8 @@ class _CategoryPageState extends State<CategoryPage>
 
   @override
   Widget build(BuildContext context) {
+    ProductsCountRepository productCountRepository;
+    if (widget.level == CategoryLevel.category) productCountRepository = context.watch<ProductsCountRepository>();
     final widgets = (widget.level == CategoryLevel.category
         ? <Widget>[
             Column(
@@ -74,6 +67,12 @@ class _CategoryPageState extends State<CategoryPage>
               children: [
                 CategoryImage(
                   category: widget.topCategory,
+                  count: productCountRepository.response?.content?.getCountText,
+                  onProductsClick: () {
+                    widget.onPush(widget.topCategory..children.forEach((element) {
+                      element.reset();
+                    }), callback: updateCount);
+                  },
                 ),
                 CategoryBrands()
               ],
@@ -106,19 +105,15 @@ class _CategoryPageState extends State<CategoryPage>
               )
               .toList());
 
-    return CupertinoPageScaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
+    return Material(
+      color: Colors.white,
       child: Column(
         children: [
           Expanded(
             child: Stack(
               children: [
                 ListView.separated(
-                  padding: EdgeInsets.only(
-                      bottom: widget.level == CategoryLevel.category
-                          ? 99.0 + 55.0
-                          : 99.0),
+                  padding: EdgeInsets.only(bottom: widget.level == CategoryLevel.category ? 99.0 + 55.0 : 99.0),
                   itemCount: widgets.length,
                   itemBuilder: (context, index) {
                     return widgets.elementAt(index);
@@ -134,9 +129,6 @@ class _CategoryPageState extends State<CategoryPage>
                         bottom: 0,
                         child: Builder(
                           builder: (context) {
-                            final productCountRepository =
-                                context.watch<ProductsCountRepository>();
-
                             String title = "";
                             String subtitle = "";
 
@@ -148,13 +140,11 @@ class _CategoryPageState extends State<CategoryPage>
                               subtitle = "Мы уже работаем над её исправлением";
                             } else {
                               title = "ПОКАЗАТЬ";
-                              subtitle = productCountRepository
-                                  .response.content.getCountText;
+                              subtitle = productCountRepository.response.content.getCountText;
                             }
                             return BottomButton(
                               action: () {
-                                widget.onPush(widget.topCategory,
-                                    callback: updateCount);
+                                widget.onPush(widget.topCategory, callback: updateCount);
                               },
                               title: title,
                               subtitle: subtitle,

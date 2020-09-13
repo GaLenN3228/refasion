@@ -21,6 +21,9 @@ class CategoryFilterItem extends StatelessWidget {
           children: [
             RefashionedCheckbox(
               value: category.selected,
+              onUpdate: (value) {
+                onSelect(category.id);
+              },
             ),
             SizedBox(
               width: 11,

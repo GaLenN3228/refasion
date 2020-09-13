@@ -2,19 +2,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
+import 'package:refashioned_app/screens/authorization/phone_page.dart';
+import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_navigation.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/collect_widgets_data.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
+import 'package:refashioned_app/utils/prefs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Используемый паттерн: https://medium.com/coding-with-flutter/flutter-case-study-multiple-navigators-with-bottomnavigationbar-90eb6caa6dbf
 //Github: https://github.com/bizz84/nested-navigation-demo-flutter
 
 class TabSwitcher extends StatefulWidget {
   final BottomTab initialTab;
+  final CatalogNavigator catalogNavigator;
 
-  const TabSwitcher({Key key, this.initialTab: BottomTab.catalog})
+  ValueNotifier<BottomTab> currentTab;
+
+  TabSwitcher({Key key, this.initialTab: BottomTab.catalog, this.catalogNavigator})
       : super(key: key);
 
   @override
@@ -26,8 +33,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
   SizesProvider sizesProvider;
 
-  ValueNotifier<BottomTab> currentTab;
-
   @override
   initState() {
     sizesProvider = Provider.of<SizesProvider>(context, listen: false);
@@ -35,17 +40,26 @@ class _TabSwitcherState extends State<TabSwitcher> {
     bottomNavWidgetData =
         sizesProvider.getData("bottomNav") ?? WidgetData.create("bottomNav");
 
-    currentTab = ValueNotifier(widget.initialTab);
+    widget.currentTab = ValueNotifier(widget.initialTab);
+
+    SharedPreferences.getInstance().then((newSharedPreferences) {
+      if (!newSharedPreferences.containsKey(Prefs.city_id)) {
+        WidgetsBinding.instance
+            .addPostFrameCallback((_) =>
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => PhonePage())));
+      }
+    });
 
     super.initState();
   }
 
   onTabRefresh() {
     final canPop =
-        navigatorKeys[currentTab.value]?.currentState?.canPop() ?? false;
+        navigatorKeys[widget.currentTab.value]?.currentState?.canPop() ?? false;
 
     if (canPop)
-      navigatorKeys[currentTab.value]
+      navigatorKeys[widget.currentTab.value]
           .currentState
           .pushNamedAndRemoveUntil('/', (route) => false);
   }
@@ -55,39 +69,39 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
   @override
   void dispose() {
-    currentTab.dispose();
+    widget.currentTab.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      resizeToAvoidBottomInset: false,
+    return Material(
       child: WillPopScope(
         onWillPop: () async =>
-            !await navigatorKeys[currentTab.value].currentState.maybePop(),
+            !await navigatorKeys[widget.currentTab.value].currentState.maybePop(),
         child: Stack(
           children: <Widget>[
             TabView(
               BottomTab.home,
-              currentTab,
+              widget.currentTab,
               onTabRefresh: onTabRefresh,
             ),
             TabView(
               BottomTab.catalog,
-              currentTab,
+              widget.currentTab,
               pushPageOnTop: pushPageOnTop,
               onTabRefresh: onTabRefresh,
+              catalogNavigator: widget.catalogNavigator,
             ),
             TabView(
               BottomTab.cart,
-              currentTab,
+              widget.currentTab,
               onTabRefresh: onTabRefresh,
             ),
             TabView(
               BottomTab.profile,
-              currentTab,
+              widget.currentTab,
               onTabRefresh: onTabRefresh,
             ),
             Positioned(
@@ -100,7 +114,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                 child: SizedBox(
                   key: bottomNavWidgetData.key,
                   child: BottomNavigation(
-                    currentTab,
+                    widget.currentTab,
                     () => Navigator.of(context).push(
                       PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) =>
