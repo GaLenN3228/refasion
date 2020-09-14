@@ -31,24 +31,42 @@ class ResultTile extends StatelessWidget {
       return GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => {onClick(searchResult)},
-        child: (splitted.length != 3)
-            ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
-                child: Text(searchResult.name, style: textTheme),
-              )
-            : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
-                child: RichText(
-                  text: TextSpan(
-                    text: splitted.elementAt(0),
-                    style: textTheme,
-                    children: <TextSpan>[
-                      TextSpan(text: splitted.elementAt(1), style: textTheme.copyWith(fontWeight: FontWeight.w700)),
-                      TextSpan(text: splitted.elementAt(2)),
-                    ],
-                  ),
-                ),
+        child: Row(
+          children: <Widget>[
+            searchResult.extraData != null &&
+                searchResult.extraData.image != null &&
+                searchResult.extraData.image.isNotEmpty ?
+            Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: SizedBox(
+                height: 24,
+                width: 40,
+                child: Image.network(
+                        searchResult.extraData.image,
+                        fit: BoxFit.contain,
+                      ),
               ),
+            ) : SizedBox(),
+            (splitted.length != 3)
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
+                    child: Text(searchResult.name, style: textTheme),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
+                    child: RichText(
+                      text: TextSpan(
+                        text: splitted.elementAt(0),
+                        style: textTheme,
+                        children: <TextSpan>[
+                          TextSpan(text: splitted.elementAt(1), style: textTheme.copyWith(fontWeight: FontWeight.w700)),
+                          TextSpan(text: splitted.elementAt(2)),
+                        ],
+                      ),
+                    ),
+                  ),
+          ],
+        ),
       );
     }
     return SizedBox();

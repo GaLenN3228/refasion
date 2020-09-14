@@ -36,8 +36,9 @@ class _TabViewState extends State<TabView> {
   changeTabTo(BottomTab newBottomTab) {
     if (newBottomTab == widget.tab && widget.onTabRefresh != null)
       widget.onTabRefresh();
-    else
+    else {
       widget.currentTab.value = newBottomTab;
+    }
   }
 
   @override
@@ -103,10 +104,30 @@ class _TabViewState extends State<TabView> {
 
     return ValueListenableBuilder(
       valueListenable: widget.currentTab,
-      builder: (context, value, child) => Offstage(
-        offstage: value != widget.tab,
-        child: child,
-      ),
+      builder: (context, value, child) {
+        var topPanelController = Provider.of<TopPanelController>(context, listen: false);
+        switch (widget.currentTab.value){
+          case BottomTab.cart:
+            topPanelController.needShow = false;
+            break;
+          case BottomTab.home:
+            topPanelController.needShow = true;
+            // TODO: Handle this case.
+            break;
+          case BottomTab.catalog:
+            topPanelController.needShow = true;
+            // TODO: Handle this case.
+            break;
+          case BottomTab.profile:
+            topPanelController.needShow = false;
+            // TODO: Handle this case.
+            break;
+        }
+        return Offstage(
+          offstage: value != widget.tab,
+          child: child,
+        );
+      },
       child: CupertinoPageScaffold(
         child: content,
         resizeToAvoidBottomInset: false,

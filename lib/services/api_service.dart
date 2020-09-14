@@ -239,4 +239,11 @@ class ApiService {
     };
     return dioClient.post(Url.addProduct, data: body);
   }
+
+  static Future<Response> calcProductPrice(int price) async {
+    Dio dioClient =
+    await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    var body = {"price": price};
+    return dioClient.post(Url.calcProductPrice, data: body);
+  }
 }

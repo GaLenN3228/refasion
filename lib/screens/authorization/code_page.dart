@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:refashioned_app/repositories/authorization.dart';
+import 'package:refashioned_app/screens/authorization/name_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:provider/provider.dart';
 
@@ -155,7 +156,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                         } else if (codeAuthorizationRepository.getStatusCode ==
                                 200 ||
                             codeAuthorizationRepository.getStatusCode == 201) {
-                          Navigator.pop(context);
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => NamePage()));
                         }
                       });
                       codeAuthorizationRepository.sendCode(

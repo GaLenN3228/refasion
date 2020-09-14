@@ -9,6 +9,8 @@ import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 import 'package:refashioned_app/screens/marketplace/pages/section_page.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
 import 'package:refashioned_app/services/api_service.dart';
+import 'package:refashioned_app/utils/prefs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -56,13 +58,17 @@ class AuthorizedProfilePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Валерия',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600
-                        ),
+                      FutureBuilder(
+                        future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              snapshot.toString(),
+                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                            );
+                          }
+                          return SizedBox();
+                        },
                       ),
                       Text(
                         'Мой профиль',

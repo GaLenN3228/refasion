@@ -5,6 +5,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 
 enum PanelType { SEARCH_UNFOCUSED, SEARCH_FOCUSED }
 
@@ -157,7 +158,7 @@ class _TopPanelState extends State<TopPanel> with SingleTickerProviderStateMixin
                             settings: RouteSettings(name: "/authorization"),
                             context: context,
                             useRootNavigator: true,
-                            builder: (context, controller) => AuthorizationSheet());
+                            builder: (context, controller) => ProfilePage());
                   })
                 },
                 child: Container(

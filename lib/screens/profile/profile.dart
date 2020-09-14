@@ -91,8 +91,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).push(
-                          CupertinoPageRoute(builder: (context) => PhonePage()));
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => PhonePage()));
                     },
                   ),
                 ),

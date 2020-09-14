@@ -43,7 +43,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
     widget.currentTab = ValueNotifier(widget.initialTab);
 
     SharedPreferences.getInstance().then((newSharedPreferences) {
-      if (!newSharedPreferences.containsKey(Prefs.city_id)) {
+      if (!newSharedPreferences.containsKey(Prefs.need_show_authorization_screen)) {
+        newSharedPreferences.setBool(Prefs.need_show_authorization_screen, false);
         WidgetsBinding.instance
             .addPostFrameCallback((_) =>
             Navigator.of(context).push(

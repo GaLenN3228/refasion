@@ -9,6 +9,7 @@ import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductsItem extends StatefulWidget {
@@ -73,7 +74,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                           expand: false,
                                           context: context,
                                           useRootNavigator: true,
-                                          builder: (context, controller) => AuthorizationSheet());
+                                          builder: (context, controller) => ProfilePage());
                                 })
                               },
                           child: Align(
