@@ -19,15 +19,15 @@ class DeliveryData {
       this.name,
       this.title});
 
-  static DeliveryType _selectType(int code) {
+  static DeliveryType _selectType(String code) {
     switch (code) {
-      case 0:
+      case "pickup":
         return DeliveryType.PICKUP_ADDRESS;
-      case 1:
+      case "courier":
         return DeliveryType.COURIER_DELIVERY;
-      case 2:
+      case "pickpoint":
         return DeliveryType.PICKUP_POINT;
-      case 3:
+      case "express":
         return DeliveryType.EXPRESS_DEVILERY;
       default:
         return DeliveryType.PICKUP_ADDRESS;
