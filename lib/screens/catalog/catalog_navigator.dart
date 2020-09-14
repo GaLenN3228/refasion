@@ -182,7 +182,7 @@ class CatalogNavigator extends StatelessWidget {
                         routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
                   ),
                 )
-                .then((value) => topPanelController.needShow = true),
+                .then((value) => topPanelController.needShow = false),
             onSellerPush: (seller) => Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
@@ -227,7 +227,7 @@ class CatalogNavigator extends StatelessWidget {
                             routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
                       ),
                     )
-                    .then((value) => topPanelController.needShow = true),
+                    .then((value) => topPanelController.needShow = false),
               );
             });
 

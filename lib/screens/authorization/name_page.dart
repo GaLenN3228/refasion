@@ -84,6 +84,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                   autofocus: true,
                   style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
                   cursorWidth: 2.0,
+                  textCapitalization: TextCapitalization.sentences,
                   cursorRadius: Radius.circular(2.0),
                   cursorColor: Color(0xFFE6E6E6),
                   decoration: InputDecoration(
@@ -107,8 +108,10 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
               borderRadius: 5,
               onClick: name != null && name.length > 0
                   ? () {
-                      SharedPreferences.getInstance().then((prefs) => prefs.setString(Prefs.user_name, name));
-                      Navigator.pop(context);
+                      SharedPreferences.getInstance().then((prefs) {
+                        prefs.setString(Prefs.user_name, name);
+                        Navigator.pop(context);
+                      });
                     }
                   : () {},
             ),

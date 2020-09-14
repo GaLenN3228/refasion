@@ -10,6 +10,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return CupertinoPageScaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
@@ -136,6 +137,7 @@ class HomePage extends StatelessWidget {
   Widget _recommendationsList(context){
     return Material(
       child: Container(
+        color: Colors.white,
         padding: EdgeInsets.only(left: 20, bottom:20,),
         height: MediaQuery.of(context).size.width * 0.35,
         child: CustomScrollView(
@@ -163,6 +165,7 @@ class HomePage extends StatelessWidget {
     CarouselController buttonCarouselController = CarouselController();
     return Material(
       child: Container(
+        color: Colors.white,
         child: CarouselSlider(
           carouselController: buttonCarouselController,
           items: [

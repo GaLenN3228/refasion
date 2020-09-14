@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/repositories/search.dart';
+import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/search/components/result_tile.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
@@ -11,6 +12,8 @@ import 'package:refashioned_app/screens/components/tab_switcher/components/tab_v
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
+import 'package:refashioned_app/utils/prefs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum SearchResultState { SHOW, HIDE, VISIBLE, NOT_FOUND }
 
@@ -39,6 +42,15 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
 
   @override
   void initState() {
+    SharedPreferences.getInstance().then((newSharedPreferences) {
+      if (!newSharedPreferences.containsKey(Prefs.need_show_authorization_screen)) {
+        Future.delayed(Duration(milliseconds: 1000), (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhonePage()));
+        });
+        newSharedPreferences.setBool(Prefs.need_show_authorization_screen, false);
+      }
+    });
+
     widget.catalogNavigator = CatalogNavigator();
     widget.tabSwitcher = TabSwitcher(
       catalogNavigator: widget.catalogNavigator,
@@ -63,18 +75,24 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
       onCancelClick: () {
         setState(() {
           searchQuery = "";
+          searchRepository?.search(searchQuery);
           _searchResultState = SearchResultState.HIDE;
           textEditController.text = "";
           FocusScope.of(context).unfocus();
         });
       },
       onFavouritesClick: () {
+        previousTab = widget.tabSwitcher.currentTab.value;
         var topPanelController = Provider.of<TopPanelController>(context, listen: false);
-        return Navigator.of(navigatorKeys[BottomTab.catalog].currentContext)
+        Navigator.of(navigatorKeys[BottomTab.catalog].currentContext)
             .push(CupertinoPageRoute(
                 builder: (context) => widget.tabSwitcher.catalogNavigator
                     .routeBuilder(navigatorKeys[BottomTab.catalog].currentContext, CatalogNavigatorRoutes.favourites)))
-            .then((value) => topPanelController.needShow = true);
+            .then((value) => {
+                  topPanelController.needShow = true,
+                  if (previousTab != null) widget.tabSwitcher.currentTab.value = previousTab
+                });
+        widget.tabSwitcher.currentTab.value = BottomTab.catalog;
       },
       onSearch: (query) {
         searchRepository?.search(query);
@@ -108,43 +126,45 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
               child: Stack(children: [
                 widget.tabSwitcher,
                 _searchResultState == SearchResultState.VISIBLE
-                    ? Container(
-                        color: Colors.white,
-                        child: SlideTransition(
-                          position: offset,
-                          child: ListView.separated(
-                            padding: EdgeInsets.zero,
-                            itemCount: searchRepository.response.content.results.length,
-                            itemBuilder: (context, index) => ResultTile(
-                              query: searchQuery,
-                              searchResult: searchRepository.response.content.results.elementAt(index),
-                              onClick: (searchResult) {
-                                previousTab = widget.tabSwitcher.currentTab.value;
-                                navigatorKeys[BottomTab.catalog]
-                                    .currentState
-                                    .push(
-                                      MaterialWithModalsPageRoute(
-                                        builder: (context) => widget.catalogNavigator.routeBuilder(
-                                            context, CatalogNavigatorRoutes.products,
-                                            searchResult: searchResult),
-                                      ),
-                                    )
-                                    .then((value) => {
-                                          topPanelController.needShowBack = false,
-                                          if (previousTab != null) widget.tabSwitcher.currentTab.value = previousTab
-                                        });
-                                widget.tabSwitcher.currentTab.value = BottomTab.catalog;
-                                setState(() {
-                                  searchQuery = "";
-                                  _searchResultState = SearchResultState.HIDE;
-                                  FocusScope.of(context).unfocus();
-                                });
-                              },
+                    ? Scaffold(
+                        resizeToAvoidBottomInset: true,
+                        body: Container(
+                          color: Colors.white,
+                          child: SlideTransition(
+                            position: offset,
+                            child: ListView.separated(
+                              padding: EdgeInsets.zero,
+                              itemCount: searchRepository.response.content.results.length,
+                              itemBuilder: (context, index) => ResultTile(
+                                query: searchQuery,
+                                searchResult: searchRepository.response.content.results.elementAt(index),
+                                onClick: (searchResult) {
+                                  previousTab = widget.tabSwitcher.currentTab.value;
+                                  navigatorKeys[BottomTab.catalog]
+                                      .currentState
+                                      .push(
+                                        MaterialWithModalsPageRoute(
+                                          builder: (context) => widget.catalogNavigator.routeBuilder(
+                                              context, CatalogNavigatorRoutes.products,
+                                              searchResult: searchResult),
+                                        ),
+                                      )
+                                      .then((value) => {
+                                            topPanelController.needShowBack = false,
+                                            if (previousTab != null) widget.tabSwitcher.currentTab.value = previousTab
+                                          });
+                                  widget.tabSwitcher.currentTab.value = BottomTab.catalog;
+                                  setState(() {
+                                    searchQuery = "";
+                                    _searchResultState = SearchResultState.HIDE;
+                                    FocusScope.of(context).unfocus();
+                                  });
+                                },
+                              ),
+                              separatorBuilder: (context, _) => ItemsDivider(),
                             ),
-                            separatorBuilder: (context, _) => ItemsDivider(),
                           ),
-                        ),
-                      )
+                        ))
                     : _searchResultState == SearchResultState.NOT_FOUND
                         ? Container(
                             color: Colors.white,

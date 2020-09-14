@@ -86,7 +86,7 @@ class _TabViewState extends State<TabView> {
 
       case BottomTab.profile:
         content = CupertinoPageScaffold(
-          child: ProfilePage(),
+          child: ProfilePage(catalogNavigator: widget.catalogNavigator, currentTab: widget.currentTab,),
         );
         break;
 
@@ -112,15 +112,12 @@ class _TabViewState extends State<TabView> {
             break;
           case BottomTab.home:
             topPanelController.needShow = true;
-            // TODO: Handle this case.
             break;
           case BottomTab.catalog:
             topPanelController.needShow = true;
-            // TODO: Handle this case.
             break;
           case BottomTab.profile:
             topPanelController.needShow = false;
-            // TODO: Handle this case.
             break;
         }
         return Offstage(
@@ -128,9 +125,8 @@ class _TabViewState extends State<TabView> {
           child: child,
         );
       },
-      child: CupertinoPageScaffold(
+      child: Material(
         child: content,
-        resizeToAvoidBottomInset: false,
       ),
     );
   }

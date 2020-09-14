@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
-import 'package:refashioned_app/screens/marketplace/pages/section_page.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
 import 'package:refashioned_app/services/api_service.dart';
 import 'package:refashioned_app/utils/prefs.dart';
@@ -15,6 +19,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class AuthorizedProfilePage extends StatelessWidget {
+  final CatalogNavigator catalogNavigator;
+  final ValueNotifier<BottomTab> currentTab;
+
+  const AuthorizedProfilePage({Key key, this.catalogNavigator, this.currentTab}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -63,7 +72,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
-                              snapshot.toString(),
+                              snapshot.data.toString(),
                               style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                             );
                           }
@@ -119,7 +128,18 @@ class AuthorizedProfilePage extends StatelessWidget {
                     ),
                  ),
                 Tapable(
-                  onTap: (){},
+                  onTap: (){
+                    currentTab.value = BottomTab.catalog;
+                    var topPanelController = Provider.of<TopPanelController>(context, listen: false);
+                    return Navigator.of(navigatorKeys[BottomTab.catalog].currentContext)
+                        .push(CupertinoPageRoute(
+                        builder: (context) => catalogNavigator
+                            .routeBuilder(navigatorKeys[BottomTab.catalog].currentContext, CatalogNavigatorRoutes.favourites)))
+                        .then((value) => {
+                      topPanelController.needShow = true,
+                      currentTab.value = BottomTab.profile
+                    });
+                  },
                   padding: EdgeInsets.all(10),
                   child: Column(
                     children: [

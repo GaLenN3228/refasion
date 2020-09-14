@@ -74,7 +74,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                           expand: false,
                                           context: context,
                                           useRootNavigator: true,
-                                          builder: (context, controller) => ProfilePage());
+                                          builder: (context, controller) => AuthorizationSheet());
                                 })
                               },
                           child: Align(

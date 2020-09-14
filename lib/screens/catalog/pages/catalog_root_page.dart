@@ -53,7 +53,7 @@ class CatalogRootPage extends StatelessWidget {
               SliverAppBar(
                 backgroundColor: Colors.white,
                 brightness: Brightness.light,
-                expandedHeight: 0,
+                expandedHeight: 50,
                 primary: false,
                 pinned: true,
                 floating: true,

@@ -158,7 +158,7 @@ class _TopPanelState extends State<TopPanel> with SingleTickerProviderStateMixin
                             settings: RouteSettings(name: "/authorization"),
                             context: context,
                             useRootNavigator: true,
-                            builder: (context, controller) => ProfilePage());
+                            builder: (context, controller) => AuthorizationSheet());
                   })
                 },
                 child: Container(

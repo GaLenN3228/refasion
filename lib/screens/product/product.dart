@@ -127,7 +127,7 @@ class _ProductPageState extends State<ProductPage> {
                                       context: context,
                                       settings: RouteSettings(name: "/authorization"),
                                       useRootNavigator: true,
-                                      builder: (context, controller) => ProfilePage());
+                                      builder: (context, controller) => AuthorizationSheet());
                             });
                           },
                         )

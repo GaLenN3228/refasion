@@ -28,6 +28,7 @@ class CategoryPage extends StatefulWidget {
 
 class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver {
   String countParameters;
+  String topCategoryCount;
 
   updateCount() {
     prepareParameters();
@@ -59,7 +60,11 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
   @override
   Widget build(BuildContext context) {
     ProductsCountRepository productCountRepository;
-    if (widget.level == CategoryLevel.category) productCountRepository = context.watch<ProductsCountRepository>();
+    if (widget.level == CategoryLevel.category) {
+      productCountRepository = context.watch<ProductsCountRepository>();
+      if (topCategoryCount == null || topCategoryCount.isEmpty)
+        topCategoryCount = productCountRepository.response?.content?.getCountText;
+    }
     final widgets = (widget.level == CategoryLevel.category
         ? <Widget>[
             Column(
@@ -67,7 +72,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
               children: [
                 CategoryImage(
                   category: widget.topCategory,
-                  count: productCountRepository.response?.content?.getCountText,
+                  count: topCategoryCount,
                   onProductsClick: () {
                     widget.onPush(widget.topCategory..children.forEach((element) {
                       element.reset();

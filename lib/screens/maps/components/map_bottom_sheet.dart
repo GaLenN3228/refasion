@@ -41,7 +41,7 @@ class _MapBottomSheetState extends State<MapBottomSheet> {
           child: Container(
         key: widget.bottomSheetKey,
         margin: EdgeInsets.only(top: 6),
-        padding: EdgeInsets.only(bottom: 22),
+        padding: EdgeInsets.only(bottom: 32),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -139,7 +139,7 @@ class _MapBottomSheetState extends State<MapBottomSheet> {
                         mapBottomSheetDataController.currentBottomSheetData.address,
                         style: textTheme.subtitle1,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                        maxLines: 2,
                       ))),
                     ]))
                 : SizedBox(),

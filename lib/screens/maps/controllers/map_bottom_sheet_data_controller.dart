@@ -33,6 +33,12 @@ class MapBottomSheetDataController with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  MapBottomSheetData get mapBottomSheetDataNotFound => _mapBottomSheetDataNotFound;
+
+  MapBottomSheetData get mapBottomSheetDataAddress => _mapBottomSheetDataAddress;
+
+  MapBottomSheetData get mapBottomSheetDataPreview => _mapBottomSheetDataPreview;
 }
 
 class MapBottomSheetData extends ChangeNotifier {

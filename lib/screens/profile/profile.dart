@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
+import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:refashioned_app/screens/profile/loginned_profile.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
@@ -16,8 +18,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   final Function(List<String>) onPush;
+  final CatalogNavigator catalogNavigator;
+  final ValueNotifier<BottomTab> currentTab;
 
-  ProfilePage({Key key, this.onPush}) : super(key: key);
+  ProfilePage({Key key, this.onPush, this.catalogNavigator, this.currentTab}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -116,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         }else{
-          return AuthorizedProfilePage();
+          return AuthorizedProfilePage(catalogNavigator: widget.catalogNavigator, currentTab: widget.currentTab,);
         }
       },
     ));

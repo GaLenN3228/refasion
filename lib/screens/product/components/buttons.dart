@@ -47,7 +47,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
   }
 
   repositoryListener() {
-    if (cartRepository != null) {
+    if (cartRepository != null && cartRepository.addProduct.productId == widget.productId) {
       switch (cartRepository.addProduct.status) {
         case Status.LOADING:
           buttonState.value = ButtonState.loading;
