@@ -1,44 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/status.dart';
-
-class GeolocationResponse {
-  final Status status;
-  final City content;
-
-  const GeolocationResponse({this.status, this.content});
-
-  factory GeolocationResponse.fromJson(Map<String, dynamic> json) {
-    final content = json['content'];
-
-    return GeolocationResponse(
-      status: Status.fromJson(json['status']),
-      content: content != null && content['city'] != null
-          ? City.fromJson(content['city'])
-          : null,
-    );
-  }
-}
-
-class CitySelectResponse {
-  final Status status;
-  final City content;
-
-  const CitySelectResponse({this.status, this.content});
-
-  factory CitySelectResponse.fromJson(Map<String, dynamic> json) {
-    final content = json['content'];
-
-    return CitySelectResponse(
-      status: Status.fromJson(json['status']),
-      content: content != null ? City.fromJson(content['city']) : null,
-    );
-  }
-}
 
 class CitiesProvider {
   final _allCities = List<City>();
+  List<City> get allCities => _allCities;
 
   final _citiesController = StreamController<List<City>>();
 
@@ -49,6 +15,8 @@ class CitiesProvider {
 
   int _pinnedCount = 0;
   int get pinnedCount => _pinnedCount;
+
+  bool skipable = false;
 
   final _pinnedIDs = List<String>();
 
@@ -61,9 +29,7 @@ class CitiesProvider {
 
     _allCities.addAll([for (final city in json['other']) City.fromJson(city)]);
 
-    // select(_allCities.first);
-
-    cities = _citiesController.stream;
+    cities = _citiesController.stream.asBroadcastStream();
 
     reset();
   }
@@ -106,64 +72,34 @@ class CitiesProvider {
     _citiesController.add(_allCities);
   }
 
-  select(City newCity) {
+  select(String id) {
     _selectedCity?.deselect();
 
-    newCity.select();
+    final newCity =
+        _allCities.firstWhere((city) => city.id == id, orElse: () => null);
+
+    newCity?.select();
 
     _selectedCity = newCity;
   }
 
-  bool checkSavedCity(String id) {
-    if (id == null) {
-      print("Null id on city check");
+  updateList() {
+    if (_selectedCity != null) {
+      final selectedCityIndex =
+          _allCities.indexWhere((city) => city.id == _selectedCity.id);
 
-      return false;
-    }
+      if (selectedCityIndex > _pinnedIDs.length) {
+        _allCities.removeAt(selectedCityIndex);
 
-    final selectedCityIndex = _allCities.indexWhere((city) => city.id == id);
+        _allCities.insert(0, _selectedCity);
 
-    if (selectedCityIndex >= 0) {
-      _selectedCity = _allCities.elementAt(selectedCityIndex)..select();
-
-      print("Selected city: " + _selectedCity.toString());
-
-      return true;
-    } else {
-      print("City with id " + id + " not found");
-
-      return false;
-    }
-  }
-
-  updateGeolocation(City newCity) {
-    if (newCity == null) {
-      print("City not found");
-
-      return;
-    }
-
-    final locatedCityIndex =
-        _allCities.indexWhere((city) => city.id == newCity.id);
-
-    if (locatedCityIndex >= 0) {
-      final locatedCity = _allCities.elementAt(locatedCityIndex);
-
-      if (locatedCityIndex > _pinnedIDs.length) {
-        _allCities.removeAt(locatedCityIndex);
-
-        _allCities.insert(0, locatedCity);
-
-        _pinnedIDs.insert(0, locatedCity.id);
+        _pinnedIDs.insert(0, _selectedCity.id);
 
         updatePinnedCount(_allCities);
 
         _citiesController.add(_allCities);
       }
-
-      if (!locatedCity.selected.value) select(locatedCity);
-    } else
-      print("City " + newCity.toString() + " not found");
+    }
   }
 }
 

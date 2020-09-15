@@ -14,5 +14,5 @@ class CartProduct {
         selected: ValueNotifier(false),
       );
 
-  update() => selected.value = !selected.value;
+  update({bool value}) => selected.value = value ?? !selected.value;
 }

@@ -18,7 +18,7 @@ class ProductSeller extends StatelessWidget {
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () => onSellerPush(seller),
+      onTap: () => onSellerPush?.call(seller),
       child: Container(
         margin: EdgeInsets.only(top: 25, bottom: 20),
         decoration: BoxDecoration(

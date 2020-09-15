@@ -11,53 +11,57 @@ import 'package:refashioned_app/screens/components/button/components/button_titl
 class ProductBottomButtons extends StatefulWidget {
   final String productId;
   final Function() onCartPush;
+  final Function() openDeliveryTypesSelector;
 
-  const ProductBottomButtons({this.productId, this.onCartPush});
+  const ProductBottomButtons(
+      {this.productId, this.onCartPush, this.openDeliveryTypesSelector});
   @override
   _ProductBottomButtonsState createState() => _ProductBottomButtonsState();
 }
 
 class _ProductBottomButtonsState extends State<ProductBottomButtons> {
   CartRepository cartRepository;
-  ValueNotifier<ButtonState> buttonState;
+
+  ValueNotifier<ButtonState> addToCartButtonState;
 
   @override
   void initState() {
-    buttonState = ValueNotifier<ButtonState>(ButtonState.disabled);
+    addToCartButtonState = ValueNotifier<ButtonState>(ButtonState.disabled);
 
     cartRepository = Provider.of<CartRepository>(context, listen: false);
 
-    if (cartRepository != null) buttonState.value = ButtonState.enabled;
+    if (cartRepository != null)
+      addToCartButtonState.value = ButtonState.enabled;
 
     if (cartRepository.checkPresence(widget.productId))
-      buttonState.value = ButtonState.done;
+      addToCartButtonState.value = ButtonState.done;
 
-    if (buttonState.value != ButtonState.done)
-      cartRepository?.addProduct?.addListener(repositoryListener);
+    if (addToCartButtonState.value != ButtonState.done)
+      cartRepository?.addProduct?.addListener(addToCartRepositoryListener);
 
     super.initState();
   }
 
   addToCart() {
-    if (buttonState.value != ButtonState.done) {
+    if (addToCartButtonState.value != ButtonState.done) {
       HapticFeedback.mediumImpact();
       cartRepository?.addToCart(widget.productId);
     } else
       widget.onCartPush();
   }
 
-  repositoryListener() {
+  addToCartRepositoryListener() {
     if (cartRepository != null) {
       switch (cartRepository.addProduct.status) {
         case Status.LOADING:
-          buttonState.value = ButtonState.loading;
+          addToCartButtonState.value = ButtonState.loading;
           break;
         case Status.ERROR:
           HapticFeedback.vibrate();
-          buttonState.value = ButtonState.error;
+          addToCartButtonState.value = ButtonState.error;
           break;
         case Status.LOADED:
-          buttonState.value = ButtonState.done;
+          addToCartButtonState.value = ButtonState.done;
           break;
       }
     }
@@ -65,12 +69,12 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
   @override
   void dispose() {
-    cartRepository?.addProduct?.removeListener(repositoryListener);
+    cartRepository?.addProduct?.removeListener(addToCartRepositoryListener);
 
     super.dispose();
   }
 
-  final buttonStatesData = {
+  final addToCartButtonStatesData = {
     ButtonState.disabled: ButtonData(
       buttonContainerData: ButtonContainerData(
         decorationType: ButtonDecorationType.gray,
@@ -131,27 +135,22 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: widget.productId != null && widget.productId.isNotEmpty
-                ? RefashionedButton(
-                    height: 40,
-                    onTap: () => HapticFeedback.mediumImpact(),
-                    data: ButtonData(
-                      buttonContainerData: ButtonContainerData(
-                        decorationType: ButtonDecorationType.black,
-                      ),
-                      titleData: ButtonTitleData(
-                        text: "Спросить",
-                        color: ButtonTitleColor.white,
-                      ),
-                    ),
-                  )
-                : RefashionedButton(
-                    height: 40,
-                    data: ButtonData(
-                        buttonContainerData: ButtonContainerData(
-                      decorationType: ButtonDecorationType.black,
-                    )),
-                  ),
+            child: RefashionedButton(
+              height: 40,
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                widget.openDeliveryTypesSelector();
+              },
+              data: ButtonData(
+                buttonContainerData: ButtonContainerData(
+                  decorationType: ButtonDecorationType.black,
+                ),
+                titleData: ButtonTitleData(
+                  text: "Купить сейчас",
+                  color: ButtonTitleColor.white,
+                ),
+              ),
+            ),
           ),
           Container(
             width: 5,
@@ -160,8 +159,8 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
             child: RefashionedButton(
               height: 40,
               onTap: addToCart,
-              states: buttonState,
-              statesData: buttonStatesData,
+              states: addToCartButtonState,
+              statesData: addToCartButtonStatesData,
             ),
           ),
         ],

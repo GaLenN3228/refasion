@@ -30,7 +30,7 @@ class RefashionApp extends StatelessWidget {
             create: (_) => CatalogRepository()..getCatalog(),
           ),
           ChangeNotifierProvider<CitiesRepository>(
-            create: (_) => CitiesRepository()..getCities(),
+            create: (_) => CitiesRepository(),
           ),
           ChangeNotifierProvider<CartRepository>(
             create: (_) => CartRepository(),
@@ -42,7 +42,9 @@ class RefashionApp extends StatelessWidget {
         child: MaterialApp(
           theme: _materialTheme(),
           debugShowCheckedModeBanner: false,
-          home: CitySelector(),
+          home: CitySelector(
+            onFirstLaunch: true,
+          ),
         ));
   }
 }

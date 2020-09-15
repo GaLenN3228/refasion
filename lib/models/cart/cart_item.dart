@@ -1,25 +1,45 @@
 import 'package:refashioned_app/models/cart/cart_product.dart';
+import 'package:refashioned_app/models/cart/delivery_company.dart';
+import 'package:refashioned_app/models/cart/delivery_data.dart';
 
 class CartItem {
-  final String deliveryObject;
-  final String deliveryData;
-  final List<CartProduct> products;
+  final DeliveryCompany deliveryCompany;
+  final DeliveryData deliveryData;
+  final List<CartProduct> cartProducts;
   final String id;
 
-  CartItem({this.id, this.products, this.deliveryObject, this.deliveryData});
+  CartItem(
+      {this.id, this.cartProducts, this.deliveryCompany, this.deliveryData});
 
-  factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
-        id: json['id'],
-        deliveryData: json['delivaery_data'],
-        deliveryObject: json['delivery_object'],
-        products: [
-          for (final itemProduct in json['item_products'])
-            CartProduct.fromJson(itemProduct)
-        ],
-      );
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    final deliveryData = json['delivery_data'] != null
+        ? DeliveryData.fromJson(json['delivery_data'])
+        : null;
+    final deliveryCompany = json['delivery_object'] != null &&
+            json['delivery_object']['delivery_company'] != null
+        ? DeliveryCompany.fromJson(json['delivery_object']['delivery_company'])
+        : null;
 
-  CartProduct getProduct(String productId) => products.firstWhere(
-        (cartProduct) => cartProduct.product.id == productId,
+    return CartItem(
+      id: json['id'],
+      deliveryData: deliveryData,
+      deliveryCompany: deliveryCompany,
+      cartProducts: [
+        for (final itemProduct in json['item_products'])
+          CartProduct.fromJson(itemProduct)
+      ],
+    );
+  }
+
+  CartProduct getProduct(String productId) => cartProducts.firstWhere(
+        (cartProduct) =>
+            cartProduct.product.id == productId || cartProduct.id == productId,
         orElse: () => null,
       );
+
+  update(bool value) =>
+      cartProducts.forEach((cartProduct) => cartProduct.update(value: value));
+
+  @override
+  String toString() => "cart item with id " + id.toString();
 }

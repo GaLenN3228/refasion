@@ -10,7 +10,8 @@ class PickPoint {
   final String workSchedule;
   City city;
 
-  PickPoint({this.id,
+  PickPoint(
+      {this.id,
       this.address,
       this.originalAddress,
       this.latitude,

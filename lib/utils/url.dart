@@ -8,7 +8,6 @@ class Url {
       '$refashionedBaseUrl/geo/geocode/latlon/';
   static const findAddressesByQuery =
       '$refashionedBaseUrl/geo/geocode/suggestions/';
-  static const addresses = '$refashionedBaseUrl/geo/addresses/';
 
   //CART
 
@@ -16,6 +15,18 @@ class Url {
   static const cart = '$refashionedBaseUrl/cart/';
   static const cartItemProduct = '$refashionedBaseUrl/cart/item_product/';
   static const cartItem = '$refashionedBaseUrl/cart/item/';
+
+  //ORDERS
+
+  static const orders = '$refashionedBaseUrl/orders/';
+
+  //USER ADDRESSES
+
+  static const userAddresses = '$refashionedBaseUrl/geo/addresses/';
+
+  //USER PICKPOINTS
+
+  static const userPickPoints = '$refashionedBaseUrl/geo/pickpoints/';
 
   //Categories
   static const categories = '$refashionedBaseUrl/catalog/categories/';
