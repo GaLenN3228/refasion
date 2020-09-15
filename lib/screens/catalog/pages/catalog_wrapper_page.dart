@@ -21,6 +21,8 @@ class CatalogWrapperPage extends StatefulWidget {
   TabSwitcher tabSwitcher;
   CatalogNavigator catalogNavigator;
 
+  GlobalKey<NavigatorState> tabSwitcherKey;
+
   @override
   _CatalogWrapperPageState createState() => _CatalogWrapperPageState();
 }
@@ -38,10 +40,9 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
 
   SearchRepository searchRepository;
 
-  BottomTab previousTab;
-
   @override
   void initState() {
+    widget.tabSwitcherKey = GlobalKey<NavigatorState>();
     SharedPreferences.getInstance().then((newSharedPreferences) {
       if (!newSharedPreferences.containsKey(Prefs.need_show_authorization_screen)) {
         Future.delayed(Duration(milliseconds: 1000), (){
@@ -53,6 +54,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
 
     widget.catalogNavigator = CatalogNavigator();
     widget.tabSwitcher = TabSwitcher(
+      key: widget.tabSwitcherKey,
       catalogNavigator: widget.catalogNavigator,
     );
 
@@ -84,7 +86,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
       onFavouritesClick: () {
         previousTab = widget.tabSwitcher.currentTab.value;
         var topPanelController = Provider.of<TopPanelController>(context, listen: false);
-        Navigator.of(navigatorKeys[BottomTab.catalog].currentContext)
+        Navigator.of(widget.tabSwitcherKey.currentContext)
             .push(CupertinoPageRoute(
                 builder: (context) => widget.tabSwitcher.catalogNavigator
                     .routeBuilder(navigatorKeys[BottomTab.catalog].currentContext, CatalogNavigatorRoutes.favourites)))
@@ -92,7 +94,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
                   topPanelController.needShow = true,
                   if (previousTab != null) widget.tabSwitcher.currentTab.value = previousTab
                 });
-        widget.tabSwitcher.currentTab.value = BottomTab.catalog;
+        // widget.tabSwitcher.currentTab.value = BottomTab.catalog;
       },
       onSearch: (query) {
         searchRepository?.search(query);

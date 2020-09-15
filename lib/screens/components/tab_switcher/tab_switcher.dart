@@ -11,6 +11,7 @@ import 'package:refashioned_app/screens/components/tab_switcher/components/botto
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/collect_widgets_data.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/tabs.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,10 +22,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class TabSwitcher extends StatefulWidget {
   final BottomTab initialTab;
   final CatalogNavigator catalogNavigator;
+  final GlobalKey key;
 
   ValueNotifier<BottomTab> currentTab;
 
-  TabSwitcher({Key key, this.initialTab: BottomTab.catalog, this.catalogNavigator}) : super(key: key);
+  TabSwitcher({this.key, this.initialTab: BottomTab.catalog, this.catalogNavigator});
 
   @override
   _TabSwitcherState createState() => _TabSwitcherState();
@@ -68,28 +70,11 @@ class _TabSwitcherState extends State<TabSwitcher> {
         onWillPop: () async => !await navigatorKeys[widget.currentTab.value].currentState.maybePop(),
         child: Stack(
           children: <Widget>[
-            TabView(
-              BottomTab.home,
-              widget.currentTab,
-              onTabRefresh: onTabRefresh,
-            ),
-            TabView(
-              BottomTab.catalog,
-              widget.currentTab,
-              pushPageOnTop: pushPageOnTop,
-              onTabRefresh: onTabRefresh,
+            Tabs(
+              key: widget.key,
               catalogNavigator: widget.catalogNavigator,
-            ),
-            TabView(
-              BottomTab.cart,
-              widget.currentTab,
               onTabRefresh: onTabRefresh,
-            ),
-            TabView(
-              BottomTab.profile,
-              widget.currentTab,
-              onTabRefresh: onTabRefresh,
-              catalogNavigator: widget.catalogNavigator,
+              currentTab: widget.currentTab,
             ),
             Positioned(
               left: 0,
