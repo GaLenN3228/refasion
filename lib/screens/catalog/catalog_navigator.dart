@@ -36,7 +36,7 @@ class CatalogNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   final Function(Widget) onPushPageOnTop;
 
-  Widget routeBuilder(BuildContext context, String route,
+  Widget _routeBuilder(BuildContext context, String route,
       {Category category,
       List<Category> categories,
       Product product,
@@ -58,7 +58,7 @@ class CatalogNavigator extends StatelessWidget {
             return Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => routeBuilder(context, newRoute, category: category),
+                    builder: (context) => _routeBuilder(context, newRoute, category: category),
                   ),
                 )
                 .then((value) => topPanelController.needShowBack = false);
@@ -66,7 +66,7 @@ class CatalogNavigator extends StatelessWidget {
           onFavouritesClick: () => Navigator.of(context)
               .push(
                 MaterialWithModalsPageRoute(
-                  builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.favourites,
                       category: category, parameters: parameters),
                 ),
               )
@@ -86,7 +86,7 @@ class CatalogNavigator extends StatelessWidget {
             return Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => routeBuilder(context, newRoute, category: category),
+                    builder: (context) => _routeBuilder(context, newRoute, category: category),
                     settings: RouteSettings(name: newRoute),
                   ),
                 )
@@ -95,7 +95,7 @@ class CatalogNavigator extends StatelessWidget {
           onFavouritesClick: () => Navigator.of(context)
               .push(
                 MaterialWithModalsPageRoute(
-                  builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.favourites,
                       category: category, parameters: parameters),
                 ),
               )
@@ -114,7 +114,7 @@ class CatalogNavigator extends StatelessWidget {
             onPush: (_, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
+                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
                 settings: RouteSettings(name: CatalogNavigatorRoutes.products),
               ),
             )
@@ -124,7 +124,7 @@ class CatalogNavigator extends StatelessWidget {
             onFavouritesClick: () => Navigator.of(context)
                 .push(
                   MaterialWithModalsPageRoute(
-                    builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.favourites,
                         category: category, parameters: parameters),
                   ),
                 )
@@ -147,7 +147,7 @@ class CatalogNavigator extends StatelessWidget {
                       .push(
                     CupertinoPageRoute(
                       builder: (context) =>
-                          routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                          _routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
                     ),
                   )
                       .then((flag) {
@@ -157,7 +157,7 @@ class CatalogNavigator extends StatelessWidget {
               onFavouritesClick: ({callback}) => Navigator.of(context)
                       .push(
                     MaterialWithModalsPageRoute(
-                      builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                      builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.favourites,
                           category: category, parameters: parameters),
                     ),
                   )
@@ -179,18 +179,18 @@ class CatalogNavigator extends StatelessWidget {
                 .push(
                   CupertinoPageRoute(
                     builder: (context) =>
-                        routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                        _routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
                   ),
                 )
                 .then((value) => topPanelController.needShow = true),
             onSellerPush: (seller) => Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
+                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
               ),
             ),
             onSubCategoryClick: (parameters, title) => Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => routeBuilder(context, CatalogNavigatorRoutes.products,
+                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
                     product: product, category: category, parameters: parameters, productTitle: title),
               ),
             ),
@@ -204,7 +204,7 @@ class CatalogNavigator extends StatelessWidget {
               .push(
                 CupertinoPageRoute(
                   builder: (context) =>
-                      routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                      _routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
                 ),
               )
               .then((value) => topPanelController.needShow = true),
@@ -224,7 +224,7 @@ class CatalogNavigator extends StatelessWidget {
                     .push(
                       CupertinoPageRoute(
                         builder: (context) =>
-                            routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                            _routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
                       ),
                     )
                     .then((value) => topPanelController.needShow = true),
@@ -266,7 +266,7 @@ class CatalogNavigator extends StatelessWidget {
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
           builder: (context) =>
-              routeBuilder(context, routeSettings.name, categories: catalogRepository.response.content),
+              _routeBuilder(context, routeSettings.name, categories: catalogRepository.response.content),
         );
       },
     );

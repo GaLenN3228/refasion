@@ -109,20 +109,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
                             itemBuilder: (context, index) => ResultTile(
                               query: searchQuery,
                               searchResult: searchRepository.response.content.results.elementAt(index),
-                              onClick: (searchResult) {
-                                widget.navigatorKey.currentState.push(
-                                  MaterialWithModalsPageRoute(
-                                    builder: (context) => widget.catalogNavigator.routeBuilder(
-                                        context, CatalogNavigatorRoutes.products,
-                                        searchResult: searchResult),
-                                  ),
-                                ).then((value) => topPanelController.needShowBack = false);
-                                setState(() {
-                                  searchQuery = "";
-                                  _searchResultState = SearchResultState.HIDE;
-                                  FocusScope.of(context).unfocus();
-                                });
-                              },
+                              onClick: (searchResult) {},
                             ),
                             separatorBuilder: (context, _) => ItemsDivider(),
                           ),

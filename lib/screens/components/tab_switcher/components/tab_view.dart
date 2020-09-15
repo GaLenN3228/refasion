@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/screens/cart/cart/cart_navigator.dart';
@@ -10,6 +11,7 @@ import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart'
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/home/home.dart';
+import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 
 final navigatorKeys = {
@@ -56,13 +58,7 @@ class _TabViewState extends State<TabView> {
               var topPanelController = Provider.of<TopPanelController>(context, listen: false);
               return CatalogWrapperPage(
                 catalogNavigator: catalogNavigator,
-                onFavClick: () {
-                  return Navigator.of(navigatorKeys[widget.currentTab.value].currentContext)
-                      .push(CupertinoPageRoute(
-                          builder: (context) => catalogNavigator.routeBuilder(
-                              navigatorKeys[widget.currentTab.value].currentContext, CatalogNavigatorRoutes.favourites)))
-                      .then((value) => topPanelController.needShow = true);
-                },
+                onFavClick: () {},
                 navigatorKey: navigatorKeys[widget.currentTab.value],
               );
             });
