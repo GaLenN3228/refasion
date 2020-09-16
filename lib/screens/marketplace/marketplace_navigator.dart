@@ -7,6 +7,7 @@ import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/sell_properties.dart';
 import 'package:refashioned_app/screens/marketplace/components/take_option_tile.dart';
 import 'package:refashioned_app/screens/marketplace/pages/addresses_page.dart';
@@ -106,7 +107,7 @@ class MarketplaceNavigator extends StatefulWidget {
 class ProductData {
   Category category;
 
-  int price;
+  double price;
 
   Brand brand;
 
@@ -132,7 +133,7 @@ class ProductData {
 
   updateCard(String newCard) => card = newCard;
 
-  updatePrice(int newPrice) => price = newPrice;
+  updatePrice(double newPrice) => price = newPrice;
 
   updateBrand(Brand newBrand) => brand = newBrand;
 
@@ -358,21 +359,26 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         );
 
       case MarketplaceNavigatorRoutes.price:
-        return PricePage(
-          onClose: widget.onClose,
-          focusNode: focusNodes[route],
-          initialData: productData.price,
-          onUpdate: (price) => productData.updatePrice(price),
-          onPush: () {
-            Navigator.of(context).push(
-              MaterialWithModalsPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, MarketplaceNavigatorRoutes.cards),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.cards),
-              ),
-            );
-          },
-        );
+        return ChangeNotifierProvider<CalcProductPrice>(create: (_) {
+          return CalcProductPrice();
+        }, builder: (context, _) {
+          return PricePage(
+            onClose: widget.onClose,
+            focusNode: focusNodes[route],
+            initialData: productData.price,
+            onUpdate: (price) => productData.updatePrice(price),
+            onPush: () {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(
+                      context, MarketplaceNavigatorRoutes.addresses),
+                  settings:
+                  RouteSettings(name: MarketplaceNavigatorRoutes.addresses),
+                ),
+              );
+            },
+          );
+        });
 
       case MarketplaceNavigatorRoutes.cards:
         return CardsPage(

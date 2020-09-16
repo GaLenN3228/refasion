@@ -5,8 +5,11 @@ import 'package:refashioned_app/services/api_service.dart';
 import 'base.dart';
 
 class AddProductToCartRepository extends BaseRepository {
+  String productId;
+
   Future<void> update(String productId) => apiCall(
         () async {
+          this.productId = productId;
           response = BaseResponse.fromJson(
               (await ApiService.addProductToCart(productId)).data, null);
         },

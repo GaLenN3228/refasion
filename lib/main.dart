@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/repositories/cart.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/cities.dart';
@@ -34,6 +35,9 @@ class RefashionApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<CartRepository>(
             create: (_) => CartRepository(),
+          ),
+          ChangeNotifierProvider<CodeAuthorizationRepository>(
+            create: (_) => CodeAuthorizationRepository(),
           ),
           Provider<SizesProvider>(
             create: (_) => SizesProvider(),

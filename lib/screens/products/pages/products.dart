@@ -16,11 +16,8 @@ import 'package:refashioned_app/screens/products/content/products.dart';
 
 class ProductsPage extends StatefulWidget {
   final Function(Product, {dynamic callback}) onPush;
-  final Function() onSearch;
   final Category topCategory;
   final SearchResult searchResult;
-  final Function({dynamic callback}) onFavouritesClick;
-  final GlobalKey<NavigatorState> productKey;
 
   final String parameters;
   final String title;
@@ -28,12 +25,10 @@ class ProductsPage extends StatefulWidget {
   const ProductsPage(
       {Key key,
       this.onPush,
-      this.onSearch,
       this.topCategory,
       this.searchResult,
-      this.onFavouritesClick,
       this.parameters,
-      this.title, this.productKey});
+      this.title});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -141,7 +136,6 @@ class _ProductsPageState extends State<ProductsPage> {
                     ),
                     Expanded(
                       child: ProductsPageContent(
-                        productKey: widget.productKey,
                         onPush: (product) {
                           widget.onPush(
                             product,

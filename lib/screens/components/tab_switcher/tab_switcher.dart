@@ -1,12 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
+import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
+import 'package:refashioned_app/screens/authorization/phone_page.dart';
+import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_navigation.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/collect_widgets_data.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
+import 'package:refashioned_app/utils/prefs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Используемый паттерн: https://medium.com/coding-with-flutter/flutter-case-study-multiple-navigators-with-bottomnavigationbar-90eb6caa6dbf
 //Github: https://github.com/bizz84/nested-navigation-demo-flutter
@@ -14,8 +21,9 @@ import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 class TabSwitcher extends StatefulWidget {
   final BottomTab initialTab;
 
-  const TabSwitcher({Key key, this.initialTab: BottomTab.catalog})
-      : super(key: key);
+  ValueNotifier<BottomTab> currentTab;
+
+  TabSwitcher({this.initialTab: BottomTab.catalog});
 
   @override
   _TabSwitcherState createState() => _TabSwitcherState();
@@ -26,69 +34,73 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
   SizesProvider sizesProvider;
 
-  ValueNotifier<BottomTab> currentTab;
-
   @override
   initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => SharedPreferences.getInstance().then(
+        (newSharedPreferences) {
+          if (!newSharedPreferences.containsKey(Prefs.need_show_authorization_screen)) {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhonePage(fromStart: true)));
+            newSharedPreferences.setBool(Prefs.need_show_authorization_screen, false);
+          }
+        },
+      ),
+    );
+
     sizesProvider = Provider.of<SizesProvider>(context, listen: false);
 
-    bottomNavWidgetData =
-        sizesProvider.getData("bottomNav") ?? WidgetData.create("bottomNav");
+    bottomNavWidgetData = sizesProvider.getData("bottomNav") ?? WidgetData.create("bottomNav");
 
-    currentTab = ValueNotifier(widget.initialTab);
+    widget.currentTab = ValueNotifier(widget.initialTab);
 
     super.initState();
   }
 
   onTabRefresh() {
-    final canPop =
-        navigatorKeys[currentTab.value]?.currentState?.canPop() ?? false;
+    final canPop = navigatorKeys[widget.currentTab.value]?.currentState?.canPop() ?? false;
 
-    if (canPop)
-      navigatorKeys[currentTab.value]
-          .currentState
-          .pushNamedAndRemoveUntil('/', (route) => false);
+    if (canPop) navigatorKeys[widget.currentTab.value].currentState.pushNamedAndRemoveUntil('/', (route) => false);
   }
 
-  pushPageOnTop(Widget page) => Navigator.of(context)
-      .push(CupertinoPageRoute(builder: (context) => page));
+  pushPageOnTop(Widget page) => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => page));
 
   @override
   void dispose() {
-    currentTab.dispose();
+    widget.currentTab.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      resizeToAvoidBottomInset: false,
+    return Material(
       child: WillPopScope(
-        onWillPop: () async =>
-            !await navigatorKeys[currentTab.value].currentState.maybePop(),
+        onWillPop: () async => !await navigatorKeys[widget.currentTab.value]?.currentState?.maybePop(),
         child: Stack(
           children: <Widget>[
             TabView(
               BottomTab.home,
-              currentTab,
+              widget.currentTab,
               onTabRefresh: onTabRefresh,
+              pushPageOnTop: pushPageOnTop,
             ),
             TabView(
               BottomTab.catalog,
-              currentTab,
+              widget.currentTab,
               pushPageOnTop: pushPageOnTop,
               onTabRefresh: onTabRefresh,
             ),
             TabView(
               BottomTab.cart,
-              currentTab,
+              widget.currentTab,
               onTabRefresh: onTabRefresh,
+              pushPageOnTop: pushPageOnTop,
             ),
             TabView(
               BottomTab.profile,
-              currentTab,
+              widget.currentTab,
               onTabRefresh: onTabRefresh,
+              pushPageOnTop: pushPageOnTop,
             ),
             Positioned(
               left: 0,
@@ -100,19 +112,28 @@ class _TabSwitcherState extends State<TabSwitcher> {
                 child: SizedBox(
                   key: bottomNavWidgetData.key,
                   child: BottomNavigation(
-                    currentTab,
-                    () => Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            SlideTransition(
-                          position: Tween(begin: Offset(0, 1), end: Offset.zero)
-                              .animate(animation),
-                          child: MarketplaceNavigator(
-                            onClose: () => Navigator.of(context).pop(),
-                          ),
-                        ),
-                      ),
-                    ),
+                    widget.currentTab,
+                    () => {
+                      BaseRepository.isAuthorized().then((isAuthorized) {
+                        return isAuthorized
+                            ? Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                                    position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                                    child: MarketplaceNavigator(
+                                      onClose: () => Navigator.of(context).pop(),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : showCupertinoModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                expand: false,
+                                context: context,
+                                useRootNavigator: true,
+                                builder: (context, controller) => AuthorizationSheet());
+                      })
+                    },
                     onTabRefresh,
                   ),
                 ),

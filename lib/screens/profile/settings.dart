@@ -8,9 +8,6 @@ import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
-import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
-import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
-import 'package:refashioned_app/screens/maps/map_picker.dart';
 
 class SettingPage extends StatelessWidget {
   @override
@@ -92,30 +89,15 @@ class SettingPage extends StatelessWidget {
 }
 
 class SettingForAuthUser extends StatefulWidget {
+  final Function() onMapPageClick;
+
+  const SettingForAuthUser({Key key, this.onMapPageClick}) : super(key: key);
+
   @override
   _SettingForAuthUserState createState() => _SettingForAuthUserState();
 }
 
 class _SettingForAuthUserState extends State<SettingForAuthUser> {
-  MapBottomSheetDataController mapBottomSheetDataController;
-  MapDataController mapDataController;
-
-  @override
-  void initState() {
-    mapDataController =
-        MapDataController(pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
-    mapBottomSheetDataController = MapBottomSheetDataController(
-        mapBottomSheetDataPreview: MapBottomSheetData(
-            title: "Где можно забрать вещь?",
-            hint: "Укажите на карте или введите адрес вручную"),
-        mapBottomSheetDataAddress: MapBottomSheetData(
-          isCancelPointEnable: true,
-          title: "Адрес доставки",
-        ));
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -134,7 +116,7 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: () {
+              onTap: (){
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) => CitySelector(),
                 ));
@@ -171,12 +153,7 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             Tapable(
               padding: EdgeInsets.all(10),
               onTap: () {
-                Navigator.of(context).push(CupertinoPageRoute(
-                    builder: (context) => MapsPickerPage(
-                          mapDataController: mapDataController,
-                          mapBottomSheetDataController:
-                              mapBottomSheetDataController,
-                        )));
+                widget.onMapPageClick();
               },
               child: Container(
                 padding: EdgeInsets.only(top: 15, left: 10, bottom: 10),

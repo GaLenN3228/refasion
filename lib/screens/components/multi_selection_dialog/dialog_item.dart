@@ -8,35 +8,37 @@ class DialogItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-    return GestureDetector(
+    TextTheme textTheme = Theme
+        .of(context)
+        .textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: GestureDetector(
       onTap: dialogItemContent?.onClick,
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          children: [
-            SVGIcon(
-              icon: dialogItemContent.icon,
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  dialogItemContent.text,
-                  style:
-                      dialogItemContent.dialogItemType == DialogItemType.system
-                          ? textTheme.headline6
-                          : textTheme.headline5,
-                  maxLines: 1,
-                ),
+      child: Row(
+        children: [
+          SVGIcon(
+            icon: dialogItemContent.icon,
+          ),
+          Expanded(
+            child: Center(
+              child: Text(
+                dialogItemContent.text,
+                style:
+                dialogItemContent.dialogItemType == DialogItemType.system
+                    ? textTheme.headline6
+                    : textTheme.headline5,
+                maxLines: 1,
               ),
             ),
-            SizedBox(
-              width: 30,
-            ),
-          ],
-        ),
+          ),
+          SizedBox(
+            width: 30,
+          ),
+        ],
       ),
-    );
+    ),);
   }
 }
 

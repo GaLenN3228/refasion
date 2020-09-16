@@ -24,6 +24,7 @@ import 'package:refashioned_app/screens/product/components/recommended.dart';
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPage extends StatefulWidget {

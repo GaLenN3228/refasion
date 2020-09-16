@@ -55,14 +55,14 @@ class _CitySelectorState extends State<CitySelector> {
   }
 
   pushTabSwitcher() => Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              FadeTransition(
+    PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          FadeTransition(
             opacity: animation,
             child: TabSwitcher(),
           ),
-        ),
-      );
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {

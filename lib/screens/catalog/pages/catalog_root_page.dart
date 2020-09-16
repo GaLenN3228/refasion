@@ -9,10 +9,9 @@ import 'package:refashioned_app/utils/colors.dart';
 class CatalogRootPage extends StatelessWidget {
   final List<Category> categories;
   final Function(Category) onPush;
-  final Function() onSearch;
   final Function() onFavouritesClick;
 
-  const CatalogRootPage({Key key, this.categories, this.onPush, this.onSearch, this.onFavouritesClick})
+  const CatalogRootPage({Key key, this.categories, this.onPush, this.onFavouritesClick})
       : super(key: key);
 
   Widget tabContent(BuildContext context, Category category) {
@@ -28,7 +27,7 @@ class CatalogRootPage extends StatelessWidget {
       padding: const EdgeInsets.only(top: 7.5, bottom: 89 + 7.5),
       key: PageStorageKey<String>(category.name),
       //null element is for the Brands card
-      children: [null, ...category.children]
+      children: category.children
           .map((category) => CategoryRootCard(
                 category: category,
                 onPush: () => onPush(category),
@@ -53,7 +52,7 @@ class CatalogRootPage extends StatelessWidget {
               SliverAppBar(
                 backgroundColor: Colors.white,
                 brightness: Brightness.light,
-                expandedHeight: 0,
+                expandedHeight: 50,
                 primary: false,
                 pinned: true,
                 floating: true,

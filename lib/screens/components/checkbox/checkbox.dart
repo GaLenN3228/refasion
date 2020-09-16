@@ -24,13 +24,6 @@ class RefashionedCheckbox extends StatefulWidget {
 class _RefashionedCheckboxState extends State<RefashionedCheckbox> {
   bool value;
 
-  @override
-  initState() {
-    value = widget.value;
-
-    super.initState();
-  }
-
   update() {
     widget.onUpdate?.call(!value);
     setState(() => value = !value);
@@ -43,6 +36,8 @@ class _RefashionedCheckboxState extends State<RefashionedCheckbox> {
 
   @override
   Widget build(BuildContext context) {
+    value = widget.value;
+
     final boxSize = widget.size ?? 20;
 
     return GestureDetector(

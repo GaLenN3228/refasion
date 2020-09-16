@@ -34,6 +34,8 @@ class Url {
   //Products
   static const products = '$refashionedBaseUrl/catalog/products/';
   static const productsCount = '$refashionedBaseUrl/catalog/products/count/';
+  static const addProduct = '$refashionedBaseUrl/catalog/products/create/';
+  static const calcProductPrice = '$refashionedBaseUrl/catalog/price-calc/';
 
   static String productsRecommended(id) =>
       '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';
@@ -43,7 +45,7 @@ class Url {
 
   //Filters
   static const filters = '$refashionedBaseUrl/catalog/filters/';
-  static const quick_filters = '$refashionedBaseUrl/catalog/quickfilters/';
+  static const quickFilters = '$refashionedBaseUrl/catalog/quickfilters/';
 
   //Filters
   static const sortMethods = '$refashionedBaseUrl/catalog/sort/';

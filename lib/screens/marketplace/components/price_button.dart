@@ -7,7 +7,7 @@ enum PriceButtonType { tradeIn, diy }
 class PriceButton extends StatelessWidget {
   final PriceButtonType type;
   final Brand brand;
-  final Map<PriceButtonType, int> prices;
+  final Map<PriceButtonType, double> prices;
   final Function() onPush;
 
   PriceButton({Key key, this.type, this.brand, this.prices, this.onPush})

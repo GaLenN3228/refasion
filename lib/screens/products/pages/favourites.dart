@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
@@ -20,9 +21,21 @@ class FavouritesPage extends StatefulWidget {
 }
 
 class _FavouritesPageState extends State<FavouritesPage> {
+  Widget loadIcon;
+
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+
   @override
   Widget build(BuildContext context) {
+    loadIcon = SizedBox(
+      width: 25.0,
+      height: 25.0,
+      child: defaultTargetPlatform ==
+          TargetPlatform.iOS
+          ? const CupertinoActivityIndicator()
+          : const CircularProgressIndicator(
+          strokeWidth: 2.0),
+    );
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -50,28 +63,39 @@ class _FavouritesPageState extends State<FavouritesPage> {
             var favouriteProducts = favouritesProductsRepository.response.content.products;
 
             return Container(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 50),
-                child: SmartRefresher(
-                  enablePullDown: true,
-                  enablePullUp: true,
-                  header: ClassicHeader(),
-                  controller: _refreshController,
-                  onRefresh: () async {
-                    await favouritesProductsRepository.getFavouritesProducts();
-                    _refreshController.refreshCompleted();
-                  },
-                  child: StaggeredGridView.countBuilder(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.only(left: 16, right: 16, bottom: 89),
-                    crossAxisCount: 2,
-                    itemCount: favouriteProducts.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        ProductsItem(product: favouriteProducts[index], onPush: widget.onPush),
-                    staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
-                    mainAxisSpacing: 16.0,
-                  ),
-                ),);
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 50),
+              child: SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: false,
+                header: ClassicHeader(
+                  completeDuration: Duration.zero,
+                  completeIcon: null,
+                  completeText: "",
+                  idleIcon: loadIcon,
+                  idleText: "Обновление",
+                  refreshingText: "Обновление",
+                  refreshingIcon: loadIcon,
+                  releaseIcon: loadIcon,
+                  releaseText: "Обновление",
+                ),
+                controller: _refreshController,
+                onRefresh: () async {
+                  await favouritesProductsRepository.getFavouritesProducts();
+                  _refreshController.refreshCompleted();
+                },
+                child: StaggeredGridView.countBuilder(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 89),
+                  crossAxisCount: 2,
+                  itemCount: favouriteProducts.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                      ProductsItem(product: favouriteProducts[index], onPush: widget.onPush),
+                  staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
+                  mainAxisSpacing: 16.0,
+                ),
+              ),
+            );
           })
         ],
       ),

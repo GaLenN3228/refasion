@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/addresses.dart';
+import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
@@ -9,39 +9,24 @@ import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_c
 import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
 import 'package:refashioned_app/screens/maps/map_picker.dart';
 
-class PickUpPointsPage extends StatefulWidget {
-  final Address address;
-
-  const PickUpPointsPage({Key key, this.address}) : super(key: key);
-
-  @override
-  _PickUpPointsPageState createState() => _PickUpPointsPageState();
-}
-
-class _PickUpPointsPageState extends State<PickUpPointsPage> {
-  MapDataController mapDataController;
+class MapPage extends StatelessWidget {
   MapBottomSheetDataController mapBottomSheetDataController;
-
-  @override
-  void initState() {
-    mapDataController = MapDataController(
-      pickUpPointsCompany: PickUpPointsCompany.BOXBERRY
-    );
-    mapBottomSheetDataController = MapBottomSheetDataController(
-      mapBottomSheetDataPreview: MapBottomSheetData(
-          title: "Пункты отправки",
-          hint: "Продавцу нужно отнести вещь в пункт отправки службы доставки, которую выберет покупатель."),
-      mapBottomSheetDataAddress: MapBottomSheetData(
-        isCancelPointEnable: true,
-        title: "Адрес доставки",
-      )
-    );
-
-    super.initState();
-  }
+  MapDataController mapDataController;
 
   @override
   Widget build(BuildContext context) {
+    mapDataController = MapDataController(
+        pickUpPointsCompany: PickUpPointsCompany.BOXBERRY
+    );
+    mapBottomSheetDataController = MapBottomSheetDataController(
+        mapBottomSheetDataPreview: MapBottomSheetData(
+            title: "Где можно получить заказ?",
+            hint: "Ищите ближайшие к вам пункты выдачи"),
+        mapBottomSheetDataAddress: MapBottomSheetData(
+          isCancelPointEnable: true,
+          title: "Адрес доставки",
+        )
+    );
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
@@ -53,7 +38,7 @@ class _PickUpPointsPageState extends State<PickUpPointsPage> {
                 TBIconType.back,
                 onTap: () => Navigator.of(context).pop(),
               ),
-              middleData: TBMiddleData.title("Пункты отправлений"),
+              middleData: TBMiddleData.title("Пункты выдачи"),
             ),
           ),
           SizedBox(

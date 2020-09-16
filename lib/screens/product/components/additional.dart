@@ -33,12 +33,6 @@ class ProductAdditional extends StatelessWidget {
                 "?p=" + product.category.id, product.category.name);
           },
         ),
-//        ProductAdditionalButton(
-//          text: "Все " + (product.category != null ? product.category.name : "null"),
-//          onSubCategoryClick: () {
-//            onSubCategoryClick("?p=" + product.category.id, product.category.name);
-//          },
-//        ),
       ],
     );
   }

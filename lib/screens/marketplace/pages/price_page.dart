@@ -1,28 +1,25 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_price_formatter.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/marketplace/components/price_button.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:provider/provider.dart';
 
 class PricePage extends StatefulWidget {
-  final int initialData;
+  final double initialData;
 
   final Function() onClose;
-  final Function(int) onUpdate;
+  final Function(double) onUpdate;
   final Function() onPush;
 
   final FocusNode focusNode;
 
-  const PricePage(
-      {this.onPush,
-      this.onClose,
-      this.focusNode,
-      this.initialData,
-      this.onUpdate});
+  const PricePage({this.onPush, this.onClose, this.focusNode, this.initialData, this.onUpdate});
 
   @override
   _PricePageState createState() => _PricePageState();
@@ -30,7 +27,7 @@ class PricePage extends StatefulWidget {
 
 class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
   TextEditingController textController;
-  Map<PriceButtonType, int> prices;
+  Map<PriceButtonType, double> prices;
   PriceFormatter priceFormatter;
 
   final double bottomPadding = 16;
@@ -38,20 +35,38 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
   bool canPush;
   bool keyboardVisible;
 
+  CalcProductPrice _calcProductPrice;
+
   @override
   void initState() {
     priceFormatter = PriceFormatter();
 
     textController = TextEditingController(
-        text: widget.initialData != null
-            ? priceFormatter.format(widget.initialData.toString())
-            : null);
+        text: widget.initialData != null ? priceFormatter.format(widget.initialData.toString()) : null);
     prices = {PriceButtonType.tradeIn: 0, PriceButtonType.diy: 0};
 
     textController.addListener(textControllerListener);
 
     canPush = false;
     keyboardVisible = false;
+
+    _calcProductPrice = Provider.of<CalcProductPrice>(context, listen: false);
+    _calcProductPrice.addListener(() {
+      var price = 0.0;
+      if (_calcProductPrice.isLoaded || (_calcProductPrice.isLoading && _calcProductPrice.response != null)){
+        price = _calcProductPrice.response.content.cash;
+      } else {
+        _calcProductPrice.response = null;
+      }
+
+      widget.onUpdate(price);
+
+      setState(() {
+        canPush = price != 0;
+
+        prices = {PriceButtonType.tradeIn: price, PriceButtonType.diy: price};
+      });
+    });
 
     super.initState();
 
@@ -70,19 +85,8 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
   }
 
   textControllerListener() {
-    final newPrice =
-        int.tryParse(priceFormatter.plainText(textController.text)) ?? 0;
-
-    widget.onUpdate(newPrice);
-
-    setState(() {
-      canPush = newPrice != 0;
-
-      prices = {
-        PriceButtonType.tradeIn: (newPrice * 0.7).round(),
-        PriceButtonType.diy: (newPrice * 0.85).round()
-      };
-    });
+    final newPrice = int.tryParse(priceFormatter.plainText(textController.text)) ?? 0;
+    _calcProductPrice.calcProductPrice(newPrice);
   }
 
   void didChangeMetrics() {
@@ -95,8 +99,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
       renderBox.size.width,
       renderBox.size.height,
     );
-    final keyboardTopPixels =
-        window.physicalSize.height - window.viewInsets.bottom;
+    final keyboardTopPixels = window.physicalSize.height - window.viewInsets.bottom;
     final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
     final overlap = widgetRect.bottom - keyboardTopPoints;
 
@@ -141,29 +144,19 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                           keyboardType: TextInputType.number,
                           focusNode: widget.focusNode,
                           autofocus: true,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline1
-                              .copyWith(fontSize: 20),
+                          style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
                           cursorWidth: 2.0,
                           cursorRadius: Radius.circular(2.0),
                           cursorColor: Color(0xFFE6E6E6),
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(bottom: 10),
-                            border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xFFE6E6E6), width: 1)),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xFFE6E6E6), width: 1)),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xFFE6E6E6), width: 1)),
+                            border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
+                            focusedBorder:
+                                UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
+                            enabledBorder:
+                                UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
                             hintText: "0 ₽",
-                            hintStyle: Theme.of(context)
-                                .textTheme
-                                .headline1
-                                .copyWith(fontSize: 20),
+                            hintStyle: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
                           ),
                         ),
                       ),
@@ -183,10 +176,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                         ),
                         Text(
                           "Как рассчитывается стоимость вещи?",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              .copyWith(decoration: TextDecoration.underline),
+                          style: Theme.of(context).textTheme.bodyText2.copyWith(decoration: TextDecoration.underline),
                         ),
                       ],
                     ),

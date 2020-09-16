@@ -9,15 +9,14 @@ import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductsItem extends StatefulWidget {
   final Product product;
-  final GlobalKey<NavigatorState> productKey;
   final Function(Product) onPush;
 
-  const ProductsItem({Key key, this.product, this.onPush, this.productKey})
-      : super(key: key);
+  const ProductsItem({Key key, this.product, this.onPush}) : super(key: key);
 
   @override
   _ProductsItemState createState() => _ProductsItemState();

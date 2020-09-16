@@ -54,6 +54,10 @@ enum IconAsset {
   geolocation,
   compass,
   notifications,
+
+  marketPlaceCategory1,
+  marketPlaceCategory2,
+  marketPlaceCategory3
 }
 
 final assets = {
@@ -102,6 +106,9 @@ final assets = {
   IconAsset.share: "share.svg",
   IconAsset.sort: "sort.svg",
   IconAsset.star: "star.svg",
+  IconAsset.marketPlaceCategory1: "market_place_category_1.svg",
+  IconAsset.marketPlaceCategory2: "market_place_category_2.svg",
+  IconAsset.marketPlaceCategory3: "market_place_category_3.svg",
 };
 
 class SVGIcon extends StatelessWidget {
@@ -126,7 +133,7 @@ class SVGIcon extends StatelessWidget {
       basePath + assets[icon],
       width: width ?? size,
       height: height ?? size,
-      color: color ?? primaryColor,
+      color: color,
     );
   }
 }

@@ -65,8 +65,8 @@ class NewAddressPage extends StatelessWidget {
         mapBottomSheetDataPreview:
             MapBottomSheetData(title: "Где хранится вещь?", hint: "Укажите на карте или введите адрес вручную"),
         mapBottomSheetDataAddress: MapBottomSheetData(
-            title: "Адрес доставки",
-            finishButtonText: "ПРИВЕЗТИ СЮДА",
+            title: "Где хранится вещь?",
+            finishButtonText: "ПРОДОЛЖИТЬ",
             isFinishButtonEnable: true,
             onFinishButtonClick: (pickPoint) {
               onAddressPush(Address(
@@ -76,8 +76,8 @@ class NewAddressPage extends StatelessWidget {
                   city: pickPoint.city));
             }),
         mapBottomSheetDataNotFound: MapBottomSheetData(
-            title: "Адрес доставки",
-            finishButtonText: "ПРИВЕЗТИ СЮДА",
+            title: "Где хранится вещь?",
+            finishButtonText: "ПРОДОЛЖИТЬ",
             isFinishButtonEnable: false,
             address: "Не удалось определить точный адрес"));
   }
