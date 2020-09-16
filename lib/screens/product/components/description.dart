@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/property.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/product/components/properties.dart';
 
 class ProductDescription extends StatelessWidget {
@@ -32,7 +33,13 @@ class ProductDescription extends StatelessWidget {
         ProductProperties(
           properties: properties,
           article: article,
-        )
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: ItemsDivider(
+            padding: 0,
+          ),
+        ),
       ],
     );
   }

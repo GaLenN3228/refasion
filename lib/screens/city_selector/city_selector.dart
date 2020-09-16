@@ -2,28 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
-import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cities.dart';
-import 'file:///E:/Flutter/Production/Refashioned/ref_mobile_app/lib/screens/search_wrapper.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/city_selector/city_tile.dart';
-import 'package:refashioned_app/screens/components/scaffold/data/children_data.dart';
-import 'package:refashioned_app/screens/components/scaffold/data/scaffold_data.dart';
-import 'package:refashioned_app/screens/components/scaffold/scaffold.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
-import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_image.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
-import 'package:refashioned_app/utils/prefs.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class CitySelector extends StatefulWidget {
-  final Function(City) onCitySelect;
+  final bool onFirstLaunch;
 
-  const CitySelector({Key key, this.onCitySelect}) : super(key: key);
+  const CitySelector({Key key, this.onFirstLaunch: false}) : super(key: key);
 
   @override
   _CitySelectorState createState() => _CitySelectorState();
@@ -31,73 +24,35 @@ class CitySelector extends StatefulWidget {
 
 class _CitySelectorState extends State<CitySelector> {
   CitiesRepository citiesRepository;
-  ValueNotifier<Status> statusNotifier;
-  SharedPreferences sharedPreferences;
+
+  bool skipable = false;
 
   @override
-  void initState() {
-    statusNotifier = ValueNotifier(Status.LOADING);
+  initState() {
+    super.initState();
 
     citiesRepository = Provider.of<CitiesRepository>(context, listen: false);
 
-    citiesRepository.statusNotifier.addListener(citiesRepositoryStatusListener);
-
-    super.initState();
+    if (widget.onFirstLaunch) citiesRepository.addListener(repositoryListener);
   }
 
-  citiesRepositoryStatusListener() async {
-    final repositoryStatus = citiesRepository.statusNotifier.value;
-    switch (repositoryStatus) {
-      case Status.ERROR:
-        break;
+  repositoryListener() {
+    skipable = (citiesRepository.response?.content?.skipable ?? false) &&
+        widget.onFirstLaunch;
 
-      case Status.LOADING:
-        statusNotifier.value = repositoryStatus;
-        break;
+    if (skipable) {
+      citiesRepository.removeListener(repositoryListener);
 
-      case Status.LOADED:
-        await SharedPreferences.getInstance().then((newSharedPreferences) {
-          sharedPreferences = newSharedPreferences;
-          if (sharedPreferences.containsKey(Prefs.city_id)) {
-            bool check = false;
-            try {
-              final cityId = sharedPreferences.getString(Prefs.city_id);
-              check = citiesRepository.response.content.checkSavedCity(cityId);
-            } catch (err) {
-              print("City Check Exception: " + err.toString());
-            }
-            if (check)
-              pushTabSwitcher();
-            else
-              statusNotifier.value = repositoryStatus;
-          } else
-            statusNotifier.value = repositoryStatus;
-        }).catchError((err) {
-          print("Shared Prefs Exception: " + err.toString());
-          statusNotifier.value = Status.ERROR;
-        });
-        break;
+      pushTabSwitcher();
     }
   }
 
-  selectCity() {
-    citiesRepository
-        .selectCity(citiesRepository.response.content.selectedCity)
-        .then((newCity) {
-      if (newCity != null)
-        setCityId(newCity.id).then((result) {
-          if (result)
-            pushTabSwitcher();
-          else
-            print("city wasn't selected");
-        });
-      else
-        print("city wasn't provided");
-    });
-  }
+  @override
+  dispose() {
+    citiesRepository.removeListener(repositoryListener);
 
-  Future<bool> setCityId(String id) async =>
-      sharedPreferences?.setString(Prefs.city_id, id);
+    super.dispose();
+  }
 
   pushTabSwitcher() => Navigator.of(context).pushReplacement(
     PageRouteBuilder(
@@ -110,66 +65,98 @@ class _CitySelectorState extends State<CitySelector> {
   );
 
   @override
-  void dispose() {
-    citiesRepository.statusNotifier
-        .removeListener(citiesRepositoryStatusListener);
-
-    citiesRepository.dispose();
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return RefashionedScaffold(
-      state: statusNotifier,
-      stateData: {
-        Status.ERROR: () => ScaffoldData.simple(
-              adjustToOverlays: false,
-              childrenData: ScaffoldChildrenData.logo(),
-            ),
-        Status.LOADING: () => ScaffoldData.simple(
-              adjustToOverlays: false,
-              childrenData: ScaffoldChildrenData.logo(),
-            ),
-        Status.LOADED: () {
-          final citiesProvider = citiesRepository.response.content;
+    return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      child: Consumer<CitiesRepository>(
+        builder: (context, repository, emptyState) {
+          if (repository.loadingFailed)
+            return Center(
+              child: Text(
+                "Ошибка: " + repository.response?.errors.toString(),
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            );
 
-          return ScaffoldData(
-            topBarData: TopBarData(
-              middleData: TBMiddleData.title("Выбор города"),
-              searchData: TBSearchData(
-                hintText: "Город или регион",
-                onSearchUpdate: citiesProvider.search,
-                autofocus: true,
+          final provider = repository.response?.content;
+
+          if (repository.isLoading || provider == null || skipable)
+            return emptyState;
+
+          return Column(
+            children: [
+              RefashionedTopBar(
+                data: TopBarData(
+                  leftButtonData: widget.onFirstLaunch
+                      ? null
+                      : TBButtonData.icon(
+                          TBIconType.back,
+                          onTap: Navigator.of(context).pop,
+                        ),
+                  middleData: TBMiddleData.title("Выбор города"),
+                  searchData: TBSearchData(
+                    hintText: "Город или регион",
+                    onSearchUpdate: provider.search,
+                    autofocus: true,
+                  ),
+                ),
               ),
-            ),
-            childrenDataStream: citiesProvider.cities.map(
-              (cities) => ScaffoldChildrenData(
-                itemCount: cities.length,
-                itemBuilder: (context, index) {
-                  final city = cities.elementAt(index);
-                  return CityTile(
-                    city: city,
-                    onTap: () {
-                      citiesProvider.select(city);
-                      selectCity();
-                    },
-                  );
-                },
-                separatorBuilder: (context, index) =>
-                    index != citiesProvider.pinnedCount - 1
-                        ? ItemsDivider()
-                        : Container(
-                            height: 8,
-                            width: double.infinity,
-                            color: Color.fromRGBO(0, 0, 0, 0.05),
-                          ),
+              Expanded(
+                child: StreamBuilder<List<City>>(
+                    stream: provider.cities,
+                    builder: (context, snapshot) {
+                      final cities = snapshot?.data;
+
+                      if (cities == null || cities.isEmpty)
+                        return Text(
+                          "Введите название города",
+                          style: Theme.of(context).textTheme.subtitle2,
+                        );
+
+                      return ListView.separated(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).padding.bottom),
+                        itemCount: cities.length,
+                        itemBuilder: (context, index) {
+                          final city = cities.elementAt(index);
+
+                          return CityTile(
+                            city: city,
+                            onTap: () async {
+                              final result = await repository.selectCity(city);
+
+                              if (result) {
+                                if (widget.onFirstLaunch)
+                                  pushTabSwitcher();
+                                else
+                                  Navigator.of(context).pop();
+                              }
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) =>
+                            index != provider.pinnedCount - 1
+                                ? ItemsDivider()
+                                : Container(
+                                    height: 8,
+                                    width: double.infinity,
+                                    color: Color.fromRGBO(0, 0, 0, 0.05),
+                                  ),
+                      );
+                    }),
               ),
-            ),
+            ],
           );
         },
-      },
+        child: Center(
+          child: widget.onFirstLaunch
+              ? SVGImage(
+                  image: ImageAsset.refashionedLogo,
+                )
+              : SizedBox(),
+        ),
+      ),
     );
   }
 }

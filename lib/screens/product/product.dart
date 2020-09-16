@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
@@ -36,13 +38,27 @@ class ProductPage extends StatefulWidget {
   final Function(String parameters, String title) onSubCategoryClick;
   final Function() onCartPush;
 
-  const ProductPage(
-      {this.product,
-      this.onProductPush,
-      this.onSellerPush,
-      this.onSubCategoryClick,
-      this.onCartPush})
-      : assert(product != null);
+  final Function(String deliveryCompanyId, String deliveryObjectId)
+      onCheckoutPush;
+
+  final Function(
+    BuildContext,
+    String, {
+    List<DeliveryType> deliveryTypes,
+    PickPoint pickUpAddress,
+    Function() onClose,
+    Function(String, String) onFinish,
+  }) openDeliveryTypesSelector;
+
+  const ProductPage({
+    this.product,
+    this.onProductPush,
+    this.onSellerPush,
+    this.onSubCategoryClick,
+    this.onCartPush,
+    this.openDeliveryTypesSelector,
+    this.onCheckoutPush,
+  }) : assert(product != null);
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -65,7 +81,8 @@ class _ProductPageState extends State<ProductPage> {
     super.initState();
   }
 
-  repositoryStatusListener() => setState(() => status = productRepository.statusNotifier.value);
+  repositoryStatusListener() =>
+      setState(() => status = productRepository.statusNotifier.value);
 
   @override
   void dispose() {
@@ -76,7 +93,7 @@ class _ProductPageState extends State<ProductPage> {
     super.dispose();
   }
 
-  Widget updateTopBar(Status status, BuildContext context) {
+  Widget updateTopBar(Status status) {
     switch (status) {
       case Status.LOADED:
         final product = productRepository.response.content;
@@ -86,8 +103,7 @@ class _ProductPageState extends State<ProductPage> {
             data: TopBarData(
               leftButtonData: TBButtonData.icon(
                 TBIconType.back,
-                onTap: Navigator.of(context)
-                    .pop,
+                onTap: Navigator.of(context).pop,
               ),
             ),
           );
@@ -96,38 +112,50 @@ class _ProductPageState extends State<ProductPage> {
           builder: (context) {
             final isFavorite = true;
 
-            return Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
+            return Consumer<AddRemoveFavouriteRepository>(
+                builder: (context, addRemoveFavouriteRepository, child) {
               return RefashionedTopBar(
                 data: TopBarData(
                   leftButtonData: TBButtonData.icon(
                     TBIconType.back,
-                    onTap: Navigator.of(context)
-                        .pop,
+                    onTap: Navigator.of(context).pop,
                   ),
                   middleData: TBMiddleData.condensed(
-                    product.brand.name.toString() + " • " + product.name.toString(),
+                    product.brand.name.toString() +
+                        " • " +
+                        product.name.toString(),
                     product.currentPrice.toString() + " ₽",
                   ),
                   secondRightButtonData: isFavorite
                       ? TBButtonData(
-                          iconType: widget.product.isFavourite ? TBIconType.favoriteFilled : TBIconType.favorite,
-                          iconColor: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
+                          iconType: widget.product.isFavourite
+                              ? TBIconType.favoriteFilled
+                              : TBIconType.favorite,
+                          iconColor: widget.product.isFavourite
+                              ? Color(0xFFD12C2A)
+                              : Color(0xFF000000),
                           onTap: () {
                             HapticFeedback.vibrate();
                             BaseRepository.isAuthorized().then((isAuthorized) {
                               isAuthorized
                                   ? widget.product.isFavourite
                                       ? addRemoveFavouriteRepository
-                                          .removeFromFavourites((widget.product..isFavourite = false).id)
+                                          .removeFromFavourites((widget.product
+                                                ..isFavourite = false)
+                                              .id)
                                       : addRemoveFavouriteRepository
-                                          .addToFavourites((widget.product..isFavourite = true).id)
+                                          .addToFavourites((widget.product
+                                                ..isFavourite = true)
+                                              .id)
                                   : showCupertinoModalBottomSheet(
                                       backgroundColor: Colors.white,
                                       expand: false,
                                       context: context,
-                                      settings: RouteSettings(name: "/authorization"),
+                                      settings:
+                                          RouteSettings(name: "/authorization"),
                                       useRootNavigator: true,
-                                      builder: (context, controller) => AuthorizationSheet());
+                                      builder: (context, controller) =>
+                                          AuthorizationSheet());
                             });
                           },
                         )
@@ -148,8 +176,7 @@ class _ProductPageState extends State<ProductPage> {
           data: TopBarData(
             leftButtonData: TBButtonData.icon(
               TBIconType.back,
-              onTap: Navigator.of(context)
-                  .pop,
+              onTap: Navigator.of(context).pop,
             ),
           ),
         );
@@ -159,12 +186,12 @@ class _ProductPageState extends State<ProductPage> {
   Widget updateContent(Status status) {
     switch (status) {
       case Status.LOADING:
-          return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: accentColor,
-              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-            ),
-          );
+        return Center(
+          child: CircularProgressIndicator(
+            backgroundColor: accentColor,
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+          ),
+        );
       case Status.ERROR:
         return Center(
           child: Text(
@@ -185,58 +212,84 @@ class _ProductPageState extends State<ProductPage> {
 
         return Material(
           color: Colors.white,
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: 99.0 + 55.0),
-            children: <Widget>[
-              ProductSlider(
-                images: product.images,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: <Widget>[
-                    ProductPrice(
-                      currentPrice: product.currentPrice,
-                      discountPrice: product.discountPrice,
-                    ),
-                    ProductTitle(
-                      name: product.name,
-                      brand: product.brand.name,
-                    ),
-                    ProductSeller(
-                      seller: product.seller,
-                    ),
-                    ProductDescription(
-                      description: product.description,
-                      properties: product.properties,
-                      article: product.article,
-                    ),
-                    ProductQuestions(),
-                    ProductDelivery(),
-                    ProductPayment(),
-                    ProductAdditional(
-                      product: product,
-                      onSubCategoryClick: widget.onSubCategoryClick,
-                    ),
-                    RelatedProducts(),
-                    Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "ВАМ МОЖЕТ ПОНРАВИТЬСЯ",
-                            style: Theme.of(context).textTheme.headline2,
-                          ),
+          child: Stack(
+            children: [
+              ListView(
+                padding: const EdgeInsets.only(bottom: 99.0 + 55.0),
+                children: <Widget>[
+                  ProductSlider(
+                    images: product.images,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: <Widget>[
+                        ProductPrice(
+                          currentPrice: product.currentPrice,
+                          discountPrice: product.discountPrice,
                         ),
-                        ChangeNotifierProvider<ProductRecommendedRepository>(
-                          create: (_) => ProductRecommendedRepository()..getProductRecommended(product.id),
-                          child: RecommendedProducts(
-                            onProductPush: widget.onProductPush,
-                          ),
-                        )
+                        ProductTitle(
+                          name: product.name,
+                          brand: product.brand.name,
+                        ),
+                        ProductSeller(
+                          seller: product.seller,
+                          onSellerPush: widget.onSellerPush,
+                        ),
+                        ProductDescription(
+                          description: product.description,
+                          properties: product.properties,
+                          article: product.article,
+                        ),
+                        ProductDelivery(
+                          product: product,
+                        ),
+                        ProductPayment(),
+                        ProductAdditional(
+                          product: product,
+                          onSubCategoryClick: widget.onSubCategoryClick,
+                        ),
+                        RelatedProducts(),
+                        Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "ВАМ МОЖЕТ ПОНРАВИТЬСЯ",
+                                style: Theme.of(context).textTheme.headline2,
+                              ),
+                            ),
+                            ChangeNotifierProvider<
+                                ProductRecommendedRepository>(
+                              create: (_) => ProductRecommendedRepository()
+                                ..getProductRecommended(product.id),
+                              child: RecommendedProducts(
+                                onProductPush: widget.onProductPush,
+                              ),
+                            )
+                          ],
+                        ),
                       ],
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 99,
+                child: ProductBottomButtons(
+                  productId: widget.product.id,
+                  onCartPush: widget.onCartPush,
+                  openDeliveryTypesSelector: () =>
+                      widget?.openDeliveryTypesSelector?.call(
+                    context,
+                    widget.product.id,
+                    deliveryTypes: product.deliveryTypes,
+                    pickUpAddress: product.pickUpAddress,
+                    onFinish: (companyId, objectId) =>
+                        widget.onCheckoutPush(companyId, objectId),
+                  ),
                 ),
               ),
             ],
@@ -256,24 +309,12 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
+      resizeToAvoidBottomInset: false,
+      body: Column(
         children: [
-          Column(
-            children: [
-              updateTopBar(status, context),
-              Expanded(
-                child: updateContent(status),
-              ),
-            ],
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: MediaQuery.of(context).padding.bottom + 60,
-            child: ProductBottomButtons(
-              productId: widget.product.id,
-              onCartPush: widget.onCartPush,
-            ),
+          updateTopBar(status),
+          Expanded(
+            child: updateContent(status),
           ),
         ],
       ),

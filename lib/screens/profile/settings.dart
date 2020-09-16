@@ -115,14 +115,15 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: () {
+              onTap: (){
                 CitiesRepository().getCities();
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) => CitySelector(),
                 ));
               },
               child: Container(
-                padding: EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
+                padding:
+                    EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
                 child: Row(
                   children: [
                     SVGIcon(
@@ -135,9 +136,11 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                       style: textTheme.subtitle1,
                     ),
                     Spacer(),
-                    Text(
-                      'Москва',
-                      style: textTheme.subtitle2,
+                    Consumer<CitiesRepository>(
+                      builder: (context, value, _) => Text(
+                        value.city?.name ?? "Город не выбран",
+                        style: textTheme.subtitle2,
+                      ),
                     )
                   ],
                 ),

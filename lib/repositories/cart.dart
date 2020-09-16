@@ -26,24 +26,26 @@ class RemoveItemFromCartRepository extends BaseRepository {
 }
 
 class GetCartItemDeliveryTypesRepository
-    extends BaseRepository<List<DeliveryData>> {
+    extends BaseRepository<List<DeliveryType>> {
   Future<void> update(String itemId) => apiCall(
         () async {
           response = BaseResponse.fromJson(
               (await ApiService.getCartItemDeliveryTypes(itemId)).data,
               (contentJson) => [
-                    for (final type in contentJson) DeliveryData.fromJson(type)
+                    for (final type in contentJson) DeliveryType.fromJson(type)
                   ]);
         },
       );
 }
 
 class SetCartItemDeliveryTypeRepository extends BaseRepository {
-  Future<void> update(String itemId, String deliveryObjectId) => apiCall(
+  Future<void> update(
+          String itemId, String deliveryCompanyId, String deliveryObjectId) =>
+      apiCall(
         () async {
           response = BaseResponse.fromJson(
               (await ApiService.setCartItemDeliveryType(
-                      itemId, deliveryObjectId))
+                      itemId, deliveryCompanyId, deliveryObjectId))
                   .data,
               null);
         },
@@ -60,6 +62,11 @@ class CartRepository extends BaseRepository<Cart> {
   List<String> selectedIDs;
   List<String> pendingIDs;
 
+  String selectionActionLabel;
+  Function() selectionAction;
+
+  bool canMakeOrder;
+
   CartRepository() {
     addProduct = AddProductToCartRepository();
     removeItem = RemoveItemFromCartRepository();
@@ -69,6 +76,11 @@ class CartRepository extends BaseRepository<Cart> {
 
     selectedIDs = [];
     pendingIDs = [];
+
+    selectionActionLabel = "";
+    selectionAction = () {};
+
+    canMakeOrder = false;
 
     _update();
   }
@@ -84,31 +96,71 @@ class CartRepository extends BaseRepository<Cart> {
     super.dispose();
   }
 
-  bool select(String productId) {
+  updateSelectionAction() {
+    final itemsWithSelectedDelivery = response?.content?.groups
+        ?.where((cartItem) =>
+            cartItem.deliveryData != null && cartItem.deliveryCompany != null)
+        ?.toList();
+
+    if (itemsWithSelectedDelivery != null &&
+        itemsWithSelectedDelivery.isNotEmpty) {
+      if (selectedIDs.isNotEmpty) {
+        selectionActionLabel = "Снять всё";
+        selectionAction = () {
+          itemsWithSelectedDelivery.forEach((cartItem) => cartItem.cartProducts
+              .forEach((cartProduct) =>
+                  select(cartProduct.product.id, value: false)));
+        };
+        canMakeOrder = true;
+      } else {
+        selectionActionLabel = "Выбрать всё";
+        selectionAction = () {
+          itemsWithSelectedDelivery.forEach((cartItem) => cartItem.cartProducts
+              .forEach((cartProduct) =>
+                  select(cartProduct.product.id, value: true)));
+        };
+        canMakeOrder = false;
+      }
+    } else {
+      selectionActionLabel = "";
+      selectionAction = () {};
+      canMakeOrder = false;
+    }
+
+    notifyListeners();
+  }
+
+  bool select(String productId, {bool value}) {
     final group = response?.content?.getGroup(productId);
-    if (group == null || group.products.isEmpty) return false;
+    if (group == null) {
+      return false;
+    }
 
     final cartProduct = group.getProduct(productId);
     final id = cartProduct.product.id;
 
     if (group.deliveryData == null) {
       if (!pendingIDs.contains(id)) pendingIDs.add(id);
+
       return false;
     }
 
-    cartProduct.update();
+    cartProduct.update(value: value);
 
     final selected = cartProduct.selected.value;
     final wasSelected = selectedIDs.contains(id);
 
-    if (selected && !wasSelected)
+    if (selected && !wasSelected) {
       selectedIDs.add(id);
-    else if (!selected && wasSelected) selectedIDs.remove(id);
+    } else if (!selected && wasSelected) selectedIDs.remove(id);
 
-    if (cartProduct.selected.value && !selectedIDs.contains(id))
-      selectedIDs.add(id);
+    updateSelectionAction();
 
     return true;
+  }
+
+  clearPendingIDs() {
+    pendingIDs.clear();
   }
 
   bool checkPresence(String productId) =>
@@ -117,6 +169,12 @@ class CartRepository extends BaseRepository<Cart> {
   Future<void> addToCart(String productId) async {
     await addProduct.update(productId);
     if (addProduct.response.status.code == 201) await _update();
+  }
+
+  Future<void> setDelivery(
+      String itemId, String deliveryCompanyId, String deliveryObjectId) async {
+    await setDeliveryType.update(itemId, deliveryCompanyId, deliveryObjectId);
+    if (setDeliveryType.response.status.code == 204) await _update();
   }
 
   Future<void> removeFromCart(String productId) async {
@@ -137,8 +195,11 @@ class CartRepository extends BaseRepository<Cart> {
           response = BaseResponse.fromJson((await ApiService.getCart()).data,
               (contentJson) => Cart.fromJson(contentJson));
 
-          if (selectedIDs.isNotEmpty)
-            selectedIDs.forEach((productId) => select(productId));
+          [...pendingIDs, ...selectedIDs]
+              .forEach((productId) => select(productId, value: true));
+          pendingIDs.clear();
+
+          updateSelectionAction();
         },
       );
 }

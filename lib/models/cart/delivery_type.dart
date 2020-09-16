@@ -1,65 +1,23 @@
-enum DeliveryType {
-  PICKUP_ADDRESS,
-  PICKUP_POINT,
-  COURIER_DELIVERY,
-  EXPRESS_DEVILERY
-}
+import 'package:refashioned_app/models/cart/delivery_company.dart';
 
-class DeliveryData {
+class DeliveryType {
   final String name;
   final String title;
   final String id;
-  final DeliveryType deliveryType;
-  final List<DeliveryOption> deliveryOptions;
+  final Delivery type;
+  final List<DeliveryCompany> items;
 
-  DeliveryData(
-      {this.id,
-      this.deliveryOptions,
-      this.deliveryType,
-      this.name,
-      this.title});
+  DeliveryType({this.id, this.items, this.type, this.name, this.title});
 
-  static DeliveryType _selectType(String code) {
-    switch (code) {
-      case "pickup":
-        return DeliveryType.PICKUP_ADDRESS;
-      case "courier":
-        return DeliveryType.COURIER_DELIVERY;
-      case "pickpoint":
-        return DeliveryType.PICKUP_POINT;
-      case "express":
-        return DeliveryType.EXPRESS_DEVILERY;
-      default:
-        return DeliveryType.PICKUP_ADDRESS;
-    }
-  }
-
-  factory DeliveryData.fromJson(Map<String, dynamic> json) => DeliveryData(
+  factory DeliveryType.fromJson(Map<String, dynamic> json) => DeliveryType(
           id: json['id'],
-          deliveryType: _selectType(json['type']),
+          type: deliveryTypes[json['type']] ?? Delivery.PICKUP_POINT,
           name: json['name'],
           title: json['title'],
-          deliveryOptions: [
-            for (final option in json['items']) DeliveryOption.fromJson(option)
+          items: [
+            for (final option in json['items']) DeliveryCompany.fromJson(option)
           ]);
 
   @override
-  String toString() => deliveryType.toString() + ": " + name + ", " + title;
-}
-
-class DeliveryOption {
-  final String name;
-  final String title;
-  final String id;
-
-  DeliveryOption({this.id, this.name, this.title});
-
-  factory DeliveryOption.fromJson(Map<String, dynamic> json) => DeliveryOption(
-        id: json['id'],
-        name: json['name'],
-        title: json['title'],
-      );
-
-  @override
-  String toString() => name + ", " + title;
+  String toString() => type.toString() + ": " + name + ", " + title;
 }

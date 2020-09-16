@@ -3,10 +3,10 @@ import 'package:refashioned_app/models/cart/cart_product.dart';
 
 class Cart {
   final String text;
-  final int productsCount;
-  final int totalCurrentPrice;
-  final int totalDiscountPrice;
-  final int totalDiscount;
+  final num productsCount;
+  final num totalCurrentPrice;
+  final num totalDiscountPrice;
+  final num totalDiscount;
   final List<CartItem> groups;
 
   Cart(

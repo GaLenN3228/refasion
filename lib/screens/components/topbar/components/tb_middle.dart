@@ -96,43 +96,31 @@ class _TBMiddleState extends State<TBMiddle>
     if (widget.data?.titleText != null && widget.data.titleText.isNotEmpty) {
       if (widget.data?.subtitleText != null &&
           widget.data.subtitleText.isNotEmpty) {
-        final animationController = widget.scrollActionsProvider
-            ?.getAction(ScrollActionType.fadeTopBarMiddle)
-            ?.animationController;
-
-        if (animationController == null) return SizedBox();
-
-        final animation =
-            Tween<double>(begin: 0, end: 1).animate(animationController);
-
-        return FadeTransition(
-          opacity: animation,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline1.copyWith(
-                      fontWeight: FontWeight.normal,
-                      color: contentColor,
-                    ),
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-              ),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .subtitle1
-                    .copyWith(color: secondContentColor),
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-              ),
-            ],
-          ),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline1.copyWith(
+                    fontWeight: FontWeight.normal,
+                    color: contentColor,
+                  ),
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+            ),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle1
+                  .copyWith(color: secondContentColor),
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+            ),
+          ],
         );
       } else
         return Padding(
