@@ -6,7 +6,8 @@ class ProductAdditional extends StatelessWidget {
   final Function(String parameters, String title) onSubCategoryClick;
   final Product product;
 
-  const ProductAdditional({Key key, this.onSubCategoryClick, this.product}) : super(key: key);
+  const ProductAdditional({Key key, this.onSubCategoryClick, this.product})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +26,11 @@ class ProductAdditional extends StatelessWidget {
           },
         ),
         ProductAdditionalButton(
-          text: "Все " + (product.category != null ? product.category.name : "null"),
+          text: "Все " +
+              (product.category != null ? product.category.name : "null"),
           onSubCategoryClick: () {
-            onSubCategoryClick("?p=" + product.category.id, product.category.name);
+            onSubCategoryClick(
+                "?p=" + product.category.id, product.category.name);
           },
         ),
 //        ProductAdditionalButton(

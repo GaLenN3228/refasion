@@ -19,11 +19,8 @@ import 'package:refashioned_app/screens/product/components/additional.dart';
 import 'package:refashioned_app/screens/product/components/buttons.dart';
 import 'package:refashioned_app/screens/product/components/delivery.dart';
 import 'package:refashioned_app/screens/product/components/description.dart';
-import 'package:refashioned_app/screens/product/components/payment.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
-import 'package:refashioned_app/screens/product/components/questions.dart';
 import 'package:refashioned_app/screens/product/components/recommended.dart';
-import 'package:refashioned_app/screens/product/components/related_products.dart';
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
@@ -222,51 +219,31 @@ class _ProductPageState extends State<ProductPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         ProductPrice(
-                          currentPrice: product.currentPrice,
-                          discountPrice: product.discountPrice,
+                          product: product,
                         ),
                         ProductTitle(
-                          name: product.name,
-                          brand: product.brand.name,
+                          product: product,
                         ),
                         ProductSeller(
                           seller: product.seller,
                           onSellerPush: widget.onSellerPush,
                         ),
                         ProductDescription(
-                          description: product.description,
-                          properties: product.properties,
-                          article: product.article,
+                          product: product,
                         ),
                         ProductDelivery(
                           product: product,
                         ),
-                        ProductPayment(),
                         ProductAdditional(
                           product: product,
                           onSubCategoryClick: widget.onSubCategoryClick,
                         ),
-                        RelatedProducts(),
-                        Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "ВАМ МОЖЕТ ПОНРАВИТЬСЯ",
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
-                            ),
-                            ChangeNotifierProvider<
-                                ProductRecommendedRepository>(
-                              create: (_) => ProductRecommendedRepository()
-                                ..getProductRecommended(product.id),
-                              child: RecommendedProducts(
-                                onProductPush: widget.onProductPush,
-                              ),
-                            )
-                          ],
+                        RecommendedProducts(
+                          product: product,
+                          onProductPush: widget.onProductPush,
                         ),
                       ],
                     ),

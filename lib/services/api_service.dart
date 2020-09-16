@@ -7,7 +7,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   static Map<String, String> header = {"Content-Type": "application/json"};
 

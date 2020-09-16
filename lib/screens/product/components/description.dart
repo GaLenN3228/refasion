@@ -1,46 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/property.dart';
-import 'package:refashioned_app/screens/components/items_divider.dart';
+import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/screens/product/components/properties.dart';
 
 class ProductDescription extends StatelessWidget {
-  final String description;
-  final String article;
-  final List<Property> properties;
+  final Product product;
 
-  const ProductDescription(
-      {Key key,
-      @required this.description,
-      @required this.article,
-      @required this.properties})
-      : super(key: key);
+  const ProductDescription({Key key, this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (description == null && article == null && properties == null)
-      return SizedBox();
+    if (product.description == null &&
+        product.article == null &&
+        product.properties == null) return SizedBox();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          child: Text(
-            description ?? "Описание отсутствует",
-            style: Theme.of(context).textTheme.bodyText1,
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          if (product.description != null && product.description.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15),
+              child: Text(
+                product.description,
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+          ProductProperties(
+            product: product,
           ),
-        ),
-        ProductProperties(
-          properties: properties,
-          article: article,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: ItemsDivider(
-            padding: 0,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -16,18 +16,21 @@ class ProductsItem extends StatefulWidget {
   final GlobalKey<NavigatorState> productKey;
   final Function(Product) onPush;
 
-  const ProductsItem({Key key, this.product, this.onPush, this.productKey}) : super(key: key);
+  const ProductsItem({Key key, this.product, this.onPush, this.productKey})
+      : super(key: key);
 
   @override
   _ProductsItemState createState() => _ProductsItemState();
 }
 
-class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMixin {
+class _ProductsItemState extends State<ProductsItem>
+    with TickerProviderStateMixin {
   AnimationController _controller;
 
   @override
   void initState() {
-    _controller = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 200), vsync: this);
     super.initState();
   }
 
@@ -57,23 +60,31 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                         fit: BoxFit.cover,
                       ),
                     ),
-                    Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
+                    Consumer<AddRemoveFavouriteRepository>(builder:
+                        (context, addRemoveFavouriteRepository, child) {
                       return GestureDetector(
                           onTap: () => {
                                 _controller.forward(),
-                                BaseRepository.isAuthorized().then((isAuthorized) {
+                                BaseRepository.isAuthorized()
+                                    .then((isAuthorized) {
                                   isAuthorized
                                       ? widget.product.isFavourite
                                           ? addRemoveFavouriteRepository
-                                              .removeFromFavourites((widget.product..isFavourite = false).id)
+                                              .removeFromFavourites(
+                                                  (widget.product
+                                                        ..isFavourite = false)
+                                                      .id)
                                           : addRemoveFavouriteRepository
-                                              .addToFavourites((widget.product..isFavourite = true).id)
+                                              .addToFavourites((widget.product
+                                                    ..isFavourite = true)
+                                                  .id)
                                       : showCupertinoModalBottomSheet(
                                           backgroundColor: Colors.white,
                                           expand: false,
                                           context: context,
                                           useRootNavigator: true,
-                                          builder: (context, controller) => AuthorizationSheet());
+                                          builder: (context, controller) =>
+                                              AuthorizationSheet());
                                 })
                               },
                           child: Align(
@@ -81,19 +92,24 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                             child: Padding(
                               padding: EdgeInsets.all(10),
                               child: ScaleTransition(
-                                scale: Tween(begin: 1.0, end: 1.3)
-                                    .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
-                                      ..addStatusListener((status) {
-                                        if (status == AnimationStatus.completed) {
-                                          setState(() {
-                                            _controller.reverse();
-                                          });
-                                        }
-                                      }),
+                                scale: Tween(begin: 1.0, end: 1.3).animate(
+                                    CurvedAnimation(
+                                        parent: _controller,
+                                        curve: Curves.easeInQuad))
+                                  ..addStatusListener((status) {
+                                    if (status == AnimationStatus.completed) {
+                                      setState(() {
+                                        _controller.reverse();
+                                      });
+                                    }
+                                  }),
                                 child: SVGIcon(
-                                  color: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
-                                  icon:
-                                      widget.product.isFavourite ? IconAsset.favoriteFilled : IconAsset.favoriteBorder,
+                                  color: widget.product.isFavourite
+                                      ? Color(0xFFD12C2A)
+                                      : Color(0xFF000000),
+                                  icon: widget.product.isFavourite
+                                      ? IconAsset.favoriteFilled
+                                      : IconAsset.favoriteBorder,
                                   size: 26,
                                 ),
                               ),
@@ -104,7 +120,8 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                       alignment: Alignment.bottomRight,
                       child: Consumer<CartRepository>(
                         builder: (context, repository, child) {
-                          final isInCart = repository.checkPresence(widget.product.id);
+                          final isInCart =
+                              repository.checkPresence(widget.product.id);
 
                           return GestureDetector(
                             onTap: () {
@@ -115,7 +132,8 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                 repository.addToCart(widget.product.id);
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 10),
                               child: SVGIcon(
                                 icon: IconAsset.cart,
                                 size: 26,
@@ -150,8 +168,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
               Container(
                 margin: const EdgeInsets.only(top: 6.0),
                 child: ProductPrice(
-                  discountPrice: widget.product.discountPrice,
-                  currentPrice: widget.product.currentPrice,
+                  product: widget.product,
                 ),
               )
             ],
