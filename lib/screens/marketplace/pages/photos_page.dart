@@ -52,21 +52,25 @@ class _PhotosPageState extends State<PhotosPage> {
   Future openGallery(int index) async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
-    if (pickedFile != null)
+    if (pickedFile != null) {
       setState(() {
         File _image = File(pickedFile.path);
         images[index] = _image;
       });
+      Navigator.of(context).pop();
+    }
   }
 
   Future openCamera(int index) async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
 
-    if (pickedFile != null)
+    if (pickedFile != null) {
       setState(() {
         File _image = File(pickedFile.path);
         images[index] = _image;
       });
+      Navigator.of(context).pop();
+    }
   }
 
   @override

@@ -32,21 +32,8 @@ class ResultTile extends StatelessWidget {
         behavior: HitTestBehavior.translucent,
         onTap: () => {onClick(searchResult)},
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            searchResult.extraData != null &&
-                searchResult.extraData.image != null &&
-                searchResult.extraData.image.isNotEmpty ?
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: SizedBox(
-                height: 24,
-                width: 40,
-                child: Image.network(
-                        searchResult.extraData.image,
-                        fit: BoxFit.contain,
-                      ),
-              ),
-            ) : SizedBox(),
             (splitted.length != 3)
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
@@ -65,6 +52,20 @@ class ResultTile extends StatelessWidget {
                       ),
                     ),
                   ),
+            searchResult.extraData != null &&
+                searchResult.extraData.image != null &&
+                searchResult.extraData.image.isNotEmpty ?
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: SizedBox(
+                height: 30,
+                width: 50,
+                child: Image.network(
+                  searchResult.extraData.image,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ) : SizedBox(),
           ],
         ),
       );
