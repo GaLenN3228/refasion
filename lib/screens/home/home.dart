@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 50),
         child: Column(
           children: [
             // _appBar(context),
