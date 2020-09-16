@@ -7,8 +7,7 @@ import 'package:refashioned_app/screens/catalog/filters/components/bottom_button
 import 'package:refashioned_app/screens/components/multi_selection_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
-import 'package:refashioned_app/screens/components/multi_selection_dialog/dialog.dart'
-    as MultiSelectionDialog;
+import 'package:refashioned_app/screens/components/multi_selection_dialog/dialog.dart' as MultiSelectionDialog;
 import 'package:refashioned_app/screens/marketplace/components/add_photo_description_item.dart';
 import 'package:refashioned_app/screens/marketplace/components/add_photo_item.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
@@ -20,33 +19,32 @@ class PhotosPage extends StatefulWidget {
   final Function(List<String>) onUpdate;
   final Function() onPush;
 
-  const PhotosPage(
-      {Key key, this.onPush, this.onClose, this.onUpdate, this.initialData})
-      : super(key: key);
+  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.initialData}) : super(key: key);
 
   @override
   _PhotosPageState createState() => _PhotosPageState();
 }
 
 class _PhotosPageState extends State<PhotosPage> {
+  BuildContext dialogContext;
+
   final picker = ImagePicker();
   Map<int, File> images = {0: null, 1: null, 2: null};
 
   Future getImage(int index) async {
     showDialog(
         context: context,
-        builder: (dialogContext) => MultiSelectionDialog.Dialog(
-              dialogContent: [
-                DialogItemContent("Сделать фото", () => openCamera(index),
-                    DialogItemType.item,
-                    icon: IconAsset.camera),
-                DialogItemContent("Выбрать из галереи",
-                    () => openGallery(index), DialogItemType.item,
-                    icon: IconAsset.image),
-                DialogItemContent("Закрыть", () => Navigator.pop(dialogContext),
-                    DialogItemType.system)
-              ],
-            ));
+        builder: (dialogContext) {
+          this.dialogContext = dialogContext;
+          return MultiSelectionDialog.Dialog(
+            dialogContent: [
+              DialogItemContent("Сделать фото", () => openCamera(index), DialogItemType.item, icon: IconAsset.camera),
+              DialogItemContent("Выбрать из галереи", () => openGallery(index), DialogItemType.item,
+                  icon: IconAsset.image),
+              DialogItemContent("Закрыть", () => Navigator.pop(dialogContext), DialogItemType.system)
+            ],
+          );
+        });
   }
 
   Future openGallery(int index) async {
@@ -57,7 +55,7 @@ class _PhotosPageState extends State<PhotosPage> {
         File _image = File(pickedFile.path);
         images[index] = _image;
       });
-      Navigator.of(context).pop();
+      Navigator.pop(dialogContext);
     }
   }
 
@@ -69,7 +67,7 @@ class _PhotosPageState extends State<PhotosPage> {
         File _image = File(pickedFile.path);
         images[index] = _image;
       });
-      Navigator.of(context).pop();
+      Navigator.pop(dialogContext);
     }
   }
 
@@ -115,12 +113,9 @@ class _PhotosPageState extends State<PhotosPage> {
                         style: Theme.of(context).textTheme.headline1,
                       ),
                     ),
-                    AddPhotoDescriptionItem(
-                        title: "Сфотографируйте все имеющиеся деффекты"),
-                    AddPhotoDescriptionItem(
-                        title: "Сделайте фото бирки и ото этикетки с размером"),
-                    AddPhotoDescriptionItem(
-                        title: "Используйте нейтральный фон"),
+                    AddPhotoDescriptionItem(title: "Сфотографируйте все имеющиеся деффекты"),
+                    AddPhotoDescriptionItem(title: "Сделайте фото бирки и ото этикетки с размером"),
+                    AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
                   ],
                 ),
               ),
