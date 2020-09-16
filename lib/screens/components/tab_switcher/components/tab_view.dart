@@ -4,11 +4,8 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/repositories/search.dart';
-import 'package:refashioned_app/screens/cart/cart/cart_navigator.dart';
-import 'package:refashioned_app/screens/cart/delivery/delivery_navigator.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/cart.dart';
-import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
@@ -84,10 +81,8 @@ class _TabViewState extends State<TabView> {
 
             Navigator.of(context).push(
               PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    SlideTransition(
-                  position: Tween(begin: Offset(0, 1), end: Offset.zero)
-                      .animate(animation),
+                pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                  position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
                   child: DeliveryNavigator(
                     deliveryType: deliveryType,
                     pickUpAddress: pickUpAddress,
@@ -119,7 +114,11 @@ class _TabViewState extends State<TabView> {
 
     switch (widget.tab) {
       case BottomTab.catalog:
-        var catalogNavigator = CatalogNavigator(navigatorKey: navigatorKeys[widget.tab], changeTabTo: changeTabTo,openDeliveryTypesSelector: openDeliveryTypesSelector,);
+        var catalogNavigator = CatalogNavigator(
+          navigatorKey: navigatorKeys[widget.tab],
+          changeTabTo: changeTabTo,
+          openDeliveryTypesSelector: openDeliveryTypesSelector,
+        );
         content = MultiProvider(
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),

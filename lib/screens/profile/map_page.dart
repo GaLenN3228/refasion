@@ -20,8 +20,8 @@ class MapPage extends StatelessWidget {
     );
     mapBottomSheetDataController = MapBottomSheetDataController(
         mapBottomSheetDataPreview: MapBottomSheetData(
-            title: "Где можно забрать вещь?",
-            hint: "Укажите на карте или введите адрес вручную"),
+            title: "Где можно получить заказ?",
+            hint: "Ищите ближайшие к вам пункты выдачи"),
         mapBottomSheetDataAddress: MapBottomSheetData(
           isCancelPointEnable: true,
           title: "Адрес доставки",
@@ -38,7 +38,7 @@ class MapPage extends StatelessWidget {
                 TBIconType.back,
                 onTap: () => Navigator.of(context).pop(),
               ),
-              middleData: TBMiddleData.title("Пункты отправлений"),
+              middleData: TBMiddleData.title("Пункты выдачи"),
             ),
           ),
           SizedBox(

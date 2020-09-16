@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
@@ -116,7 +117,6 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             Tapable(
               padding: EdgeInsets.all(10),
               onTap: (){
-                CitiesRepository().getCities();
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) => CitySelector(),
                 ));
