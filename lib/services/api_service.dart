@@ -13,7 +13,7 @@ class ApiService {
 
   //ADDRESSES
 
-  static const LOG_ADDRESSES = false;
+  static const LOG_ADDRESSES = true;
 
   static Future<Response> findAddressesByQuery(String query) async {
     Dio dioClient =
@@ -36,7 +36,7 @@ class ApiService {
 
   //CART
 
-  static const LOG_CART = false;
+  static const LOG_CART = true;
 
   static Future<Response> getCart() async {
     Dio dioClient = await DioClient()
@@ -79,7 +79,7 @@ class ApiService {
 
   //CITIES
 
-  static const LOG_CITIES = false;
+  static const LOG_CITIES = true;
 
   static Future<Response> getCities() async {
     Dio dioClient =
@@ -111,7 +111,7 @@ class ApiService {
 
   //USER ADDRESSES
 
-  static const LOG_USER_ADDRESSES = false;
+  static const LOG_USER_ADDRESSES = true;
 
   static getUserAddresses() async {
     Dio dioClient = await DioClient().getClient(
@@ -141,7 +141,7 @@ class ApiService {
 
   //USER PICKPOINTS
 
-  static const LOG_USER_PICKPOINTS = false;
+  static const LOG_USER_PICKPOINTS = true;
 
   static getUserPickPoints() async {
     Dio dioClient = await DioClient().getClient(

@@ -131,7 +131,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
     if (widget.productId == null) return SizedBox();
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: <Widget>[
           Expanded(

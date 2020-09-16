@@ -121,7 +121,7 @@ class _CartPageState extends State<CartPage> {
                     children: [
                       ListView(
                         padding:
-                            EdgeInsets.fromLTRB(15, 0, 15, 99.0 + 55.0 + 20.0),
+                            EdgeInsets.fromLTRB(15, 0, 15, 99.0 + 45.0 + 20.0),
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.symmetric(

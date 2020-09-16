@@ -211,7 +211,7 @@ class _ProductPageState extends State<ProductPage> {
           child: Stack(
             children: [
               ListView(
-                padding: const EdgeInsets.only(bottom: 99.0 + 55.0),
+                padding: const EdgeInsets.only(bottom: 99.0 + 45.0 + 20.0),
                 children: <Widget>[
                   ProductSlider(
                     images: product.images,
