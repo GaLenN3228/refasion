@@ -23,7 +23,6 @@ class SearchPage extends StatelessWidget {
             child: SearchPageContent(onClick: (searchResult) {
               Navigator.of(context).push(CupertinoPageRoute(
                 builder: (context) => ProductsPage(
-                  onSearch: () => {SearchPage()},
                   searchResult: searchResult,
                   onPush: (product, {dynamic callback}) => Navigator.of(context).push(
                       CupertinoPageRoute(

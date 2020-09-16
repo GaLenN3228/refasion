@@ -1,5 +1,6 @@
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/models/product_price.dart';
 import 'package:refashioned_app/models/products.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 
@@ -63,5 +64,12 @@ class ProductRecommendedRepository extends BaseRepository<List<Product>> {
             });
           }
         });
+      });
+}
+
+class CalcProductPrice extends BaseRepository<ProductPrice> {
+  Future<void> calcProductPrice(int price) => apiCall(() async {
+        response = BaseResponse.fromJson(
+            (await ApiService.calcProductPrice(price)).data, (contentJson) => ProductPrice.fromJson(contentJson));
       });
 }

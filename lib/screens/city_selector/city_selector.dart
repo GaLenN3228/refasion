@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cities.dart';
-import 'package:refashioned_app/screens/catalog/pages/catalog_wrapper_page.dart';
+import 'file:///E:/Flutter/Production/Refashioned/ref_mobile_app/lib/screens/search_wrapper.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/city_selector/city_tile.dart';
 import 'package:refashioned_app/screens/components/scaffold/data/children_data.dart';
@@ -99,17 +99,15 @@ class _CitySelectorState extends State<CitySelector> {
   Future<bool> setCityId(String id) async =>
       sharedPreferences?.setString(Prefs.city_id, id);
 
-  pushTabSwitcher() {
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            FadeTransition(
-              opacity: animation,
-              child: CatalogWrapperPage(),
-            ),
-      ),
-    );
-  }
+  pushTabSwitcher() => Navigator.of(context).pushReplacement(
+    PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          FadeTransition(
+            opacity: animation,
+            child: TabSwitcher(),
+          ),
+    ),
+  );
 
   @override
   void dispose() {

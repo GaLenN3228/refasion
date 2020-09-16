@@ -1,15 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
-import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/catalog/search/components/result_tile.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/utils/prefs.dart';
@@ -17,47 +13,34 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum SearchResultState { SHOW, HIDE, VISIBLE, NOT_FOUND }
 
-class CatalogWrapperPage extends StatefulWidget {
-  TabSwitcher tabSwitcher;
-  CatalogNavigator catalogNavigator;
+class SearchWrapper extends StatefulWidget {
+  final Widget content;
+  final Function() onBackPressed;
+  final Function() onFavouritesClick;
+  final Function(SearchResult) onSearchResultClick;
 
-  GlobalKey<NavigatorState> tabSwitcherKey;
+  const SearchWrapper(
+      {Key key, this.content, this.onBackPressed, this.onFavouritesClick, this.onSearchResultClick})
+      : super(key: key);
 
   @override
-  _CatalogWrapperPageState createState() => _CatalogWrapperPageState();
+  _SearchWrapperState createState() => _SearchWrapperState();
 }
 
-class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTickerProviderStateMixin {
+class _SearchWrapperState extends State<SearchWrapper> with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<Offset> offset;
 
   TextEditingController textEditController;
-  TopPanel _topPanel;
 
   String searchQuery = "";
-
   SearchResultState _searchResultState = SearchResultState.HIDE;
-
   SearchRepository searchRepository;
+
+  TopPanel _topPanel;
 
   @override
   void initState() {
-    widget.tabSwitcherKey = GlobalKey<NavigatorState>();
-    SharedPreferences.getInstance().then((newSharedPreferences) {
-      if (!newSharedPreferences.containsKey(Prefs.need_show_authorization_screen)) {
-        Future.delayed(Duration(milliseconds: 1000), (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhonePage()));
-        });
-        newSharedPreferences.setBool(Prefs.need_show_authorization_screen, false);
-      }
-    });
-
-    widget.catalogNavigator = CatalogNavigator();
-    widget.tabSwitcher = TabSwitcher(
-      key: widget.tabSwitcherKey,
-      catalogNavigator: widget.catalogNavigator,
-    );
-
     textEditController = TextEditingController();
     controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     offset = Tween<Offset>(begin: Offset(0.0, 0.0), end: Offset.zero).animate(controller);
@@ -71,7 +54,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
           _searchResultState = SearchResultState.HIDE;
           textEditController.text = "";
           FocusScope.of(context).unfocus();
-          navigatorKeys[BottomTab.catalog].currentState.pop();
+          widget.onBackPressed();
         });
       },
       onCancelClick: () {
@@ -84,17 +67,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
         });
       },
       onFavouritesClick: () {
-        previousTab = widget.tabSwitcher.currentTab.value;
-        var topPanelController = Provider.of<TopPanelController>(context, listen: false);
-        Navigator.of(widget.tabSwitcherKey.currentContext)
-            .push(CupertinoPageRoute(
-                builder: (context) => widget.tabSwitcher.catalogNavigator
-                    .routeBuilder(navigatorKeys[BottomTab.catalog].currentContext, CatalogNavigatorRoutes.favourites)))
-            .then((value) => {
-                  topPanelController.needShow = true,
-                  if (previousTab != null) widget.tabSwitcher.currentTab.value = previousTab
-                });
-        // widget.tabSwitcher.currentTab.value = BottomTab.catalog;
+        widget.onFavouritesClick();
       },
       onSearch: (query) {
         searchRepository?.search(query);
@@ -126,7 +99,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
           Container(
               margin: EdgeInsets.only(top: topPanelController.needShow ? MediaQuery.of(context).padding.top + 43 : 0),
               child: Stack(children: [
-                widget.tabSwitcher,
+                widget.content,
                 _searchResultState == SearchResultState.VISIBLE
                     ? Scaffold(
                         resizeToAvoidBottomInset: true,
@@ -141,21 +114,7 @@ class _CatalogWrapperPageState extends State<CatalogWrapperPage> with SingleTick
                                 query: searchQuery,
                                 searchResult: searchRepository.response.content.results.elementAt(index),
                                 onClick: (searchResult) {
-                                  previousTab = widget.tabSwitcher.currentTab.value;
-                                  navigatorKeys[BottomTab.catalog]
-                                      .currentState
-                                      .push(
-                                        MaterialWithModalsPageRoute(
-                                          builder: (context) => widget.catalogNavigator.routeBuilder(
-                                              context, CatalogNavigatorRoutes.products,
-                                              searchResult: searchResult),
-                                        ),
-                                      )
-                                      .then((value) => {
-                                            topPanelController.needShowBack = false,
-                                            if (previousTab != null) widget.tabSwitcher.currentTab.value = previousTab
-                                          });
-                                  widget.tabSwitcher.currentTab.value = BottomTab.catalog;
+                                  widget.onSearchResultClick(searchResult);
                                   setState(() {
                                     searchQuery = "";
                                     _searchResultState = SearchResultState.HIDE;

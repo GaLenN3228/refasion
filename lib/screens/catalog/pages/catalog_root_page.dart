@@ -9,10 +9,9 @@ import 'package:refashioned_app/utils/colors.dart';
 class CatalogRootPage extends StatelessWidget {
   final List<Category> categories;
   final Function(Category) onPush;
-  final Function() onSearch;
   final Function() onFavouritesClick;
 
-  const CatalogRootPage({Key key, this.categories, this.onPush, this.onSearch, this.onFavouritesClick})
+  const CatalogRootPage({Key key, this.categories, this.onPush, this.onFavouritesClick})
       : super(key: key);
 
   Widget tabContent(BuildContext context, Category category) {

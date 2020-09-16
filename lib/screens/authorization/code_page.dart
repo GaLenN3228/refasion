@@ -58,8 +58,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final AuthorizationRepository authorizationRepository =
-        context.watch<AuthorizationRepository>();
+    final AuthorizationRepository authorizationRepository = context.watch<AuthorizationRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       key: scaffoldKey,
@@ -79,10 +78,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
               alignment: Alignment.topRight,
               child: Text(
                 "Закрыть",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    .copyWith(color: Color(0xFF959595)),
+                style: Theme.of(context).textTheme.bodyText1.copyWith(color: Color(0xFF959595)),
               ),
             ),
           ),
@@ -128,42 +124,37 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                   animationType: AnimationType.fade,
                   textInputType: TextInputType.number,
                   textStyle: TextStyle(
-                      color: hasError ? Colors.redAccent : Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                      color: hasError ? Colors.redAccent : Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                   pinTheme: PinTheme(
                       shape: PinCodeFieldShape.underline,
                       fieldHeight: 50,
                       fieldWidth: 40,
                       selectedColor: hasError ? Colors.redAccent : Colors.black,
-                      activeColor:
-                          hasError ? Colors.redAccent : Color(0xFFFAD24E),
-                      inactiveColor:
-                          hasError ? Colors.redAccent : Color(0xFFFAD24E)),
+                      activeColor: hasError ? Colors.redAccent : Color(0xFFFAD24E),
+                      inactiveColor: hasError ? Colors.redAccent : Color(0xFFFAD24E)),
                   animationDuration: Duration(milliseconds: 300),
                   enableActiveFill: false,
                   errorAnimationController: errorController,
                   onCompleted: (v) {
                     if (authorizationRepository.isLoaded) {
                       var codeAuthorizationRepository =
-                          CodeAuthorizationRepository();
+                          Provider.of<CodeAuthorizationRepository>(context, listen: false);
                       codeAuthorizationRepository.addListener(() {
                         if (codeAuthorizationRepository.getStatusCode == 400) {
                           errorController.add(ErrorAnimationType.shake);
                           setState(() {
                             hasError = true;
                           });
-                        } else if (codeAuthorizationRepository.getStatusCode ==
-                                200 ||
+                        } else if (codeAuthorizationRepository.getStatusCode == 200 ||
                             codeAuthorizationRepository.getStatusCode == 201) {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context) => NamePage()));
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
+                              builder: (context) => NamePage(
+                                    phone: widget.phone,
+                                  )));
                         }
                       });
                       codeAuthorizationRepository.sendCode(
-                          authorizationRepository.getPhone,
-                          authorizationRepository.response.content.hash,
-                          v);
+                          authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
                     }
                   },
                   onChanged: (value) {
@@ -186,8 +177,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                       child: Text(
                         "Некорректный код",
                         textAlign: TextAlign.center,
-                        style:
-                            textTheme.caption.copyWith(color: Colors.redAccent),
+                        style: textTheme.caption.copyWith(color: Colors.redAccent),
                       ))
                   : Container(
                       height: 16,
@@ -196,21 +186,18 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
             ],
           ),
           Container(
-            margin:
-                const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+            margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
             alignment: Alignment.bottomCenter,
             child: Button(
               _start == 0 ? "ПОЛУЧИТЬ НОВЫЙ КОД" : "ПОЛУЧИТЬ НОВЫЙ КОД ЧЕРЕЗ 0:$_start",
 //          buttonStyle: phoneIsEmpty ? ButtonStyle.dark_gray : ButtonStyle.dark,
-              buttonStyle:
-                  _start == 0 ? ButtonStyle.dark : ButtonStyle.dark_gray,
+              buttonStyle: _start == 0 ? ButtonStyle.dark : ButtonStyle.dark_gray,
               height: 45,
               width: double.infinity,
               borderRadius: 5,
               onClick: () {
                 if (_start == 0 && authorizationRepository.isLoaded) {
-                  authorizationRepository
-                      .sendPhoneAndGetCode(authorizationRepository.getPhone);
+                  authorizationRepository.sendPhoneAndGetCode(authorizationRepository.getPhone);
                   _start = 59;
                   startTimer();
                 }

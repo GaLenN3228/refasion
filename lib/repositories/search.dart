@@ -1,6 +1,6 @@
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/search_result.dart';
-import 'package:refashioned_app/repositories/SearchGeneralRepository.dart';
+import 'package:refashioned_app/repositories/search_general_repository.dart';
 
 import '../services/api_service.dart';
 

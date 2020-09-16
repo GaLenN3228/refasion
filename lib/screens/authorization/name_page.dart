@@ -6,7 +6,9 @@ import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NamePage extends StatefulWidget {
-  const NamePage({Key key}) : super(key: key);
+  final String phone;
+
+  const NamePage({Key key, this.phone}) : super(key: key);
 
   @override
   _PhonePageState createState() => _PhonePageState();
@@ -47,11 +49,14 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
         body: Stack(children: [
           GestureDetector(
             onTap: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              } else {
-                SystemNavigator.pop();
-              }
+              SharedPreferences.getInstance().then((prefs) {
+                prefs.setString(Prefs.user_name, widget.phone);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                } else {
+                  SystemNavigator.pop();
+                }
+              });
             },
             child: Container(
                 padding: const EdgeInsets.only(right: 16.0, top: 60),

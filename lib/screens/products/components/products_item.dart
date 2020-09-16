@@ -14,10 +14,9 @@ import 'package:refashioned_app/utils/colors.dart';
 
 class ProductsItem extends StatefulWidget {
   final Product product;
-  final GlobalKey<NavigatorState> productKey;
   final Function(Product) onPush;
 
-  const ProductsItem({Key key, this.product, this.onPush, this.productKey}) : super(key: key);
+  const ProductsItem({Key key, this.product, this.onPush}) : super(key: key);
 
   @override
   _ProductsItemState createState() => _ProductsItemState();

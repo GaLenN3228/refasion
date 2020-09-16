@@ -11,7 +11,6 @@ import 'package:refashioned_app/screens/components/tab_switcher/components/botto
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/collect_widgets_data.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/tabs.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,12 +20,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TabSwitcher extends StatefulWidget {
   final BottomTab initialTab;
-  final CatalogNavigator catalogNavigator;
-  final GlobalKey key;
 
   ValueNotifier<BottomTab> currentTab;
 
-  TabSwitcher({this.key, this.initialTab: BottomTab.catalog, this.catalogNavigator});
+  TabSwitcher({this.initialTab: BottomTab.catalog});
 
   @override
   _TabSwitcherState createState() => _TabSwitcherState();
@@ -39,6 +36,17 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
   @override
   initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => SharedPreferences.getInstance().then(
+        (newSharedPreferences) {
+          if (!newSharedPreferences.containsKey(Prefs.need_show_authorization_screen)) {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhonePage(fromStart: true)));
+            newSharedPreferences.setBool(Prefs.need_show_authorization_screen, false);
+          }
+        },
+      ),
+    );
+
     sizesProvider = Provider.of<SizesProvider>(context, listen: false);
 
     bottomNavWidgetData = sizesProvider.getData("bottomNav") ?? WidgetData.create("bottomNav");
@@ -67,14 +75,32 @@ class _TabSwitcherState extends State<TabSwitcher> {
   Widget build(BuildContext context) {
     return Material(
       child: WillPopScope(
-        onWillPop: () async => !await navigatorKeys[widget.currentTab.value].currentState.maybePop(),
+        onWillPop: () async => !await navigatorKeys[widget.currentTab.value]?.currentState?.maybePop(),
         child: Stack(
           children: <Widget>[
-            Tabs(
-              key: widget.key,
-              catalogNavigator: widget.catalogNavigator,
+            TabView(
+              BottomTab.home,
+              widget.currentTab,
               onTabRefresh: onTabRefresh,
-              currentTab: widget.currentTab,
+              pushPageOnTop: pushPageOnTop,
+            ),
+            TabView(
+              BottomTab.catalog,
+              widget.currentTab,
+              pushPageOnTop: pushPageOnTop,
+              onTabRefresh: onTabRefresh,
+            ),
+            TabView(
+              BottomTab.cart,
+              widget.currentTab,
+              onTabRefresh: onTabRefresh,
+              pushPageOnTop: pushPageOnTop,
+            ),
+            TabView(
+              BottomTab.profile,
+              widget.currentTab,
+              onTabRefresh: onTabRefresh,
+              pushPageOnTop: pushPageOnTop,
             ),
             Positioned(
               left: 0,

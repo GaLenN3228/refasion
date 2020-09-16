@@ -16,10 +16,8 @@ class CategoryPage extends StatefulWidget {
   final Category topCategory;
   final CategoryLevel level;
   final Function(Category, {dynamic callback}) onPush;
-  final Function() onSearch;
-  final Function() onFavouritesClick;
 
-  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onSearch, this.onFavouritesClick})
+  const CategoryPage({Key key, this.topCategory, this.onPush, this.level})
       : super(key: key);
 
   @override

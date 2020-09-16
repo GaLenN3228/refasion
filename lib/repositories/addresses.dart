@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/models/base.dart';
-import 'package:refashioned_app/repositories/SearchGeneralRepository.dart';
+import 'package:refashioned_app/repositories/search_general_repository.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../services/api_service.dart';
 import 'base.dart';

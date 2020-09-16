@@ -184,12 +184,6 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
   }
 
   @override
-  void dispose() {
-    _centerMarkerController?.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,

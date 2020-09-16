@@ -1,26 +1,12 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:refashioned_app/main.dart';
-import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
-import 'package:refashioned_app/screens/city_selector/city_tile.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
-import 'package:refashioned_app/screens/maps/components/map.dart';
-import 'package:refashioned_app/screens/maps/controllers/map_bottom_sheet_data_controller.dart';
-import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dart';
-import 'package:refashioned_app/screens/maps/map_picker.dart';
-import 'package:refashioned_app/utils/prefs.dart';
-import 'package:refashioned_app/utils/url.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingPage extends StatelessWidget {
   @override
@@ -39,13 +25,15 @@ class SettingPage extends StatelessWidget {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
-              },
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.only(top: 20, left: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text('Условия использования', style: textTheme.subtitle1,),
+                    Text(
+                      'Условия использования',
+                      style: textTheme.subtitle1,
+                    ),
                   ],
                 ),
               ),
@@ -56,13 +44,15 @@ class SettingPage extends StatelessWidget {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
-              },
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text('Оферта на оказание услуг', style: textTheme.subtitle1,),
+                    Text(
+                      'Оферта на оказание услуг',
+                      style: textTheme.subtitle1,
+                    ),
                   ],
                 ),
               ),
@@ -73,13 +63,15 @@ class SettingPage extends StatelessWidget {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
-              },
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text('Лицензионное соглашение', style: textTheme.subtitle1,),
+                    Text(
+                      'Лицензионное соглашение',
+                      style: textTheme.subtitle1,
+                    ),
                   ],
                 ),
               ),
@@ -95,35 +87,16 @@ class SettingPage extends StatelessWidget {
   }
 }
 
-
 class SettingForAuthUser extends StatefulWidget {
+  final Function() onMapPageClick;
+
+  const SettingForAuthUser({Key key, this.onMapPageClick}) : super(key: key);
+
   @override
   _SettingForAuthUserState createState() => _SettingForAuthUserState();
 }
 
 class _SettingForAuthUserState extends State<SettingForAuthUser> {
-  MapBottomSheetDataController mapBottomSheetDataController;
-  MapDataController mapDataController;
-
-  @override
-  void initState() {
-    mapDataController = MapDataController(
-        pickUpPointsCompany: PickUpPointsCompany.BOXBERRY
-    );
-    mapBottomSheetDataController = MapBottomSheetDataController(
-        mapBottomSheetDataPreview: MapBottomSheetData(
-            title: "Где можно забрать вещь?",
-            hint: "Укажите на карте или введите адрес вручную"),
-        mapBottomSheetDataAddress: MapBottomSheetData(
-          isCancelPointEnable: true,
-          title: "Адрес доставки",
-        )
-    );
-
-    super.initState();
-  }
-
-
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -132,20 +105,17 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
       child: Material(
         color: Colors.white,
         child: Column(
-
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RefashionedTopBar(
               data: TopBarData.simple(
                 onBack: () => Navigator.of(context).pop(),
                 middleText: "Настройки",
-
               ),
             ),
-
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
+              onTap: () {
                 CitiesRepository().getCities();
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) => CitySelector(),
@@ -160,7 +130,10 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                       height: 30,
                       color: Colors.black,
                     ),
-                    Text('Мой город', style: textTheme.subtitle1,),
+                    Text(
+                      'Мой город',
+                      style: textTheme.subtitle1,
+                    ),
                     Spacer(),
                     Text(
                       'Москва',
@@ -176,19 +149,17 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
-                Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) => MapsPickerPage(
-                    mapDataController: mapDataController,
-                    mapBottomSheetDataController: mapBottomSheetDataController,
-                  )
-                ));
+              onTap: () {
+                widget.onMapPageClick();
               },
               child: Container(
                 padding: EdgeInsets.only(top: 15, left: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text('Пункты выдачи', style: textTheme.subtitle1,),
+                    Text(
+                      'Пункты выдачи',
+                      style: textTheme.subtitle1,
+                    ),
                   ],
                 ),
               ),
@@ -199,13 +170,15 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
-              },
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.only(top: 20, left: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text('Условия использования', style: textTheme.subtitle1,),
+                    Text(
+                      'Условия использования',
+                      style: textTheme.subtitle1,
+                    ),
                   ],
                 ),
               ),
@@ -216,13 +189,15 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
-              },
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text('Оферта на оказание услуг', style: textTheme.subtitle1,),
+                    Text(
+                      'Оферта на оказание услуг',
+                      style: textTheme.subtitle1,
+                    ),
                   ],
                 ),
               ),
@@ -233,13 +208,15 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
-              },
+              onTap: () {},
               child: Container(
                 padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text('Лицензионное соглашение', style: textTheme.subtitle1,),
+                    Text(
+                      'Лицензионное соглашение',
+                      style: textTheme.subtitle1,
+                    ),
                   ],
                 ),
               ),
@@ -254,4 +231,3 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
     );
   }
 }
-

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/addresses.dart';
-import 'package:refashioned_app/repositories/SearchGeneralRepository.dart';
+import 'package:refashioned_app/repositories/search_general_repository.dart';
 import 'package:refashioned_app/repositories/addresses.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/sliding_panel_indicator.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';

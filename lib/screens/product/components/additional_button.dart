@@ -14,27 +14,31 @@ class ProductAdditionalButton extends StatelessWidget {
       onTap: () {
         onSubCategoryClick();
       },
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(text, style: Theme.of(context).textTheme.subtitle1),
-              RotatedBox(
-                quarterTurns: 2,
-                child: SVGIcon(
-                  icon: IconAsset.back,
-                  size: 14,
+      child: Container(
+        height:  48,
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(text, style: Theme.of(context).textTheme.subtitle1),
+                RotatedBox(
+                  quarterTurns: 2,
+                  child: SVGIcon(
+                    icon: IconAsset.back,
+                    size: 14,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Container(
-            color: const Color(0xFFE6E6E6),
-            margin: EdgeInsets.symmetric(vertical: 16),
-            height: 1,
-          ),
-        ],
+              ],
+            ),
+            Container(
+              color: const Color(0xFFE6E6E6),
+              margin: EdgeInsets.symmetric(vertical: 16),
+              height: 1,
+            ),
+          ],
+        ),
       ),
     );
   }
