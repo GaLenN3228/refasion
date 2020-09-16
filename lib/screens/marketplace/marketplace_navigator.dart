@@ -369,9 +369,11 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             onUpdate: (price) => productData.updatePrice(price),
             onPush: () {
               Navigator.of(context).push(
-                MaterialWithModalsPageRoute(
-                  builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.cards),
-                  settings: RouteSettings(name: MarketplaceNavigatorRoutes.cards),
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(
+                      context, MarketplaceNavigatorRoutes.addresses),
+                  settings:
+                  RouteSettings(name: MarketplaceNavigatorRoutes.addresses),
                 ),
               );
             },
