@@ -29,8 +29,8 @@ class _PickUpPointsPageState extends State<PickUpPointsPage> {
     );
     mapBottomSheetDataController = MapBottomSheetDataController(
       mapBottomSheetDataPreview: MapBottomSheetData(
-          title: "Где хранится вещь?",
-          hint: "Укажите на карте или введите адрес вручную"),
+          title: "Пункты отправки",
+          hint: "Продавцу нужно отнести вещь в пункт отправки службы доставки, которую выберет покупатель."),
       mapBottomSheetDataAddress: MapBottomSheetData(
         isCancelPointEnable: true,
         title: "Адрес доставки",
