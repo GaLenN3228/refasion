@@ -33,8 +33,6 @@ class CitiesRepository extends BaseRepository<CitiesProvider> {
         final selectedFromPrefs =
             cityInPrefs != null ? await selectCity(cityInPrefs) : false;
 
-        print("cityInPrefs: " + cityInPrefs.toString());
-
         if (selectedFromPrefs) {
           provider.skipable = true;
 
@@ -45,8 +43,6 @@ class CitiesRepository extends BaseRepository<CitiesProvider> {
           await _geolocationRepository.update();
 
           final geolocation = _geolocationRepository.response?.content;
-
-          print("geolocation: " + geolocation.toString());
 
           if (geolocation != null)
             await selectCity(geolocation, addToPrefs: false);
@@ -110,33 +106,6 @@ class CitiesRepository extends BaseRepository<CitiesProvider> {
 
     super.dispose();
   }
-
-  // Future<bool> selectCity(City newCity) async {
-  //   await response.content.select(newCity);
-
-  //   final selectedCity = jsonEncode(newCity.toJson());
-
-  //   try {
-  //     return ApiService.selectCity(selectedCity)
-  //         .then((citySelectRequestResponse) {
-  //       final citySelectResponse =
-  //           CitySelectResponse.fromJson(citySelectRequestResponse.data);
-
-  //       if (citySelectResponse.status.code == 200)
-  //         return citySelectResponse?.content != null;
-  //       else {
-  //         print("CitySelectRequestResponse: " +
-  //             citySelectRequestResponse.toString());
-
-  //         return false;
-  //       }
-  //     });
-  //   } catch (err) {
-  //     print("City Select error: " + err.toString());
-
-  //     return false;
-  //   }
-  // }
 }
 
 class SelectCityRepository extends BaseRepository<City> {
