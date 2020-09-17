@@ -81,18 +81,20 @@ class _TabViewState extends State<TabView> {
 
             Navigator.of(context).push(
               PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
-                  position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    SlideTransition(
+                  position: Tween(begin: Offset(0, 1), end: Offset.zero)
+                      .animate(animation),
                   child: DeliveryNavigator(
                     deliveryType: deliveryType,
                     pickUpAddress: pickUpAddress,
                     onClose: () {
-                      Navigator.of(context).pop();
                       onClose?.call();
+                      Navigator.of(context).pop();
                     },
                     onFinish: (id) {
-                      Navigator.of(context).pop();
                       onFinish?.call(deliveryType.items.first.id, id);
+                      Navigator.of(context).pop();
                     },
                   ),
                 ),
@@ -121,8 +123,10 @@ class _TabViewState extends State<TabView> {
         );
         content = MultiProvider(
             providers: [
-              ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
-              ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
+              ChangeNotifierProvider<TopPanelController>(
+                  create: (_) => TopPanelController()),
+              ChangeNotifierProvider<SearchRepository>(
+                  create: (_) => SearchRepository()),
             ],
             child: SearchWrapper(
               content: catalogNavigator,
@@ -130,10 +134,12 @@ class _TabViewState extends State<TabView> {
                 navigatorKeys[widget.tab].currentState.pop();
               },
               onFavouritesClick: () {
-                catalogNavigator.pushFavourites(navigatorKeys[widget.tab].currentContext);
+                catalogNavigator
+                    .pushFavourites(navigatorKeys[widget.tab].currentContext);
               },
               onSearchResultClick: (searchResult) {
-                catalogNavigator.pushProducts(navigatorKeys[widget.tab].currentContext, searchResult);
+                catalogNavigator.pushProducts(
+                    navigatorKeys[widget.tab].currentContext, searchResult);
               },
             ));
 
@@ -148,11 +154,14 @@ class _TabViewState extends State<TabView> {
         break;
 
       case BottomTab.home:
-        var homeNavigator = HomeNavigator(navigatorKey: navigatorKeys[widget.tab], changeTabTo: changeTabTo);
+        var homeNavigator = HomeNavigator(
+            navigatorKey: navigatorKeys[widget.tab], changeTabTo: changeTabTo);
         content = MultiProvider(
             providers: [
-              ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
-              ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
+              ChangeNotifierProvider<TopPanelController>(
+                  create: (_) => TopPanelController()),
+              ChangeNotifierProvider<SearchRepository>(
+                  create: (_) => SearchRepository()),
             ],
             child: SearchWrapper(
               content: homeNavigator,
@@ -160,10 +169,12 @@ class _TabViewState extends State<TabView> {
                 navigatorKeys[widget.tab].currentState.pop();
               },
               onFavouritesClick: () {
-                homeNavigator.pushFavourites(navigatorKeys[widget.tab].currentContext);
+                homeNavigator
+                    .pushFavourites(navigatorKeys[widget.tab].currentContext);
               },
               onSearchResultClick: (searchResult) {
-                homeNavigator.pushProducts(navigatorKeys[widget.tab].currentContext, searchResult);
+                homeNavigator.pushProducts(
+                    navigatorKeys[widget.tab].currentContext, searchResult);
               },
             ));
         break;
@@ -176,8 +187,10 @@ class _TabViewState extends State<TabView> {
         );
         content = MultiProvider(
             providers: [
-              ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
-              ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
+              ChangeNotifierProvider<TopPanelController>(
+                  create: (_) => TopPanelController()),
+              ChangeNotifierProvider<SearchRepository>(
+                  create: (_) => SearchRepository()),
             ],
             child: SearchWrapper(
               content: profileNavigator,
@@ -185,10 +198,12 @@ class _TabViewState extends State<TabView> {
                 navigatorKeys[widget.tab].currentState.pop();
               },
               onFavouritesClick: () {
-                profileNavigator.pushFavourites(navigatorKeys[widget.tab].currentContext, true);
+                profileNavigator.pushFavourites(
+                    navigatorKeys[widget.tab].currentContext, true);
               },
               onSearchResultClick: (searchResult) {
-                profileNavigator.pushProducts(navigatorKeys[widget.tab].currentContext, searchResult);
+                profileNavigator.pushProducts(
+                    navigatorKeys[widget.tab].currentContext, searchResult);
               },
             ));
         break;
