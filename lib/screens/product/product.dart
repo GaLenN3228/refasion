@@ -24,7 +24,6 @@ import 'package:refashioned_app/screens/product/components/recommended.dart';
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPage extends StatefulWidget {
@@ -197,7 +196,8 @@ class _ProductPageState extends State<ProductPage> {
           child: Stack(
             children: [
               ListView(
-                padding: const EdgeInsets.only(bottom: 99.0 + 45.0 + 20.0),
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom + 65.0),
                 children: <Widget>[
                   ProductSlider(
                     images: product.images,
@@ -244,13 +244,13 @@ class _ProductPageState extends State<ProductPage> {
                   productId: widget.product.id,
                   onCartPush: widget.onCartPush,
                   openDeliveryTypesSelector: () =>
-                      widget?.openDeliveryTypesSelector?.call(
+                      widget.openDeliveryTypesSelector?.call(
                     context,
                     widget.product.id,
                     deliveryTypes: product.deliveryTypes,
                     pickUpAddress: product.pickUpAddress,
                     onFinish: (companyId, objectId) =>
-                        widget.onCheckoutPush(companyId, objectId),
+                        widget.onCheckoutPush?.call(companyId, objectId),
                   ),
                 ),
               ),

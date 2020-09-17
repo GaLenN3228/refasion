@@ -112,16 +112,15 @@ class _CartNavigatorState extends State<CartNavigator> {
 
               await ordersRepository.update(parameters);
 
-              if (ordersRepository.response?.status?.code == 200)
-                return Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(
-                      context,
-                      CartNavigatorRoutes.checkout,
-                      order: ordersRepository.response.content,
-                    ),
+              return Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(
+                    context,
+                    CartNavigatorRoutes.checkout,
+                    order: ordersRepository.response?.content,
                   ),
-                );
+                ),
+              );
             },
             onProductPush: (product) => Navigator.of(context).push(
               CupertinoPageRoute(
@@ -140,6 +139,7 @@ class _CartNavigatorState extends State<CartNavigator> {
 
       case CartNavigatorRoutes.checkout:
         return CheckoutPage(
+          order: order,
           cart: cart,
         );
 
