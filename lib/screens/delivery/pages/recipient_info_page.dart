@@ -12,6 +12,7 @@ import 'package:refashioned_app/screens/components/button/button.dart';
 import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox.dart';
+import 'package:refashioned_app/screens/components/checkbox/stateful.dart';
 import 'package:refashioned_app/screens/components/textfield/ref_textfield.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
@@ -262,7 +263,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                     flex: 1,
                                     child: Row(
                                       children: [
-                                        RefashionedCheckbox(
+                                        RefashionedCheckboxStateful(
                                           value: privateHouse,
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 10),

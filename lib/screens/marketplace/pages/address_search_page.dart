@@ -49,7 +49,6 @@ class AddressSearchPage extends StatelessWidget {
                 final city =
                     Provider.of<CitiesRepository>(context, listen: false).city;
 
-                print("city: " + city.toString());
                 return RefashionedTopBar(
                   data: TopBarData(
                     middleData: TBMiddleData.title("Поиск"),
