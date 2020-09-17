@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/order/order.dart';
@@ -82,8 +83,11 @@ class _CartPageState extends State<CartPage> {
   }
 
   onCheckoutPush() {
-    if (buttonState.value == ButtonState.enabled &&
-        widget.onCheckoutPush != null) widget.onCheckoutPush(null);
+    if (buttonState.value == ButtonState.enabled) {
+      HapticFeedback.lightImpact();
+
+      widget.onCheckoutPush?.call(null);
+    }
   }
 
   @override

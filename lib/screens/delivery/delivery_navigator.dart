@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/pick_point.dart';
@@ -71,8 +71,11 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           onClose: widget.onClose,
           onFinish: widget.onFinish,
           userAddresses: userAddresses,
-          onAddAddress: () =>
-              Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.map),
+          onAddAddress: () {
+            HapticFeedback.lightImpact();
+
+            Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.map);
+          },
         );
 
       case DeliveryNavigatorRoutes.map:
@@ -83,6 +86,9 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           pickUpAddress: widget.pickUpAddress,
           onAddressPush: (newAddress) {
             selectedAddress = newAddress;
+
+            HapticFeedback.lightImpact();
+
             Navigator.of(context)
                 .pushNamed(DeliveryNavigatorRoutes.recipientInfo);
           },

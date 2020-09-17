@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/pick_point.dart';
@@ -179,7 +180,12 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
         break;
     }
 
-    if (id != null) widget.onFinish?.call(id);
+    if (id != null) {
+      HapticFeedback.lightImpact();
+
+      widget.onFinish?.call(id);
+    } else
+      HapticFeedback.heavyImpact();
   }
 
   @override

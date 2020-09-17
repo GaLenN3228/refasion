@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/user_address.dart';
@@ -79,7 +80,11 @@ class _AddressesPageState extends State<AddressesPage> {
               list: widget.userAddresses ?? [],
               deliveryType: widget.deliveryType,
               onAddAddress: widget.onAddAddress,
-              onSelectAddress: (id) => widget.onFinish?.call(id),
+              onSelectAddress: (id) {
+                HapticFeedback.lightImpact();
+
+                widget.onFinish?.call(id);
+              },
               emptyStateTitle: emptyStateTitle,
               callToAction: callToAction,
               bottomText: bottomText,

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
@@ -76,13 +77,17 @@ class _TabViewState extends State<TabView> {
 
     userAddresses = userAddressesRepository.response?.content ?? [];
 
-    if (types != null && types.isNotEmpty)
+    if (types != null && types.isNotEmpty) {
+      HapticFeedback.lightImpact();
+
       await showMaterialModalBottomSheet(
         expand: false,
         context: context,
         useRootNavigator: true,
         builder: (context, controller) => DeliveryOptionsPanel(
           onPush: (deliveryType) {
+            HapticFeedback.selectionClick();
+
             selected = true;
 
             Navigator.of(context).pop();
@@ -98,12 +103,16 @@ class _TabViewState extends State<TabView> {
                     pickUpAddress: pickUpAddress,
                     userAddresses: userAddresses,
                     onClose: () async {
+                      HapticFeedback.selectionClick();
+
                       await onClose?.call();
                       userAddressesRepository.dispose();
 
                       Navigator.of(context).pop();
                     },
                     onFinish: (id) async {
+                      HapticFeedback.lightImpact();
+
                       await onFinish?.call(deliveryType.items.first.id, id);
                       userAddressesRepository.dispose();
 
@@ -117,6 +126,7 @@ class _TabViewState extends State<TabView> {
           options: types,
         ),
       );
+    }
 
     if (!selected) onClose?.call();
 
