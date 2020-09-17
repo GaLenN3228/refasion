@@ -97,14 +97,14 @@ class _TabViewState extends State<TabView> {
                     deliveryType: deliveryType,
                     pickUpAddress: pickUpAddress,
                     userAddresses: userAddresses,
-                    onClose: () {
-                      onClose?.call();
+                    onClose: () async {
+                      await onClose?.call();
                       userAddressesRepository.dispose();
 
                       Navigator.of(context).pop();
                     },
-                    onFinish: (id) {
-                      onFinish?.call(deliveryType.items.first.id, id);
+                    onFinish: (id) async {
+                      await onFinish?.call(deliveryType.items.first.id, id);
                       userAddressesRepository.dispose();
 
                       Navigator.of(context).pop();

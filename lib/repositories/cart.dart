@@ -175,19 +175,12 @@ class CartRepository extends BaseRepository<Cart> {
       String itemId, String deliveryCompanyId, String deliveryObjectId) async {
     await setDeliveryType.update(itemId, deliveryCompanyId, deliveryObjectId);
     if (setDeliveryType.response.status.code == 204) {
-      print("delivery set");
-      print("pending: " + pendingIDs.toString());
-
       if (pendingIDs.isEmpty) {
-        print("group: " + response.content?.getGroup(itemId).toString());
-
         final list = response.content
             ?.getGroup(itemId)
             ?.cartProducts
             ?.map((cartProduct) => cartProduct.id)
             ?.toList();
-
-        print("list: " + list.toString());
 
         if (list != null) pendingIDs.addAll(list);
       }

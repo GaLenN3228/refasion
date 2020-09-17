@@ -275,7 +275,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
 
               await ordersRepository.update(parameters);
 
-              return Navigator.of(context).push(
+              Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => _routeBuilder(
                     context,

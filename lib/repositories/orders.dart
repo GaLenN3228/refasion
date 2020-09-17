@@ -6,7 +6,7 @@ class OrdersRepository extends BaseRepository {
   Future<void> update(String parameters) => apiCall(
         () async {
           response = BaseResponse.fromJson(
-              (await ApiService.makeOrder(parameters)).deliveryType, null);
+              (await ApiService.makeOrder(parameters)).data, null);
         },
       );
 }

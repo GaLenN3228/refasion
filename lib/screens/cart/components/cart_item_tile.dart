@@ -39,17 +39,11 @@ class _CartItemTileState extends State<CartItemTile> {
         context,
         widget.cartItem.id,
         pickUpAddress: null,
-        onClose: Provider.of<CartRepository>(context, listen: false)
-            .clearPendingIDs(),
-        onFinish: (companyId, objectId) async {
-          final cartRepository =
-              Provider.of<CartRepository>(context, listen: false);
-
-          await cartRepository.setDelivery(
-              widget.cartItem.id, companyId, objectId);
-
-          if (cartRepository.setDeliveryType?.response?.status?.code == 204) {}
-        },
+        onClose:
+            Provider.of<CartRepository>(context, listen: false).clearPendingIDs,
+        onFinish: (companyId, objectId) async =>
+            await Provider.of<CartRepository>(context, listen: false)
+                .setDelivery(widget.cartItem.id, companyId, objectId),
       );
 
   @override
