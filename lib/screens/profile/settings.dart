@@ -14,6 +14,7 @@ class SettingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return CupertinoPageScaffold(
+      backgroundColor: Colors.white,
       child: Material(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

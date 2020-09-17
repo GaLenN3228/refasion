@@ -11,6 +11,7 @@ import 'package:refashioned_app/screens/components/tab_switcher/components/botto
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/collect_widgets_data.dart';
+import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,6 +61,12 @@ class _TabSwitcherState extends State<TabSwitcher> {
     final canPop = navigatorKeys[widget.currentTab.value]?.currentState?.canPop() ?? false;
 
     if (canPop) navigatorKeys[widget.currentTab.value].currentState.pushNamedAndRemoveUntil('/', (route) => false);
+
+    if (widget.currentTab.value == BottomTab.catalog || widget.currentTab.value == BottomTab.home) {
+      var topPanelController = Provider.of<TopPanelController>(navigatorKeys[widget.currentTab.value].currentContext, listen: false);
+      topPanelController.needShow = true;
+      topPanelController.needShowBack = false;
+    }
   }
 
   pushPageOnTop(Widget page) => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => page));

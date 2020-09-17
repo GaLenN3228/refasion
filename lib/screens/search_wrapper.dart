@@ -19,8 +19,7 @@ class SearchWrapper extends StatefulWidget {
   final Function() onFavouritesClick;
   final Function(SearchResult) onSearchResultClick;
 
-  const SearchWrapper(
-      {Key key, this.content, this.onBackPressed, this.onFavouritesClick, this.onSearchResultClick})
+  const SearchWrapper({Key key, this.content, this.onBackPressed, this.onFavouritesClick, this.onSearchResultClick})
       : super(key: key);
 
   @override
@@ -128,6 +127,7 @@ class _SearchWrapperState extends State<SearchWrapper> with SingleTickerProvider
                         ))
                     : _searchResultState == SearchResultState.NOT_FOUND
                         ? Container(
+                            margin: EdgeInsets.only(bottom: 190),
                             color: Colors.white,
                             child: Center(
                               child: Text("Не найдено, повторите запрос", style: Theme.of(context).textTheme.bodyText1),

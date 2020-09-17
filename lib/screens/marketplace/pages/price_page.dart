@@ -155,7 +155,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                                 UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
                             enabledBorder:
                                 UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
-                            hintText: "0 ₽",
+                            hintText: "   ₽",
                             hintStyle: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
                           ),
                         ),
