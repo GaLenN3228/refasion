@@ -14,6 +14,7 @@ class RefashionedTextField extends StatefulWidget {
   final IconAsset icon;
 
   final GlobalKey<FormState> formKey;
+  final TextInputType keyboardType;
 
   const RefashionedTextField(
       {Key key,
@@ -22,7 +23,8 @@ class RefashionedTextField extends StatefulWidget {
       this.onSearchUpdate,
       this.autofocus: false,
       this.icon,
-      this.formKey})
+      this.formKey,
+      this.keyboardType})
       : super(key: key);
 
   factory RefashionedTextField.fromTbSearchData(TBSearchData data) =>
@@ -100,6 +102,7 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
   Widget build(BuildContext context) {
     if (widget.onCancel == null)
       return TBSearchDecoration(
+        keyboardType: widget.keyboardType,
         autofocus: widget.autofocus,
         hintText: widget.hintText,
         focusNode: focusNode,
@@ -122,6 +125,7 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
                 child: child);
           },
           child: TBSearchDecoration(
+            keyboardType: widget.keyboardType,
             icon: widget.icon,
             autofocus: widget.autofocus,
             hintText: widget.hintText,

@@ -10,6 +10,8 @@ class TBSearchTextField extends StatefulWidget {
   final TextEditingController textController;
   final ValueNotifier<bool> hasText;
 
+  final TextInputType keyboardType;
+
   const TBSearchTextField({
     Key key,
     this.focusNode,
@@ -17,6 +19,7 @@ class TBSearchTextField extends StatefulWidget {
     this.hasText,
     this.autofocus,
     this.hintText,
+    this.keyboardType,
   }) : super(key: key);
 
   @override
@@ -33,6 +36,7 @@ class _TBSearchTextFieldState extends State<TBSearchTextField> {
           enableSuggestions: false,
           autocorrect: false,
           focusNode: widget.focusNode,
+          keyboardType: widget.keyboardType ?? TextInputType.text,
           decoration: InputDecoration(
               border: InputBorder.none,
               hintText: widget.hintText ?? "Поиск",

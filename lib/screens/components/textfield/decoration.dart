@@ -12,6 +12,7 @@ class TBSearchDecoration extends StatefulWidget {
   final TextEditingController textController;
   final ValueNotifier<bool> hasText;
   final IconAsset icon;
+  final TextInputType keyboardType;
 
   const TBSearchDecoration({
     Key key,
@@ -21,6 +22,7 @@ class TBSearchDecoration extends StatefulWidget {
     this.textController,
     this.hasText,
     this.icon,
+    this.keyboardType,
   }) : super(key: key);
 
   @override
@@ -52,6 +54,7 @@ class _TBSearchDecorationState extends State<TBSearchDecoration> {
                   ),
             Expanded(
               child: TBSearchTextField(
+                keyboardType: widget.keyboardType,
                 autofocus: widget.autofocus,
                 hintText: widget.hintText,
                 focusNode: widget.focusNode,
