@@ -5,6 +5,7 @@ import 'package:refashioned_app/models/cart/cart.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/order/order_item.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/orders.dart';
@@ -27,6 +28,7 @@ class CartNavigator extends StatefulWidget {
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
+    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
   }) openDeliveryTypesSelector;

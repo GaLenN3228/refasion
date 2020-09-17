@@ -35,9 +35,10 @@ class CartItemTile extends StatefulWidget {
 }
 
 class _CartItemTileState extends State<CartItemTile> {
-  openDeliveryTypesSelector() => widget?.openDeliveryTypesSelector?.call(
+  openDeliveryTypesSelector() => widget.openDeliveryTypesSelector?.call(
         context,
         widget.cartItem.id,
+        pickUpAddress: null,
         onClose: Provider.of<CartRepository>(context, listen: false)
             .clearPendingIDs(),
         onFinish: (companyId, objectId) async {
@@ -59,10 +60,11 @@ class _CartItemTileState extends State<CartItemTile> {
           CartProductTile(
             cartProduct: cartProduct,
             onSelect: () {
-              final result = Provider.of<CartRepository>(context, listen: false)
-                  .select(cartProduct.product.id);
+              final wasAbleToSelect =
+                  Provider.of<CartRepository>(context, listen: false)
+                      .select(cartProduct.product.id);
 
-              if (!result) openDeliveryTypesSelector();
+              if (!wasAbleToSelect) openDeliveryTypesSelector();
             },
             onProductPush: () => widget.onProductPush(cartProduct.product),
           ),
