@@ -106,13 +106,10 @@ class _ProductPageState extends State<ProductPage> {
           );
 
         return Builder(
-          builder: (context) {
-            final isFavorite = true;
-
-            return Consumer<AddRemoveFavouriteRepository>(
-                builder: (context, addRemoveFavouriteRepository, child) {
-              return RefashionedTopBar(
-                data: TopBarData(
+          builder: (context) => Consumer<AddRemoveFavouriteRepository>(
+              builder: (context, addRemoveFavouriteRepository, child) {
+            return RefashionedTopBar(
+              data: TopBarData(
                   leftButtonData: TBButtonData.icon(
                     TBIconType.back,
                     onTap: Navigator.of(context).pop,
@@ -123,50 +120,38 @@ class _ProductPageState extends State<ProductPage> {
                         product.name.toString(),
                     product.currentPrice.toString() + " ₽",
                   ),
-                  secondRightButtonData: isFavorite
-                      ? TBButtonData(
-                          iconType: widget.product.isFavourite
-                              ? TBIconType.favoriteFilled
-                              : TBIconType.favorite,
-                          iconColor: widget.product.isFavourite
-                              ? Color(0xFFD12C2A)
-                              : Color(0xFF000000),
-                          onTap: () {
-                            HapticFeedback.vibrate();
-                            BaseRepository.isAuthorized().then((isAuthorized) {
-                              isAuthorized
-                                  ? widget.product.isFavourite
-                                      ? addRemoveFavouriteRepository
-                                          .removeFromFavourites((widget.product
-                                                ..isFavourite = false)
-                                              .id)
-                                      : addRemoveFavouriteRepository
-                                          .addToFavourites((widget.product
-                                                ..isFavourite = true)
-                                              .id)
-                                  : showCupertinoModalBottomSheet(
-                                      backgroundColor: Colors.white,
-                                      expand: false,
-                                      context: context,
-                                      settings:
-                                          RouteSettings(name: "/authorization"),
-                                      useRootNavigator: true,
-                                      builder: (context, controller) =>
-                                          AuthorizationSheet());
-                            });
-                          },
-                        )
-                      : TBButtonData(
-                          iconType: TBIconType.favorite,
-                          onTap: () {},
-                        ),
                   rightButtonData: TBButtonData(
-                    iconType: TBIconType.share,
-                  ),
-                ),
-              );
-            });
-          },
+                    iconType: widget.product.isFavourite
+                        ? TBIconType.favoriteFilled
+                        : TBIconType.favorite,
+                    iconColor: widget.product.isFavourite
+                        ? Color(0xFFD12C2A)
+                        : Color(0xFF000000),
+                    animated: true,
+                    onTap: () async {
+                      HapticFeedback.vibrate();
+                      await BaseRepository.isAuthorized().then((isAuthorized) {
+                        isAuthorized
+                            ? widget.product.isFavourite
+                                ? addRemoveFavouriteRepository
+                                    .removeFromFavourites((widget.product
+                                          ..isFavourite = false)
+                                        .id)
+                                : addRemoveFavouriteRepository.addToFavourites(
+                                    (widget.product..isFavourite = true).id)
+                            : showCupertinoModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                expand: false,
+                                context: context,
+                                settings: RouteSettings(name: "/authorization"),
+                                useRootNavigator: true,
+                                builder: (context, controller) =>
+                                    AuthorizationSheet());
+                      });
+                    },
+                  )),
+            );
+          }),
         );
       default:
         return RefashionedTopBar(
