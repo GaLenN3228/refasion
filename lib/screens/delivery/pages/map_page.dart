@@ -86,7 +86,8 @@ class _MapPageState extends State<MapPage> {
 
         topBarData = TopBarData.simple(
           middleText: "Новый адрес",
-          onBack: Navigator.of(context).pop,
+          onBack:
+              Navigator.of(context).canPop() ? Navigator.of(context).pop : null,
           onClose: widget.onClose,
         );
         break;
@@ -115,7 +116,8 @@ class _MapPageState extends State<MapPage> {
 
         topBarData = TopBarData.simple(
           middleText: "Новый адрес",
-          onBack: Navigator.of(context).pop,
+          onBack:
+              Navigator.of(context).canPop() ? Navigator.of(context).pop : null,
           onClose: widget.onClose,
         );
         break;

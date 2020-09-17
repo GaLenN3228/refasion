@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/user_addresses.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
@@ -15,8 +17,6 @@ import 'package:refashioned_app/screens/profile/profile_navigator.dart';
 import 'package:refashioned_app/screens/search_wrapper.dart';
 import 'package:refashioned_app/screens/delivery/components/delivery_options_panel.dart';
 import 'package:refashioned_app/screens/delivery/delivery_navigator.dart';
-import 'package:refashioned_app/screens/home/home.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
 
 final navigatorKeys = {
   BottomTab.home: GlobalKey<NavigatorState>(),
@@ -57,16 +57,24 @@ class _TabViewState extends State<TabView> {
     Function(String, String) onFinish,
   }) async {
     List<DeliveryType> types;
+    List<UserAddress> userAddresses;
 
     if (deliveryTypes == null || deliveryTypes.isEmpty) {
-      final repository = Provider.of<CartRepository>(context, listen: false);
+      final deliveryTypesRepository =
+          Provider.of<CartRepository>(context, listen: false);
 
-      await repository.getCartItemDeliveryTypes(id);
+      await deliveryTypesRepository.getCartItemDeliveryTypes(id);
 
-      types = repository?.getDeliveryTypes?.response?.content;
+      types = deliveryTypesRepository?.getDeliveryTypes?.response?.content;
     } else {
       types = deliveryTypes;
     }
+
+    final userAddressesRepository = GetUserAddressesRepository();
+
+    await userAddressesRepository.update();
+
+    userAddresses = userAddressesRepository.response?.content ?? [];
 
     if (types != null && types.isNotEmpty)
       await showMaterialModalBottomSheet(
@@ -88,12 +96,17 @@ class _TabViewState extends State<TabView> {
                   child: DeliveryNavigator(
                     deliveryType: deliveryType,
                     pickUpAddress: pickUpAddress,
+                    userAddresses: userAddresses,
                     onClose: () {
                       onClose?.call();
+                      userAddressesRepository.dispose();
+
                       Navigator.of(context).pop();
                     },
                     onFinish: (id) {
                       onFinish?.call(deliveryType.items.first.id, id);
+                      userAddressesRepository.dispose();
+
                       Navigator.of(context).pop();
                     },
                   ),

@@ -4,6 +4,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/pick_point.dart';
+import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/screens/delivery/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/delivery/pages/map_page.dart';
 import 'package:refashioned_app/screens/delivery/pages/recipient_info_page.dart';
@@ -18,6 +19,7 @@ class DeliveryNavigator extends StatefulWidget {
   final Function() onClose;
   final Function(String) onFinish;
 
+  final List<UserAddress> userAddresses;
   final DeliveryType deliveryType;
   final PickPoint pickUpAddress;
 
@@ -27,6 +29,7 @@ class DeliveryNavigator extends StatefulWidget {
     this.deliveryType,
     this.onFinish,
     this.pickUpAddress,
+    this.userAddresses,
   }) : super(key: key);
 
   @override
@@ -34,30 +37,42 @@ class DeliveryNavigator extends StatefulWidget {
 }
 
 class _DeliveryNavigatorState extends State<DeliveryNavigator> {
-  Widget _routeBuilder(
-    BuildContext context,
-    String route, {
-    PickPoint address,
-  }) {
+  List<UserAddress> userAddresses;
+  PickPoint selectedAddress;
+
+  @override
+  void initState() {
+    switch (widget.deliveryType.type) {
+      case Delivery.PICKUP_POINT:
+        userAddresses = widget.userAddresses
+            ?.where((userAddress) => userAddress.pickpoint != null)
+            ?.toList();
+        break;
+
+      case Delivery.COURIER_DELIVERY:
+      case Delivery.EXPRESS_DEVILERY:
+        userAddresses = widget.userAddresses
+            ?.where((userAddress) => userAddress.pickpoint == null)
+            ?.toList();
+        break;
+
+      default:
+        userAddresses = [];
+        break;
+    }
+    super.initState();
+  }
+
+  Widget _routeBuilder(BuildContext context, String route) {
     switch (route) {
       case DeliveryNavigatorRoutes.addresses:
         return AddressesPage(
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
           onFinish: widget.onFinish,
-          onAddAddress: () {
-            Navigator.of(context).push(
-              MaterialWithModalsPageRoute(
-                builder: (context) => _routeBuilder(
-                  context,
-                  DeliveryNavigatorRoutes.map,
-                ),
-                settings: RouteSettings(
-                  name: DeliveryNavigatorRoutes.map,
-                ),
-              ),
-            );
-          },
+          userAddresses: userAddresses,
+          onAddAddress: () =>
+              Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.map),
         );
 
       case DeliveryNavigatorRoutes.map:
@@ -65,25 +80,17 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
           onFinish: widget.onFinish,
-          onAddressPush: (address) {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => _routeBuilder(
-                  context,
-                  DeliveryNavigatorRoutes.recipientInfo,
-                  address: address,
-                ),
-                settings: RouteSettings(
-                  name: DeliveryNavigatorRoutes.recipientInfo,
-                ),
-              ),
-            );
+          pickUpAddress: widget.pickUpAddress,
+          onAddressPush: (newAddress) {
+            selectedAddress = newAddress;
+            Navigator.of(context)
+                .pushNamed(DeliveryNavigatorRoutes.recipientInfo);
           },
         );
 
       case DeliveryNavigatorRoutes.recipientInfo:
         return RecipientInfoPage(
-          pickpoint: address,
+          pickpoint: selectedAddress,
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
           onFinish: widget.onFinish,
@@ -104,16 +111,18 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.deliveryType.type == Delivery.PICKUP_ADDRESS)
-      return MapPage(
-        pickUpAddress: widget.pickUpAddress,
-        deliveryType: widget.deliveryType,
-        onClose: widget.onClose,
-        onFinish: widget.onFinish,
-      );
+    final initialRoute = widget.deliveryType.type == Delivery.PICKUP_ADDRESS ||
+            userAddresses.isEmpty
+        ? DeliveryNavigatorRoutes.map
+        : DeliveryNavigatorRoutes.addresses;
 
     return Navigator(
-      initialRoute: DeliveryNavigatorRoutes.addresses,
+      initialRoute: initialRoute,
+      onGenerateInitialRoutes: (navigator, initialRoute) => [
+        CupertinoPageRoute(
+          builder: (context) => _routeBuilder(context, initialRoute),
+        )
+      ],
       onGenerateRoute: (routeSettings) => CupertinoPageRoute(
         builder: (context) => _routeBuilder(context, routeSettings.name),
         settings: routeSettings,
