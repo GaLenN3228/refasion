@@ -14,10 +14,11 @@ class ApiService {
 
   static const LOG_ADDRESSES = true;
 
-  static Future<Response> findAddressesByQuery(String query) async {
+  static Future<Response> findAddressesByQuery(String query,
+      {String city}) async {
     Dio dioClient =
         await DioClient().getClient(logging: LOG_ADDRESSES || LOG_ENABLE);
-    final queryParameters = {'q': query};
+    final queryParameters = {'q': query, 'city': city};
     return dioClient.get(Url.findAddressesByQuery,
         queryParameters: queryParameters);
   }
@@ -267,7 +268,8 @@ class ApiService {
   }
 
   static Future<Response> addProducts(ProductData productData) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {
       "name": productData.description,
       "description": productData.description,
@@ -287,7 +289,7 @@ class ApiService {
 
   static Future<Response> calcProductPrice(int price) async {
     Dio dioClient =
-    await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"price": price};
     return dioClient.post(Url.calcProductPrice, data: body);
   }

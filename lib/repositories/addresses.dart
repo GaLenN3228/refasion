@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:refashioned_app/models/base.dart';
-import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/search_general_repository.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
@@ -22,9 +21,9 @@ class AddressRepository extends BaseRepository<PickPoint> {
 }
 
 class AddressesRepository extends SearchGeneralRepository<List<PickPoint>> {
-  update(String query, {City city}) => callSearchApi(query, () async {
+  update(String query, {String city}) => callSearchApi(query, () async {
         response = BaseResponse.fromJson(
-          (await ApiService.findAddressesByQuery(query)).data,
+          (await ApiService.findAddressesByQuery(query, city: city)).data,
           (contentJson) => contentJson.fold(
             List<PickPoint>(),
             (list, address) {
