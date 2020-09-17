@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
@@ -117,7 +117,7 @@ class ProductData {
 
   List<String> photos;
 
-  Address address;
+  PickPoint address;
 
   List<TakeOption> options;
 
@@ -127,7 +127,7 @@ class ProductData {
 
   updatePhotos(List<String> newPhotos) => photos = newPhotos;
 
-  updateAddress(Address newAddress) => address = newAddress;
+  updateAddress(PickPoint newAddress) => address = newAddress;
 
   updateTakeOptions(List<TakeOption> newOptions) => options = newOptions;
 
@@ -283,9 +283,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           },
         );
 
-
-        //TODO Sizes
-
+      //TODO Sizes
 
       case MarketplaceNavigatorRoutes.sellProperty:
         final sellProperty = sellProperties.elementAt(sellPropertyIndex);
@@ -373,7 +371,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
                   builder: (context) => _routeBuilder(
                       context, MarketplaceNavigatorRoutes.addresses),
                   settings:
-                  RouteSettings(name: MarketplaceNavigatorRoutes.addresses),
+                      RouteSettings(name: MarketplaceNavigatorRoutes.addresses),
                 ),
               );
             },
@@ -442,8 +440,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.takeOptions:
         return TakeOptionsPage(
-          address:
-              productData.address ?? Address(originalAddress: "Какой-то адрес"),
+          address: productData.address,
           onPush: (options) {
             productData.updateTakeOptions(options);
 

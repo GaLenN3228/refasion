@@ -131,15 +131,7 @@ class _MapPageState extends State<MapPage> {
         context: context,
         builder: (context, controller) => AddressSearchPage(
           scrollController: controller,
-          onSelect: (address) {
-            mapDataController.pickPoint = PickPoint(
-              address: address.address,
-              originalAddress: address.originalAddress,
-              latitude: address.coordinates.latitude,
-              longitude: address.coordinates.longitude,
-              city: address.city,
-            );
-          },
+          onSelect: (address) => mapDataController.pickPoint = address,
         ),
       );
 

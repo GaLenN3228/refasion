@@ -22,14 +22,18 @@ class MapsPickerPage extends StatefulWidget {
   final MapDataController mapDataController;
   final MapBottomSheetDataController mapBottomSheetDataController;
 
-  MapsPickerPage({Key key, @required this.mapDataController, @required this.mapBottomSheetDataController})
+  MapsPickerPage(
+      {Key key,
+      @required this.mapDataController,
+      @required this.mapBottomSheetDataController})
       : super(key: key);
 
   @override
   _MapsPickerPageState createState() => _MapsPickerPageState();
 }
 
-class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStateMixin {
+class _MapsPickerPageState extends State<MapsPickerPage>
+    with TickerProviderStateMixin {
   MapPage _mapPage;
 
   AnimationController _centerMarkerController;
@@ -54,20 +58,23 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         mapDataController: widget.mapDataController,
         onMarkerClick: (pickPoint) {
           _selectedPickPoint = pickPoint;
-          if (widget.mapDataController.pickUpPointsCompany != null) changeBottomSheetStateWithPickPoint();
+          if (widget.mapDataController.pickUpPointsCompany != null)
+            changeBottomSheetStateWithPickPoint();
         },
         onMapCameraListener: (mapTouchStatus, {Future<Point> point}) {
           switch (mapTouchStatus) {
             case MapCameraListenerStatus.STARTED:
-              if (widget.mapDataController.centerMarkerEnable) startCenterMarkerAnimation();
+              if (widget.mapDataController.centerMarkerEnable)
+                startCenterMarkerAnimation();
               hideBottomSheetWithHeight();
               break;
 
             case MapCameraListenerStatus.COMPLETED:
               if (widget.mapDataController.centerMarkerEnable) {
                 point.then((point) {
-                  _selectedPickPoint = PickPoint(latitude: point.latitude, longitude: point.longitude);
-                  _addressRepository.findAddressByCoordinates(point);
+                  _selectedPickPoint = PickPoint(
+                      latitude: point.latitude, longitude: point.longitude);
+                  _addressRepository.update(point);
                 });
               } else {
                 showBottomSheetWithHeight();
@@ -77,13 +84,17 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         },
         mapCameraFirstInit: () {
           if (widget.mapDataController.pickPoint != null) {
-            _mapPage.addMarker(widget.mapDataController.pickPoint).then((value) => _mapPage.moveToPoint(
-                MapPage.ZOOM_TO_POINT_VALUE,
-                Point(
-                    latitude: widget.mapDataController.pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF,
-                    longitude: widget.mapDataController.pickPoint.longitude)));
+            _mapPage.addMarker(widget.mapDataController.pickPoint).then(
+                (value) => _mapPage.moveToPoint(
+                    MapPage.ZOOM_TO_POINT_VALUE,
+                    Point(
+                        latitude: widget.mapDataController.pickPoint.latitude -
+                            MapPage.ZOOM_SELECTED_MARKER_DIFF,
+                        longitude:
+                            widget.mapDataController.pickPoint.longitude)));
           } else {
-            _mapPage.moveToPoint(MapPage.ZOOM_TO_BOUNDS_VALUE, Point(latitude: 55.7522200, longitude: 37.6155600));
+            _mapPage.moveToPoint(MapPage.ZOOM_TO_BOUNDS_VALUE,
+                Point(latitude: 55.7522200, longitude: 37.6155600));
           }
         });
 
@@ -91,8 +102,9 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
       pickPointRepository = new PickPointRepository();
       pickPointRepository.getPickPoints();
       pickPointRepository.addListener(() {
-        _mapPage.addMarkers(
-            pickPointRepository.response.content.where((element) => element.address.contains("Москва")).toList());
+        _mapPage.addMarkers(pickPointRepository.response.content
+            .where((element) => element.address.contains("Москва"))
+            .toList());
       });
     }
 
@@ -106,7 +118,8 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
     if (widget.mapDataController.pickPoint != null) {
       changeBottomSheetStateWithExternalPickPoint();
     } else {
-      widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.PREVIEW;
+      widget.mapBottomSheetDataController.setCurrentBottomSheetData =
+          MapBottomSheetDataType.PREVIEW;
     }
     widget.mapDataController.addListener(() {
       if (widget.mapDataController.pickPoint != null) {
@@ -114,7 +127,8 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         _mapPage.moveToPoint(
             MapPage.ZOOM_TO_POINT_VALUE,
             Point(
-                latitude: widget.mapDataController.pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF,
+                latitude: widget.mapDataController.pickPoint.latitude -
+                    MapPage.ZOOM_SELECTED_MARKER_DIFF,
                 longitude: widget.mapDataController.pickPoint.longitude));
       }
     });
@@ -140,15 +154,21 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
     Future.delayed(Duration(milliseconds: 100), () {
       if (_selectedPickPoint != null) {
         if (_addressRepository.isLoaded) {
-          _selectedPickPoint.address = _addressRepository.response.content.address;
-          _selectedPickPoint.originalAddress = _addressRepository.response.content.originalAddress;
+          _selectedPickPoint.address =
+              _addressRepository.response.content.address;
+          _selectedPickPoint.originalAddress =
+              _addressRepository.response.content.originalAddress;
           _selectedPickPoint.city = _addressRepository.response.content.city;
-          widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.ADDRESS;
-          widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
+          widget.mapBottomSheetDataController.setCurrentBottomSheetData =
+              MapBottomSheetDataType.ADDRESS;
+          widget.mapBottomSheetDataController.currentBottomSheetData.address =
+              _selectedPickPoint.address;
           finishCenterMarkerAnimation();
           showBottomSheetWithHeight();
-        } else if (_addressRepository.loadingFailed && _addressRepository.getStatusCode == HttpStatus.badRequest) {
-          widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.NOT_FOUND;
+        } else if (_addressRepository.loadingFailed &&
+            _addressRepository.getStatusCode == HttpStatus.badRequest) {
+          widget.mapBottomSheetDataController.setCurrentBottomSheetData =
+              MapBottomSheetDataType.NOT_FOUND;
           finishCenterMarkerAnimation();
           showBottomSheetWithHeight();
         }
@@ -161,9 +181,12 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
     //delay to await bottom sheet animation
     Future.delayed(Duration(milliseconds: 100), () {
       if (_selectedPickPoint != null) {
-        widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.ADDRESS;
-        widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
-        widget.mapBottomSheetDataController.currentBottomSheetData.type = _selectedPickPoint.type;
+        widget.mapBottomSheetDataController.setCurrentBottomSheetData =
+            MapBottomSheetDataType.ADDRESS;
+        widget.mapBottomSheetDataController.currentBottomSheetData.address =
+            _selectedPickPoint.address;
+        widget.mapBottomSheetDataController.currentBottomSheetData.type =
+            _selectedPickPoint.type;
       }
       showBottomSheetWithHeight(delay: 150);
     });
@@ -171,14 +194,17 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
 
   void changeBottomSheetStateWithExternalPickPoint() {
     _selectedPickPoint = widget.mapDataController.pickPoint;
-    widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.ADDRESS;
-    widget.mapBottomSheetDataController.currentBottomSheetData.address = _selectedPickPoint.address;
+    widget.mapBottomSheetDataController.setCurrentBottomSheetData =
+        MapBottomSheetDataType.ADDRESS;
+    widget.mapBottomSheetDataController.currentBottomSheetData.address =
+        _selectedPickPoint.address;
   }
 
   void changeBottomSheetStateWithPreview() {
     hideBottomSheetWithHeight();
     Future.delayed(Duration(milliseconds: 100), () {
-      widget.mapBottomSheetDataController.setCurrentBottomSheetData = MapBottomSheetDataType.PREVIEW;
+      widget.mapBottomSheetDataController.setCurrentBottomSheetData =
+          MapBottomSheetDataType.PREVIEW;
     });
     showBottomSheetWithHeight(delay: 150);
   }
@@ -250,7 +276,9 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
         controller: _bottomSheetController,
         headerBar: Stack(children: [
           widget.mapDataController.onSearchButtonClick != null
-              ? SearchButton(onSearchButtonClick: widget.mapDataController.onSearchButtonClick)
+              ? SearchButton(
+                  onSearchButtonClick:
+                      widget.mapDataController.onSearchButtonClick)
               : SizedBox(),
           GeolocationButton(onGeolocationButtonClick: () {
             _mapPage.showUserLocation();
@@ -260,13 +288,15 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
             create: (_) => widget.mapBottomSheetDataController,
             builder: (context, _) {
               return ChangeNotifierProvider.value(
-                  value: widget.mapBottomSheetDataController.currentBottomSheetData,
+                  value: widget
+                      .mapBottomSheetDataController.currentBottomSheetData,
                   child: MapBottomSheet(
                     bottomSheetKey: _bottomSheetKey,
                     onBottomSheetSizeChange: _onBottomSheetSizeChange,
                     onFinishButtonClick: () {
                       if (_selectedPickPoint != null) {
-                        widget.mapBottomSheetDataController.currentBottomSheetData
+                        widget
+                            .mapBottomSheetDataController.currentBottomSheetData
                             .onFinishButtonClick(_selectedPickPoint);
                       }
                     },
@@ -308,9 +338,10 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
               begin: Offset(0.0, (_centerMarkerRouteFlag) ? 0.0 : -0.03),
               end: Offset(0.0, (_centerMarkerRouteFlag) ? -0.03 : 0.0))
           .animate(_centerMarkerController);
-      _centerMarkerShadowAnimation =
-          Tween<double>(begin: (_centerMarkerRouteFlag) ? 1 : 0.3, end: (_centerMarkerRouteFlag) ? 0.3 : 1)
-              .animate(_centerMarkerController);
+      _centerMarkerShadowAnimation = Tween<double>(
+              begin: (_centerMarkerRouteFlag) ? 1 : 0.3,
+              end: (_centerMarkerRouteFlag) ? 0.3 : 1)
+          .animate(_centerMarkerController);
       _centerMarkerController.forward();
       _centerMarkerRouteFlag = !_centerMarkerRouteFlag;
     });
@@ -318,7 +349,8 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
 
   void finishCenterMarkerAnimation() {
     setState(() {
-      if (_centerMarkerAnimation != null && _centerMarkerShadowAnimation != null) {
+      if (_centerMarkerAnimation != null &&
+          _centerMarkerShadowAnimation != null) {
         var centerMarkerCurrentValue = _centerMarkerAnimation.value.dy;
         var centerMarkerShadowCurrentValue = _centerMarkerShadowAnimation.value;
 
@@ -326,11 +358,15 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
           _centerMarkerController.reset();
         }
 
-        _centerMarkerController = AnimationController(duration: Duration(milliseconds: 100), vsync: this);
-        _centerMarkerAnimation = Tween<Offset>(begin: Offset(0.0, centerMarkerCurrentValue), end: Offset(0.0, 0.0))
+        _centerMarkerController = AnimationController(
+            duration: Duration(milliseconds: 100), vsync: this);
+        _centerMarkerAnimation = Tween<Offset>(
+                begin: Offset(0.0, centerMarkerCurrentValue),
+                end: Offset(0.0, 0.0))
             .animate(_centerMarkerController);
         _centerMarkerShadowAnimation =
-            Tween<double>(begin: centerMarkerShadowCurrentValue, end: 1).animate(_centerMarkerController);
+            Tween<double>(begin: centerMarkerShadowCurrentValue, end: 1)
+                .animate(_centerMarkerController);
         _centerMarkerController.forward();
         _centerMarkerRouteFlag = true;
       }

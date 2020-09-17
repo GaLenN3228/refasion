@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/models/addresses.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/search_general_repository.dart';
 import 'package:refashioned_app/repositories/addresses.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/sliding_panel_indicator.dart';
@@ -14,7 +14,7 @@ import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/marketplace/components/address_tile.dart';
 
 class AddressSearchPage extends StatelessWidget {
-  final Function(Address) onSelect;
+  final Function(PickPoint) onSelect;
   final ScrollController scrollController;
 
   const AddressSearchPage({Key key, this.onSelect, this.scrollController})

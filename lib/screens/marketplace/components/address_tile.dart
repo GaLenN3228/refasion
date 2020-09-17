@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/addresses.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 
 class AddressTile extends StatelessWidget {
-  final Address address;
+  final PickPoint address;
   final Function() onTap;
 
   const AddressTile({this.address, this.onTap}) : assert(address != null);
