@@ -3,6 +3,7 @@ import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import '../../../models/category.dart';
 import '../../catalog/components/category_tile.dart';
+import '../../components/button/button.dart';
 
 class CategoriesList extends StatefulWidget {
   final Widget header;
@@ -75,7 +76,6 @@ class _CategoriesListState extends State<CategoriesList> {
               else if (widget.onPush != null) widget.onPush(category);
             }))
         .toList();
-
     return Column(
       children: [
         widget.appBar ?? SizedBox(),
@@ -96,7 +96,7 @@ class _CategoriesListState extends State<CategoriesList> {
                       itemBuilder: (context, index) => widgets.elementAt(index),
                       separatorBuilder: (context, index) => ItemsDivider(),
                     ),
-                    Positioned(
+                    selectedSubcategories.isNotEmpty == true ?  Positioned(
                       left: 0,
                       right: 0,
                       bottom: 0,
@@ -107,6 +107,16 @@ class _CategoriesListState extends State<CategoriesList> {
                                   widget.onUpdate(selectedSubcategories),
                             )
                           : SizedBox(),
+                    ) : Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child:widget.multiselection
+                          ?  BottomButton(
+                        enabled: false,
+                        title: "ВЫБРАТЬ",
+                        action: (){},
+                      ) : SizedBox(),
                     )
                   ],
                 ),
