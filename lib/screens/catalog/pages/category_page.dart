@@ -16,9 +16,9 @@ class CategoryPage extends StatefulWidget {
   final Category topCategory;
   final CategoryLevel level;
   final Function(Category, {dynamic callback}) onPush;
+  final Function onBrandsPush;
 
-  const CategoryPage({Key key, this.topCategory, this.onPush, this.level})
-      : super(key: key);
+  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onBrandsPush}) : super(key: key);
 
   @override
   _CategoryPageState createState() => _CategoryPageState();
@@ -34,8 +34,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
   }
 
   prepareParameters() {
-    final selectedIdList =
-        widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
+    final selectedIdList = widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
 
     if (selectedIdList.isNotEmpty && widget.level == CategoryLevel.category)
       countParameters = "?p=" + selectedIdList.join(',');
@@ -60,8 +59,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
     ProductsCountRepository productCountRepository;
     if (widget.level == CategoryLevel.category) {
       productCountRepository = context.watch<ProductsCountRepository>();
-      if (topCategoryCount == null || topCategoryCount.isEmpty)
-        topCategoryCount = productCountRepository.response?.content?.getCountText;
+      if (topCategoryCount == null || topCategoryCount.isEmpty) topCategoryCount = productCountRepository.response?.content?.getCountText;
     }
     final widgets = (widget.level == CategoryLevel.category
         ? <Widget>[
@@ -72,12 +70,15 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
                   category: widget.topCategory,
                   count: topCategoryCount,
                   onProductsClick: () {
-                    widget.onPush(widget.topCategory..children.forEach((element) {
-                      element.reset();
-                    }), callback: updateCount);
+                    widget.onPush(
+                        widget.topCategory
+                          ..children.forEach((element) {
+                            element.reset();
+                          }),
+                        callback: updateCount);
                   },
                 ),
-                CategoryBrands()
+                GestureDetector(behavior: HitTestBehavior.translucent, onTap: () => {widget.onBrandsPush()}, child: CategoryBrands())
               ],
             )
           ]

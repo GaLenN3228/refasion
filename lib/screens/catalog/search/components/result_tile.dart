@@ -35,12 +35,12 @@ class ResultTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             (splitted.length != 3)
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
+                ? Container(
+                    margin: const EdgeInsets.only(top: 14.0, bottom: 14, left: 20),
                     child: Text(searchResult.name, style: textTheme),
                   )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
+                : Container(
+                    margin: const EdgeInsets.only(top: 14.0, bottom: 14, left: 20),
                     child: RichText(
                       text: TextSpan(
                         text: splitted.elementAt(0),
@@ -55,11 +55,11 @@ class ResultTile extends StatelessWidget {
             searchResult.extraData != null &&
                 searchResult.extraData.image != null &&
                 searchResult.extraData.image.isNotEmpty ?
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
+            Container(
+              margin: const EdgeInsets.only(right: 20),
               child: SizedBox(
-                height: 30,
-                width: 50,
+                height: 40,
+                width: 60,
                 child: Image.network(
                   searchResult.extraData.image,
                   fit: BoxFit.contain,

@@ -1,43 +1,39 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
-import 'package:refashioned_app/screens/catalog/components/category_brands.dart';
+import 'package:refashioned_app/screens/catalog/components/category_brand_item.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
-import 'package:refashioned_app/screens/catalog/components/category_image.dart';
-import 'package:refashioned_app/screens/catalog/components/category_tile.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import 'package:refashioned_app/screens/products/components/category_filter_item.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
-class CategoryPage extends StatefulWidget {
+class CategoryBrandsPage extends StatefulWidget {
   final Category topCategory;
-  final Function(Category, {dynamic callback}) onPush;
+  final Function(Category, List<Brand>, {dynamic callback}) onPush;
 
-  const CategoryPage({Key key, this.topCategory, this.onPush})
-      : super(key: key);
+  const CategoryBrandsPage({Key key, this.topCategory, this.onPush}) : super(key: key);
 
   @override
-  _CategoryPageState createState() => _CategoryPageState();
+  _CategoryBrandsPageState createState() => _CategoryBrandsPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver {
+class _CategoryBrandsPageState extends State<CategoryBrandsPage> {
+  ProductsCountRepository productCountRepository;
+  CategoryBrandsRepository categoryBrandsRepository;
   String countParameters;
-  String topCategoryCount;
 
   updateCount() {
     prepareParameters();
-    Provider.of<ProductsCountRepository>(context, listen: false).getProductsCount(countParameters);
+    productCountRepository.getProductsCount(countParameters);
   }
 
   prepareParameters() {
-    final selectedIdList =
-        widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
-
-    if (selectedIdList.isNotEmpty && widget.level == CategoryLevel.category)
-      countParameters = "?p=" + selectedIdList.join(',');
-    else
-      countParameters = "?p=" + widget.topCategory.id;
+    countParameters = "?p=" + widget.topCategory.id;
+    if (categoryBrandsRepository.response != null && categoryBrandsRepository.isLoaded) {
+      countParameters += "&p=" + categoryBrandsRepository.response.content.where((brand) => brand.selected).map((brand) => brand.id).join(',');
+    }
   }
 
   clearSelectedCategories({Category category}) {
@@ -48,115 +44,100 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
 
   @override
   void initState() {
+    productCountRepository = Provider.of<ProductsCountRepository>(context, listen: false);
+    categoryBrandsRepository = Provider.of<CategoryBrandsRepository>(context, listen: false);
     prepareParameters();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    ProductsCountRepository productCountRepository;
-    if (widget.level == CategoryLevel.category) {
-      productCountRepository = context.watch<ProductsCountRepository>();
-      if (topCategoryCount == null || topCategoryCount.isEmpty)
-        topCategoryCount = productCountRepository.response?.content?.getCountText;
-    }
-    final widgets = (widget.level == CategoryLevel.category
-        ? <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CategoryImage(
-                  category: widget.topCategory,
-                  count: topCategoryCount,
-                  onProductsClick: () {
-                    widget.onPush(widget.topCategory..children.forEach((element) {
-                      element.reset();
-                    }), callback: updateCount);
-                  },
-                ),
-                CategoryBrands()
-              ],
+    return Consumer<CategoryBrandsRepository>(builder: (context, categoryBrandsRepository, child) {
+      if (categoryBrandsRepository.isLoading && categoryBrandsRepository.response == null)
+        return Center(
+          child: CircularProgressIndicator(
+            backgroundColor: accentColor,
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+          ),
+        );
+
+      if (categoryBrandsRepository.loadingFailed)
+        return Center(
+          child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+        );
+
+      var brands = categoryBrandsRepository.response.content;
+
+      final widgets = List<Widget>()
+        ..addAll(brands
+            .map(
+              (brand) => CategoryBrandItem(
+                brand: brand,
+                onSelect: (id) {
+                  setState(() {
+                    categoryBrandsRepository.update(brand.id);
+                    updateCount();
+                  });
+                },
+              ),
             )
-          ]
-        : List<Widget>())
-      ..addAll((widget.level == CategoryLevel.category)
-          ? widget.topCategory.children
-              .map(
-                (category) => CategoryFilterItem(
-                  category: category,
-                  onSelect: (id) {
-                    setState(() {
-                      widget.topCategory.updateChild(category.id);
-                      updateCount();
-                    });
-                  },
-                ),
-              )
-              .toList()
-          : widget.topCategory.children
-              .map(
-                (category) => CategoryTile(
-                  category: category,
-                  onPush: () {
-                    widget.topCategory.updateChild(category.id);
-                    widget.onPush(category, callback: clearSelectedCategories);
-                  },
-                ),
-              )
-              .toList());
+            .toList());
 
-    return Material(
-      color: Colors.white,
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                ListView.separated(
-                  padding: EdgeInsets.only(bottom: 99.0 + 55.0),
-                  itemCount: widgets.length,
-                  itemBuilder: (context, index) {
-                    return widgets.elementAt(index);
-                  },
-                  separatorBuilder: (context, index) {
-                    return ItemsDivider();
-                  },
-                ),
-                Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Builder(
-                          builder: (context) {
-                            String title = "";
-                            String subtitle = "";
+      return Material(
+        color: Colors.white,
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  ListView.separated(
+                    padding: EdgeInsets.only(bottom: 99.0 + 55.0),
+                    itemCount: widgets.length,
+                    itemBuilder: (context, index) {
+                      return widgets.elementAt(index);
+                    },
+                    separatorBuilder: (context, index) {
+                      return ItemsDivider();
+                    },
+                  ),
+                  Consumer<ProductsCountRepository>(builder: (context, productsCountRepository, child) {
+                    return Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Builder(
+                        builder: (context) {
+                          String title = "";
+                          String subtitle = "";
 
-                            if (productCountRepository.isLoading) {
-                              title = "ПОДОЖДИТЕ";
-                              subtitle = "Обновление товаров...";
-                            } else if (productCountRepository.loadingFailed) {
-                              title = "ОШИБКА";
-                              subtitle = "Мы уже работаем над её исправлением";
-                            } else {
-                              title = "ПОКАЗАТЬ";
-                              subtitle = productCountRepository.response.content.getCountText;
-                            }
-                            return BottomButton(
-                              action: () {
-                                widget.onPush(widget.topCategory, callback: updateCount);
-                              },
-                              title: title,
-                              subtitle: subtitle,
-                              bottomPadding: MediaQuery.of(context).padding.bottom + 70,
-                            );
-                          },
-                        ),
-                      )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+                          if (productCountRepository.isLoading) {
+                            title = "ПОДОЖДИТЕ";
+                            subtitle = "Обновление товаров...";
+                          } else if (productCountRepository.loadingFailed) {
+                            title = "ОШИБКА";
+                            subtitle = "Мы уже работаем над её исправлением";
+                          } else {
+                            title = "ПОКАЗАТЬ";
+                            subtitle = productCountRepository.response.content.getCountText;
+                          }
+                          return BottomButton(
+                            action: () {
+                              widget.onPush(widget.topCategory, categoryBrandsRepository.response.content, callback: updateCount);
+                            },
+                            title: title,
+                            subtitle: subtitle,
+                            bottomPadding: MediaQuery.of(context).padding.bottom + 70,
+                          );
+                        },
+                      ),
+                    );
+                  })
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 }

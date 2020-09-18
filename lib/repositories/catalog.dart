@@ -22,6 +22,10 @@ class ProductsCountRepository extends BaseRepository<ProductsCount> {
 }
 
 class CategoryBrandsRepository extends BaseRepository<List<Brand>> {
+  update(String id) {
+    response.content.firstWhere((brand) => brand.id == id).update();
+  }
+
   Future<void> getBrands(String id) => apiCall(() async {
         response = BaseResponse.fromJson((await ApiService.getCategoryBrands(id)).data,
             (contentJson) => [for (final brand in contentJson) Brand.fromJson(brand)]);
