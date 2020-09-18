@@ -79,7 +79,7 @@ class ApiService {
 
   //CITIES
 
-  static const LOG_CITIES = true;
+  static const LOG_CITIES = false;
 
   static Future<Response> getCities() async {
     Dio dioClient =
@@ -103,10 +103,26 @@ class ApiService {
 
   static const LOG_ORDERS = true;
 
-  static makeOrder(String orderParameters) async {
+  static createOrder(String orderParameters) async {
     Dio dioClient = await DioClient()
         .getClient(manageCookies: true, logging: LOG_ORDERS || LOG_ENABLE);
     return dioClient.post(Url.orders, data: orderParameters);
+  }
+
+  static getOrder(String id) async {
+    Dio dioClient = await DioClient()
+        .getClient(manageCookies: true, logging: LOG_ORDERS || LOG_ENABLE);
+
+    final path = id + "/";
+    return dioClient.get(Url.orders + path);
+  }
+
+  static updateOrder(String id, String orderData) async {
+    Dio dioClient = await DioClient()
+        .getClient(manageCookies: true, logging: LOG_ORDERS || LOG_ENABLE);
+
+    final path = id + "/";
+    return dioClient.post(Url.orders + path, data: orderData);
   }
 
   //USER ADDRESSES

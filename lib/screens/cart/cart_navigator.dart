@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,18 +49,24 @@ class CartNavigator extends StatefulWidget {
 }
 
 class _CartNavigatorState extends State<CartNavigator> {
-  OrdersRepository ordersRepository;
+  CreateOrderRepository createOrderRepository;
+
+  GetOrderRepository getOrderRepository;
 
   @override
   initState() {
-    ordersRepository = OrdersRepository();
+    createOrderRepository = CreateOrderRepository();
+
+    getOrderRepository = GetOrderRepository();
 
     super.initState();
   }
 
   @override
   dispose() {
-    ordersRepository.dispose();
+    createOrderRepository.dispose();
+
+    getOrderRepository.dispose();
 
     super.dispose();
   }
@@ -102,24 +110,25 @@ class _CartNavigatorState extends State<CartNavigator> {
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
             onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
-              final parameters = Order(
-                items: [
-                  OrderItem(
-                    deliveryCompany: deliveryCompanyId,
-                    deliveryObjectId: deliveryObjectId,
-                    products: [product.id],
-                  ),
-                ],
-              ).getParameters();
+              final parameters = jsonEncode([
+                OrderItem(
+                  deliveryCompany: deliveryCompanyId,
+                  deliveryObjectId: deliveryObjectId,
+                  products: [product.id],
+                ),
+              ]);
 
-              await ordersRepository.update(parameters);
+              await createOrderRepository.update(parameters);
+
+              final orderId = createOrderRepository.response?.content?.id;
+
+              await getOrderRepository.update(orderId);
 
               return Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => _routeBuilder(
                     context,
                     CartNavigatorRoutes.checkout,
-                    order: ordersRepository.response?.content,
                   ),
                 ),
               );

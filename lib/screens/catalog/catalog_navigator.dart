@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -87,13 +89,17 @@ class CatalogNavigator extends StatefulWidget {
 }
 
 class _CatalogNavigatorState extends State<CatalogNavigator> {
-  OrdersRepository ordersRepository;
+  CreateOrderRepository createOrderRepository;
+
+  GetOrderRepository getOrderRepository;
 
   TopPanelController topPanelController;
 
   @override
   initState() {
-    ordersRepository = OrdersRepository();
+    createOrderRepository = CreateOrderRepository();
+
+    getOrderRepository = GetOrderRepository();
 
     topPanelController =
         Provider.of<TopPanelController>(context, listen: false);
@@ -102,7 +108,9 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
 
   @override
   dispose() {
-    ordersRepository.dispose();
+    createOrderRepository.dispose();
+
+    getOrderRepository.dispose();
 
     super.dispose();
   }
@@ -263,24 +271,26 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                 .then((value) => topPanelController.needShow = false),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
             onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
-              final parameters = Order(
-                items: [
-                  OrderItem(
-                    deliveryCompany: deliveryCompanyId,
-                    deliveryObjectId: deliveryObjectId,
-                    products: [product.id],
-                  ),
-                ],
-              ).getParameters();
+              final parameters = jsonEncode([
+                OrderItem(
+                  deliveryCompany: deliveryCompanyId,
+                  deliveryObjectId: deliveryObjectId,
+                  products: [product.id],
+                ),
+              ]);
 
-              await ordersRepository.update(parameters);
+              await createOrderRepository.update(parameters);
+
+              final orderId = createOrderRepository.response?.content?.id;
+
+              await getOrderRepository.update(orderId);
 
               Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => _routeBuilder(
                     context,
                     CatalogNavigatorRoutes.checkout,
-                    order: ordersRepository.response?.content,
+                    order: createOrderRepository.response?.content,
                   ),
                 ),
               );
