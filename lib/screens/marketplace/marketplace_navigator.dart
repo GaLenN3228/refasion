@@ -215,18 +215,34 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.category:
         return CategoryPage(
-          topCategory: category,
-          onClose: widget.onClose,
-          onPush: (category) => Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) => _routeBuilder(
-                  context, MarketplaceNavigatorRoutes.subCategory,
-                  category: category),
-              settings:
-                  RouteSettings(name: MarketplaceNavigatorRoutes.subCategory),
-            ),
-          ),
-        );
+            topCategory: category,
+            onClose: widget.onClose,
+            onPush: (pushedCategory) {
+              if (pushedCategory.children.isNotEmpty) {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => _routeBuilder(
+                        context, MarketplaceNavigatorRoutes.subCategory,
+                        category: pushedCategory),
+                    settings: RouteSettings(
+                        name: MarketplaceNavigatorRoutes.subCategory),
+                  ),
+                );
+              } else {
+                sellPropertiesRepository = SellPropertiesRepository();
+                sellPropertiesRepository.getProperties(category.id);
+
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => _routeBuilder(
+                        context, MarketplaceNavigatorRoutes.photos,
+                        categories: categories),
+                    settings:
+                        RouteSettings(name: MarketplaceNavigatorRoutes.photos),
+                  ),
+                );
+              }
+            });
 
       case MarketplaceNavigatorRoutes.subCategory:
         return SubcategoryPage(

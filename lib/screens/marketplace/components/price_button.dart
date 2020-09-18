@@ -25,7 +25,7 @@ class PriceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final price = prices != null ? prices[type] ?? 0 : 0;
+    final price = prices != null && prices[type] != null ? (prices[type] != 0.0 ? prices[type] : 0) : 0;
     final enabled = price != 0;
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
