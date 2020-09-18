@@ -54,7 +54,7 @@ class UserAddressTile extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        userAddress.address.originalAddress,
+                        userAddress.address?.originalAddress ?? "Нет адреса",
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     ),
