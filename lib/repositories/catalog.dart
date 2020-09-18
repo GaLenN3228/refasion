@@ -30,4 +30,15 @@ class CategoryBrandsRepository extends BaseRepository<List<Brand>> {
         response = BaseResponse.fromJson((await ApiService.getCategoryBrands(id)).data,
             (contentJson) => [for (final brand in contentJson) Brand.fromJson(brand)]);
       });
+
+  String getRequestParameters() {
+    String requestParameters = "";
+    if (response.content.any((brand) => brand.selected))
+      requestParameters = "&p=" +
+          response.content
+              .where((filter) => filter.selected)
+              .map((filter) => filter.id)
+              .join(',');
+    return requestParameters;
+  }
 }

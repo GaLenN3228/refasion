@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
@@ -51,7 +52,8 @@ class CatalogNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) => _catalogNavigatorState._routeBuilder(context, CatalogNavigatorRoutes.favourites),
+            builder: (context) =>
+                _catalogNavigatorState._routeBuilder(context, CatalogNavigatorRoutes.favourites),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -62,7 +64,9 @@ class CatalogNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) => _catalogNavigatorState._routeBuilder(context, CatalogNavigatorRoutes.products, searchResult: searchResult),
+            builder: (context) => _catalogNavigatorState._routeBuilder(
+                context, CatalogNavigatorRoutes.products,
+                searchResult: searchResult),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -115,6 +119,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
     String productTitle,
     Order order,
     SearchResult searchResult,
+    List<Brand> brands,
   }) {
     switch (route) {
       case CatalogNavigatorRoutes.root:
@@ -122,7 +127,9 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         return CatalogRootPage(
           categories: categories,
           onPush: (category) {
-            final newRoute = category.children.isNotEmpty ? CatalogNavigatorRoutes.categories : CatalogNavigatorRoutes.category;
+            final newRoute = category.children.isNotEmpty
+                ? CatalogNavigatorRoutes.categories
+                : CatalogNavigatorRoutes.category;
 
             return Navigator.of(context)
                 .push(
@@ -135,7 +142,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           onFavouritesClick: () => Navigator.of(context)
               .push(
                 MaterialWithModalsPageRoute(
-                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.favourites, category: category, parameters: parameters),
+                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                      category: category, parameters: parameters),
                 ),
               )
               .then((value) => topPanelController.needShow = true),
@@ -147,7 +155,9 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           topCategory: category,
           level: CategoryLevel.categories,
           onPush: (category, {callback}) {
-            final newRoute = category.children.isNotEmpty ? CatalogNavigatorRoutes.category : CatalogNavigatorRoutes.products;
+            final newRoute = category.children.isNotEmpty
+                ? CatalogNavigatorRoutes.category
+                : CatalogNavigatorRoutes.products;
 
             return Navigator.of(context)
                 .push(
@@ -171,7 +181,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             onPush: (_, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
+                builder: (context) =>
+                    _routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
                 settings: RouteSettings(name: CatalogNavigatorRoutes.products),
               ),
             )
@@ -181,7 +192,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             onBrandsPush: () {
               Navigator.of(context).push(
                 CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.brands, category: category),
+                  builder: (context) =>
+                      _routeBuilder(context, CatalogNavigatorRoutes.brands, category: category),
                   settings: RouteSettings(name: CatalogNavigatorRoutes.brands),
                 ),
               );
@@ -193,8 +205,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         topPanelController.needShowBack = true;
         return MultiProvider(
             providers: [
-              ChangeNotifierProvider<ProductsCountRepository>(create: (_) => ProductsCountRepository()..getProductsCount("?p=" + category.id)),
-              ChangeNotifierProvider<CategoryBrandsRepository>(create: (_) => CategoryBrandsRepository()..getBrands(category.id))
+              ChangeNotifierProvider<ProductsCountRepository>(
+                  create: (_) => ProductsCountRepository()..getProductsCount("?p=" + category.id)),
             ],
             builder: (context, _) {
               return CategoryBrandsPage(
@@ -202,7 +214,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                 onPush: (_, brands, {callback}) => Navigator.of(context)
                     .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
+                    builder: (context) =>
+                        _routeBuilder(context, CatalogNavigatorRoutes.products, category: category, brands: brands),
                     settings: RouteSettings(name: CatalogNavigatorRoutes.products),
                   ),
                 )
@@ -226,7 +239,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             onPush: (product, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                    product: product, category: category),
               ),
             )
                 .then(
@@ -249,20 +263,25 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             onProductPush: (product) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                        product: product, category: category),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
             onSellerPush: (seller) => Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
+                builder: (context) =>
+                    _routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
               ),
             ),
             onSubCategoryClick: (parameters, title) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
                     builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
-                        product: product, category: category, parameters: parameters, productTitle: title),
+                        product: product,
+                        category: category,
+                        parameters: parameters,
+                        productTitle: title),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
@@ -300,7 +319,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           onProductPush: (product) => Navigator.of(context)
               .push(
                 CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                      product: product, category: category),
                 ),
               )
               .then((value) => topPanelController.needShow = true),
@@ -310,15 +330,18 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         topPanelController.needShow = false;
         return MultiProvider(
             providers: [
-              ChangeNotifierProvider<FavouritesProductsRepository>(create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+              ChangeNotifierProvider<FavouritesProductsRepository>(
+                  create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
+              ChangeNotifierProvider<AddRemoveFavouriteRepository>(
+                  create: (_) => AddRemoveFavouriteRepository())
             ],
             builder: (context, _) {
               return FavouritesPage(onPush: (product) {
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(
-                        builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product, product: product, category: category),
+                        builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                            product: product, category: category),
                       ),
                     )
                     .then((value) => topPanelController.needShow = false);
@@ -365,7 +388,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
       initialRoute: CatalogNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
-          builder: (context) => _routeBuilder(context, routeSettings.name, categories: catalogRepository.response.content),
+          builder: (context) => _routeBuilder(context, routeSettings.name,
+              categories: catalogRepository.response.content),
         );
       },
     );

@@ -30,6 +30,8 @@ class RefashionApp extends StatelessWidget {
           ChangeNotifierProvider<CatalogRepository>(
             create: (_) => CatalogRepository()..getCatalog(),
           ),
+          ChangeNotifierProvider<CategoryBrandsRepository>(
+              create: (_) => CategoryBrandsRepository()),
           ChangeNotifierProvider<CitiesRepository>(
             create: (_) => CitiesRepository(),
           ),
@@ -55,8 +57,7 @@ class RefashionApp extends StatelessWidget {
 
 ThemeData _materialTheme() {
   return ThemeData(
-      bottomSheetTheme:
-          BottomSheetThemeData(backgroundColor: Colors.transparent),
+      bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
       textTheme: TextTheme(
         headline1: TextStyle(
             fontSize: 16,

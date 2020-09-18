@@ -31,8 +31,14 @@ class _CategoryBrandsPageState extends State<CategoryBrandsPage> {
 
   prepareParameters() {
     countParameters = "?p=" + widget.topCategory.id;
-    if (categoryBrandsRepository.response != null && categoryBrandsRepository.isLoaded) {
-      countParameters += "&p=" + categoryBrandsRepository.response.content.where((brand) => brand.selected).map((brand) => brand.id).join(',');
+    if (categoryBrandsRepository.response != null &&
+        categoryBrandsRepository.isLoaded &&
+        categoryBrandsRepository.response.content.where((element) => element.selected).isNotEmpty) {
+      countParameters += "&p=" +
+          categoryBrandsRepository.response.content
+              .where((brand) => brand.selected)
+              .map((brand) => brand.id)
+              .join(',');
     }
   }
 
@@ -46,12 +52,14 @@ class _CategoryBrandsPageState extends State<CategoryBrandsPage> {
   void initState() {
     productCountRepository = Provider.of<ProductsCountRepository>(context, listen: false);
     categoryBrandsRepository = Provider.of<CategoryBrandsRepository>(context, listen: false);
+    categoryBrandsRepository.getBrands(widget.topCategory.id);
     prepareParameters();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return Consumer<CategoryBrandsRepository>(builder: (context, categoryBrandsRepository, child) {
       if (categoryBrandsRepository.isLoading && categoryBrandsRepository.response == null)
         return Center(
@@ -85,56 +93,63 @@ class _CategoryBrandsPageState extends State<CategoryBrandsPage> {
 
       return Material(
         color: Colors.white,
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  ListView.separated(
-                    padding: EdgeInsets.only(bottom: 99.0 + 55.0),
-                    itemCount: widgets.length,
-                    itemBuilder: (context, index) {
-                      return widgets.elementAt(index);
-                    },
-                    separatorBuilder: (context, index) {
-                      return ItemsDivider();
-                    },
-                  ),
-                  Consumer<ProductsCountRepository>(builder: (context, productsCountRepository, child) {
-                    return Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Builder(
-                        builder: (context) {
-                          String title = "";
-                          String subtitle = "";
-
-                          if (productCountRepository.isLoading) {
-                            title = "ПОДОЖДИТЕ";
-                            subtitle = "Обновление товаров...";
-                          } else if (productCountRepository.loadingFailed) {
-                            title = "ОШИБКА";
-                            subtitle = "Мы уже работаем над её исправлением";
-                          } else {
-                            title = "ПОКАЗАТЬ";
-                            subtitle = productCountRepository.response.content.getCountText;
-                          }
-                          return BottomButton(
-                            action: () {
-                              widget.onPush(widget.topCategory, categoryBrandsRepository.response.content, callback: updateCount);
-                            },
-                            title: title,
-                            subtitle: subtitle,
-                            bottomPadding: MediaQuery.of(context).padding.bottom + 70,
-                          );
-                        },
-                      ),
-                    );
-                  })
-                ],
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 24, 26, 0),
+              child: Text(
+                widget.topCategory.name.toUpperCase(),
+                style: textTheme.headline1,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            )
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 50),
+              child: ListView.separated(
+                padding: EdgeInsets.only(bottom: 99.0 + 55.0),
+                itemCount: widgets.length,
+                itemBuilder: (context, index) {
+                  return widgets.elementAt(index);
+                },
+                separatorBuilder: (context, index) {
+                  return ItemsDivider();
+                },
+              ),
+            ),
+            Consumer<ProductsCountRepository>(builder: (context, productsCountRepository, child) {
+              return Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Builder(
+                  builder: (context) {
+                    String title = "";
+                    String subtitle = "";
+
+                    if (productCountRepository.isLoading) {
+                      title = "ПОДОЖДИТЕ";
+                      subtitle = "Обновление товаров...";
+                    } else if (productCountRepository.loadingFailed) {
+                      title = "ОШИБКА";
+                      subtitle = "Мы уже работаем над её исправлением";
+                    } else {
+                      title = "ПОКАЗАТЬ";
+                      subtitle = productCountRepository.response.content.getCountText;
+                    }
+                    return BottomButton(
+                      action: () {
+                        widget.onPush(widget.topCategory, categoryBrandsRepository.response.content,
+                            callback: updateCount);
+                      },
+                      title: title,
+                      subtitle: subtitle,
+                      bottomPadding: MediaQuery.of(context).padding.bottom + 70,
+                    );
+                  },
+                ),
+              );
+            })
           ],
         ),
       );

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
+import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/quick_filters.dart';
@@ -23,12 +24,7 @@ class ProductsPage extends StatefulWidget {
   final String title;
 
   const ProductsPage(
-      {Key key,
-      this.onPush,
-      this.topCategory,
-      this.searchResult,
-      this.parameters,
-      this.title});
+      {Key key, this.onPush, this.topCategory, this.searchResult, this.parameters, this.title});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -37,6 +33,7 @@ class ProductsPage extends StatefulWidget {
 class _ProductsPageState extends State<ProductsPage> {
   FiltersRepository filtersRepository;
   SortMethodsRepository sortMethodsRepository;
+  CategoryBrandsRepository categoryBrandsRepository;
 
   String initialParameters;
 
@@ -44,6 +41,8 @@ class _ProductsPageState extends State<ProductsPage> {
   void initState() {
     filtersRepository = FiltersRepository();
     sortMethodsRepository = SortMethodsRepository();
+
+    categoryBrandsRepository = Provider.of<CategoryBrandsRepository>(context, listen: false);
 
     filtersRepository.addListener(repositoryListener);
     sortMethodsRepository.addListener(repositoryListener);
@@ -55,6 +54,9 @@ class _ProductsPageState extends State<ProductsPage> {
       initialParameters = "?p=" + widget.searchResult.id;
     } else if (widget.parameters != null) {
       initialParameters = widget.parameters;
+    } else if (categoryBrandsRepository.isLoaded){
+      initialParameters = widget.topCategory.getRequestParameters();
+      initialParameters += categoryBrandsRepository.getRequestParameters();
     } else {
       initialParameters = widget.topCategory.getRequestParameters();
     }
@@ -83,11 +85,13 @@ class _ProductsPageState extends State<ProductsPage> {
             .fold("", (parameters, filter) => parameters + filter.getRequestParameters())
         : "";
 
-    final sortParameters = sortMethodsRepository.isLoaded && sortMethodsRepository.getStatusCode == 200
-        ? sortMethodsRepository.response.content.getRequestParameters()
-        : "";
+    final sortParameters =
+        sortMethodsRepository.isLoaded && sortMethodsRepository.getStatusCode == 200
+            ? sortMethodsRepository.response.content.getRequestParameters()
+            : "";
 
-    String newParameters = initialParameters + filtersParameters + sortParameters + quickFiltersParameters;
+    String newParameters =
+        initialParameters + filtersParameters + sortParameters + quickFiltersParameters;
 
     Provider.of<ProductsRepository>(context, listen: false).getProducts(newParameters);
   }
