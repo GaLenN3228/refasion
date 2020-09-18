@@ -291,4 +291,9 @@ class ApiService {
     var body = {"price": price};
     return dioClient.post(Url.calcProductPrice, data: body);
   }
+
+  static Future<Response> getCategoryBrands(String id) async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    return dioClient.get(Url.categoryBrands(id));
+  }
 }

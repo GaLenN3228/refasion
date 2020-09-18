@@ -30,6 +30,7 @@ class Url {
 
   //Categories
   static const categories = '$refashionedBaseUrl/catalog/categories/';
+  static String categoryBrands(id) => '$categories' + id + '/brands/';
 
   //Products
   static const products = '$refashionedBaseUrl/catalog/products/';
