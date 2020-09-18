@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
-import 'package:refashioned_app/screens/components/multi_selection_dialog/dialog_item.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class Dialog extends StatefulWidget {

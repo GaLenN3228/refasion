@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import 'package:refashioned_app/screens/components/multi_selection_dialog/dialog_item.dart';
+import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
-import 'package:refashioned_app/screens/components/multi_selection_dialog/dialog.dart' as MultiSelectionDialog;
+import 'package:refashioned_app/screens/components/custom_dialog/dialog.dart' as CustomDialog;
 import 'package:refashioned_app/screens/marketplace/components/add_photo_description_item.dart';
 import 'package:refashioned_app/screens/marketplace/components/add_photo_item.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
@@ -36,7 +36,7 @@ class _PhotosPageState extends State<PhotosPage> {
         context: context,
         builder: (dialogContext) {
           this.dialogContext = dialogContext;
-          return MultiSelectionDialog.Dialog(
+          return CustomDialog.Dialog(
             dialogContent: [
               DialogItemContent("Сделать фото", () => openCamera(index), DialogItemType.item, icon: IconAsset.camera),
               DialogItemContent("Выбрать из галереи", () => openGallery(index), DialogItemType.item,
