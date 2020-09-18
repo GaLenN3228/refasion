@@ -16,6 +16,7 @@ class SettingPage extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Material(
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
