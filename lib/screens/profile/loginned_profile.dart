@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
@@ -212,7 +213,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                 width: 180,
                 borderRadius: 5,
                 onClick: () {
-                  Navigator.of(context).push(
+                  Navigator.of(context, rootNavigator: true).push(
                     CupertinoPageRoute(
                       builder: (context) => MarketplaceNavigator(
                         onClose: Navigator.of(context).pop,

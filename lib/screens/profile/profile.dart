@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: double.infinity,
                   borderRadius: 5,
                   onClick: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhonePage()));
+                    Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => PhonePage()));
                   },
                 ),
               ),
