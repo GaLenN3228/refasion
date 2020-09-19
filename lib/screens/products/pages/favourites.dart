@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -80,6 +81,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                 ),
                 controller: _refreshController,
                 onRefresh: () async {
+                  HapticFeedback.heavyImpact();
                   await favouritesProductsRepository.getFavouritesProducts();
                   _refreshController.refreshCompleted();
                 },
