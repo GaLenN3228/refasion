@@ -31,8 +31,9 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
     phoneIsEmpty = false;
     textEditingController = TextEditingController();
     maskFormatter =
-        new MaskTextInputFormatter(mask: '+7 ### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
+        new MaskTextInputFormatter(mask: '### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
     textEditingController.addListener(textControllerListener);
+    textEditingController.selection = TextSelection.fromPosition(TextPosition(offset: textEditingController.text.length));
 
     super.initState();
     WidgetsBinding.instance.addObserver(this);
@@ -100,30 +101,35 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                   style: textTheme.caption,
                 ),
               ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("+7 ", style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20)),
+                  IntrinsicWidth(child: TextField(
+                    inputFormatters: [maskFormatter],
+                    textAlign: TextAlign.start,
+                    controller: textEditingController,
+                    keyboardType: TextInputType.phone,
+                    autofocus: true,
+                    style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
+                    cursorWidth: 2.0,
+                    cursorRadius: Radius.circular(2.0),
+                    cursorColor: Color(0xFFE6E6E6),
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        hintText: "Введите номер",
+                        hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
+                  ),),
+                ],
+              ),
               Container(
+                color: Color(0xFFFAD24E),
+                width: double.infinity,
+                height: 2,
                 alignment: Alignment.center,
-                margin: const EdgeInsets.only(top: 28.0, left: 20, right: 20),
-                child: TextField(
-                  autofocus: true,
-                  inputFormatters: [maskFormatter],
-                  textAlign: TextAlign.center,
-                  controller: textEditingController,
-                  keyboardType: TextInputType.phone,
-                  style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
-                  cursorWidth: 2.0,
-                  cursorRadius: Radius.circular(2.0),
-                  cursorColor: Color(0xFFE6E6E6),
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(bottom: 10),
-                      border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                      hintText: "Введите номер",
-                      hintStyle: Theme.of(context).textTheme.subtitle1.copyWith(fontSize: 20)),
-                ),
+                margin: const EdgeInsets.only(left: 20, right: 20),
               ),
               Container(
                   alignment: Alignment.center,
