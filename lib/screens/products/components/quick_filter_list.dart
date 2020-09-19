@@ -19,53 +19,52 @@ class QuickFilterList extends StatefulWidget {
 }
 
 class _QuickFilterListState extends State<QuickFilterList> {
-  QuickFiltersRepository quickFiltersRepository;
-
   @override
   void initState() {
-    quickFiltersRepository = Provider.of<QuickFiltersRepository>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return quickFiltersRepository.isLoaded
-        ? SizedBox(
-            height: widget.horizontalHeight,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.topCategory != null && widget.topCategory.children != null
-                  ? quickFiltersRepository.response.content.length + 1
-                  : quickFiltersRepository.response.content.length,
-              padding: widget.padding ?? EdgeInsets.zero,
-              itemBuilder: (context, index) {
-                return QuickFilterItem(
-                    topCategory: widget.topCategory,
-                    isNavigationButton:
-                        widget.topCategory != null && widget.topCategory.children != null
-                            ? index == 0
-                            : false,
-                    horizontalHeight: widget.horizontalHeight,
-                    filterValue: widget.topCategory != null && widget.topCategory.children != null
-                        ? ((index > 0)
-                            ? quickFiltersRepository.response.content.elementAt(index - 1)
-                            : null)
-                        : quickFiltersRepository.response.content.elementAt(index),
-                    onSelect: (urlParameter, prices) {
-                      setState(() {
-                        quickFiltersRepository.update(id: urlParameter, price: prices);
-                      });
-                      widget.updateProducts();
-                    },
-                    updateProducts: widget.updateProducts);
-              },
-              separatorBuilder: (context, index) {
-                return SizedBox(
-                  width: 5,
-                );
-              },
-            ),
-          )
-        : SizedBox();
+    return Consumer<QuickFiltersRepository>(builder: (context, quickFiltersRepository, child) {
+      return quickFiltersRepository.isLoaded
+          ? SizedBox(
+              height: widget.horizontalHeight,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.topCategory != null && widget.topCategory.children != null
+                    ? quickFiltersRepository.response.content.length + 1
+                    : quickFiltersRepository.response.content.length,
+                padding: widget.padding ?? EdgeInsets.zero,
+                itemBuilder: (context, index) {
+                  return QuickFilterItem(
+                      topCategory: widget.topCategory,
+                      isNavigationButton:
+                          widget.topCategory != null && widget.topCategory.children != null
+                              ? index == 0
+                              : false,
+                      horizontalHeight: widget.horizontalHeight,
+                      filterValue: widget.topCategory != null && widget.topCategory.children != null
+                          ? ((index > 0)
+                              ? quickFiltersRepository.response.content.elementAt(index - 1)
+                              : null)
+                          : quickFiltersRepository.response.content.elementAt(index),
+                      onSelect: (urlParameter, prices) {
+                        setState(() {
+                          quickFiltersRepository.update(id: urlParameter, price: prices);
+                        });
+                        widget.updateProducts();
+                      },
+                      updateProducts: widget.updateProducts);
+                },
+                separatorBuilder: (context, index) {
+                  return SizedBox(
+                    width: 5,
+                  );
+                },
+              ),
+            )
+          : SizedBox();
+    });
   }
 }
