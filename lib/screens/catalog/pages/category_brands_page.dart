@@ -144,7 +144,7 @@ class _CategoryBrandsPageState extends State<CategoryBrandsPage> {
                         return BottomButton(
                           action: () {
                             widget.onPush(
-                                widget.topCategory, categoryBrandsRepository.response.content,
+                                widget.topCategory..children.forEach((element) {element.selected = false;}), categoryBrandsRepository.response.content,
                                 callback: updateCount);
                           },
                           title: title,

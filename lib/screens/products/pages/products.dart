@@ -128,7 +128,16 @@ class _ProductsPageState extends State<ProductsPage> {
             element.selected = false;
         });
     });
-    quickFiltersRepository.finishLoading();
+
+    quickFiltersRepository.response.content.forEach((element) {
+        if (element.values.price != null && element.selected){
+
+        }
+    });
+
+    Future.delayed(Duration.zero, () {
+      quickFiltersRepository.finishLoading();
+    });
   }
 
   @override
@@ -157,6 +166,9 @@ class _ProductsPageState extends State<ProductsPage> {
                     0,
                     QuickFilter(
                         name: brand.name, selected: true, values: QuickFilterValue(id: brand.id)));
+            });
+            Future.delayed(Duration.zero, () {
+              quickFiltersRepository.finishLoading();
             });
           }
           return (filtersRepository.isLoaded && sortMethodsRepository.isLoaded)
