@@ -16,7 +16,7 @@ class AuthorizationSheet extends StatelessWidget {
       this.onPush,
       this.onAuthorizationCancel,
       this.onAuthorizationDone,
-      this.needDismiss})
+      this.needDismiss = true})
       : super(key: key);
 
   @override

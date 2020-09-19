@@ -77,11 +77,28 @@ class TabView extends StatelessWidget {
         break;
 
       case BottomTab.cart:
-        content = CartNavigator(
+        var cartNavigator = CartNavigator(
           navigatorKey: navigatorKeys[tab],
           changeTabTo: changeTabTo,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
         );
+        content = MultiProvider(
+            providers: [
+              ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
+              ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
+            ],
+            child: SearchWrapper(
+              content: cartNavigator,
+              onBackPressed: () {
+                navigatorKeys[tab].currentState.pop();
+              },
+              onFavouritesClick: () {
+                cartNavigator.pushFavourites(navigatorKeys[tab].currentContext);
+              },
+              onSearchResultClick: (searchResult) {
+                cartNavigator.pushProducts(navigatorKeys[tab].currentContext, searchResult);
+              },
+            ));
         break;
 
       case BottomTab.home:
