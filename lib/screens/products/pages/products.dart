@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/models/quick_filter.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/filters.dart';
@@ -34,6 +35,7 @@ class _ProductsPageState extends State<ProductsPage> {
   FiltersRepository filtersRepository;
   SortMethodsRepository sortMethodsRepository;
   CategoryBrandsRepository categoryBrandsRepository;
+  QuickFiltersRepository quickFiltersRepository;
 
   String initialParameters;
 
@@ -54,7 +56,7 @@ class _ProductsPageState extends State<ProductsPage> {
       initialParameters = "?p=" + widget.searchResult.id;
     } else if (widget.parameters != null) {
       initialParameters = widget.parameters;
-    } else if (categoryBrandsRepository.isLoaded){
+    } else if (categoryBrandsRepository.isLoaded) {
       initialParameters = widget.topCategory.getRequestParameters();
       initialParameters += categoryBrandsRepository.getRequestParameters();
     } else {
@@ -107,6 +109,19 @@ class _ProductsPageState extends State<ProductsPage> {
           ChangeNotifierProvider(create: (_) => QuickFiltersRepository()..getQuickFilters())
         ],
         builder: (context, _) {
+          quickFiltersRepository = Provider.of<QuickFiltersRepository>(context, listen: false);
+          if (categoryBrandsRepository.isLoaded &&
+              categoryBrandsRepository.response.content
+                  .where((element) => element.selected)
+                  .isNotEmpty &&
+              quickFiltersRepository.isLoaded) {
+            categoryBrandsRepository.response.content
+                .where((element) => element.selected)
+                .forEach((brand) {
+              quickFiltersRepository.response.content.insert(0, QuickFilter(
+                  name: brand.name, selected: true, values: QuickFilterValue(id: brand.id)));
+            });
+          }
           return (filtersRepository.isLoaded && sortMethodsRepository.isLoaded)
               ? Column(
                   children: [

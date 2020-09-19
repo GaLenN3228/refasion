@@ -21,9 +21,7 @@ class QuickFilterValue {
   final String id;
   final List<int> price;
 
-  bool selected;
-
-  QuickFilterValue({this.id, this.price, this.selected: false});
+  QuickFilterValue({this.id, this.price});
 
   factory QuickFilterValue.fromJson(Map<String, dynamic> json) => QuickFilterValue(
       id: json['id'] != null ? json['id'].toString() : null,
