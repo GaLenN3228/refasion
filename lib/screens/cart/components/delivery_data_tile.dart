@@ -47,26 +47,32 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                if (selected)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 3),
-                    child: SVGIcon(
-                      icon: deliveryIcons[widget.deliveryCompany.type],
-                      size: 24,
+            Expanded(
+              child: Row(
+                children: [
+                  if (selected)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 3),
+                      child: SVGIcon(
+                        icon: deliveryIcons[widget.deliveryCompany.type],
+                        size: 24,
+                      ),
+                    ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 10),
+                      child: Text(
+                        text,
+                        style: Theme.of(context).textTheme.subtitle1.copyWith(
+                              color: !selected ? Color(0xFF930012) : null,
+                            ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: Text(
-                    text,
-                    style: Theme.of(context).textTheme.subtitle1.copyWith(
-                          color: !selected ? Color(0xFF930012) : null,
-                        ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
             Row(
               children: [

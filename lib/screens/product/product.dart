@@ -19,15 +19,11 @@ import 'package:refashioned_app/screens/product/components/additional.dart';
 import 'package:refashioned_app/screens/product/components/buttons.dart';
 import 'package:refashioned_app/screens/product/components/delivery.dart';
 import 'package:refashioned_app/screens/product/components/description.dart';
-import 'package:refashioned_app/screens/product/components/payment.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
-import 'package:refashioned_app/screens/product/components/questions.dart';
 import 'package:refashioned_app/screens/product/components/recommended.dart';
-import 'package:refashioned_app/screens/product/components/related_products.dart';
 import 'package:refashioned_app/screens/product/components/seller.dart';
 import 'package:refashioned_app/screens/product/components/slider.dart';
 import 'package:refashioned_app/screens/product/components/title.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPage extends StatefulWidget {
@@ -109,13 +105,10 @@ class _ProductPageState extends State<ProductPage> {
           );
 
         return Builder(
-          builder: (context) {
-            final isFavorite = true;
-
-            return Consumer<AddRemoveFavouriteRepository>(
-                builder: (context, addRemoveFavouriteRepository, child) {
-              return RefashionedTopBar(
-                data: TopBarData(
+          builder: (context) => Consumer<AddRemoveFavouriteRepository>(
+              builder: (context, addRemoveFavouriteRepository, child) {
+            return RefashionedTopBar(
+              data: TopBarData(
                   leftButtonData: TBButtonData.icon(
                     TBIconType.back,
                     onTap: Navigator.of(context).pop,
@@ -126,50 +119,38 @@ class _ProductPageState extends State<ProductPage> {
                         product.name.toString(),
                     product.currentPrice.toString() + " ₽",
                   ),
-                  secondRightButtonData: isFavorite
-                      ? TBButtonData(
-                          iconType: widget.product.isFavourite
-                              ? TBIconType.favoriteFilled
-                              : TBIconType.favorite,
-                          iconColor: widget.product.isFavourite
-                              ? Color(0xFFD12C2A)
-                              : Color(0xFF000000),
-                          onTap: () {
-                            HapticFeedback.vibrate();
-                            BaseRepository.isAuthorized().then((isAuthorized) {
-                              isAuthorized
-                                  ? widget.product.isFavourite
-                                      ? addRemoveFavouriteRepository
-                                          .removeFromFavourites((widget.product
-                                                ..isFavourite = false)
-                                              .id)
-                                      : addRemoveFavouriteRepository
-                                          .addToFavourites((widget.product
-                                                ..isFavourite = true)
-                                              .id)
-                                  : showCupertinoModalBottomSheet(
-                                      backgroundColor: Colors.white,
-                                      expand: false,
-                                      context: context,
-                                      settings:
-                                          RouteSettings(name: "/authorization"),
-                                      useRootNavigator: true,
-                                      builder: (context, controller) =>
-                                          AuthorizationSheet());
-                            });
-                          },
-                        )
-                      : TBButtonData(
-                          iconType: TBIconType.favorite,
-                          onTap: () {},
-                        ),
                   rightButtonData: TBButtonData(
-                    iconType: TBIconType.share,
-                  ),
-                ),
-              );
-            });
-          },
+                    iconType: widget.product.isFavourite
+                        ? TBIconType.favoriteFilled
+                        : TBIconType.favorite,
+                    iconColor: widget.product.isFavourite
+                        ? Color(0xFFD12C2A)
+                        : Color(0xFF000000),
+                    animated: true,
+                    onTap: () async {
+                      HapticFeedback.vibrate();
+                      await BaseRepository.isAuthorized().then((isAuthorized) {
+                        isAuthorized
+                            ? widget.product.isFavourite
+                                ? addRemoveFavouriteRepository
+                                    .removeFromFavourites((widget.product
+                                          ..isFavourite = false)
+                                        .id)
+                                : addRemoveFavouriteRepository.addToFavourites(
+                                    (widget.product..isFavourite = true).id)
+                            : showCupertinoModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                expand: false,
+                                context: context,
+                                settings: RouteSettings(name: "/authorization"),
+                                useRootNavigator: true,
+                                builder: (context, controller) =>
+                                    AuthorizationSheet());
+                      });
+                    },
+                  )),
+            );
+          }),
         );
       default:
         return RefashionedTopBar(
@@ -215,7 +196,8 @@ class _ProductPageState extends State<ProductPage> {
           child: Stack(
             children: [
               ListView(
-                padding: const EdgeInsets.only(bottom: 99.0 + 55.0),
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom + 65.0),
                 children: <Widget>[
                   ProductSlider(
                     images: product.images,
@@ -223,51 +205,31 @@ class _ProductPageState extends State<ProductPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         ProductPrice(
-                          currentPrice: product.currentPrice,
-                          discountPrice: product.discountPrice,
+                          product: product,
                         ),
                         ProductTitle(
-                          name: product.name,
-                          brand: product.brand.name,
+                          product: product,
                         ),
                         ProductSeller(
                           seller: product.seller,
                           onSellerPush: widget.onSellerPush,
                         ),
                         ProductDescription(
-                          description: product.description,
-                          properties: product.properties,
-                          article: product.article,
+                          product: product,
                         ),
                         ProductDelivery(
                           product: product,
                         ),
-                        ProductPayment(),
                         ProductAdditional(
                           product: product,
                           onSubCategoryClick: widget.onSubCategoryClick,
                         ),
-                        RelatedProducts(),
-                        Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "ВАМ МОЖЕТ ПОНРАВИТЬСЯ",
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
-                            ),
-                            ChangeNotifierProvider<
-                                ProductRecommendedRepository>(
-                              create: (_) => ProductRecommendedRepository()
-                                ..getProductRecommended(product.id),
-                              child: RecommendedProducts(
-                                onProductPush: widget.onProductPush,
-                              ),
-                            )
-                          ],
+                        RecommendedProducts(
+                          product: product,
+                          onProductPush: widget.onProductPush,
                         ),
                       ],
                     ),
@@ -282,13 +244,13 @@ class _ProductPageState extends State<ProductPage> {
                   productId: widget.product.id,
                   onCartPush: widget.onCartPush,
                   openDeliveryTypesSelector: () =>
-                      widget?.openDeliveryTypesSelector?.call(
+                      widget.openDeliveryTypesSelector?.call(
                     context,
                     widget.product.id,
                     deliveryTypes: product.deliveryTypes,
                     pickUpAddress: product.pickUpAddress,
                     onFinish: (companyId, objectId) =>
-                        widget.onCheckoutPush(companyId, objectId),
+                        widget.onCheckoutPush?.call(companyId, objectId),
                   ),
                 ),
               ),

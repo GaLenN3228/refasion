@@ -38,7 +38,13 @@ class ProductDelivery extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 15),
+          padding: const EdgeInsets.only(bottom: 20),
+          child: ItemsDivider(
+            padding: 0,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15),
           child: Text(
             "Доставка",
             style: Theme.of(context).textTheme.headline2,
@@ -95,27 +101,24 @@ class ProductDelivery extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: ItemsDivider(
                   padding: 0,
                 ),
               ),
             ],
           ),
-        Column(
-          children: otherDeliveries
-              .map(
-                (deliveryType) => DeliveryTypeTile(
-                  deliveryType: deliveryType,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                ),
-              )
-              .toList(),
-        ),
         Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 20),
-          child: ItemsDivider(
-            padding: 0,
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Column(
+            children: otherDeliveries
+                .map(
+                  (deliveryType) => DeliveryTypeTile(
+                    deliveryType: deliveryType,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                )
+                .toList(),
           ),
         ),
       ],

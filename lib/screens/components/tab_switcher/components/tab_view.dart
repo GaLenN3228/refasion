@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/models/pick_point.dart';
-import 'package:refashioned_app/repositories/cart.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
@@ -13,10 +11,6 @@ import 'package:refashioned_app/screens/components/top_panel/top_panel_controlle
 import 'package:refashioned_app/screens/home/home_navigator.dart';
 import 'package:refashioned_app/screens/profile/profile_navigator.dart';
 import 'package:refashioned_app/screens/search_wrapper.dart';
-import 'package:refashioned_app/screens/delivery/components/delivery_options_panel.dart';
-import 'package:refashioned_app/screens/delivery/delivery_navigator.dart';
-import 'package:refashioned_app/screens/home/home.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
 
 final navigatorKeys = {
   BottomTab.home: GlobalKey<NavigatorState>(),
@@ -25,97 +19,40 @@ final navigatorKeys = {
   BottomTab.profile: GlobalKey<NavigatorState>(),
 };
 
-class TabView extends StatefulWidget {
+class TabView extends StatelessWidget {
   final BottomTab tab;
   final ValueNotifier<BottomTab> currentTab;
   final Function(Widget) pushPageOnTop;
   final Function() onTabRefresh;
 
-  TabView(this.tab, this.currentTab, {this.pushPageOnTop, this.onTabRefresh});
-
-  @override
-  _TabViewState createState() => _TabViewState();
-}
-
-class _TabViewState extends State<TabView> {
-  bool selected = false;
-
-  changeTabTo(BottomTab newBottomTab) {
-    if (newBottomTab == widget.tab && widget.onTabRefresh != null)
-      widget.onTabRefresh();
-    else {
-      widget.currentTab.value = newBottomTab;
-    }
-  }
-
-  openDeliveryTypesSelector(
-    BuildContext context,
-    String id, {
+  final Function(
+    BuildContext,
+    String, {
     List<DeliveryType> deliveryTypes,
     PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
-  }) async {
-    List<DeliveryType> types;
+  }) openDeliveryTypesSelector;
 
-    if (deliveryTypes == null || deliveryTypes.isEmpty) {
-      final repository = Provider.of<CartRepository>(context, listen: false);
+  TabView(this.tab, this.currentTab,
+      {this.pushPageOnTop, this.onTabRefresh, this.openDeliveryTypesSelector});
 
-      await repository.getCartItemDeliveryTypes(id);
-
-      types = repository?.getDeliveryTypes?.response?.content;
-    } else {
-      types = deliveryTypes;
+  changeTabTo(BottomTab newBottomTab) {
+    if (newBottomTab == tab && onTabRefresh != null)
+      onTabRefresh();
+    else {
+      currentTab.value = newBottomTab;
     }
-
-    if (types != null && types.isNotEmpty)
-      await showMaterialModalBottomSheet(
-        expand: false,
-        context: context,
-        useRootNavigator: true,
-        builder: (context, controller) => DeliveryOptionsPanel(
-          onPush: (deliveryType) {
-            selected = true;
-
-            Navigator.of(context).pop();
-
-            Navigator.of(context).push(
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
-                  position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
-                  child: DeliveryNavigator(
-                    deliveryType: deliveryType,
-                    pickUpAddress: pickUpAddress,
-                    onClose: () {
-                      Navigator.of(context).pop();
-                      onClose?.call();
-                    },
-                    onFinish: (id) {
-                      Navigator.of(context).pop();
-                      onFinish?.call(deliveryType.items.first.id, id);
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
-          options: types,
-        ),
-      );
-
-    if (!selected) onClose?.call();
-
-    selected = false;
   }
 
   @override
   Widget build(BuildContext context) {
     Widget content;
 
-    switch (widget.tab) {
+    switch (tab) {
       case BottomTab.catalog:
         var catalogNavigator = CatalogNavigator(
-          navigatorKey: navigatorKeys[widget.tab],
+          navigatorKey: navigatorKeys[tab],
           changeTabTo: changeTabTo,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
         );
@@ -127,13 +64,13 @@ class _TabViewState extends State<TabView> {
             child: SearchWrapper(
               content: catalogNavigator,
               onBackPressed: () {
-                navigatorKeys[widget.tab].currentState.pop();
+                navigatorKeys[tab].currentState.pop();
               },
               onFavouritesClick: () {
-                catalogNavigator.pushFavourites(navigatorKeys[widget.tab].currentContext);
+                catalogNavigator.pushFavourites(navigatorKeys[tab].currentContext);
               },
               onSearchResultClick: (searchResult) {
-                catalogNavigator.pushProducts(navigatorKeys[widget.tab].currentContext, searchResult);
+                catalogNavigator.pushProducts(navigatorKeys[tab].currentContext, searchResult);
               },
             ));
 
@@ -141,14 +78,15 @@ class _TabViewState extends State<TabView> {
 
       case BottomTab.cart:
         content = CartNavigator(
-          navigatorKey: navigatorKeys[widget.tab],
+          navigatorKey: navigatorKeys[tab],
           changeTabTo: changeTabTo,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
         );
         break;
 
       case BottomTab.home:
-        var homeNavigator = HomeNavigator(navigatorKey: navigatorKeys[widget.tab], changeTabTo: changeTabTo);
+        var homeNavigator =
+            HomeNavigator(navigatorKey: navigatorKeys[tab], changeTabTo: changeTabTo);
         content = MultiProvider(
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
@@ -157,22 +95,22 @@ class _TabViewState extends State<TabView> {
             child: SearchWrapper(
               content: homeNavigator,
               onBackPressed: () {
-                navigatorKeys[widget.tab].currentState.pop();
+                navigatorKeys[tab].currentState.pop();
               },
               onFavouritesClick: () {
-                homeNavigator.pushFavourites(navigatorKeys[widget.tab].currentContext);
+                homeNavigator.pushFavourites(navigatorKeys[tab].currentContext);
               },
               onSearchResultClick: (searchResult) {
-                homeNavigator.pushProducts(navigatorKeys[widget.tab].currentContext, searchResult);
+                homeNavigator.pushProducts(navigatorKeys[tab].currentContext, searchResult);
               },
             ));
         break;
 
       case BottomTab.profile:
         var profileNavigator = ProfileNavigator(
-          navigatorKey: navigatorKeys[widget.tab],
+          navigatorKey: navigatorKeys[tab],
           changeTabTo: changeTabTo,
-          pushPageOnTop: widget.pushPageOnTop,
+          pushPageOnTop: pushPageOnTop,
         );
         content = MultiProvider(
             providers: [
@@ -182,13 +120,13 @@ class _TabViewState extends State<TabView> {
             child: SearchWrapper(
               content: profileNavigator,
               onBackPressed: () {
-                navigatorKeys[widget.tab].currentState.pop();
+                navigatorKeys[tab].currentState.pop();
               },
               onFavouritesClick: () {
-                profileNavigator.pushFavourites(navigatorKeys[widget.tab].currentContext, true);
+                profileNavigator.pushFavourites(navigatorKeys[tab].currentContext, true);
               },
               onSearchResultClick: (searchResult) {
-                profileNavigator.pushProducts(navigatorKeys[widget.tab].currentContext, searchResult);
+                profileNavigator.pushProducts(navigatorKeys[tab].currentContext, searchResult);
               },
             ));
         break;
@@ -197,7 +135,7 @@ class _TabViewState extends State<TabView> {
         content = CupertinoPageScaffold(
           child: Center(
             child: Text(
-              "Вкладка " + widget.tab.toString(),
+              "Вкладка " + tab.toString(),
               style: Theme.of(context).textTheme.bodyText1,
             ),
           ),
@@ -206,10 +144,10 @@ class _TabViewState extends State<TabView> {
     }
 
     return ValueListenableBuilder(
-      valueListenable: widget.currentTab,
+      valueListenable: currentTab,
       builder: (context, value, child) {
         return Offstage(
-          offstage: value != widget.tab,
+          offstage: value != tab,
           child: child,
         );
       },

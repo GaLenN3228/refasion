@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
@@ -86,7 +87,8 @@ class _MapPageState extends State<MapPage> {
 
         topBarData = TopBarData.simple(
           middleText: "Новый адрес",
-          onBack: Navigator.of(context).pop,
+          onBack:
+              Navigator.of(context).canPop() ? Navigator.of(context).pop : null,
           onClose: widget.onClose,
         );
         break;
@@ -115,7 +117,8 @@ class _MapPageState extends State<MapPage> {
 
         topBarData = TopBarData.simple(
           middleText: "Новый адрес",
-          onBack: Navigator.of(context).pop,
+          onBack:
+              Navigator.of(context).canPop() ? Navigator.of(context).pop : null,
           onClose: widget.onClose,
         );
         break;
@@ -124,22 +127,18 @@ class _MapPageState extends State<MapPage> {
     super.initState();
   }
 
-  showBottomSheet() => showCupertinoModalBottomSheet(
-        expand: true,
-        context: context,
-        builder: (context, controller) => AddressSearchPage(
-          scrollController: controller,
-          onSelect: (address) {
-            mapDataController.pickPoint = PickPoint(
-              address: address.address,
-              originalAddress: address.originalAddress,
-              latitude: address.coordinates.latitude,
-              longitude: address.coordinates.longitude,
-              city: address.city,
-            );
-          },
-        ),
-      );
+  showBottomSheet() {
+    HapticFeedback.lightImpact();
+
+    showCupertinoModalBottomSheet(
+      expand: true,
+      context: context,
+      builder: (context, controller) => AddressSearchPage(
+        scrollController: controller,
+        onSelect: (address) => mapDataController.pickPoint = address,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

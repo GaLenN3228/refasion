@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/pick_point.dart';
@@ -12,6 +13,7 @@ import 'package:refashioned_app/screens/components/button/button.dart';
 import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox.dart';
+import 'package:refashioned_app/screens/components/checkbox/stateful.dart';
 import 'package:refashioned_app/screens/components/textfield/ref_textfield.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
@@ -178,7 +180,12 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
         break;
     }
 
-    if (id != null) widget.onFinish?.call(id);
+    if (id != null) {
+      HapticFeedback.lightImpact();
+
+      widget.onFinish?.call(id);
+    } else
+      HapticFeedback.heavyImpact();
   }
 
   @override
@@ -250,6 +257,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                     child: RefashionedTextField(
                                       autofocus: true,
                                       hintText: "Квартира / Офис",
+                                      keyboardType: TextInputType.number,
                                       onSearchUpdate: (text) =>
                                           onUpdate(InfoField.appartment, text),
                                     ),
@@ -261,7 +269,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                     flex: 1,
                                     child: Row(
                                       children: [
-                                        RefashionedCheckbox(
+                                        RefashionedCheckboxStateful(
                                           value: privateHouse,
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 10),
@@ -290,6 +298,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                     flex: 1,
                                     child: RefashionedTextField(
                                       hintText: "Подъезд",
+                                      keyboardType: TextInputType.number,
                                       onSearchUpdate: (text) =>
                                           onUpdate(InfoField.porch, text),
                                     ),
@@ -301,6 +310,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                     flex: 1,
                                     child: RefashionedTextField(
                                       hintText: "Этаж",
+                                      keyboardType: TextInputType.number,
                                       onSearchUpdate: (text) =>
                                           onUpdate(InfoField.floor, text),
                                     ),
@@ -343,6 +353,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: RefashionedTextField(
                           autofocus: !courierDelivery,
+                          keyboardType: TextInputType.name,
                           hintText: "ФИО",
                           onSearchUpdate: (text) =>
                               onUpdate(InfoField.fio, text),
@@ -362,6 +373,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: RefashionedTextField(
                           hintText: "Телефон",
+                          keyboardType: TextInputType.phone,
                           onSearchUpdate: (text) =>
                               onUpdate(InfoField.phone, text),
                         ),
@@ -373,6 +385,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: RefashionedTextField(
                           hintText: "Электронная почта",
+                          keyboardType: TextInputType.emailAddress,
                           onSearchUpdate: (text) =>
                               onUpdate(InfoField.email, text),
                         ),

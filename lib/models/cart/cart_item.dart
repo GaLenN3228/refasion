@@ -31,7 +31,7 @@ class CartItem {
     );
   }
 
-  CartProduct getProduct(String productId) => cartProducts.firstWhere(
+  CartProduct findProduct(String productId) => cartProducts.firstWhere(
         (cartProduct) =>
             cartProduct.product.id == productId || cartProduct.id == productId,
         orElse: () => null,

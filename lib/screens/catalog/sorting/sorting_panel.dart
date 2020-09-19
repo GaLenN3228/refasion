@@ -21,6 +21,10 @@ class SortingPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(10),
+        topRight: Radius.circular(10),
+      ),
       child: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         child: Column(

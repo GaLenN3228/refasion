@@ -3,66 +3,106 @@ import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-class TBButton extends StatelessWidget {
+final _assets = {
+  TBIconType.back: IconAsset.back,
+  TBIconType.share: IconAsset.share,
+  TBIconType.favorite: IconAsset.favoriteBorder,
+  TBIconType.favoriteFilled: IconAsset.favoriteFilled,
+  TBIconType.filters: IconAsset.filters,
+  TBIconType.setttings: IconAsset.settingsRounded,
+  TBIconType.search: IconAsset.search,
+  TBIconType.hanger: IconAsset.hanger
+};
+
+class TBButton extends StatefulWidget {
   final TBButtonData data;
   final EdgeInsets padding;
 
   const TBButton({Key key, this.data, this.padding: EdgeInsets.zero})
       : super(key: key);
 
-  IconAsset asset() {
-    switch (data.iconType) {
-      case TBIconType.back:
-        return IconAsset.back;
-      case TBIconType.share:
-        return IconAsset.share;
-      case TBIconType.favorite:
-        return IconAsset.favoriteBorder;
-      case TBIconType.favoriteFilled:
-        return IconAsset.favoriteFilled;
-      case TBIconType.filters:
-        return IconAsset.filters;
-      case TBIconType.setttings:
-        return IconAsset.settingsRounded;
-      case TBIconType.search:
-        return IconAsset.search;
-      case TBIconType.hanger:
-        return IconAsset.hanger;
-      default:
-        return null;
+  @override
+  _TBButtonState createState() => _TBButtonState();
+}
+
+class _TBButtonState extends State<TBButton>
+    with SingleTickerProviderStateMixin {
+  AnimationController animationController;
+
+  @override
+  initState() {
+    if (widget.data != null && widget.data.animated) {
+      animationController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 200),
+      );
     }
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    animationController?.dispose();
+
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (data?.label != null)
+    if (widget.data?.label != null)
       return GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: data.onTap != null ? data.onTap : () {},
+        onTap: widget.data.onTap?.call,
         child: Padding(
-          padding: padding,
+          padding: widget.padding,
           child: Text(
-            data.label,
+            widget.data.label,
             style: Theme.of(context)
                 .textTheme
                 .bodyText1
-                .copyWith(color: data.textColor ?? darkGrayColor),
+                .copyWith(color: widget.data.textColor ?? darkGrayColor),
           ),
         ),
       );
-    else if (data?.iconType != null)
-      return GestureDetector(
+    else if (widget.data?.iconType != null) {
+      final asset = _assets[widget.data.iconType];
+
+      final icon = GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: data.onTap != null ? data.onTap : () {},
+        onTap: () async {
+          await widget.data.onTap?.call();
+
+          if (widget.data.animated) {
+            await animationController?.forward();
+            await animationController?.reverse();
+          }
+        },
         child: Padding(
-          padding: padding,
+          padding: widget.data.animated
+              ? EdgeInsets.fromLTRB(
+                  widget.padding.left / 1.2,
+                  widget.padding.top / 1.2,
+                  widget.padding.right / 1.2,
+                  widget.padding.bottom / 1.2,
+                )
+              : widget.padding,
           child: SVGIcon(
-            icon: asset(),
-            color: data.iconColor,
+            icon: asset,
+            color: widget.data.iconColor,
           ),
         ),
       );
-    else
+
+      if (widget.data.animated) {
+        return ScaleTransition(
+          scale: animationController.drive(Tween<double>(begin: 1.0, end: 1.2)),
+          child: icon,
+        );
+      }
+
+      return icon;
+    } else
       return SizedBox();
   }
 }

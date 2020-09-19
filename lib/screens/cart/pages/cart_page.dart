@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/order/order.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart.dart';
 import 'package:refashioned_app/screens/cart/components/cart_item_tile.dart';
@@ -26,6 +28,7 @@ class CartPage extends StatefulWidget {
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
+    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
   }) openDeliveryTypesSelector;
@@ -80,8 +83,11 @@ class _CartPageState extends State<CartPage> {
   }
 
   onCheckoutPush() {
-    if (buttonState.value == ButtonState.enabled &&
-        widget.onCheckoutPush != null) widget.onCheckoutPush(null);
+    if (buttonState.value == ButtonState.enabled) {
+      HapticFeedback.lightImpact();
+
+      widget.onCheckoutPush?.call(null);
+    }
   }
 
   @override
@@ -120,8 +126,8 @@ class _CartPageState extends State<CartPage> {
                 ? Stack(
                     children: [
                       ListView(
-                        padding:
-                            EdgeInsets.fromLTRB(15, 0, 15, 99.0 + 55.0 + 20.0),
+                        padding: EdgeInsets.fromLTRB(15, 0, 15,
+                            MediaQuery.of(context).padding.bottom + 65.0),
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.symmetric(

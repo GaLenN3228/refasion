@@ -38,7 +38,7 @@ class _UserAddressesListState extends State<UserAddressesList> {
 
   @override
   initState() {
-    selectedUserAddressId = widget.list.first.id;
+    if (widget.list.isNotEmpty) selectedUserAddressId = widget.list.first.id;
 
     super.initState();
   }

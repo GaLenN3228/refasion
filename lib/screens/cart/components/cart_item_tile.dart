@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_item.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
@@ -35,21 +36,18 @@ class CartItemTile extends StatefulWidget {
 }
 
 class _CartItemTileState extends State<CartItemTile> {
-  openDeliveryTypesSelector() => widget?.openDeliveryTypesSelector?.call(
-        context,
-        widget.cartItem.id,
-        onClose: Provider.of<CartRepository>(context, listen: false)
-            .clearPendingIDs(),
-        onFinish: (companyId, objectId) async {
-          final cartRepository =
-              Provider.of<CartRepository>(context, listen: false);
-
-          await cartRepository.setDelivery(
-              widget.cartItem.id, companyId, objectId);
-
-          if (cartRepository.setDeliveryType?.response?.status?.code == 204) {}
-        },
-      );
+  openDeliveryTypesSelector() {
+    widget.openDeliveryTypesSelector?.call(
+      context,
+      widget.cartItem.id,
+      pickUpAddress: null,
+      onClose:
+          Provider.of<CartRepository>(context, listen: false).clearPendingIDs,
+      onFinish: (companyId, objectId) async =>
+          await Provider.of<CartRepository>(context, listen: false)
+              .setDelivery(widget.cartItem.id, companyId, objectId),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,10 +57,14 @@ class _CartItemTileState extends State<CartItemTile> {
           CartProductTile(
             cartProduct: cartProduct,
             onSelect: () {
-              final result = Provider.of<CartRepository>(context, listen: false)
-                  .select(cartProduct.product.id);
+              final wasAbleToSelect =
+                  Provider.of<CartRepository>(context, listen: false)
+                      .select(cartProduct.product.id);
 
-              if (!result) openDeliveryTypesSelector();
+              if (!wasAbleToSelect)
+                openDeliveryTypesSelector();
+              else
+                HapticFeedback.selectionClick();
             },
             onProductPush: () => widget.onProductPush(cartProduct.product),
           ),

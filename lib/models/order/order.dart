@@ -1,11 +1,7 @@
-import 'dart:convert';
-
-import 'package:refashioned_app/models/order/order_item.dart';
-
 class Order {
-  final List<OrderItem> items;
+  final String id;
 
-  Order({this.items});
+  const Order({this.id});
 
-  String getParameters() => jsonEncode(items);
+  factory Order.fromJson(Map<String, dynamic> json) => Order(id: json['id']);
 }

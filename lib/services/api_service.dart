@@ -8,16 +8,17 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = true;
+  static const LOG_ENABLE = false;
 
   //ADDRESSES
 
-  static const LOG_ADDRESSES = false;
+  static const LOG_ADDRESSES = true;
 
-  static Future<Response> findAddressesByQuery(String query) async {
+  static Future<Response> findAddressesByQuery(String query,
+      {String city}) async {
     Dio dioClient =
         await DioClient().getClient(logging: LOG_ADDRESSES || LOG_ENABLE);
-    final queryParameters = {'q': query};
+    final queryParameters = {'q': query, 'city': city};
     return dioClient.get(Url.findAddressesByQuery,
         queryParameters: queryParameters);
   }
@@ -35,7 +36,7 @@ class ApiService {
 
   //CART
 
-  static const LOG_CART = false;
+  static const LOG_CART = true;
 
   static Future<Response> getCart() async {
     Dio dioClient = await DioClient()
@@ -102,15 +103,31 @@ class ApiService {
 
   static const LOG_ORDERS = true;
 
-  static makeOrder(String orderParameters) async {
+  static createOrder(String orderParameters) async {
     Dio dioClient = await DioClient()
         .getClient(manageCookies: true, logging: LOG_ORDERS || LOG_ENABLE);
     return dioClient.post(Url.orders, data: orderParameters);
   }
 
+  static getOrder(String id) async {
+    Dio dioClient = await DioClient()
+        .getClient(manageCookies: true, logging: LOG_ORDERS || LOG_ENABLE);
+
+    final path = id + "/";
+    return dioClient.get(Url.orders + path);
+  }
+
+  static updateOrder(String id, String orderData) async {
+    Dio dioClient = await DioClient()
+        .getClient(manageCookies: true, logging: LOG_ORDERS || LOG_ENABLE);
+
+    final path = id + "/";
+    return dioClient.post(Url.orders + path, data: orderData);
+  }
+
   //USER ADDRESSES
 
-  static const LOG_USER_ADDRESSES = false;
+  static const LOG_USER_ADDRESSES = true;
 
   static getUserAddresses() async {
     Dio dioClient = await DioClient().getClient(
@@ -140,7 +157,7 @@ class ApiService {
 
   //USER PICKPOINTS
 
-  static const LOG_USER_PICKPOINTS = false;
+  static const LOG_USER_PICKPOINTS = true;
 
   static getUserPickPoints() async {
     Dio dioClient = await DioClient().getClient(
@@ -267,7 +284,8 @@ class ApiService {
   }
 
   static Future<Response> addProducts(ProductData productData) async {
-    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    Dio dioClient =
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {
       "name": productData.description,
       "description": productData.description,
@@ -287,7 +305,7 @@ class ApiService {
 
   static Future<Response> calcProductPrice(int price) async {
     Dio dioClient =
-    await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+        await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"price": price};
     return dioClient.post(Url.calcProductPrice, data: body);
   }

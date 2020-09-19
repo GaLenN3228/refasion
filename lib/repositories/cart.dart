@@ -131,12 +131,12 @@ class CartRepository extends BaseRepository<Cart> {
   }
 
   bool select(String productId, {bool value}) {
-    final group = response?.content?.getGroup(productId);
+    final group = response?.content?.findGroupOfProduct(productId);
     if (group == null) {
       return false;
     }
 
-    final cartProduct = group.getProduct(productId);
+    final cartProduct = group.findProduct(productId);
     final id = cartProduct.product.id;
 
     if (group.deliveryData == null) {
@@ -174,7 +174,18 @@ class CartRepository extends BaseRepository<Cart> {
   Future<void> setDelivery(
       String itemId, String deliveryCompanyId, String deliveryObjectId) async {
     await setDeliveryType.update(itemId, deliveryCompanyId, deliveryObjectId);
-    if (setDeliveryType.response.status.code == 204) await _update();
+    if (setDeliveryType.response.status.code == 204) {
+      if (pendingIDs.isEmpty) {
+        final list = response.content
+            ?.getGroup(itemId)
+            ?.cartProducts
+            ?.map((cartProduct) => cartProduct.id)
+            ?.toList();
+
+        if (list != null) pendingIDs.addAll(list);
+      }
+      await _update();
+    }
   }
 
   Future<void> removeFromCart(String productId) async {

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/addresses.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
@@ -10,7 +10,7 @@ import 'package:refashioned_app/screens/maps/controllers/map_data_controller.dar
 import 'package:refashioned_app/screens/maps/map_picker.dart';
 
 class PickUpPointsPage extends StatefulWidget {
-  final Address address;
+  final PickPoint address;
 
   const PickUpPointsPage({Key key, this.address}) : super(key: key);
 
@@ -24,18 +24,17 @@ class _PickUpPointsPageState extends State<PickUpPointsPage> {
 
   @override
   void initState() {
-    mapDataController = MapDataController(
-      pickUpPointsCompany: PickUpPointsCompany.BOXBERRY
-    );
+    mapDataController =
+        MapDataController(pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
     mapBottomSheetDataController = MapBottomSheetDataController(
-      mapBottomSheetDataPreview: MapBottomSheetData(
-          title: "Пункты отправки",
-          hint: "Продавцу нужно отнести вещь в пункт отправки службы доставки, которую выберет покупатель."),
-      mapBottomSheetDataAddress: MapBottomSheetData(
-        isCancelPointEnable: true,
-        title: "Адрес доставки",
-      )
-    );
+        mapBottomSheetDataPreview: MapBottomSheetData(
+            title: "Пункты отправки",
+            hint:
+                "Продавцу нужно отнести вещь в пункт отправки службы доставки, которую выберет покупатель."),
+        mapBottomSheetDataAddress: MapBottomSheetData(
+          isCancelPointEnable: true,
+          title: "Адрес доставки",
+        ));
 
     super.initState();
   }

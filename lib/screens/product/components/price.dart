@@ -1,43 +1,44 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPrice extends StatelessWidget {
-  final int currentPrice;
-  final int discountPrice;
+  final Product product;
 
-  const ProductPrice(
-      {Key key, @required this.currentPrice, @required this.discountPrice})
-      : super(key: key);
+  const ProductPrice({Key key, this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (currentPrice == null && discountPrice == null) return SizedBox();
+    final currentPrice = product?.currentPrice;
+    final discountPrice = product?.discountPrice;
 
-    TextTheme textTheme = Theme.of(context).textTheme;
-    TextStyle subtitle = textTheme.subtitle1;
-    TextStyle bodyText2 = textTheme.bodyText2;
+    if (currentPrice == null) return SizedBox();
+
     final numberFormat = NumberFormat("#,###", "ru_Ru");
-    bool hasDiscount = discountPrice != null && discountPrice > 0;
+    final hasDiscount = discountPrice != null && discountPrice > 0;
 
     return Row(
       children: <Widget>[
         hasDiscount
-            ? Text("${numberFormat.format(discountPrice)}",
-                style:
-                    bodyText2.copyWith(decoration: TextDecoration.lineThrough))
-            : Container(),
-        hasDiscount
-            ? Container(
-                width: 8,
+            ? Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                  "${numberFormat.format(discountPrice)}",
+                  style: Theme.of(context).textTheme.bodyText2.copyWith(
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                ),
               )
-            : Container(),
+            : SizedBox(),
         Container(
-          color: hasDiscount ? accentColor : Color(0),
+          color: hasDiscount ? accentColor : null,
           padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-          child:
-              Text("${numberFormat.format(currentPrice)} ₽", style: subtitle),
+          child: Text(
+            "${numberFormat.format(currentPrice)} ₽",
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
         )
       ],
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/addresses.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/screens/components/button/button.dart';
 import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
@@ -13,7 +13,7 @@ import 'package:refashioned_app/screens/marketplace/components/take_option_tile.
 class TakeOptionsPage extends StatefulWidget {
   final Function(List<TakeOption>) onPush;
   final Function() showPickUpPoints;
-  final Address address;
+  final PickPoint address;
 
   const TakeOptionsPage(
       {Key key, this.onPush, this.address, this.showPickUpPoints})

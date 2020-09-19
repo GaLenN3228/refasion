@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:refashioned_app/models/addresses.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
@@ -117,7 +117,7 @@ class ProductData {
 
   List<String> photos;
 
-  Address address;
+  PickPoint address;
 
   List<TakeOption> options;
 
@@ -127,7 +127,7 @@ class ProductData {
 
   updatePhotos(List<String> newPhotos) => photos = newPhotos;
 
-  updateAddress(Address newAddress) => address = newAddress;
+  updateAddress(PickPoint newAddress) => address = newAddress;
 
   updateTakeOptions(List<TakeOption> newOptions) => options = newOptions;
 
@@ -139,7 +139,8 @@ class ProductData {
 
   updateDescription(String newDescription) => description = newDescription;
 
-  updateProperties(SellProperty newSellProperty) => properties.add(newSellProperty);
+  updateProperties(SellProperty newSellProperty) =>
+      properties.add(newSellProperty);
 }
 
 class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
@@ -155,9 +156,11 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
   @override
   initState() {
-    focusNodes = Map.fromIterable(widget.pagesWithFocusNodes, key: (route) => route, value: (_) => new FocusNode());
+    focusNodes = Map.fromIterable(widget.pagesWithFocusNodes,
+        key: (route) => route, value: (_) => new FocusNode());
 
-    sellNavigatorObserver = MarketplaceNavigatorObserver(context: context, focusNodes: focusNodes);
+    sellNavigatorObserver =
+        MarketplaceNavigatorObserver(context: context, focusNodes: focusNodes);
 
     productData = ProductData();
 
@@ -172,7 +175,10 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
   }
 
   Widget _routeBuilder(BuildContext context, String route,
-      {Category category, List<Category> categories, List<SellProperty> sellProperties, int sellPropertyIndex: 0}) {
+      {Category category,
+      List<Category> categories,
+      List<SellProperty> sellProperties,
+      int sellPropertyIndex: 0}) {
     switch (route) {
       case MarketplaceNavigatorRoutes.section:
         return WillPopScope(
@@ -182,9 +188,11 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             onClose: widget.onClose,
             onPush: (category) => Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, MarketplaceNavigatorRoutes.topCategory, category: category),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.topCategory),
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.topCategory,
+                    category: category),
+                settings:
+                    RouteSettings(name: MarketplaceNavigatorRoutes.topCategory),
               ),
             ),
           ),
@@ -196,8 +204,11 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           onClose: widget.onClose,
           onPush: (category) => Navigator.of(context).push(
             CupertinoPageRoute(
-              builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.category, category: category),
-              settings: RouteSettings(name: MarketplaceNavigatorRoutes.category),
+              builder: (context) => _routeBuilder(
+                  context, MarketplaceNavigatorRoutes.category,
+                  category: category),
+              settings:
+                  RouteSettings(name: MarketplaceNavigatorRoutes.category),
             ),
           ),
         );
@@ -210,9 +221,11 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
               if (pushedCategory.children.isNotEmpty) {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
-                    builder: (context) =>
-                        _routeBuilder(context, MarketplaceNavigatorRoutes.subCategory, category: pushedCategory),
-                    settings: RouteSettings(name: MarketplaceNavigatorRoutes.subCategory),
+                    builder: (context) => _routeBuilder(
+                        context, MarketplaceNavigatorRoutes.subCategory,
+                        category: pushedCategory),
+                    settings: RouteSettings(
+                        name: MarketplaceNavigatorRoutes.subCategory),
                   ),
                 );
               } else {
@@ -221,9 +234,11 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
                 Navigator.of(context).push(
                   CupertinoPageRoute(
-                    builder: (context) =>
-                        _routeBuilder(context, MarketplaceNavigatorRoutes.photos, categories: categories),
-                    settings: RouteSettings(name: MarketplaceNavigatorRoutes.photos),
+                    builder: (context) => _routeBuilder(
+                        context, MarketplaceNavigatorRoutes.photos,
+                        categories: categories),
+                    settings:
+                        RouteSettings(name: MarketplaceNavigatorRoutes.photos),
                   ),
                 );
               }
@@ -241,8 +256,11 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.photos, categories: categories),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.photos),
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.photos,
+                    categories: categories),
+                settings:
+                    RouteSettings(name: MarketplaceNavigatorRoutes.photos),
               ),
             );
           },
@@ -257,16 +275,20 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             final hasSellProperties = (sellPropertiesRepository != null &&
                 sellPropertiesRepository.isLoaded &&
                 sellPropertiesRepository.response.status.code == 200 &&
-                sellPropertiesRepository.response.content.requiredProperties.isNotEmpty);
+                sellPropertiesRepository
+                    .response.content.requiredProperties.isNotEmpty);
 
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) {
                   if (hasSellProperties)
-                    return _routeBuilder(context, MarketplaceNavigatorRoutes.sellProperty,
-                        sellProperties: sellPropertiesRepository.response.content.requiredProperties);
+                    return _routeBuilder(
+                        context, MarketplaceNavigatorRoutes.sellProperty,
+                        sellProperties: sellPropertiesRepository
+                            .response.content.requiredProperties);
                   else
-                    return _routeBuilder(context, MarketplaceNavigatorRoutes.description);
+                    return _routeBuilder(
+                        context, MarketplaceNavigatorRoutes.description);
                 },
                 settings: RouteSettings(
                     name: hasSellProperties
@@ -291,16 +313,21 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             if (sellPropertyIndex < sellProperties.length - 1)
               Navigator.of(context).push(
                 CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.sellProperty,
-                      sellProperties: sellProperties, sellPropertyIndex: sellPropertyIndex + 1),
-                  settings: RouteSettings(name: MarketplaceNavigatorRoutes.sellProperty),
+                  builder: (context) => _routeBuilder(
+                      context, MarketplaceNavigatorRoutes.sellProperty,
+                      sellProperties: sellProperties,
+                      sellPropertyIndex: sellPropertyIndex + 1),
+                  settings: RouteSettings(
+                      name: MarketplaceNavigatorRoutes.sellProperty),
                 ),
               );
             else
               Navigator.of(context).push(
                 CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.description),
-                  settings: RouteSettings(name: MarketplaceNavigatorRoutes.description),
+                  builder: (context) => _routeBuilder(
+                      context, MarketplaceNavigatorRoutes.description),
+                  settings: RouteSettings(
+                      name: MarketplaceNavigatorRoutes.description),
                 ),
               );
           },
@@ -311,12 +338,15 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             onClose: widget.onClose,
             focusNode: focusNodes[route],
             initialData: productData.description,
-            onUpdate: (description) => productData.updateDescription(description),
+            onUpdate: (description) =>
+                productData.updateDescription(description),
             onPush: () {
               Navigator.of(context).push(
                 CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.price),
-                  settings: RouteSettings(name: MarketplaceNavigatorRoutes.price),
+                  builder: (context) =>
+                      _routeBuilder(context, MarketplaceNavigatorRoutes.price),
+                  settings:
+                      RouteSettings(name: MarketplaceNavigatorRoutes.price),
                 ),
               );
             });
@@ -334,7 +364,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           onPush: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.price),
+                builder: (context) =>
+                    _routeBuilder(context, MarketplaceNavigatorRoutes.price),
                 settings: RouteSettings(name: MarketplaceNavigatorRoutes.price),
               ),
             );
@@ -353,8 +384,10 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             onPush: () {
               Navigator.of(context).push(
                 CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.addresses),
-                  settings: RouteSettings(name: MarketplaceNavigatorRoutes.addresses),
+                  builder: (context) => _routeBuilder(
+                      context, MarketplaceNavigatorRoutes.addresses),
+                  settings:
+                      RouteSettings(name: MarketplaceNavigatorRoutes.addresses),
                 ),
               );
             },
@@ -369,8 +402,10 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           onPush: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.addresses),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.addresses),
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.addresses),
+                settings:
+                    RouteSettings(name: MarketplaceNavigatorRoutes.addresses),
               ),
             );
           },
@@ -384,16 +419,20 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           onPush: () {
             Navigator.of(context).push(
               MaterialWithModalsPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.newAddress),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.newAddress),
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.newAddress),
+                settings:
+                    RouteSettings(name: MarketplaceNavigatorRoutes.newAddress),
               ),
             );
           },
           onSkip: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.onModeration),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.onModeration),
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.onModeration),
+                settings: RouteSettings(
+                    name: MarketplaceNavigatorRoutes.onModeration),
               ),
             );
           },
@@ -406,8 +445,10 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.takeOptions),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.takeOptions),
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.takeOptions),
+                settings:
+                    RouteSettings(name: MarketplaceNavigatorRoutes.takeOptions),
               ),
             );
           },
@@ -415,22 +456,26 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.takeOptions:
         return TakeOptionsPage(
-          address: productData.address ?? Address(originalAddress: "Какой-то адрес"),
+          address: productData.address,
           onPush: (options) {
             productData.updateTakeOptions(options);
 
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.onModeration),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.onModeration),
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.onModeration),
+                settings: RouteSettings(
+                    name: MarketplaceNavigatorRoutes.onModeration),
               ),
             );
           },
           showPickUpPoints: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.pickUpPoints),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.pickUpPoints),
+                builder: (context) => _routeBuilder(
+                    context, MarketplaceNavigatorRoutes.pickUpPoints),
+                settings: RouteSettings(
+                    name: MarketplaceNavigatorRoutes.pickUpPoints),
               ),
             );
           },
@@ -468,9 +513,11 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         ),
       );
 
-    if (catalogRepository.loadingFailed || catalogRepository.response.status.code != 200)
+    if (catalogRepository.loadingFailed ||
+        catalogRepository.response.status.code != 200)
       return Center(
-        child: Text("Ошибка категорий", style: Theme.of(context).textTheme.bodyText1),
+        child: Text("Ошибка категорий",
+            style: Theme.of(context).textTheme.bodyText1),
       );
 
     return Navigator(
@@ -478,8 +525,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       observers: [sellNavigatorObserver],
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
-          builder: (context) =>
-              _routeBuilder(context, routeSettings.name, categories: catalogRepository.response.content),
+          builder: (context) => _routeBuilder(context, routeSettings.name,
+              categories: catalogRepository.response.content),
           settings: routeSettings,
         );
       },

@@ -31,12 +31,15 @@ class Cart {
     );
   }
 
-  CartItem getGroup(String productId) =>
-      groups.firstWhere((group) => group.getProduct(productId) != null,
+  CartItem findGroupOfProduct(String productId) =>
+      groups.firstWhere((group) => group.findProduct(productId) != null,
           orElse: () => null);
 
+  CartItem getGroup(String cartItemId) =>
+      groups.firstWhere((group) => group.id == cartItemId, orElse: () => null);
+
   CartProduct getProduct(String productId) =>
-      getGroup(productId)?.getProduct(productId);
+      findGroupOfProduct(productId)?.findProduct(productId);
 
   bool checkPresence(String productId) => getProduct(productId) != null;
 

@@ -108,7 +108,7 @@ class _TBMiddleState extends State<TBMiddle>
                     color: contentColor,
                   ),
               maxLines: 1,
-              overflow: TextOverflow.fade,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               subtitle,
@@ -118,7 +118,7 @@ class _TBMiddleState extends State<TBMiddle>
                   .subtitle1
                   .copyWith(color: secondContentColor),
               maxLines: 1,
-              overflow: TextOverflow.fade,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         );

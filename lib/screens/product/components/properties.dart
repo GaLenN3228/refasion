@@ -1,73 +1,30 @@
-import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/property.dart';
+import 'package:refashioned_app/screens/product/components/product_property_tile.dart';
 
 class ProductProperties extends StatelessWidget {
-  final List<Property> properties;
-  final String article;
-  final bool hasDots;
+  final Product product;
 
-  const ProductProperties(
-      {Key key,
-      @required this.properties,
-      @required this.article,
-      this.hasDots = true})
-      : super(key: key);
-
-  Widget _renderPropertyRow(TextTheme textTheme,
-          {String name = "Не указан", String value = "Не указан"}) =>
-      Row(
-        children: <Widget>[
-          Flexible(
-              fit: hasDots ? FlexFit.tight : FlexFit.loose,
-              child: Opacity(
-                opacity: 0.58,
-                child: Container(
-                  decoration: hasDots
-                      ? BoxDecoration(
-                          image: new DecorationImage(
-                          alignment: Alignment.lerp(
-                              Alignment.bottomCenter, Alignment.center, 0.4),
-                          repeat: ImageRepeat.repeatX,
-                          image: new AssetImage(
-                            'assets/images/png/dots.png',
-                          ),
-                        ))
-                      : BoxDecoration(),
-                  child: Text(
-                    StringUtils.capitalize(name) + (hasDots ? "" : ":"),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.bodyText2
-                        .copyWith(backgroundColor: Colors.white, height: 1.8),
-                  ),
-                ),
-              )),
-          Flexible(
-              child: Padding(
-            padding: hasDots
-                ? const EdgeInsets.only(left: 18)
-                : const EdgeInsets.only(left: 2),
-            child: Text(StringUtils.capitalize(value),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: textTheme.bodyText1.copyWith(height: 1.8)),
-          ))
-        ],
-      );
+  const ProductProperties({Key key, this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-    List<Widget> propertiesRows = [
-      _renderPropertyRow(textTheme, name: "Артикул", value: article)
-    ];
-    propertiesRows.addAll(properties.map((attribute) => _renderPropertyRow(
-        textTheme,
-        name: attribute.property,
-        value: attribute.value)));
     return Column(
-      children: propertiesRows.toList(),
+      children: [
+        if (product.article != null && product.article.isNotEmpty)
+          Property(
+            property: "Артикул",
+            value: product.article,
+          ),
+        if (product.properties != null) ...product.properties,
+      ]
+          .map(
+            (property) => ProductPropertyTile(
+              property: property,
+            ),
+          )
+          .toList(),
     );
   }
 }

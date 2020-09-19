@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +7,7 @@ import 'package:refashioned_app/models/cart/cart.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/order/order_item.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/orders.dart';
@@ -27,6 +30,7 @@ class CartNavigator extends StatefulWidget {
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
+    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
   }) openDeliveryTypesSelector;
@@ -45,18 +49,24 @@ class CartNavigator extends StatefulWidget {
 }
 
 class _CartNavigatorState extends State<CartNavigator> {
-  OrdersRepository ordersRepository;
+  CreateOrderRepository createOrderRepository;
+
+  GetOrderRepository getOrderRepository;
 
   @override
   initState() {
-    ordersRepository = OrdersRepository();
+    createOrderRepository = CreateOrderRepository();
+
+    getOrderRepository = GetOrderRepository();
 
     super.initState();
   }
 
   @override
   dispose() {
-    ordersRepository.dispose();
+    createOrderRepository.dispose();
+
+    getOrderRepository.dispose();
 
     super.dispose();
   }
@@ -100,28 +110,28 @@ class _CartNavigatorState extends State<CartNavigator> {
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
             onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
-              final parameters = Order(
-                items: [
-                  OrderItem(
-                    deliveryCompany: deliveryCompanyId,
-                    deliveryObjectId: deliveryObjectId,
-                    products: [product.id],
-                  ),
-                ],
-              ).getParameters();
+              final parameters = jsonEncode([
+                OrderItem(
+                  deliveryCompany: deliveryCompanyId,
+                  deliveryObjectId: deliveryObjectId,
+                  products: [product.id],
+                ),
+              ]);
 
-              await ordersRepository.update(parameters);
+              await createOrderRepository.update(parameters);
 
-              if (ordersRepository.response?.status?.code == 200)
-                return Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(
-                      context,
-                      CartNavigatorRoutes.checkout,
-                      order: ordersRepository.response.content,
-                    ),
+              final orderId = createOrderRepository.response?.content?.id;
+
+              await getOrderRepository.update(orderId);
+
+              return Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(
+                    context,
+                    CartNavigatorRoutes.checkout,
                   ),
-                );
+                ),
+              );
             },
             onProductPush: (product) => Navigator.of(context).push(
               CupertinoPageRoute(
@@ -140,6 +150,7 @@ class _CartNavigatorState extends State<CartNavigator> {
 
       case CartNavigatorRoutes.checkout:
         return CheckoutPage(
+          order: order,
           cart: cart,
         );
 

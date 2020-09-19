@@ -69,7 +69,9 @@ class CartProductTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        ProductPrice(product),
+                        ProductPrice(
+                          product: product,
+                        ),
                         ProductBrand(product),
                         ProductSize(product),
                       ],
