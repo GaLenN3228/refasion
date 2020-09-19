@@ -7,8 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class NamePage extends StatefulWidget {
   final String phone;
+  final Function(BuildContext) onAuthorizationDone;
+  final bool needDismiss;
 
-  const NamePage({Key key, this.phone}) : super(key: key);
+  const NamePage({Key key, this.phone, this.onAuthorizationDone, this.needDismiss})
+      : super(key: key);
 
   @override
   _PhonePageState createState() => _PhonePageState();
@@ -51,7 +54,8 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
             onTap: () {
               SharedPreferences.getInstance().then((prefs) {
                 prefs.setString(Prefs.user_name, widget.phone);
-                if (Navigator.canPop(context)) {
+                widget.onAuthorizationDone?.call(context);
+                if (widget.needDismiss) if (Navigator.canPop(context)) {
                   Navigator.pop(context);
                 } else {
                   SystemNavigator.pop();
@@ -93,9 +97,12 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                   cursorRadius: Radius.circular(2.0),
                   cursorColor: Color(0xFFE6E6E6),
                   decoration: InputDecoration(
-                      border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
                       hintText: "Введите имя",
                       hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
                 ),
@@ -107,7 +114,8 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
             alignment: Alignment.bottomCenter,
             child: Button(
               "ЗАВЕРШИТЬ",
-              buttonStyle: name != null && name.length == 0 ? ButtonStyle.dark_gray : ButtonStyle.dark,
+              buttonStyle:
+                  name != null && name.length == 0 ? ButtonStyle.dark_gray : ButtonStyle.dark,
               height: 45,
               width: double.infinity,
               borderRadius: 5,
@@ -115,7 +123,8 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                   ? () {
                       SharedPreferences.getInstance().then((prefs) {
                         prefs.setString(Prefs.user_name, name);
-                        Navigator.pop(context);
+                        widget.onAuthorizationDone(context);
+                        if (widget.needDismiss) Navigator.pop(context);
                       });
                     }
                   : () {},

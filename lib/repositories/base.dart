@@ -98,9 +98,7 @@ class BaseRepository<T> with ChangeNotifier {
 
       case HttpStatus.unauthorized:
         setAuthorized(false);
-        abortLoading(
-            message:
-                "unauthorized, status code: ${response.getStatusCode.toString()}");
+        abortLoading(message: "unauthorized, status code: ${response.getStatusCode.toString()}");
         break;
 
       default:
@@ -119,12 +117,15 @@ class BaseRepository<T> with ChangeNotifier {
       throw Exception("response == null, not processed");
   }
 
-  static Future<void> setAuthorized(bool isAuthorized) async =>
-      SharedPreferences.getInstance()
-          .then((prefs) => prefs.setBool(Prefs.is_authorized, isAuthorized));
+  static Future<void> setAuthorized(bool isAuthorized) async {
+    var prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool(Prefs.is_authorized, isAuthorized);
+  }
 
-  static Future<bool> isAuthorized() async => SharedPreferences.getInstance()
-      .then((prefs) => prefs.getBool(Prefs.is_authorized) ?? false);
+  static Future<bool> isAuthorized() async {
+    var prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(Prefs.is_authorized) ?? false;
+  }
 
   String get message {
     if (isLoading) return "Загрузка...";

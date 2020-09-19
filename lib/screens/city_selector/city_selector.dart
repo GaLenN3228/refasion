@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/city_selector/city_tile.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_image.dart';
@@ -37,13 +38,12 @@ class _CitySelectorState extends State<CitySelector> {
   }
 
   repositoryListener() {
-    skipable = (citiesRepository.response?.content?.skipable ?? false) &&
-        widget.onFirstLaunch;
+    skipable = (citiesRepository.response?.content?.skipable ?? false) && widget.onFirstLaunch;
 
     if (skipable) {
       citiesRepository.removeListener(repositoryListener);
 
-      pushTabSwitcher();
+      push(TabSwitcher());
     }
   }
 
@@ -54,15 +54,15 @@ class _CitySelectorState extends State<CitySelector> {
     super.dispose();
   }
 
-  pushTabSwitcher() => Navigator.of(context).pushReplacement(
-    PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          FadeTransition(
+  push(Widget widget, {BuildContext context}) =>
+      Navigator.of(context ?? this.context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => FadeTransition(
             opacity: animation,
-            child: TabSwitcher(),
+            child: widget,
           ),
-    ),
-  );
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +81,7 @@ class _CitySelectorState extends State<CitySelector> {
 
           final provider = repository.response?.content;
 
-          if (repository.isLoading || provider == null || skipable)
-            return emptyState;
+          if (repository.isLoading || provider == null || skipable) return emptyState;
 
           return Column(
             children: [
@@ -115,8 +114,7 @@ class _CitySelectorState extends State<CitySelector> {
                         );
 
                       return ListView.separated(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).padding.bottom),
+                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                         itemCount: cities.length,
                         itemBuilder: (context, index) {
                           final city = cities.elementAt(index);
@@ -128,21 +126,30 @@ class _CitySelectorState extends State<CitySelector> {
 
                               if (result) {
                                 if (widget.onFirstLaunch)
-                                  pushTabSwitcher();
+                                  Future.delayed(Duration(milliseconds: 700), () {
+                                    push(PhonePage(
+                                      needDismiss: false,
+                                      onAuthorizationDone: (context) {
+                                        push(TabSwitcher(), context: context);
+                                      },
+                                      onAuthorizationCancel: (context) {
+                                        push(TabSwitcher(), context: context);
+                                      },
+                                    ));
+                                  });
                                 else
                                   Navigator.of(context).pop();
                               }
                             },
                           );
                         },
-                        separatorBuilder: (context, index) =>
-                            index != provider.pinnedCount - 1
-                                ? ItemsDivider()
-                                : Container(
-                                    height: 8,
-                                    width: double.infinity,
-                                    color: Color.fromRGBO(0, 0, 0, 0.05),
-                                  ),
+                        separatorBuilder: (context, index) => index != provider.pinnedCount - 1
+                            ? ItemsDivider()
+                            : Container(
+                                height: 8,
+                                width: double.infinity,
+                                color: Color.fromRGBO(0, 0, 0, 0.05),
+                              ),
                       );
                     }),
               ),

@@ -57,17 +57,19 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                         fit: BoxFit.cover,
                       ),
                     ),
-                    Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
+                    Consumer<AddRemoveFavouriteRepository>(
+                        builder: (context, addRemoveFavouriteRepository, child) {
                       return GestureDetector(
                           onTap: () => {
+                                HapticFeedback.heavyImpact(),
                                 _controller.forward(),
                                 BaseRepository.isAuthorized().then((isAuthorized) {
                                   isAuthorized
                                       ? widget.product.isFavourite
-                                          ? addRemoveFavouriteRepository
-                                              .removeFromFavourites((widget.product..isFavourite = false).id)
-                                          : addRemoveFavouriteRepository
-                                              .addToFavourites((widget.product..isFavourite = true).id)
+                                          ? addRemoveFavouriteRepository.removeFromFavourites(
+                                              (widget.product..isFavourite = false).id)
+                                          : addRemoveFavouriteRepository.addToFavourites(
+                                              (widget.product..isFavourite = true).id)
                                       : showCupertinoModalBottomSheet(
                                           backgroundColor: Colors.white,
                                           expand: false,
@@ -81,19 +83,22 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                             child: Padding(
                               padding: EdgeInsets.all(10),
                               child: ScaleTransition(
-                                scale: Tween(begin: 1.0, end: 1.3)
-                                    .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
-                                      ..addStatusListener((status) {
-                                        if (status == AnimationStatus.completed) {
-                                          setState(() {
-                                            _controller.reverse();
-                                          });
-                                        }
-                                      }),
+                                scale: Tween(begin: 1.0, end: 1.3).animate(
+                                    CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
+                                  ..addStatusListener((status) {
+                                    if (status == AnimationStatus.completed) {
+                                      setState(() {
+                                        _controller.reverse();
+                                      });
+                                    }
+                                  }),
                                 child: SVGIcon(
-                                  color: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
-                                  icon:
-                                      widget.product.isFavourite ? IconAsset.favoriteFilled : IconAsset.favoriteBorder,
+                                  color: widget.product.isFavourite
+                                      ? Color(0xFFD12C2A)
+                                      : Color(0xFF000000),
+                                  icon: widget.product.isFavourite
+                                      ? IconAsset.favoriteFilled
+                                      : IconAsset.favoriteBorder,
                                   size: 26,
                                 ),
                               ),
@@ -108,7 +113,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
 
                           return GestureDetector(
                             onTap: () {
-                              HapticFeedback.mediumImpact();
+                              HapticFeedback.heavyImpact();
                               if (isInCart)
                                 repository.removeFromCart(widget.product.id);
                               else

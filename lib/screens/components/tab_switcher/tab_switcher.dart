@@ -6,7 +6,6 @@ import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
-import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_navigation.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
@@ -37,17 +36,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
   @override
   initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => SharedPreferences.getInstance().then(
-        (newSharedPreferences) {
-          if (!newSharedPreferences.containsKey(Prefs.need_show_authorization_screen)) {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => PhonePage(fromStart: true)));
-            newSharedPreferences.setBool(Prefs.need_show_authorization_screen, false);
-          }
-        },
-      ),
-    );
-
     sizesProvider = Provider.of<SizesProvider>(context, listen: false);
 
     bottomNavWidgetData = sizesProvider.getData("bottomNav") ?? WidgetData.create("bottomNav");

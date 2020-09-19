@@ -206,10 +206,10 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
   @override
   Widget build(BuildContext context) {
     context.watch<CodeAuthorizationRepository>();
-    return FutureBuilder(
+    return FutureBuilder<bool>(
       future: BaseRepository.isAuthorized(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
           return Navigator(
             key: widget.navigatorKey,
             initialRoute: ProfileNavigatorRoutes.root,

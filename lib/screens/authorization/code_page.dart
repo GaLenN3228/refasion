@@ -10,8 +10,13 @@ import 'package:provider/provider.dart';
 
 class CodePage extends StatefulWidget {
   final String phone;
+  final Function(BuildContext) onAuthorizationCancel;
+  final Function(BuildContext) onAuthorizationDone;
+  final bool needDismiss;
 
-  const CodePage({Key key, this.phone}) : super(key: key);
+  const CodePage(
+      {Key key, this.phone, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss})
+      : super(key: key);
 
   @override
   _CodePageState createState() => _CodePageState();
@@ -58,7 +63,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final AuthorizationRepository authorizationRepository = context.watch<AuthorizationRepository>();
+    final AuthorizationRepository authorizationRepository =
+        context.watch<AuthorizationRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       key: scaffoldKey,
@@ -67,7 +73,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
         children: [
           GestureDetector(
             onTap: () {
-              if (Navigator.canPop(context)) {
+              widget.onAuthorizationCancel?.call(context);
+              if (widget.needDismiss) if (Navigator.canPop(context)) {
                 Navigator.pop(context);
               } else {
                 SystemNavigator.pop();
@@ -124,7 +131,9 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                   animationType: AnimationType.fade,
                   textInputType: TextInputType.number,
                   textStyle: TextStyle(
-                      color: hasError ? Colors.redAccent : Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                      color: hasError ? Colors.redAccent : Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                   pinTheme: PinTheme(
                       shape: PinCodeFieldShape.underline,
                       fieldHeight: 50,
@@ -149,12 +158,14 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                             codeAuthorizationRepository.getStatusCode == 201) {
                           Navigator.of(context).pushReplacement(MaterialPageRoute(
                               builder: (context) => NamePage(
+                                    needDismiss: widget.needDismiss,
+                                    onAuthorizationDone: widget.onAuthorizationDone,
                                     phone: widget.phone,
                                   )));
                         }
                       });
-                      codeAuthorizationRepository.sendCode(
-                          authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
+                      codeAuthorizationRepository.sendCode(authorizationRepository.getPhone,
+                          authorizationRepository.response.content.hash, v);
                     }
                   },
                   onChanged: (value) {
