@@ -56,11 +56,8 @@ class _CitySelectorState extends State<CitySelector> {
 
   push(Widget widget, {BuildContext context}) =>
       Navigator.of(context ?? this.context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => FadeTransition(
-            opacity: animation,
-            child: widget,
-          ),
+        CupertinoPageRoute(
+          builder: (context) => widget,
         ),
       );
 
