@@ -22,14 +22,12 @@ class ProductsItem extends StatefulWidget {
   _ProductsItemState createState() => _ProductsItemState();
 }
 
-class _ProductsItemState extends State<ProductsItem>
-    with TickerProviderStateMixin {
+class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMixin {
   AnimationController _controller;
 
   @override
   void initState() {
-    _controller = AnimationController(
-        duration: const Duration(milliseconds: 200), vsync: this);
+    _controller = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
     super.initState();
   }
 
@@ -59,32 +57,25 @@ class _ProductsItemState extends State<ProductsItem>
                         fit: BoxFit.cover,
                       ),
                     ),
-                    Consumer<AddRemoveFavouriteRepository>(builder:
-                        (context, addRemoveFavouriteRepository, child) {
+                    Consumer<AddRemoveFavouriteRepository>(
+                        builder: (context, addRemoveFavouriteRepository, child) {
                       return GestureDetector(
                           onTap: () => {
                                 HapticFeedback.heavyImpact(),
                                 _controller.forward(),
-                                BaseRepository.isAuthorized()
-                                    .then((isAuthorized) {
+                                BaseRepository.isAuthorized().then((isAuthorized) {
                                   isAuthorized
                                       ? widget.product.isFavourite
-                                          ? addRemoveFavouriteRepository
-                                              .removeFromFavourites(
-                                                  (widget.product
-                                                        ..isFavourite = false)
-                                                      .id)
-                                          : addRemoveFavouriteRepository
-                                              .addToFavourites((widget.product
-                                                    ..isFavourite = true)
-                                                  .id)
+                                          ? addRemoveFavouriteRepository.removeFromFavourites(
+                                              (widget.product..isFavourite = false).id)
+                                          : addRemoveFavouriteRepository.addToFavourites(
+                                              (widget.product..isFavourite = true).id)
                                       : showCupertinoModalBottomSheet(
                                           backgroundColor: Colors.white,
                                           expand: false,
                                           context: context,
                                           useRootNavigator: true,
-                                          builder: (context, controller) =>
-                                              AuthorizationSheet());
+                                          builder: (context, controller) => AuthorizationSheet());
                                 })
                               },
                           child: Align(
@@ -93,9 +84,7 @@ class _ProductsItemState extends State<ProductsItem>
                               padding: EdgeInsets.all(10),
                               child: ScaleTransition(
                                 scale: Tween(begin: 1.0, end: 1.3).animate(
-                                    CurvedAnimation(
-                                        parent: _controller,
-                                        curve: Curves.easeInQuad))
+                                    CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
                                   ..addStatusListener((status) {
                                     if (status == AnimationStatus.completed) {
                                       setState(() {
@@ -120,8 +109,7 @@ class _ProductsItemState extends State<ProductsItem>
                       alignment: Alignment.bottomRight,
                       child: Consumer<CartRepository>(
                         builder: (context, repository, child) {
-                          final isInCart =
-                              repository.checkPresence(widget.product.id);
+                          final isInCart = repository.checkPresence(widget.product.id);
 
                           return GestureDetector(
                             onTap: () {
@@ -132,8 +120,7 @@ class _ProductsItemState extends State<ProductsItem>
                                 repository.addToCart(widget.product.id);
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
                               child: SVGIcon(
                                 icon: IconAsset.cart,
                                 size: 26,
