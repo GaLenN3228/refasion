@@ -7,8 +7,17 @@ import 'package:refashioned_app/screens/marketplace/pages/new_address_page.dart'
 
 class AuthorizationSheet extends StatelessWidget {
   final Function(List<String>) onPush;
+  final Function(BuildContext) onAuthorizationCancel;
+  final Function(BuildContext) onAuthorizationDone;
+  final bool needDismiss;
 
-  const AuthorizationSheet({Key key, this.onPush}) : super(key: key);
+  const AuthorizationSheet(
+      {Key key,
+      this.onPush,
+      this.onAuthorizationCancel,
+      this.onAuthorizationDone,
+      this.needDismiss})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +28,8 @@ class AuthorizationSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+            borderRadius:
+                BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
             child: Container(
               color: Colors.white,
               height: 240,
@@ -36,8 +45,7 @@ class AuthorizationSheet extends StatelessWidget {
                       height: 3,
                       decoration: ShapeDecoration(
                           color: Colors.black.withOpacity(0.1),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100))),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100))),
                     ),
                   ],
                 ),
@@ -68,14 +76,17 @@ class AuthorizationSheet extends StatelessWidget {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => PhonePage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => PhonePage(
+                                needDismiss: needDismiss,
+                                onAuthorizationDone: onAuthorizationDone,
+                                onAuthorizationCancel: onAuthorizationCancel,
+                              )));
                     },
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, top: 10, bottom: 40),
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 40),
                   child: Button(
                     "ВОЙТИ ЧЕРЕЗ СБЕРБАНК ID",
                     buttonStyle: ButtonStyle.outline,
@@ -83,8 +94,8 @@ class AuthorizationSheet extends StatelessWidget {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).push(MaterialWithModalsPageRoute(
-                          builder: (context) => NewAddressPage()));
+                      Navigator.of(context).push(
+                          MaterialWithModalsPageRoute(builder: (context) => NewAddressPage()));
                     },
                   ),
                 )
@@ -96,4 +107,3 @@ class AuthorizationSheet extends StatelessWidget {
     );
   }
 }
-
