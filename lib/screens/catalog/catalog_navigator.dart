@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
@@ -79,6 +80,7 @@ class CatalogNavigator extends StatefulWidget {
     PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
+    SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
   @override

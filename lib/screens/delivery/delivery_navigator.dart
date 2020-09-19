@@ -15,6 +15,39 @@ class DeliveryNavigatorRoutes {
   static const String recipientInfo = '/recipientInfo';
 }
 
+class DeliveryNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPop(Route route, Route previousRoute) {
+    switch (previousRoute?.settings?.name) {
+      case DeliveryNavigatorRoutes.addresses:
+      case DeliveryNavigatorRoutes.map:
+      case DeliveryNavigatorRoutes.recipientInfo:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+        break;
+
+      default:
+        break;
+    }
+
+    super.didPop(route, previousRoute);
+  }
+
+  // @override
+  // void didPush(Route route, Route previousRoute) {
+  //   switch (route?.settings?.name) {
+  //     case DeliveryNavigatorRoutes.addresses:
+  //     case DeliveryNavigatorRoutes.map:
+  //     case DeliveryNavigatorRoutes.recipientInfo:
+  //       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+  //       break;
+
+  //     default:
+  //       break;
+  //   }
+  //   super.didPush(route, previousRoute);
+  // }
+}
+
 class DeliveryNavigator extends StatefulWidget {
   final Function() onClose;
   final Function(String) onFinish;
@@ -44,16 +77,14 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
   void initState() {
     switch (widget.deliveryType.type) {
       case Delivery.PICKUP_POINT:
-        userAddresses = widget.userAddresses
-            ?.where((userAddress) => userAddress.pickpoint != null)
-            ?.toList();
+        userAddresses =
+            widget.userAddresses?.where((userAddress) => userAddress.pickpoint != null)?.toList();
         break;
 
       case Delivery.COURIER_DELIVERY:
       case Delivery.EXPRESS_DEVILERY:
-        userAddresses = widget.userAddresses
-            ?.where((userAddress) => userAddress.pickpoint == null)
-            ?.toList();
+        userAddresses =
+            widget.userAddresses?.where((userAddress) => userAddress.pickpoint == null)?.toList();
         break;
 
       default:
@@ -64,6 +95,8 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
   }
 
   Widget _routeBuilder(BuildContext context, String route) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+
     switch (route) {
       case DeliveryNavigatorRoutes.addresses:
         return AddressesPage(
@@ -89,8 +122,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
 
             HapticFeedback.lightImpact();
 
-            Navigator.of(context)
-                .pushNamed(DeliveryNavigatorRoutes.recipientInfo);
+            Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.recipientInfo);
           },
         );
 
@@ -117,13 +149,14 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    final initialRoute = widget.deliveryType.type == Delivery.PICKUP_ADDRESS ||
-            userAddresses.isEmpty
-        ? DeliveryNavigatorRoutes.map
-        : DeliveryNavigatorRoutes.addresses;
+    final initialRoute =
+        widget.deliveryType.type == Delivery.PICKUP_ADDRESS || userAddresses.isEmpty
+            ? DeliveryNavigatorRoutes.map
+            : DeliveryNavigatorRoutes.addresses;
 
     return Navigator(
       initialRoute: initialRoute,
+      observers: [DeliveryNavigatorObserver()],
       onGenerateInitialRoutes: (navigator, initialRoute) => [
         CupertinoPageRoute(
           builder: (context) => _routeBuilder(context, initialRoute),

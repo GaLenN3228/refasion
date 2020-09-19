@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/repositories/search.dart';
@@ -32,6 +33,7 @@ class TabView extends StatelessWidget {
     PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
+    SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
   TabView(this.tab, this.currentTab,

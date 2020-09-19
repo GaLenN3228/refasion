@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
@@ -30,6 +31,40 @@ class CartNavigatorRoutes {
   static const String favourites = '/favourites';
 }
 
+class CartNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPop(Route route, Route previousRoute) {
+    switch (previousRoute?.settings?.name) {
+      case CartNavigatorRoutes.cart:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        break;
+
+      default:
+        break;
+    }
+
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didPush(Route route, Route previousRoute) {
+    switch (route?.settings?.name) {
+      case CartNavigatorRoutes.cart:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        break;
+
+      case CartNavigatorRoutes.product:
+      case CartNavigatorRoutes.checkout:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+        break;
+
+      default:
+        break;
+    }
+    super.didPush(route, previousRoute);
+  }
+}
+
 class CartNavigator extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;
 
@@ -40,6 +75,7 @@ class CartNavigator extends StatefulWidget {
     PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
+    SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
   _CartNavigatorState _cartNavigatorState;
@@ -274,6 +310,7 @@ class _CartNavigatorState extends State<CartNavigator> {
   @override
   Widget build(BuildContext context) => Navigator(
         initialRoute: CartNavigatorRoutes.cart,
+        observers: [CartNavigatorObserver()],
         key: widget.navigatorKey,
         onGenerateRoute: (routeSettings) => CupertinoPageRoute(
           builder: (context) => _routeBuilder(context, routeSettings.name),

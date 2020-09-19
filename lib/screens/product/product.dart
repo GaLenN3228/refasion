@@ -34,8 +34,7 @@ class ProductPage extends StatefulWidget {
   final Function(String parameters, String title) onSubCategoryClick;
   final Function() onCartPush;
 
-  final Function(String deliveryCompanyId, String deliveryObjectId)
-      onCheckoutPush;
+  final Function(String deliveryCompanyId, String deliveryObjectId) onCheckoutPush;
 
   final Function(
     BuildContext,
@@ -44,6 +43,7 @@ class ProductPage extends StatefulWidget {
     PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
+    SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
   const ProductPage({
@@ -77,8 +77,7 @@ class _ProductPageState extends State<ProductPage> {
     super.initState();
   }
 
-  repositoryStatusListener() =>
-      setState(() => status = productRepository.statusNotifier.value);
+  repositoryStatusListener() => setState(() => status = productRepository.statusNotifier.value);
 
   @override
   void dispose() {
@@ -114,18 +113,14 @@ class _ProductPageState extends State<ProductPage> {
                     onTap: Navigator.of(context).pop,
                   ),
                   middleData: TBMiddleData.condensed(
-                    product.brand.name.toString() +
-                        " • " +
-                        product.name.toString(),
+                    product.brand.name.toString() + " • " + product.name.toString(),
                     product.currentPrice.toString() + " ₽",
                   ),
                   rightButtonData: TBButtonData(
                     iconType: widget.product.isFavourite
                         ? TBIconType.favoriteFilled
                         : TBIconType.favorite,
-                    iconColor: widget.product.isFavourite
-                        ? Color(0xFFD12C2A)
-                        : Color(0xFF000000),
+                    iconColor: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
                     animated: true,
                     onTap: () async {
                       HapticFeedback.vibrate();
@@ -133,19 +128,16 @@ class _ProductPageState extends State<ProductPage> {
                         isAuthorized
                             ? widget.product.isFavourite
                                 ? addRemoveFavouriteRepository
-                                    .removeFromFavourites((widget.product
-                                          ..isFavourite = false)
-                                        .id)
-                                : addRemoveFavouriteRepository.addToFavourites(
-                                    (widget.product..isFavourite = true).id)
+                                    .removeFromFavourites((widget.product..isFavourite = false).id)
+                                : addRemoveFavouriteRepository
+                                    .addToFavourites((widget.product..isFavourite = true).id)
                             : showCupertinoModalBottomSheet(
                                 backgroundColor: Colors.white,
                                 expand: false,
                                 context: context,
                                 settings: RouteSettings(name: "/authorization"),
                                 useRootNavigator: true,
-                                builder: (context, controller) =>
-                                    AuthorizationSheet());
+                                builder: (context, controller) => AuthorizationSheet());
                       });
                     },
                   )),
@@ -197,7 +189,7 @@ class _ProductPageState extends State<ProductPage> {
             children: [
               ListView(
                 padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom + 65.0),
+                    bottom: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
                 children: <Widget>[
                   ProductSlider(
                     images: product.images,
@@ -243,14 +235,14 @@ class _ProductPageState extends State<ProductPage> {
                 child: ProductBottomButtons(
                   productId: widget.product.id,
                   onCartPush: widget.onCartPush,
-                  openDeliveryTypesSelector: () =>
-                      widget.openDeliveryTypesSelector?.call(
+                  openDeliveryTypesSelector: () => widget.openDeliveryTypesSelector?.call(
                     context,
                     widget.product.id,
                     deliveryTypes: product.deliveryTypes,
                     pickUpAddress: product.pickUpAddress,
                     onFinish: (companyId, objectId) =>
                         widget.onCheckoutPush?.call(companyId, objectId),
+                    originalOverlayStyle: SystemUiOverlayStyle.dark,
                   ),
                 ),
               ),

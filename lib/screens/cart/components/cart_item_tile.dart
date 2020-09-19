@@ -22,13 +22,10 @@ class CartItemTile extends StatefulWidget {
     PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
+    SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  const CartItemTile(
-      {Key key,
-      this.cartItem,
-      this.onProductPush,
-      this.openDeliveryTypesSelector})
+  const CartItemTile({Key key, this.cartItem, this.onProductPush, this.openDeliveryTypesSelector})
       : super(key: key);
 
   @override
@@ -41,11 +38,11 @@ class _CartItemTileState extends State<CartItemTile> {
       context,
       widget.cartItem.id,
       pickUpAddress: null,
-      onClose:
-          Provider.of<CartRepository>(context, listen: false).clearPendingIDs,
+      onClose: Provider.of<CartRepository>(context, listen: false).clearPendingIDs,
       onFinish: (companyId, objectId) async =>
           await Provider.of<CartRepository>(context, listen: false)
               .setDelivery(widget.cartItem.id, companyId, objectId),
+      originalOverlayStyle: SystemUiOverlayStyle.light,
     );
   }
 
@@ -57,9 +54,8 @@ class _CartItemTileState extends State<CartItemTile> {
           CartProductTile(
             cartProduct: cartProduct,
             onSelect: () {
-              final wasAbleToSelect =
-                  Provider.of<CartRepository>(context, listen: false)
-                      .select(cartProduct.product.id);
+              final wasAbleToSelect = Provider.of<CartRepository>(context, listen: false)
+                  .select(cartProduct.product.id);
 
               if (!wasAbleToSelect)
                 openDeliveryTypesSelector();

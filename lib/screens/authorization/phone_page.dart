@@ -55,6 +55,8 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
         backgroundColor: Colors.white,

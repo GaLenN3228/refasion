@@ -31,6 +31,7 @@ class CartPage extends StatefulWidget {
     PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
+    SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
   final Function() onCatalogPush;
@@ -103,8 +104,7 @@ class _CartPageState extends State<CartPage> {
 
     final cart = repository?.response?.content;
 
-    buttonState.value =
-        repository.canMakeOrder ? ButtonState.enabled : ButtonState.disabled;
+    buttonState.value = repository.canMakeOrder ? ButtonState.enabled : ButtonState.disabled;
 
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
@@ -126,12 +126,11 @@ class _CartPageState extends State<CartPage> {
                 ? Stack(
                     children: [
                       ListView(
-                        padding: EdgeInsets.fromLTRB(15, 0, 15,
-                            MediaQuery.of(context).padding.bottom + 65.0),
+                        padding: EdgeInsets.fromLTRB(
+                            15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
                             child: Text(
                               cart.text,
                               style: Theme.of(context).textTheme.headline2,
@@ -140,8 +139,7 @@ class _CartPageState extends State<CartPage> {
                           for (final group in cart.groups)
                             CartItemTile(
                               cartItem: group,
-                              openDeliveryTypesSelector:
-                                  widget.openDeliveryTypesSelector,
+                              openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
                               onProductPush: widget.onProductPush,
                             ),
                           Padding(
@@ -156,7 +154,7 @@ class _CartPageState extends State<CartPage> {
                       Positioned(
                         left: 0,
                         right: 0,
-                        bottom: 99,
+                        bottom: MediaQuery.of(context).padding.bottom + 65.0,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: RefashionedButton(
@@ -225,10 +223,7 @@ class _CartPageState extends State<CartPage> {
                             alignment: Alignment.center,
                             child: Text(
                               "Перейти в каталог".toUpperCase(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1
-                                  .copyWith(
+                              style: Theme.of(context).textTheme.subtitle1.copyWith(
                                     color: Colors.white,
                                   ),
                             ),

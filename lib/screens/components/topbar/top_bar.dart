@@ -9,15 +9,13 @@ class RefashionedTopBar extends StatefulWidget {
   final TopBarData data;
   final ScaffoldScrollActionsProvider scrollActionsProvider;
 
-  const RefashionedTopBar({Key key, this.data, this.scrollActionsProvider})
-      : super(key: key);
+  const RefashionedTopBar({Key key, this.data, this.scrollActionsProvider}) : super(key: key);
 
   @override
   _RefashionedTopBarState createState() => _RefashionedTopBarState();
 }
 
-class _RefashionedTopBarState extends State<RefashionedTopBar>
-    with TickerProviderStateMixin {
+class _RefashionedTopBarState extends State<RefashionedTopBar> with TickerProviderStateMixin {
   // final flatShadow = null;
   // final elevatedShadow = BoxShadow(
   //     color: Colors.black.withOpacity(0.05),
@@ -52,11 +50,6 @@ class _RefashionedTopBarState extends State<RefashionedTopBar>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: statusBarColor,
-      statusBarBrightness: statusBarBrightness,
-    ));
-
     return Container(
       color: backgroundColor,
       child: TBContent(

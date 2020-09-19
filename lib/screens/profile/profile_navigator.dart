@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
@@ -26,6 +27,26 @@ class ProfileNavigatorRoutes {
   static const String favourites = '/favourites';
 }
 
+class ProfileNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPop(Route route, Route previousRoute) {
+    switch (previousRoute?.settings?.name) {
+      case ProfileNavigatorRoutes.root:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        break;
+    }
+
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didPush(Route route, Route previousRoute) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+
+    super.didPush(route, previousRoute);
+  }
+}
+
 class ProfileNavigator extends StatefulWidget {
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
@@ -40,7 +61,9 @@ class ProfileNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) => _mapPageState._routeBuilder(context, ProfileNavigatorRoutes.favourites),
+            builder: (context) =>
+                _mapPageState._routeBuilder(context, ProfileNavigatorRoutes.favourites),
+            settings: RouteSettings(name: ProfileNavigatorRoutes.favourites),
           ),
         )
         .then((value) => topPanelController.needShow = needShowTopBar);
@@ -51,8 +74,10 @@ class ProfileNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) =>
-                _mapPageState._routeBuilder(context, ProfileNavigatorRoutes.products, searchResult: searchResult),
+            builder: (context) => _mapPageState._routeBuilder(
+                context, ProfileNavigatorRoutes.products,
+                searchResult: searchResult),
+            settings: RouteSettings(name: ProfileNavigatorRoutes.products),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -87,8 +112,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 onSettingsClick: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(
-                      builder: (context) =>
-                          _routeBuilder(context, ProfileNavigatorRoutes.settings, isAuthorized: isAuthorized),
+                      builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.settings,
+                          isAuthorized: isAuthorized),
+                      settings: RouteSettings(name: ProfileNavigatorRoutes.settings),
                     ),
                   );
                 },
@@ -97,8 +123,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 onSettingsClick: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(
-                      builder: (context) =>
-                          _routeBuilder(context, ProfileNavigatorRoutes.settings, isAuthorized: isAuthorized),
+                      builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.settings,
+                          isAuthorized: isAuthorized),
+                      settings: RouteSettings(name: ProfileNavigatorRoutes.settings),
                     ),
                   );
                 },
@@ -129,8 +156,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             onPush: (product, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, ProfileNavigatorRoutes.product, product: product, category: category),
+                builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.product,
+                    product: product, category: category),
+                settings: RouteSettings(name: ProfileNavigatorRoutes.product),
               ),
             )
                 .then(
@@ -153,8 +181,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             onProductPush: (product) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) =>
-                        _routeBuilder(context, ProfileNavigatorRoutes.product, product: product, category: category),
+                    builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.product,
+                        product: product, category: category),
+                    settings: RouteSettings(name: ProfileNavigatorRoutes.product),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
@@ -162,7 +191,10 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 .push(
                   CupertinoPageRoute(
                     builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.products,
-                        product: product, category: category, parameters: parameters, productTitle: title),
+                        product: product,
+                        category: category,
+                        parameters: parameters,
+                        productTitle: title),
                     settings: RouteSettings(name: ProfileNavigatorRoutes.products),
                   ),
                 )
@@ -176,7 +208,8 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             providers: [
               ChangeNotifierProvider<FavouritesProductsRepository>(
                   create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+              ChangeNotifierProvider<AddRemoveFavouriteRepository>(
+                  create: (_) => AddRemoveFavouriteRepository())
             ],
             builder: (context, _) {
               return FavouritesPage(onPush: (product) {
@@ -185,6 +218,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                       CupertinoPageRoute(
                         builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.product,
                             product: product, category: category),
+                        settings: RouteSettings(name: ProfileNavigatorRoutes.product),
                       ),
                     )
                     .then((value) => topPanelController.needShow = false);
@@ -213,9 +247,12 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
           return Navigator(
             key: widget.navigatorKey,
             initialRoute: ProfileNavigatorRoutes.root,
+            observers: [ProfileNavigatorObserver()],
             onGenerateRoute: (routeSettings) {
               return CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, routeSettings.name, isAuthorized: snapshot.data),
+                builder: (context) =>
+                    _routeBuilder(context, routeSettings.name, isAuthorized: snapshot.data),
+                settings: routeSettings,
               );
             },
           );
