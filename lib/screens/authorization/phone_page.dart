@@ -33,7 +33,6 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
     maskFormatter =
         new MaskTextInputFormatter(mask: '### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
     textEditingController.addListener(textControllerListener);
-    textEditingController.selection = TextSelection.fromPosition(TextPosition(offset: textEditingController.text.length));
 
     super.initState();
     WidgetsBinding.instance.addObserver(this);
@@ -50,7 +49,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
   textControllerListener() {
     setState(() {
       phoneIsEmpty = textEditingController.text.isEmpty;
-      phone = textEditingController.text;
+      phone = "+7 " + textEditingController.text;
     });
   }
 
@@ -103,23 +102,25 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text("+7 ", style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20)),
-                  IntrinsicWidth(child: TextField(
-                    inputFormatters: [maskFormatter],
-                    textAlign: TextAlign.start,
-                    controller: textEditingController,
-                    keyboardType: TextInputType.phone,
-                    autofocus: true,
-                    style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
-                    cursorWidth: 2.0,
-                    cursorRadius: Radius.circular(2.0),
-                    cursorColor: Color(0xFFE6E6E6),
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        hintText: "Введите номер",
-                        hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
-                  ),),
+                  IntrinsicWidth(
+                    child: TextField(
+                      inputFormatters: [maskFormatter],
+                      textAlign: TextAlign.start,
+                      controller: textEditingController,
+                      keyboardType: TextInputType.phone,
+                      autofocus: true,
+                      style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
+                      cursorWidth: 2.0,
+                      cursorRadius: Radius.circular(2.0),
+                      cursorColor: Color(0xFFE6E6E6),
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          hintText: "Введите номер",
+                          hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
+                    ),
+                  ),
                 ],
               ),
               Container(
