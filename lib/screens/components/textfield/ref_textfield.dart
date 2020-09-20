@@ -16,6 +16,8 @@ class RefashionedTextField extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final TextInputType keyboardType;
 
+  final double height;
+
   const RefashionedTextField(
       {Key key,
       this.onCancel,
@@ -24,11 +26,11 @@ class RefashionedTextField extends StatefulWidget {
       this.autofocus: false,
       this.icon,
       this.formKey,
-      this.keyboardType})
+      this.keyboardType,
+      this.height: 45})
       : super(key: key);
 
-  factory RefashionedTextField.fromTbSearchData(TBSearchData data) =>
-      RefashionedTextField(
+  factory RefashionedTextField.fromTbSearchData(TBSearchData data) => RefashionedTextField(
         autofocus: data.autofocus,
         hintText: data.hintText,
         onSearchUpdate: data.onSearchUpdate,
@@ -54,11 +56,11 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
   @override
   void initState() {
     if (widget.onCancel != null) {
-      animationController = AnimationController(
-          vsync: this, duration: const Duration(milliseconds: 200));
+      animationController =
+          AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
       animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
-      offsetAnimation = Tween<Offset>(begin: Offset(1, 0), end: Offset(0, 0))
-          .animate(animationController);
+      offsetAnimation =
+          Tween<Offset>(begin: Offset(1, 0), end: Offset(0, 0)).animate(animationController);
 
       focusNode = FocusNode();
       focusNode.addListener(focusListener);
@@ -103,11 +105,13 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
     if (widget.onCancel == null)
       return TBSearchDecoration(
         keyboardType: widget.keyboardType,
+        icon: widget.icon,
         autofocus: widget.autofocus,
         hintText: widget.hintText,
         focusNode: focusNode,
         textController: textController,
         hasText: hasText,
+        height: widget.height,
       );
 
     return Stack(
@@ -120,9 +124,7 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
             final startPadding = const EdgeInsets.fromLTRB(20, 10, 20, 10);
             final endPadding = EdgeInsets.fromLTRB(20, 10, 90, 10);
 
-            return Padding(
-                padding: EdgeInsets.lerp(startPadding, endPadding, value),
-                child: child);
+            return Padding(padding: EdgeInsets.lerp(startPadding, endPadding, value), child: child);
           },
           child: TBSearchDecoration(
             keyboardType: widget.keyboardType,
@@ -132,6 +134,7 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
             focusNode: focusNode,
             textController: textController,
             hasText: hasText,
+            height: widget.height,
           ),
         ),
         Positioned(
@@ -140,14 +143,17 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
           bottom: 0,
           child: SlideTransition(
             position: offsetAnimation,
-            child: TBButton(
-              padding: EdgeInsets.only(left: 10, right: 20),
-              data: TBButtonData(
-                label: "Отменить",
-                onTap: () {
-                  focusNode.unfocus();
-                  widget.onCancel();
-                },
+            child: Container(
+              alignment: Alignment.centerRight,
+              child: TBButton(
+                padding: EdgeInsets.only(left: 10, right: 20),
+                data: TBButtonData(
+                  label: "Отменить",
+                  onTap: () {
+                    focusNode.unfocus();
+                    widget.onCancel();
+                  },
+                ),
               ),
             ),
           ),

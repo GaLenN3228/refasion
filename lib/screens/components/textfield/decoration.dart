@@ -14,6 +14,8 @@ class TBSearchDecoration extends StatefulWidget {
   final IconAsset icon;
   final TextInputType keyboardType;
 
+  final double height;
+
   const TBSearchDecoration({
     Key key,
     this.autofocus,
@@ -23,6 +25,7 @@ class TBSearchDecoration extends StatefulWidget {
     this.hasText,
     this.icon,
     this.keyboardType,
+    this.height,
   }) : super(key: key);
 
   @override
@@ -32,11 +35,10 @@ class TBSearchDecoration extends StatefulWidget {
 class _TBSearchDecorationState extends State<TBSearchDecoration> {
   @override
   Widget build(BuildContext context) => Container(
-        height: 45,
+        height: widget.height,
         decoration: ShapeDecoration(
             color: Color(0xFFF6F6F6),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -69,8 +71,7 @@ class _TBSearchDecorationState extends State<TBSearchDecoration> {
                 height: 14,
                 child: ValueListenableBuilder(
                   valueListenable: widget.hasText,
-                  builder: (context, value, child) =>
-                      value ? child : SizedBox(),
+                  builder: (context, value, child) => value ? child : SizedBox(),
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () => widget.textController.clear(),
@@ -78,8 +79,7 @@ class _TBSearchDecorationState extends State<TBSearchDecoration> {
                       children: [
                         Container(
                           decoration: ShapeDecoration(
-                              shape: CircleBorder(),
-                              color: Colors.black.withOpacity(0.25)),
+                              shape: CircleBorder(), color: Colors.black.withOpacity(0.25)),
                         ),
                         Center(
                           child: SVGIcon(
