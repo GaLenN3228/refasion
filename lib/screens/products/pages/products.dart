@@ -243,7 +243,7 @@ class _ProductsPageState extends State<ProductsPage> {
                           widget.onPush(
                             product,
                             callback: () {
-                              syncFilters(false);
+                              syncFilters(true);
                               updateProducts(context);
                             },
                           );
