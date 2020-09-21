@@ -65,7 +65,8 @@ class _ProductsPageState extends State<ProductsPage> {
       initialParameters += categoryBrandsRepository.getRequestParameters();
       quickFiltersCategories = List()
         ..addAll(widget.topCategory.children.map((e) => Category.clone(e)).toList());
-      selectedBrands = categoryBrandsRepository.response.content.where((element) => element.selected).toList();
+      selectedBrands = List()
+        ..addAll(categoryBrandsRepository.response.content.where((element) => element.selected).map((e) => Brand.clone(e)).toList());
     } else {
       initialParameters = widget.topCategory.getRequestParameters();
       quickFiltersCategories = List()
@@ -85,9 +86,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
   repositoryListener() => setState(() {});
 
-  updateProducts(BuildContext context, {bool updateFromQuickFilters = false}) {
-    syncFilters(updateFromQuickFilters);
-
+  updateProducts(BuildContext context) {
     if (quickFiltersCategories != null)
       initialParameters = "?p=" +
           (quickFiltersCategories.where((category) => category.selected).isNotEmpty
@@ -118,10 +117,10 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 
   //TODO: refactor method sync filters
-  void syncFilters(bool updateFromQuickFilters) {
+  void syncFilters(bool update) {
     if (filtersRepository.isLoaded && quickFiltersRepository.isLoaded) {
       var selectedFilters = Set<String>();
-      if (updateFromQuickFilters) {
+      if (update) {
         selectedFilters.addAll(quickFiltersRepository.response.content
             .where((element) => element.selected)
             .map((e) => e.values.id));
@@ -158,15 +157,29 @@ class _ProductsPageState extends State<ProductsPage> {
     }
 
     if (selectedBrands != null && filtersRepository.isLoaded) {
-      selectedBrands
-          .where((element) => element.selected)
-          .forEach((element) {
+      if (update)
+        selectedBrands.where((element) => element.selected).forEach((element) {
+          filtersRepository.response.content
+              .where((filter) => filter.parameter == Parameter.brand)
+              .forEach((filter) {
+            filter.values.firstWhere((filterValue) => filterValue.id == element.id).selected = true;
+            filter.isModified();
+          });
+        });
+      else
         filtersRepository.response.content
             .where((filter) => filter.parameter == Parameter.brand)
             .forEach((filter) {
-          filter.values.firstWhere((filterValue) => filterValue.id == element.id).selected = true;
+          filter.values.where((filterValue) => filterValue.selected).forEach((filterValue) {
+            selectedBrands.forEach((element) {
+              if (element.id == filterValue.id) {
+                element.selected = true;
+              } else {
+                element.selected = false;
+              }
+            });
+          });
         });
-      });
     }
   }
 
@@ -182,7 +195,7 @@ class _ProductsPageState extends State<ProductsPage> {
         ],
         builder: (context, _) {
           quickFiltersRepository = Provider.of<QuickFiltersRepository>(context, listen: false);
-          syncFilters(false);
+          syncFilters(true);
           return (filtersRepository.isLoaded && sortMethodsRepository.isLoaded)
               ? Column(
                   children: [
@@ -192,8 +205,10 @@ class _ProductsPageState extends State<ProductsPage> {
                           topCategory: widget.topCategory,
                           categories: quickFiltersCategories,
                           padding: const EdgeInsets.only(left: 20, right: 20),
-                          updateProducts: ({categories}) =>
-                              updateProducts(context, updateFromQuickFilters: true)),
+                          updateProducts: ({categories}) {
+                            syncFilters(true);
+                            updateProducts(context);
+                          }),
                     ),
                     ProductsTitle(
                         categoryName: (widget.searchResult != null)
@@ -207,11 +222,17 @@ class _ProductsPageState extends State<ProductsPage> {
                           FiltersButton(
                             root: initialParameters,
                             filters: filtersRepository.response.content,
-                            onApply: () => updateProducts(context),
+                            onApply: () {
+                              syncFilters(false);
+                              updateProducts(context);
+                            },
                           ),
                           SortingButton(
                             sort: sortMethodsRepository.response.content,
-                            onUpdate: () => updateProducts(context),
+                            onUpdate: () {
+                              syncFilters(false);
+                              updateProducts(context);
+                            },
                           )
                         ],
                       ),
@@ -222,6 +243,7 @@ class _ProductsPageState extends State<ProductsPage> {
                           widget.onPush(
                             product,
                             callback: () {
+                              syncFilters(false);
                               updateProducts(context);
                             },
                           );

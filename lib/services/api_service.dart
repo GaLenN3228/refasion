@@ -8,7 +8,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = false;
+  static const LOG_ENABLE = true;
 
   //ADDRESSES
 
