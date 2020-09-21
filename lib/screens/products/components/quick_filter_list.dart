@@ -8,10 +8,11 @@ class QuickFilterList extends StatefulWidget {
   final double horizontalHeight;
   final EdgeInsets padding;
   final Category topCategory;
+  final List<Category> categories;
   final Function() updateProducts;
 
   const QuickFilterList(
-      {Key key, this.horizontalHeight: 30.0, this.padding, this.updateProducts, this.topCategory})
+      {Key key, this.horizontalHeight: 30.0, this.padding, this.updateProducts, this.topCategory, this.categories})
       : super(key: key);
 
   @override
@@ -32,19 +33,20 @@ class _QuickFilterListState extends State<QuickFilterList> {
               height: widget.horizontalHeight,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.topCategory != null && widget.topCategory.children != null
+                itemCount: widget.topCategory != null && widget.categories != null
                     ? quickFiltersRepository.response.content.length + 1
                     : quickFiltersRepository.response.content.length,
                 padding: widget.padding ?? EdgeInsets.zero,
                 itemBuilder: (context, index) {
                   return QuickFilterItem(
                       topCategory: widget.topCategory,
+                      categories: widget.categories,
                       isNavigationButton:
-                          widget.topCategory != null && widget.topCategory.children != null
+                          widget.topCategory != null && widget.categories != null
                               ? index == 0
                               : false,
                       horizontalHeight: widget.horizontalHeight,
-                      filterValue: widget.topCategory != null && widget.topCategory.children != null
+                      filterValue: widget.topCategory != null && widget.categories != null
                           ? ((index > 0)
                               ? quickFiltersRepository.response.content.elementAt(index - 1)
                               : null)

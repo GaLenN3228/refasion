@@ -186,25 +186,32 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           return CategoryPage(
             topCategory: category,
             level: CategoryLevel.category,
-            onPush: (_, {callback}) => Navigator.of(context)
-                .push(
-              CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
-                settings: RouteSettings(name: CatalogNavigatorRoutes.products),
-              ),
-            )
-                .then((flag) {
-              callback();
-            }),
-            onBrandsPush: () {
-              Navigator.of(context).push(
+            onPush: (_, {callback}) {
+              Provider.of<CategoryBrandsRepository>(context, listen: false).response = null;
+              return Navigator.of(context)
+                  .push(
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      _routeBuilder(context, CatalogNavigatorRoutes.products, category: category),
+                  settings: RouteSettings(name: CatalogNavigatorRoutes.products),
+                ),
+              )
+                  .then((flag) {
+                callback();
+              });
+            },
+            onBrandsPush: ({callback}) {
+              Navigator.of(context)
+                  .push(
                 CupertinoPageRoute(
                   builder: (context) =>
                       _routeBuilder(context, CatalogNavigatorRoutes.brands, category: category),
                   settings: RouteSettings(name: CatalogNavigatorRoutes.brands),
                 ),
-              );
+              )
+                  .then((flag) {
+                callback();
+              });
             },
           );
         });

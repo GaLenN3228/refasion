@@ -8,21 +8,21 @@ import 'package:refashioned_app/screens/products/components/category_filter_pane
 
 class CategoryFilterPanel extends StatefulWidget {
   final Function() updateProducts;
+  final List<Category> categories;
   final Category topCategory;
 
-  const CategoryFilterPanel({Key key, this.updateProducts, this.topCategory}) : super(key: key);
+  const CategoryFilterPanel({Key key, this.updateProducts, this.topCategory, this.categories}) : super(key: key);
 
   @override
   _CategoryFilterPanelState createState() => _CategoryFilterPanelState();
 }
 
 class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
-  List<Category> savedCategories;
   String categoryFiltersParameters;
 
   prepareParameters() {
     final selectedIdList =
-        widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
+    widget.categories.where((category) => category.selected).map((category) => category.id);
     if (selectedIdList.isNotEmpty)
       categoryFiltersParameters = "?p=" + selectedIdList.join(',');
     else
@@ -31,20 +31,20 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
 
   onReset(BuildContext context) {
     setState(() {
-      widget.topCategory.children.forEach((category) => category.reset());
+      widget.categories.forEach((category) => category.reset());
     });
     prepareParameters();
     updateCount(context);
   }
 
   onClose(BuildContext context) {
-    widget.topCategory.children
-      ..clear()
-      ..addAll(savedCategories);
+    // widget.topCategory.children
+    //   ..clear()
+    //   ..addAll(savedCategories);
   }
 
   updateCategory(BuildContext context, {String id}) {
-    if (id != null && id.isNotEmpty) widget.topCategory.children.firstWhere((category) => category.id == id).update();
+    if (id != null && id.isNotEmpty) widget.categories.firstWhere((category) => category.id == id).update();
     prepareParameters();
     updateCount(context);
   }
@@ -55,7 +55,6 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
 
   @override
   void initState() {
-    savedCategories = List()..addAll(widget.topCategory.children.map((e) => Category.clone(e)).toList());
     prepareParameters();
     super.initState();
   }
@@ -83,7 +82,7 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                     ),
                     Expanded(
                       child: CategoryFilterList(
-                        values: widget.topCategory.children,
+                        values: widget.categories,
                         onSelect: (id) {
                           setState(() {
                             updateCategory(context, id: id);

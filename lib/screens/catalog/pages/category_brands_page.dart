@@ -52,6 +52,7 @@ class _CategoryBrandsPageState extends State<CategoryBrandsPage> {
   void initState() {
     productCountRepository = Provider.of<ProductsCountRepository>(context, listen: false);
     categoryBrandsRepository = Provider.of<CategoryBrandsRepository>(context, listen: false);
+    categoryBrandsRepository.response = null;
     categoryBrandsRepository.getBrands(widget.topCategory.id);
     prepareParameters();
     super.initState();
