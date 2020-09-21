@@ -7,12 +7,12 @@ import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/screens/delivery/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/delivery/pages/map_page.dart';
-import 'package:refashioned_app/screens/delivery/pages/recipient_info_page.dart';
+import 'package:refashioned_app/screens/delivery/pages/info_page.dart';
 
 class DeliveryNavigatorRoutes {
-  static const String addresses = '/addresses';
+  static const String addresses = '/address';
   static const String map = '/map';
-  static const String recipientInfo = '/info';
+  static const String info = '/info';
 }
 
 class DeliveryNavigatorObserver extends NavigatorObserver {
@@ -21,7 +21,7 @@ class DeliveryNavigatorObserver extends NavigatorObserver {
     switch (previousRoute?.settings?.name) {
       case DeliveryNavigatorRoutes.addresses:
       case DeliveryNavigatorRoutes.map:
-      case DeliveryNavigatorRoutes.recipientInfo:
+      case DeliveryNavigatorRoutes.info:
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
 
@@ -86,7 +86,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
     super.initState();
   }
 
-  Widget route(String route) {
+  Widget route(BuildContext context, String route) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     switch (route) {
@@ -110,12 +110,12 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           onAddressPush: (newAddress) {
             selectedAddress = newAddress;
             HapticFeedback.lightImpact();
-            Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.recipientInfo);
+            Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.info);
           },
         );
 
-      case DeliveryNavigatorRoutes.recipientInfo:
-        return RecipientInfoPage(
+      case DeliveryNavigatorRoutes.info:
+        return InfoPage(
           pickpoint: selectedAddress,
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
@@ -127,7 +127,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           backgroundColor: Colors.white,
           child: Center(
             child: Text(
-              "Default",
+              "Маршрут " + route.toString(),
               style: Theme.of(context).textTheme.headline1,
             ),
           ),
@@ -143,11 +143,11 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
         ],
         onGenerateInitialRoutes: (navigator, initialRoute) => [
           CupertinoPageRoute(
-            builder: (context) => route(initialRoute),
+            builder: (context) => route(context, initialRoute),
           )
         ],
         onGenerateRoute: (routeSettings) => CupertinoPageRoute(
-          builder: (context) => route(routeSettings.name),
+          builder: (context) => route(context, routeSettings.name),
           settings: routeSettings,
         ),
       );

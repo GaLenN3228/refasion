@@ -52,60 +52,55 @@ class _UserAddressesListState extends State<UserAddressesList> {
   onPush() {
     if (widget.onSelectAddress != null &&
         selectedUserAddressId != null &&
-        selectedUserAddressId.isNotEmpty)
-      widget.onSelectAddress(selectedUserAddressId);
+        selectedUserAddressId.isNotEmpty) widget.onSelectAddress(selectedUserAddressId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-              20, 20, 20, MediaQuery.of(context).padding.bottom + 65.0),
-          child: Column(
-            children: [
-              ...widget.list
-                  .map((userAddress) => UserAddressTile(
-                        userAddress: userAddress,
-                        deliveryType: widget.deliveryType,
-                        value: userAddress.id == selectedUserAddressId,
-                        onSelect: onSelect,
-                      ))
-                  .toList(),
-              ...[
-                Padding(
-                  padding: const EdgeInsets.only(top: 25, bottom: 10),
-                  child: SizedBox(
-                    width: 150,
-                    child: BorderButton(
-                      type: BorderButtonType.newAddress,
-                      onTap: widget.onAddAddress,
-                    ),
+        ListView(
+          padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(context).padding.bottom + 65.0),
+          children: [
+            ...widget.list
+                .map((userAddress) => UserAddressTile(
+                      userAddress: userAddress,
+                      deliveryType: widget.deliveryType,
+                      value: userAddress.id == selectedUserAddressId,
+                      onSelect: onSelect,
+                    ))
+                .toList(),
+            ...[
+              Padding(
+                padding: const EdgeInsets.only(top: 25, bottom: 10),
+                child: SizedBox(
+                  width: 150,
+                  child: BorderButton(
+                    type: BorderButtonType.newAddress,
+                    onTap: widget.onAddAddress,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: SizedBox(
-                    width: 250,
-                    child: Text(
-                      widget.bottomText,
-                      style: Theme.of(context).textTheme.bodyText2,
-                      textAlign: TextAlign.center,
-                    ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: SizedBox(
+                  width: 250,
+                  child: Text(
+                    widget.bottomText,
+                    style: Theme.of(context).textTheme.bodyText2,
+                    textAlign: TextAlign.center,
                   ),
-                )
-              ]
-            ],
-          ),
+                ),
+              )
+            ]
+          ],
         ),
         Positioned(
           left: 0,
           right: 0,
           bottom: 0,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                20, 10, 20, MediaQuery.of(context).padding.bottom),
+            padding: EdgeInsets.fromLTRB(20, 10, 20, MediaQuery.of(context).padding.bottom),
             child: RefashionedButton(
                 data: ButtonData(
                   buttonContainerData: ButtonContainerData(
