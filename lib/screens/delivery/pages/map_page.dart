@@ -13,7 +13,6 @@ import 'package:refashioned_app/screens/maps/map_picker.dart';
 import 'package:refashioned_app/screens/marketplace/pages/address_search_page.dart';
 
 class MapPage extends StatefulWidget {
-  final PickPoint pickUpAddress;
   final DeliveryType deliveryType;
 
   final Function(PickPoint) onAddressPush;
@@ -26,7 +25,6 @@ class MapPage extends StatefulWidget {
     this.onClose,
     this.deliveryType,
     this.onFinish,
-    this.pickUpAddress,
   }) : super(key: key);
 
   @override
@@ -44,11 +42,10 @@ class _MapPageState extends State<MapPage> {
     switch (widget.deliveryType.type) {
       case Delivery.PICKUP_ADDRESS:
         mapDataController = MapDataController(
-          pickPoint: widget.pickUpAddress ??
+          pickPoint: widget.deliveryType.deliveryOptions.first.deliveryObject ??
               PickPoint(
                 address: "пр-д Серебрякова, 4, строение 1, Москва, 129343",
-                originalAddress:
-                    "пр-д Серебрякова, 4, строение 1, Москва, 129343",
+                originalAddress: "пр-д Серебрякова, 4, строение 1, Москва, 129343",
                 latitude: 55.846726,
                 longitude: 37.647794,
               ),
@@ -69,8 +66,7 @@ class _MapPageState extends State<MapPage> {
         );
         break;
       case Delivery.PICKUP_POINT:
-        mapDataController = MapDataController(
-            pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
+        mapDataController = MapDataController(pickUpPointsCompany: PickUpPointsCompany.BOXBERRY);
 
         mapBottomSheetDataController = MapBottomSheetDataController(
           mapBottomSheetDataPreview: MapBottomSheetData(
@@ -87,15 +83,14 @@ class _MapPageState extends State<MapPage> {
 
         topBarData = TopBarData.simple(
           middleText: "Новый адрес",
-          onBack:
-              Navigator.of(context).canPop() ? Navigator.of(context).pop : null,
+          onBack: Navigator.of(context).canPop() ? Navigator.of(context).pop : null,
           onClose: widget.onClose,
         );
         break;
       case Delivery.COURIER_DELIVERY:
       case Delivery.EXPRESS_DEVILERY:
-        mapDataController = MapDataController(
-            centerMarkerEnable: true, onSearchButtonClick: showBottomSheet);
+        mapDataController =
+            MapDataController(centerMarkerEnable: true, onSearchButtonClick: showBottomSheet);
 
         mapBottomSheetDataController = MapBottomSheetDataController(
           mapBottomSheetDataPreview: MapBottomSheetData(
@@ -117,8 +112,7 @@ class _MapPageState extends State<MapPage> {
 
         topBarData = TopBarData.simple(
           middleText: "Новый адрес",
-          onBack:
-              Navigator.of(context).canPop() ? Navigator.of(context).pop : null,
+          onBack: Navigator.of(context).canPop() ? Navigator.of(context).pop : null,
           onClose: widget.onClose,
         );
         break;

@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_item.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
-import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart.dart';
 import 'package:refashioned_app/screens/cart/components/cart_product_tile.dart';
@@ -19,7 +18,6 @@ class CartItemTile extends StatefulWidget {
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
-    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
     SystemUiOverlayStyle originalOverlayStyle,
@@ -33,18 +31,15 @@ class CartItemTile extends StatefulWidget {
 }
 
 class _CartItemTileState extends State<CartItemTile> {
-  openDeliveryTypesSelector() {
-    widget.openDeliveryTypesSelector?.call(
-      context,
-      widget.cartItem.id,
-      pickUpAddress: null,
-      onClose: Provider.of<CartRepository>(context, listen: false).clearPendingIDs,
-      onFinish: (companyId, objectId) async =>
-          await Provider.of<CartRepository>(context, listen: false)
-              .setDelivery(widget.cartItem.id, companyId, objectId),
-      originalOverlayStyle: SystemUiOverlayStyle.light,
-    );
-  }
+  openDeliveryTypesSelector() => widget.openDeliveryTypesSelector?.call(
+        context,
+        widget.cartItem.id,
+        onClose: Provider.of<CartRepository>(context, listen: false).clearPendingIDs,
+        onFinish: (companyId, objectId) async =>
+            await Provider.of<CartRepository>(context, listen: false)
+                .setDelivery(widget.cartItem.id, companyId, objectId),
+        originalOverlayStyle: SystemUiOverlayStyle.light,
+      );
 
   @override
   Widget build(BuildContext context) {

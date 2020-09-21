@@ -54,14 +54,12 @@ class DeliveryNavigator extends StatefulWidget {
 
   final List<UserAddress> userAddresses;
   final DeliveryType deliveryType;
-  final PickPoint pickUpAddress;
 
   const DeliveryNavigator({
     Key key,
     this.onClose,
     this.deliveryType,
     this.onFinish,
-    this.pickUpAddress,
     this.userAddresses,
   }) : super(key: key);
 
@@ -116,7 +114,6 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
           onFinish: widget.onFinish,
-          pickUpAddress: widget.pickUpAddress,
           onAddressPush: (newAddress) {
             selectedAddress = newAddress;
 
