@@ -76,4 +76,7 @@ class Url {
   //Favourites
   static const wished = '$refashionedBaseUrl/catalog/wished/';
   static const wishedProducts = '$refashionedBaseUrl/catalog/wished/products';
+
+  //Size table
+  static String sizes(id) => '$refashionedBaseUrl/catalog/categories/' + id + '/sizes/';
 }

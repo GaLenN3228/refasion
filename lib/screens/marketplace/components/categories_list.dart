@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/screens/catalog/components/category_tile.dart';
+import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import '../../../models/category.dart';
-import '../../catalog/components/category_tile.dart';
 
 class CategoriesList extends StatefulWidget {
   final Widget header;
@@ -66,16 +67,13 @@ class _CategoriesListState extends State<CategoriesList> {
     final widgets = widget.categories
         .map((category) => CategoryTile(
             category: category,
-            selected: widget.multiselection
-                ? selectedSubcategories.contains(category)
-                : null,
+            selected: widget.multiselection ? selectedSubcategories.contains(category) : null,
             onPush: () {
               if (widget.multiselection)
                 update(category);
               else if (widget.onPush != null) widget.onPush(category);
             }))
         .toList();
-
     return Column(
       children: [
         widget.appBar ?? SizedBox(),
@@ -90,8 +88,7 @@ class _CategoriesListState extends State<CategoriesList> {
                       controller: widget.scrollController ?? ScrollController(),
                       padding: EdgeInsets.only(
                           top: widget.header != null ? 11 : 0,
-                          bottom: MediaQuery.of(context).padding.bottom +
-                              widget.bottomPadding),
+                          bottom: MediaQuery.of(context).padding.bottom + widget.bottomPadding),
                       itemCount: widgets.length,
                       itemBuilder: (context, index) => widgets.elementAt(index),
                       separatorBuilder: (context, index) => ItemsDivider(),
@@ -101,11 +98,23 @@ class _CategoriesListState extends State<CategoriesList> {
                       right: 0,
                       bottom: 0,
                       child: widget.multiselection
-                          ? BottomButton(
-                              title: "ВЫБРАТЬ",
-                              action: () =>
-                                  widget.onUpdate(selectedSubcategories),
-                            )
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
+                              child: Button(
+                                "ВЫБРАТЬ",
+                                buttonStyle: selectedSubcategories.isNotEmpty
+                                    ? ButtonStyle.dark
+                                    : ButtonStyle.dark_gray,
+                                height: 45,
+                                width: double.infinity,
+                                borderRadius: 5,
+                                onClick: selectedSubcategories.isNotEmpty
+                                    ? () {
+                                        widget.onUpdate(selectedSubcategories);
+                                      }
+                                    : () {},
+                              ))
                           : SizedBox(),
                     )
                   ],

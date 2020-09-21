@@ -1,7 +1,7 @@
 import 'package:refashioned_app/models/status.dart';
 import 'dart:math' as math;
 
-enum Parameter { color, material, price, condition, size, undefined }
+enum Parameter { color, material, price, condition, size, undefined, brand }
 
 class Filter {
   final String name;
@@ -32,9 +32,10 @@ class Filter {
   static const _parameters = {
     "Цвет": Parameter.color,
     "Материал": Parameter.material,
-    "Цена": Parameter.price,
+    "price": Parameter.price,
     "Состояние": Parameter.condition,
-    "Размер": Parameter.size,
+    "size": Parameter.size,
+    "brand": Parameter.brand,
     null: Parameter.undefined
   };
 
@@ -55,9 +56,7 @@ class Filter {
 
     switch (parameter) {
       case Parameter.price:
-        final prices = [
-          for (final value in jsonValue) double.parse(value.toString())
-        ];
+        final prices = [for (final value in jsonValue) double.parse(value.toString())];
 
         final min = prices.reduce(math.min);
         final max = prices.reduce(math.max);
@@ -72,10 +71,22 @@ class Filter {
             previousPrices: Map.from(map),
             prices: Map.from(map));
 
-      default:
+      case Parameter.brand:
         final values = [
-          for (final value in jsonValue) FilterValue.fromJson(value)
+          for (final value in jsonValue) FilterValue.fromJson(value, parameter: Parameter.brand)
         ];
+
+        return Filter(
+            name: json['name'],
+            type: json['type'],
+            parameter: parameter,
+            previousValues: values.map((e) => FilterValue.clone(e)).toList(),
+            values: List.from(values),
+            previousPrices: null,
+            prices: null);
+
+      default:
+        final values = [for (final value in jsonValue) FilterValue.fromJson(value)];
 
         return Filter(
             name: json['name'],
@@ -211,8 +222,10 @@ class FilterValue {
 
   FilterValue({this.id, this.value, this.selected: false});
 
-  factory FilterValue.fromJson(Map<String, dynamic> json) =>
-      FilterValue(id: json['id'], value: json['value']);
+  factory FilterValue.fromJson(Map<String, dynamic> json, {Parameter parameter}) =>
+      parameter != null && parameter == Parameter.brand
+          ? FilterValue(id: json['id'], value: json['name'])
+          : FilterValue(id: json['id'], value: json['value']);
 
   factory FilterValue.clone(FilterValue other) =>
       FilterValue(id: other.id, value: other.value, selected: other.selected);
@@ -226,6 +239,5 @@ class FilterValue {
   }
 
   @override
-  String toString() =>
-      "Filter Value: " + value + ", selected: " + selected.toString();
+  String toString() => "Filter Value: " + value + ", selected: " + selected.toString();
 }

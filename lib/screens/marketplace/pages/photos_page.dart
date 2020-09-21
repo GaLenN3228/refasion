@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
@@ -14,12 +15,13 @@ import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class PhotosPage extends StatefulWidget {
   final List<String> initialData;
+  final Category topCategory;
 
   final Function() onClose;
   final Function(List<String>) onUpdate;
   final Function() onPush;
 
-  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.initialData}) : super(key: key);
+  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.initialData, this.topCategory}) : super(key: key);
 
   @override
   _PhotosPageState createState() => _PhotosPageState();

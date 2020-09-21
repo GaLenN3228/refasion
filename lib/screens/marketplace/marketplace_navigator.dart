@@ -5,6 +5,7 @@ import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/sell_property.dart';
+import 'package:refashioned_app/models/size.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/products.dart';
@@ -22,6 +23,8 @@ import 'package:refashioned_app/screens/marketplace/pages/pickup_points_page.dar
 import 'package:refashioned_app/screens/marketplace/pages/price_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/section_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/sell_property_page.dart';
+import 'package:refashioned_app/screens/marketplace/pages/sizes_page.dart';
+import 'package:refashioned_app/screens/marketplace/pages/sizes_value.dart';
 import 'package:refashioned_app/screens/marketplace/pages/subcategory_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/take_options_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/top_category_page.dart';
@@ -35,6 +38,8 @@ class MarketplaceNavigatorRoutes {
   static const String sellProperty = '/sellProperty';
   static const String description = '/description';
   static const String brand = '/brand';
+  static const String sizes = '/sizes';
+  static const String sizesValue = '/sizesValue';
   static const String price = '/price';
   static const String cards = '/cards';
   static const String addresses = '/addresses';
@@ -122,6 +127,8 @@ class ProductData {
   List<TakeOption> options;
 
   String card;
+
+  Sizes sizes;
 
   updateCategory(Category newCategory) => category = newCategory;
 
@@ -228,7 +235,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
                     builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.photos,
-                        categories: categories),
+                        categories: categories, category: pushedCategory),
                     settings: RouteSettings(name: MarketplaceNavigatorRoutes.photos),
                   ),
                 );
@@ -248,7 +255,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.photos,
-                    categories: categories),
+                    categories: categories, category: category),
                 settings: RouteSettings(name: MarketplaceNavigatorRoutes.photos),
               ),
             );
@@ -257,6 +264,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.photos:
         return PhotosPage(
+          topCategory: category,
           onClose: widget.onClose,
           initialData: productData.photos,
           onUpdate: (photos) => productData.updatePhotos(photos),
@@ -285,7 +293,50 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           },
         );
 
-      //TODO Sizes
+      case MarketplaceNavigatorRoutes.sizes:
+        return SizesPage(
+          onBack: Navigator.of(context).pop,
+          onPush: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) {
+                  return _routeBuilder(
+                    context,
+                    MarketplaceNavigatorRoutes.sizesValue,
+                  );
+                },
+              ),
+            );
+          },
+        );
+
+      case MarketplaceNavigatorRoutes.sizesValue:
+        return SizeValuesPage(
+          onBack: Navigator.of(context).pop,
+          onPush: () {
+            final hasSellProperties = (sellPropertiesRepository != null &&
+                sellPropertiesRepository.isLoaded &&
+                sellPropertiesRepository.response.status.code == 200 &&
+                sellPropertiesRepository.response.content.requiredProperties.isNotEmpty);
+
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) {
+                  if (hasSellProperties)
+                    return _routeBuilder(context, MarketplaceNavigatorRoutes.sellProperty,
+                        sellProperties:
+                            sellPropertiesRepository.response.content.requiredProperties);
+                  else
+                    return _routeBuilder(context, MarketplaceNavigatorRoutes.description);
+                },
+                settings: RouteSettings(
+                    name: hasSellProperties
+                        ? MarketplaceNavigatorRoutes.sellProperty
+                        : MarketplaceNavigatorRoutes.description),
+              ),
+            );
+          },
+        );
 
       case MarketplaceNavigatorRoutes.sellProperty:
         final sellProperty = sellProperties.elementAt(sellPropertyIndex);

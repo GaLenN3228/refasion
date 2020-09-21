@@ -10,13 +10,11 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return CupertinoPageScaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 50),
+        padding: const EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
-            // _appBar(context),
             Expanded(
               child: CustomScrollView(
                 slivers: [
@@ -48,7 +46,7 @@ class HomePage extends StatelessWidget {
                         child: Text('ВЕСНА-ЛЕТО `20', style: textTheme.headline2,)),
                   ),
                   SliverToBoxAdapter(
-                    child:  _trendsNow(context),
+                    child:  _trendsNow2(context),
                   ),
                   SliverToBoxAdapter(
                     child:  Container(
@@ -56,7 +54,9 @@ class HomePage extends StatelessWidget {
                         child: Text('РЕМНИ, ПОЯСА И ПОРТУПЕИ', style: textTheme.headline2,)),
                   ),
                   SliverToBoxAdapter(
-                    child:  _trendsNow(context),
+                    child:  Container(
+                        padding: EdgeInsets.only(bottom: 30),
+                        child: _trendsNow(context)),
                   ),
                 ],
               ),
@@ -83,35 +83,35 @@ class HomePage extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Container(
-                    height: 35,
-                    decoration: ShapeDecoration(
-                        color: Color(0xFFF6F6F6),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 5, 5, 8),
-                          child: SVGIcon(
-                            icon: IconAsset.search,
-                            size: 20,
-                            color: Color(0xFF8E8E93),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: (){},
-                            child: Text(
-                              "Поиск",
-                              style: Theme.of(context).textTheme.headline1.copyWith(fontWeight: FontWeight.normal, color: Colors.black.withOpacity(0.25)),
+                    child: Container(
+                      height: 35,
+                      decoration: ShapeDecoration(
+                          color: Color(0xFFF6F6F6),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 5, 5, 8),
+                            child: SVGIcon(
+                              icon: IconAsset.search,
+                              size: 20,
+                              color: Color(0xFF8E8E93),
                             ),
                           ),
+                          Expanded(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: (){},
+                              child: Text(
+                                "Поиск",
+                                style: Theme.of(context).textTheme.headline1.copyWith(fontWeight: FontWeight.normal, color: Colors.black.withOpacity(0.25)),
+                              ),
+                            ),
 
-                        ),
-                      ],
-                    ),
-                  )
+                          ),
+                        ],
+                      ),
+                    )
                 ),
                 GestureDetector(
                   onTap: () => {
@@ -137,9 +137,8 @@ class HomePage extends StatelessWidget {
   Widget _recommendationsList(context){
     return Material(
       child: Container(
-        color: Colors.white,
-        padding: EdgeInsets.only(left: 20, bottom:20,),
-        height: MediaQuery.of(context).size.width * 0.35,
+        padding: EdgeInsets.only(bottom:20,),
+        height: MediaQuery.of(context).copyWith().size.width * 0.35,
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
           slivers: [
@@ -165,7 +164,6 @@ class HomePage extends StatelessWidget {
     CarouselController buttonCarouselController = CarouselController();
     return Material(
       child: Container(
-        color: Colors.white,
         child: CarouselSlider(
           carouselController: buttonCarouselController,
           items: [
@@ -174,7 +172,8 @@ class HomePage extends StatelessWidget {
             _promoListItem(context, 'Платья \nсо скидкой', 'до 90%'),
           ],
           options: CarouselOptions(
-            autoPlay: false,
+              autoPlay: false,
+              enableInfiniteScroll: false
           ),
         ),
       ),
@@ -185,11 +184,11 @@ class HomePage extends StatelessWidget {
   Widget _trendsNow(context){
     return Material(
       child: Container(
-        color: Color(0xFFF1F1F1),
-        height: MediaQuery.of(context).size.height * 0.25,
+        color: Colors.white,
+        height: 200,
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
-     shrinkWrap: true,
+          shrinkWrap: true,
           slivers: [
             SliverToBoxAdapter(
               child: Row(
@@ -199,6 +198,32 @@ class HomePage extends StatelessWidget {
                   _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽' ),
                   _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽' ),
                   _trendListItem(context, 'assets/images/png/shirt.png', '1 200 ₽' ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _trendsNow2(context){
+    return Material(
+      child: Container(
+        height: 225,
+        child: CustomScrollView(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          slivers: [
+            SliverToBoxAdapter(
+              child: Row(
+                children: [
+                  _trendListItem(context, 'assets/images/png/dress.png', '1 200 ₽'),
+                  _trendListItem(context, 'assets/images/png/dress.png', '1 790 ₽'),
+                  _trendListItem(context, 'assets/images/png/dress.png', '1 200 ₽' ),
+                  _trendListItem(context, 'assets/images/png/dress.png', '1 200 ₽' ),
+                  _trendListItem(context, 'assets/images/png/dress.png', '1 200 ₽' ),
                 ],
               ),
             )
@@ -241,7 +266,7 @@ class HomePage extends StatelessWidget {
     return  Tapable(
       onTap: (){},
       child: Padding(
-        padding: const EdgeInsets.only(top: 20, right: 20),
+        padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
         child: Column(
           children: [
             Image.asset(
@@ -263,7 +288,7 @@ class HomePage extends StatelessWidget {
   Widget _promoListItem(context, String title, String sale){
     TextTheme textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: const EdgeInsets.only(right: 10),
       child: Tapable(
         onTap: (){},
         child: Container(
@@ -277,7 +302,7 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(title, style: textTheme.headline5,),
                     Text(sale, style: TextStyle(
-                      color: Colors.black,
+                        color: Colors.black,
                         fontSize: 21,
                         fontWeight: FontWeight.bold),
                     ),
@@ -285,7 +310,7 @@ class HomePage extends StatelessWidget {
                 ),
                 Align(
                     alignment: Alignment.bottomRight,
-                    child: Image.asset('assets/images/png/promo_girl.png', scale: 1.2,)),
+                    child: Image.asset('assets/images/png/promo_girl.png', scale: 1.3,)),
               ],
             ),
           ),

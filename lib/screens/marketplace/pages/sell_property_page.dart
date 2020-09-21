@@ -32,7 +32,7 @@ class _SellPropertyPageState extends State<SellPropertyPage> {
       backgroundColor: Colors.white,
       child: SellPropertyValuesList(
           values: widget.sellProperty.values,
-          bottomPadding: 10,
+          bottomPadding: 100,
           appBar: RefashionedTopBar(
             data: TopBarData.simple(
               onBack: () => Navigator.of(context).pop(),
