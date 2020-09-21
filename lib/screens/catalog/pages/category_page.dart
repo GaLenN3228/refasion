@@ -16,7 +16,7 @@ class CategoryPage extends StatefulWidget {
   final Category topCategory;
   final CategoryLevel level;
   final Function(Category, {dynamic callback}) onPush;
-  final Function onBrandsPush;
+  final Function({dynamic callback}) onBrandsPush;
 
   const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onBrandsPush}) : super(key: key);
 
@@ -78,7 +78,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
                         callback: updateCount);
                   },
                 ),
-                GestureDetector(behavior: HitTestBehavior.translucent, onTap: () => {widget.onBrandsPush()}, child: CategoryBrands())
+                GestureDetector(behavior: HitTestBehavior.translucent, onTap: () => {widget.onBrandsPush(callback: updateCount)}, child: CategoryBrands())
               ],
             )
           ]

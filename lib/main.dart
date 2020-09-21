@@ -21,8 +21,6 @@ class RefashionApp extends StatelessWidget {
           ChangeNotifierProvider<CatalogRepository>(
             create: (_) => CatalogRepository()..getCatalog(),
           ),
-          ChangeNotifierProvider<CategoryBrandsRepository>(
-              create: (_) => CategoryBrandsRepository()),
           ChangeNotifierProvider<CitiesRepository>(
             create: (_) => CitiesRepository(),
           ),

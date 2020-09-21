@@ -15,6 +15,7 @@ class QuickFilterItem extends StatelessWidget {
   final Function(String, List<int>) onSelect;
   final bool isNavigationButton;
   final Function() updateProducts;
+  final List<Category> categories;
   final Category topCategory;
 
   const QuickFilterItem(
@@ -27,7 +28,8 @@ class QuickFilterItem extends StatelessWidget {
       this.horizontalBorderWidth: 1.0,
       this.isNavigationButton: false,
       this.updateProducts,
-      this.topCategory})
+      this.topCategory,
+      this.categories})
       : super(key: key);
 
   @override
@@ -45,19 +47,23 @@ class QuickFilterItem extends StatelessWidget {
                     expand: true,
                     context: context,
                     useRootNavigator: true,
-                    builder: (context, controller) =>
-                        CategoryFilterPanel(topCategory: topCategory, updateProducts: updateProducts)),
+                    builder: (context, controller) => CategoryFilterPanel(
+                        topCategory: topCategory,
+                        updateProducts: updateProducts,
+                        categories: categories)),
                 child: Container(
                   height: horizontalHeight,
                   width: horizontalWidth,
                   decoration: ShapeDecoration(
-                      color: accentColor,
+                      color: categories.where((element) => element.selected).isNotEmpty ? accentColor : Colors.white,
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(width: horizontalBorderWidth, color: accentColor),
+                          side: BorderSide(
+                              width: horizontalBorderWidth,
+                              color: categories.where((element) => element.selected).isNotEmpty ? accentColor : Color(0xFFE6E6E6)),
                           borderRadius: BorderRadius.circular(horizontalCornerRadius))),
                   child: Center(
                       child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     child: SVGIcon(
                       icon: IconAsset.categories,
                       size: 22,

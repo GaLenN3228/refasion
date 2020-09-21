@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
@@ -60,6 +61,8 @@ class TabView extends StatelessWidget {
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
+              ChangeNotifierProvider<CategoryBrandsRepository>(
+                  create: (_) => CategoryBrandsRepository()),
             ],
             child: SearchWrapper(
               content: catalogNavigator,

@@ -30,10 +30,10 @@ class Filter {
       this.prices});
 
   static const _parameters = {
-    "Цвет": Parameter.color,
-    "Материал": Parameter.material,
+    "color": Parameter.color,
+    "material": Parameter.material,
     "price": Parameter.price,
-    "Состояние": Parameter.condition,
+    "condition": Parameter.condition,
     "size": Parameter.size,
     "brand": Parameter.brand,
     null: Parameter.undefined
