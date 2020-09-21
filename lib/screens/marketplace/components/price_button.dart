@@ -7,7 +7,7 @@ enum PriceButtonType { tradeIn, diy }
 class PriceButton extends StatelessWidget {
   final PriceButtonType type;
   final Brand brand;
-  final Map<PriceButtonType, double> prices;
+  final Map<PriceButtonType, int> prices;
   final Function() onPush;
 
   PriceButton({Key key, this.type, this.brand, this.prices, this.onPush})
@@ -25,7 +25,7 @@ class PriceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final price = prices != null && prices[type] != null ? (prices[type] != 0.0 ? prices[type] : 0) : 0;
+    final price = prices != null && prices[type] != null ? prices[type] : 0;
     final enabled = price != 0;
     return GestureDetector(
       behavior: HitTestBehavior.translucent,

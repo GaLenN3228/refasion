@@ -10,6 +10,7 @@ import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/sell_properties.dart';
+import 'package:refashioned_app/repositories/size.dart';
 import 'package:refashioned_app/screens/marketplace/components/take_option_tile.dart';
 import 'package:refashioned_app/screens/marketplace/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/brand_page.dart';
@@ -112,7 +113,7 @@ class MarketplaceNavigator extends StatefulWidget {
 class ProductData {
   Category category;
 
-  double price;
+  int price;
 
   Brand brand;
 
@@ -140,7 +141,7 @@ class ProductData {
 
   updateCard(String newCard) => card = newCard;
 
-  updatePrice(double newPrice) => price = newPrice;
+  updatePrice(int newPrice) => price = newPrice;
 
   updateBrand(Brand newBrand) => brand = newBrand;
 
@@ -183,7 +184,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       {Category category,
       List<Category> categories,
       List<SellProperty> sellProperties,
-      int sellPropertyIndex: 0}) {
+      int sellPropertyIndex: 0,
+      Sizes size}) {
     switch (route) {
       case MarketplaceNavigatorRoutes.section:
         return WillPopScope(
@@ -232,6 +234,9 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
                 sellPropertiesRepository = SellPropertiesRepository();
                 sellPropertiesRepository.getProperties(category.id);
 
+                var sizeRepository = Provider.of<SizeRepository>(context,listen: false);
+                sizeRepository.getSizes(category.id);
+
                 Navigator.of(context).push(
                   CupertinoPageRoute(
                     builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.photos,
@@ -248,14 +253,17 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           onClose: widget.onClose,
           initialData: productData.category,
           onUpdate: () => productData.updateCategory(category),
-          onPush: () {
+          onPush: (chosenCategory) {
             sellPropertiesRepository = SellPropertiesRepository();
             sellPropertiesRepository.getProperties(category.id);
+
+            var sizeRepository = Provider.of<SizeRepository>(context,listen: false);
+            sizeRepository.getSizes(chosenCategory.id);
 
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.photos,
-                    categories: categories, category: category),
+                    categories: categories, category: chosenCategory),
                 settings: RouteSettings(name: MarketplaceNavigatorRoutes.photos),
               ),
             );
@@ -264,7 +272,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.photos:
         return PhotosPage(
-          topCategory: category,
           onClose: widget.onClose,
           initialData: productData.photos,
           onUpdate: (photos) => productData.updatePhotos(photos),
@@ -272,17 +279,20 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             final hasSellProperties = (sellPropertiesRepository != null &&
                 sellPropertiesRepository.isLoaded &&
                 sellPropertiesRepository.response.status.code == 200 &&
-                sellPropertiesRepository.response.content.requiredProperties.isNotEmpty);
+                sellPropertiesRepository
+                    .response.content.requiredProperties.isNotEmpty);
 
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) {
                   if (hasSellProperties)
-                    return _routeBuilder(context, MarketplaceNavigatorRoutes.sellProperty,
-                        sellProperties:
-                            sellPropertiesRepository.response.content.requiredProperties);
+                    return _routeBuilder(
+                        context, MarketplaceNavigatorRoutes.sizes,
+                        sellProperties: sellPropertiesRepository
+                            .response.content.requiredProperties, category: category);
                   else
-                    return _routeBuilder(context, MarketplaceNavigatorRoutes.description);
+                    return _routeBuilder(
+                        context, MarketplaceNavigatorRoutes.sizes);
                 },
                 settings: RouteSettings(
                     name: hasSellProperties
@@ -296,13 +306,14 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       case MarketplaceNavigatorRoutes.sizes:
         return SizesPage(
           onBack: Navigator.of(context).pop,
-          onPush: () {
+          onPush: (sizes) {
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) {
                   return _routeBuilder(
                     context,
                     MarketplaceNavigatorRoutes.sizesValue,
+                    size: sizes
                   );
                 },
               ),
@@ -312,6 +323,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.sizesValue:
         return SizeValuesPage(
+          sizes: size,
           onBack: Navigator.of(context).pop,
           onPush: () {
             final hasSellProperties = (sellPropertiesRepository != null &&

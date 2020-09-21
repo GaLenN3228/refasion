@@ -8,6 +8,7 @@ import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/size.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/repositories/user_addresses.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
@@ -270,12 +271,16 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                 PageRouteBuilder(
                                   pageBuilder: (context, animation, secondaryAnimation) =>
                                       SlideTransition(
-                                    position: Tween(begin: Offset(0, 1), end: Offset.zero)
-                                        .animate(animation),
-                                    child: MarketplaceNavigator(
-                                      onClose: () => Navigator.of(context).pop(),
-                                    ),
-                                  ),
+                                          position: Tween(begin: Offset(0, 1), end: Offset.zero)
+                                              .animate(animation),
+                                          child:
+                                              ChangeNotifierProvider<SizeRepository>(create: (_) {
+                                            return SizeRepository();
+                                          }, builder: (context, _) {
+                                            return MarketplaceNavigator(
+                                              onClose: () => Navigator.of(context).pop(),
+                                            );
+                                          })),
                                 ),
                               )
                             : showCupertinoModalBottomSheet(

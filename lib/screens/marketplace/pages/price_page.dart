@@ -11,10 +11,10 @@ import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:provider/provider.dart';
 
 class PricePage extends StatefulWidget {
-  final double initialData;
+  final int initialData;
 
   final Function() onClose;
-  final Function(double) onUpdate;
+  final Function(int) onUpdate;
   final Function() onPush;
 
   final FocusNode focusNode;
@@ -27,7 +27,7 @@ class PricePage extends StatefulWidget {
 
 class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
   TextEditingController textController;
-  Map<PriceButtonType, double> prices;
+  Map<PriceButtonType, int> prices;
   PriceFormatter priceFormatter;
 
   final double bottomPadding = 16;
@@ -52,7 +52,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
 
     _calcProductPrice = Provider.of<CalcProductPrice>(context, listen: false);
     _calcProductPrice.addListener(() {
-      var price = 0.0;
+      var price = 0;
       if (_calcProductPrice.isLoaded || (_calcProductPrice.isLoading && _calcProductPrice.response != null)){
         price = _calcProductPrice.response.content.cash;
       } else {

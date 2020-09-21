@@ -45,18 +45,7 @@ class _SizeValuesPageState extends State<SizeValuesPage> {
                 },
               )),
             ],
-          ),
-          Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: BottomButton(
-                title: "ПРОДОЛЖИТЬ",
-                action: () {
-
-                },
-                // action: widget.onPush,
-              )),
+          )
         ],
       ),
     );
@@ -65,7 +54,7 @@ class _SizeValuesPageState extends State<SizeValuesPage> {
     return Material(
       color: Colors.white,
       child:Tapable(
-        padding:  EdgeInsets.only(left: 20, top: 25, bottom: 25),
+        padding:  EdgeInsets.only(left: 20, top: 15, bottom: 15),
         onTap: (){
           onPush();
         },
