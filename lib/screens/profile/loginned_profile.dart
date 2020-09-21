@@ -37,7 +37,7 @@ class AuthorizedProfilePage extends StatelessWidget {
       color: Colors.transparent,
       child: Container(
         color: Color(0xFF373A3F),
-        height: MediaQuery.of(context).size.height * 0.24,
+        height: 150,
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
@@ -46,11 +46,11 @@ class AuthorizedProfilePage extends StatelessWidget {
             onTap: () {},
             child: Row(
               children: [
-                Container(
-                  width: 70,
-                  height: 70,
-                  child: Image.asset('assets/user_placeholder.png'),
-                ),
+                // Container(
+                //   width: 70,
+                //   height: 70,
+                //   child: Image.asset('assets/user_placeholder.png'),
+                // ),
                 Container(
                   padding: EdgeInsets.only(left: 20),
                   child: Column(

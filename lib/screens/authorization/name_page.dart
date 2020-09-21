@@ -123,7 +123,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                   ? () {
                       SharedPreferences.getInstance().then((prefs) {
                         prefs.setString(Prefs.user_name, name);
-                        widget.onAuthorizationDone(context);
+                        widget.onAuthorizationDone?.call(context);
                         if (widget.needDismiss) Navigator.pop(context);
                       });
                     }

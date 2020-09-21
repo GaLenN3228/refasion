@@ -314,4 +314,9 @@ class ApiService {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.categoryBrands(id));
   }
+
+  static Future<Response> getSizesTable(String categoryId) async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    return dioClient.get(Url.sizes(categoryId));
+  }
 }

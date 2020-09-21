@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/size.dart';
-import 'package:refashioned_app/screens/block/main_block.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
@@ -12,9 +10,9 @@ import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 class SizeValuesPage extends StatefulWidget {
   final Function() onPush;
   final Function() onBack;
-  final SizesContent sizesContent;
+  final Sizes sizes;
 
-  const SizeValuesPage({Key key, this.onPush, this.onBack, this.sizesContent}) : super(key: key);
+  const SizeValuesPage({Key key, this.onPush, this.onBack, this.sizes}) : super(key: key);
 
   @override
   _SizeValuesPageState createState() => _SizeValuesPageState();
@@ -23,7 +21,6 @@ class SizeValuesPage extends StatefulWidget {
 class _SizeValuesPageState extends State<SizeValuesPage> {
   @override
   Widget build(BuildContext context) {
-    var bloc = Provider.of<MainBloc>(context, listen: false);
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Stack(
@@ -42,9 +39,9 @@ class _SizeValuesPageState extends State<SizeValuesPage> {
                   child: ListView.separated(
                 padding: EdgeInsets.all(0),
                 separatorBuilder: (BuildContext context, int index) => ItemsDivider(),
-                itemCount: bloc.sizes.length,
+                itemCount: widget.sizes.values.length,
                 itemBuilder: (context, index) {
-                  return sizeValueItem(context, bloc.selectedSize[index]['value'], () => widget.onPush());
+                  return sizeValueItem(context, widget.sizes.values[index].value, () => widget.onPush());
                 },
               )),
             ],
@@ -55,7 +52,9 @@ class _SizeValuesPageState extends State<SizeValuesPage> {
               bottom: 0,
               child: BottomButton(
                 title: "ПРОДОЛЖИТЬ",
-                action: widget.onPush,
+                action: () {
+
+                },
                 // action: widget.onPush,
               )),
         ],

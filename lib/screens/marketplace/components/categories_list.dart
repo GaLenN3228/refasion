@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/screens/catalog/components/category_tile.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import '../../../models/category.dart';
-import '../../catalog/components/category_tile.dart';
-import '../../components/button/button.dart';
 
 class CategoriesList extends StatefulWidget {
   final Widget header;
