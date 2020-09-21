@@ -45,6 +45,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
         text: widget.initialData != null ? priceFormatter.format(widget.initialData.toString()) : null);
     prices = {PriceButtonType.tradeIn: 0, PriceButtonType.diy: 0};
 
+    textController.text = "";
     textController.addListener(textControllerListener);
 
     canPush = false;
