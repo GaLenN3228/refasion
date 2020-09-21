@@ -48,8 +48,7 @@ class Product {
       currentPrice: json['current_price'],
       discountPrice: json['discount_price'],
       image: json['image'],
-      category:
-          json['category'] != null ? Category.fromJson(json['category']) : null,
+      category: json['category'] != null ? Category.fromJson(json['category']) : null,
       brand: json['brand'] != null ? Brand.fromJson(json['brand']) : null,
       seller: json['seller'] != null ? Seller.fromJson(json['seller']) : null,
       description: json['description'],
@@ -61,12 +60,10 @@ class Product {
         if (json['images'] != null)
           for (final image in json['images']) image
       ],
-      pickUpAddress:
-          json['pickup'] != null ? PickPoint.fromJson(json['pickup']) : null,
+      pickUpAddress: json['pickup'] != null ? PickPoint.fromJson(json['pickup']) : null,
       deliveryTypes: [
         if (json['takeaways'] != null)
-          for (final deliveryType in json['takeaways'])
-            DeliveryType.fromJson(deliveryType)
+          for (final deliveryType in json['takeaways']) DeliveryType.fromJson(deliveryType)
       ],
     );
   }

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/search.dart';
-import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
 import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
@@ -31,7 +30,6 @@ class TabView extends StatelessWidget {
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
-    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
     SystemUiOverlayStyle originalOverlayStyle,

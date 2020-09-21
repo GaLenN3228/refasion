@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
-import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart.dart';
@@ -94,7 +93,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
     BuildContext context,
     String id, {
     List<DeliveryType> deliveryTypes,
-    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
     SystemUiOverlayStyle originalOverlayStyle,
@@ -120,7 +118,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
               context,
               id,
               deliveryTypes: deliveryTypes,
-              pickUpAddress: pickUpAddress,
               onClose: onClose,
               onFinish: onFinish,
             );
@@ -168,13 +165,12 @@ class _TabSwitcherState extends State<TabSwitcher> {
                     position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
                     child: DeliveryNavigator(
                       deliveryType: deliveryType,
-                      pickUpAddress: pickUpAddress,
                       userAddresses: userAddresses,
                       onClose: () async {
                         HapticFeedback.selectionClick();
 
                         await onClose?.call();
-                        userAddressesRepository.dispose();
+                        userAddressesRepository?.dispose();
 
                         Navigator.of(context).pop();
 
@@ -184,8 +180,9 @@ class _TabSwitcherState extends State<TabSwitcher> {
                       onFinish: (id) async {
                         HapticFeedback.lightImpact();
 
-                        await onFinish?.call(deliveryType.items.first.id, id);
-                        userAddressesRepository.dispose();
+                        await onFinish?.call(
+                            deliveryType.deliveryOptions.first.deliveryCompany.id, id);
+                        userAddressesRepository?.dispose();
 
                         Navigator.of(context).pop();
 

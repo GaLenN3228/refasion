@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +8,6 @@ import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/order/order_item.dart';
-import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
@@ -72,7 +70,6 @@ class CartNavigator extends StatefulWidget {
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
-    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
     SystemUiOverlayStyle originalOverlayStyle,

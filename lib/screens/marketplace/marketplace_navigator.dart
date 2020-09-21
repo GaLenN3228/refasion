@@ -388,8 +388,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             onPush: () {
               Navigator.of(context).push(
                 CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.price),
-                  settings: RouteSettings(name: MarketplaceNavigatorRoutes.price),
+                  builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.brand),
+                  settings: RouteSettings(name: MarketplaceNavigatorRoutes.brand),
                 ),
               );
             });

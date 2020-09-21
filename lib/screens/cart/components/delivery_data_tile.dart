@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_data.dart';
+import 'package:refashioned_app/models/cart/delivery_option.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
 class DeliveryDataTile extends StatefulWidget {
-  final DeliveryCompany deliveryCompany;
+  final DeliveryOption deliveryOption;
   final DeliveryData deliveryData;
   final Function() onTap;
 
-  const DeliveryDataTile(
-      {Key key, this.deliveryData, this.onTap, this.deliveryCompany})
+  const DeliveryDataTile({Key key, this.deliveryData, this.onTap, this.deliveryOption})
       : super(key: key);
 
   @override
@@ -19,18 +19,20 @@ class DeliveryDataTile extends StatefulWidget {
 class _DeliveryDataTileState extends State<DeliveryDataTile> {
   String text;
   String action;
+  IconAsset icon;
 
   bool selected;
 
   update() {
-    if (widget.deliveryCompany == null || widget.deliveryData == null) {
+    if (widget.deliveryOption == null || widget.deliveryData == null) {
       text = "Выберите способ доставки";
       action = "Выбрать";
       selected = false;
     } else {
-      text = deliveryLabels[widget.deliveryCompany.type] +
-          " - " +
-          widget.deliveryData.text;
+      final type = widget.deliveryOption.deliveryCompany.type;
+
+      icon = deliveryIcons[type];
+      text = deliveryLabels[type] + " - " + widget.deliveryData.text;
       action = "Изменить";
       selected = true;
     }
@@ -50,11 +52,11 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
             Expanded(
               child: Row(
                 children: [
-                  if (selected)
+                  if (selected && icon != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 3),
                       child: SVGIcon(
-                        icon: deliveryIcons[widget.deliveryCompany.type],
+                        icon: icon,
                         size: 24,
                       ),
                     ),

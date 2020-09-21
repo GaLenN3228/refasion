@@ -54,14 +54,12 @@ class DeliveryNavigator extends StatefulWidget {
 
   final List<UserAddress> userAddresses;
   final DeliveryType deliveryType;
-  final PickPoint pickUpAddress;
 
   const DeliveryNavigator({
     Key key,
     this.onClose,
     this.deliveryType,
     this.onFinish,
-    this.pickUpAddress,
     this.userAddresses,
   }) : super(key: key);
 
@@ -77,14 +75,16 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
   void initState() {
     switch (widget.deliveryType.type) {
       case Delivery.PICKUP_POINT:
-        userAddresses =
-            widget.userAddresses?.where((userAddress) => userAddress.pickpoint != null)?.toList();
+        userAddresses = widget.userAddresses
+            ?.where((userAddress) => userAddress != null && userAddress.pickpoint != null)
+            ?.toList();
         break;
 
       case Delivery.COURIER_DELIVERY:
       case Delivery.EXPRESS_DEVILERY:
-        userAddresses =
-            widget.userAddresses?.where((userAddress) => userAddress.pickpoint == null)?.toList();
+        userAddresses = widget.userAddresses
+            ?.where((userAddress) => userAddress != null && userAddress.pickpoint == null)
+            ?.toList();
         break;
 
       default:
@@ -116,7 +116,6 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
           onFinish: widget.onFinish,
-          pickUpAddress: widget.pickUpAddress,
           onAddressPush: (newAddress) {
             selectedAddress = newAddress;
 

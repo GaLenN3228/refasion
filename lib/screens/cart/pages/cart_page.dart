@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/order/order.dart';
-import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart.dart';
 import 'package:refashioned_app/screens/cart/components/cart_item_tile.dart';
@@ -28,7 +27,6 @@ class CartPage extends StatefulWidget {
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
-    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
     SystemUiOverlayStyle originalOverlayStyle,

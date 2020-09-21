@@ -29,18 +29,19 @@ class UserAddress {
       this.comment});
 
   factory UserAddress.fromJson(Map<String, dynamic> json) {
-    final pickpoint = json['pickpoint'];
+    // final pickpoint = json['pickpoint'];
 
-    if (pickpoint != null)
-      return UserAddress(
-        id: json['id'],
-        pickpoint: pickpoint,
-        fio: json['contact_fio'],
-        phone: json['contact_phone'],
-        email: json['contact_email'],
-        comment: json['comment'],
-      );
-    else
+    // if (pickpoint != null)
+    //   return UserAddress(
+    //     id: json['id'],
+    //     pickpoint: pickpoint,
+    //     fio: json['contact_fio'],
+    //     phone: json['contact_phone'],
+    //     email: json['contact_email'],
+    //     comment: json['comment'],
+    //   );
+    // else
+    if (json['pickpoint'] == null)
       return UserAddress(
         id: json['id'],
         address: PickPoint.fromJson(json),
@@ -53,6 +54,8 @@ class UserAddress {
         intercom: json['intercom'],
         comment: json['comment'],
       );
+    else
+      return null;
   }
 
   Map<String, dynamic> toJson() {

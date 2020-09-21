@@ -10,8 +10,8 @@ class AddProductToCartRepository extends BaseRepository {
   Future<void> update(String productId) => apiCall(
         () async {
           this.productId = productId;
-          response = BaseResponse.fromJson(
-              (await ApiService.addProductToCart(productId)).data, null);
+          response =
+              BaseResponse.fromJson((await ApiService.addProductToCart(productId)).data, null);
         },
       );
 }
@@ -19,29 +19,23 @@ class AddProductToCartRepository extends BaseRepository {
 class RemoveItemFromCartRepository extends BaseRepository {
   Future<void> update(String itemId) => apiCall(
         () async {
-          response = BaseResponse.fromJson(
-              (await ApiService.removeItemFromCart(itemId)).data, null);
+          response =
+              BaseResponse.fromJson((await ApiService.removeItemFromCart(itemId)).data, null);
         },
       );
 }
 
-class GetCartItemDeliveryTypesRepository
-    extends BaseRepository<List<DeliveryType>> {
+class GetCartItemDeliveryTypesRepository extends BaseRepository<List<DeliveryType>> {
   Future<void> update(String itemId) => apiCall(
         () async {
-          response = BaseResponse.fromJson(
-              (await ApiService.getCartItemDeliveryTypes(itemId)).data,
-              (contentJson) => [
-                    for (final type in contentJson) DeliveryType.fromJson(type)
-                  ]);
+          response = BaseResponse.fromJson((await ApiService.getCartItemDeliveryTypes(itemId)).data,
+              (contentJson) => [for (final type in contentJson) DeliveryType.fromJson(type)]);
         },
       );
 }
 
 class SetCartItemDeliveryTypeRepository extends BaseRepository {
-  Future<void> update(
-          String itemId, String deliveryCompanyId, String deliveryObjectId) =>
-      apiCall(
+  Future<void> update(String itemId, String deliveryCompanyId, String deliveryObjectId) => apiCall(
         () async {
           response = BaseResponse.fromJson(
               (await ApiService.setCartItemDeliveryType(
@@ -98,26 +92,22 @@ class CartRepository extends BaseRepository<Cart> {
 
   updateSelectionAction() {
     final itemsWithSelectedDelivery = response?.content?.groups
-        ?.where((cartItem) =>
-            cartItem.deliveryData != null && cartItem.deliveryCompany != null)
+        ?.where((cartItem) => cartItem.deliveryData != null && cartItem.deliveryOption != null)
         ?.toList();
 
-    if (itemsWithSelectedDelivery != null &&
-        itemsWithSelectedDelivery.isNotEmpty) {
+    if (itemsWithSelectedDelivery != null && itemsWithSelectedDelivery.isNotEmpty) {
       if (selectedIDs.isNotEmpty) {
         selectionActionLabel = "Снять всё";
         selectionAction = () {
           itemsWithSelectedDelivery.forEach((cartItem) => cartItem.cartProducts
-              .forEach((cartProduct) =>
-                  select(cartProduct.product.id, value: false)));
+              .forEach((cartProduct) => select(cartProduct.product.id, value: false)));
         };
         canMakeOrder = true;
       } else {
         selectionActionLabel = "Выбрать всё";
         selectionAction = () {
           itemsWithSelectedDelivery.forEach((cartItem) => cartItem.cartProducts
-              .forEach((cartProduct) =>
-                  select(cartProduct.product.id, value: true)));
+              .forEach((cartProduct) => select(cartProduct.product.id, value: true)));
         };
         canMakeOrder = false;
       }
@@ -163,16 +153,14 @@ class CartRepository extends BaseRepository<Cart> {
     pendingIDs.clear();
   }
 
-  bool checkPresence(String productId) =>
-      response?.content?.checkPresence(productId) ?? false;
+  bool checkPresence(String productId) => response?.content?.checkPresence(productId) ?? false;
 
   Future<void> addToCart(String productId) async {
     await addProduct.update(productId);
     if (addProduct.response.status.code == 201) await _update();
   }
 
-  Future<void> setDelivery(
-      String itemId, String deliveryCompanyId, String deliveryObjectId) async {
+  Future<void> setDelivery(String itemId, String deliveryCompanyId, String deliveryObjectId) async {
     await setDeliveryType.update(itemId, deliveryCompanyId, deliveryObjectId);
     if (setDeliveryType.response.status.code == 204) {
       if (pendingIDs.isEmpty) {
@@ -203,11 +191,10 @@ class CartRepository extends BaseRepository<Cart> {
 
   Future<void> _update() => apiCall(
         () async {
-          response = BaseResponse.fromJson((await ApiService.getCart()).data,
-              (contentJson) => Cart.fromJson(contentJson));
+          response = BaseResponse.fromJson(
+              (await ApiService.getCart()).data, (contentJson) => Cart.fromJson(contentJson));
 
-          [...pendingIDs, ...selectedIDs]
-              .forEach((productId) => select(productId, value: true));
+          [...pendingIDs, ...selectedIDs].forEach((productId) => select(productId, value: true));
           pendingIDs.clear();
 
           updateSelectionAction();

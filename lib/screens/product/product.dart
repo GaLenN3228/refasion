@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
-import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
@@ -40,7 +39,6 @@ class ProductPage extends StatefulWidget {
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
-    PickPoint pickUpAddress,
     Function() onClose,
     Function(String, String) onFinish,
     SystemUiOverlayStyle originalOverlayStyle,
@@ -239,7 +237,6 @@ class _ProductPageState extends State<ProductPage> {
                     context,
                     widget.product.id,
                     deliveryTypes: product.deliveryTypes,
-                    pickUpAddress: product.pickUpAddress,
                     onFinish: (companyId, objectId) =>
                         widget.onCheckoutPush?.call(companyId, objectId),
                     originalOverlayStyle: SystemUiOverlayStyle.dark,

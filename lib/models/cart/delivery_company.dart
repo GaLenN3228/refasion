@@ -1,11 +1,6 @@
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
-enum Delivery {
-  PICKUP_ADDRESS,
-  PICKUP_POINT,
-  COURIER_DELIVERY,
-  EXPRESS_DEVILERY
-}
+enum Delivery { PICKUP_ADDRESS, PICKUP_POINT, COURIER_DELIVERY, EXPRESS_DEVILERY }
 
 final deliveryTypes = {
   "pickup": Delivery.PICKUP_ADDRESS,
@@ -33,18 +28,13 @@ class DeliveryCompany {
   final String id;
   final Delivery type;
 
-  DeliveryCompany({this.type, this.id, this.name});
+  const DeliveryCompany({this.type, this.id, this.name});
 
-  factory DeliveryCompany.fromJson(Map<String, dynamic> json) {
-    final type =
-        json['delivery_type'] != null && json['delivery_type']['type'] != null
-            ? deliveryTypes[json['delivery_type']['type']]
-            : Delivery.PICKUP_POINT;
-
-    return DeliveryCompany(
-      id: json['id'],
-      name: json['name'],
-      type: type,
-    );
-  }
+  factory DeliveryCompany.fromJson(Map<String, dynamic> json) => json != null
+      ? DeliveryCompany(
+          id: json['id'],
+          name: json['name'],
+          type: deliveryTypes[json['delivery_type']['type']],
+        )
+      : null;
 }
