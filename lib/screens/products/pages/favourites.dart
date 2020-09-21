@@ -51,6 +51,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
             if (favouritesProductsRepository.isLoading && favouritesProductsRepository.response == null)
               return Center(
                 child: CircularProgressIndicator(
+                  strokeWidth: 2,
                   backgroundColor: accentColor,
                   valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
                 ),
