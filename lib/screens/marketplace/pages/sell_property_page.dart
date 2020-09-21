@@ -14,11 +14,7 @@ class SellPropertyPage extends StatefulWidget {
   final Function() onPush;
 
   const SellPropertyPage(
-      {this.sellProperty,
-      this.onPush,
-      this.onClose,
-      this.onUpdate,
-      this.initialData})
+      {this.sellProperty, this.onPush, this.onClose, this.onUpdate, this.initialData})
       : assert(sellProperty != null);
 
   @override
@@ -31,6 +27,7 @@ class _SellPropertyPageState extends State<SellPropertyPage> {
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: SellPropertyValuesList(
+          required: widget.sellProperty.isRequired,
           values: widget.sellProperty.values,
           bottomPadding: 100,
           appBar: RefashionedTopBar(
@@ -46,8 +43,7 @@ class _SellPropertyPageState extends State<SellPropertyPage> {
             setState(() {
               widget.sellProperty.update(id);
             });
-            if (widget.onPush != null && !widget.sellProperty.multiselection)
-              widget.onPush();
+            if (widget.onPush != null && !widget.sellProperty.multiselection) widget.onPush();
           },
           onPush: () {
             if (widget.onPush != null) widget.onPush();

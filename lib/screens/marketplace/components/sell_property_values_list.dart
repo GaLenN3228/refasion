@@ -14,6 +14,7 @@ class SellPropertyValuesList extends StatefulWidget {
   final bool multiselection;
   final double bottomPadding;
   final ScrollController scrollController;
+  final required;
 
   final Animation<double> animation;
   final Animation<double> secondaryAnimation;
@@ -30,6 +31,7 @@ class SellPropertyValuesList extends StatefulWidget {
     this.animation,
     this.secondaryAnimation,
     this.onPush,
+    this.required,
   }) : super(key: key);
 
   @override
@@ -81,13 +83,13 @@ class _SellPropertyValuesListState extends State<SellPropertyValuesList> {
                                   const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
                               child: Button(
                                 "ВЫБРАТЬ",
-                                buttonStyle: !isPropertiesListEmpty
+                                buttonStyle: !isPropertiesListEmpty && widget.required
                                     ? ButtonStyle.dark
                                     : ButtonStyle.dark_gray,
                                 height: 45,
                                 width: double.infinity,
                                 borderRadius: 5,
-                                onClick: !isPropertiesListEmpty
+                                onClick: !isPropertiesListEmpty && widget.required
                                     ? () {
                                         widget.onPush();
                                       }

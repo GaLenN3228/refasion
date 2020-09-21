@@ -1,5 +1,5 @@
 class ProductPrice {
-  final double cash;
+  final int cash;
 
   ProductPrice({this.cash});
 

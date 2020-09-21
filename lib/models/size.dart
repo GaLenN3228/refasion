@@ -4,9 +4,7 @@ class SizesContent {
   SizesContent({this.sizes});
 
   factory SizesContent.fromJson(Map<String, dynamic> json) {
-    return SizesContent(
-      sizes: json['sizes'],
-    );
+    return SizesContent(sizes: [for (final size in json['sizes']) Sizes.fromJson(size)]);
   }
 }
 

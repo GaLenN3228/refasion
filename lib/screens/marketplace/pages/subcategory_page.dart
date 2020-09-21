@@ -11,14 +11,9 @@ class SubcategoryPage extends StatelessWidget {
 
   final Function() onClose;
   final Function() onUpdate;
-  final Function() onPush;
+  final Function(Category) onPush;
 
-  SubcategoryPage(
-      {this.onPush,
-      this.topCategory,
-      this.onClose,
-      this.onUpdate,
-      this.initialData})
+  SubcategoryPage({this.onPush, this.topCategory, this.onClose, this.onUpdate, this.initialData})
       : assert(topCategory != null);
 
   @override
@@ -29,7 +24,7 @@ class SubcategoryPage extends StatelessWidget {
         categories: topCategory.children,
         bottomPadding: 100,
         multiselection: true,
-        onUpdate: (_) => onPush(),
+        onUpdate: (categories) => onPush(categories.last),
         appBar: RefashionedTopBar(
           data: TopBarData.simple(
             onBack: () => Navigator.of(context).pop(),
