@@ -5,7 +5,6 @@ import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/models/product.dart';
-import 'package:refashioned_app/models/quick_filter.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/filters.dart';
@@ -66,7 +65,7 @@ class _ProductsPageState extends State<ProductsPage> {
       initialParameters += categoryBrandsRepository.getRequestParameters();
       quickFiltersCategories = List()
         ..addAll(widget.topCategory.children.map((e) => Category.clone(e)).toList());
-      selectedBrands = categoryBrandsRepository.response.content.where((element) => element.selected);
+      selectedBrands = categoryBrandsRepository.response.content.where((element) => element.selected).toList();
     } else {
       initialParameters = widget.topCategory.getRequestParameters();
       quickFiltersCategories = List()
