@@ -66,7 +66,7 @@ class _CartItemTileState extends State<CartItemTile> {
           ),
         DeliveryDataTile(
           deliveryData: widget.cartItem.deliveryData,
-          deliveryCompany: widget.cartItem.deliveryCompany,
+          deliveryOption: widget.cartItem.deliveryOption,
           onTap: openDeliveryTypesSelector,
         ),
         Padding(

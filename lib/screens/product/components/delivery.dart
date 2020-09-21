@@ -13,11 +13,10 @@ class ProductDelivery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (product.deliveryTypes == null || product.deliveryTypes.isEmpty)
-      return SizedBox();
+    if (product.deliveryTypes == null || product.deliveryTypes.isEmpty) return SizedBox();
 
-    final pickUpAddressDeliveryIndex = product.deliveryTypes?.indexWhere(
-            (deliveryType) => deliveryType.type == Delivery.PICKUP_ADDRESS) ??
+    final pickUpAddressDeliveryIndex = product.deliveryTypes
+            ?.indexWhere((deliveryType) => deliveryType.type == Delivery.PICKUP_ADDRESS) ??
         -1;
 
     DeliveryType pickUpAddressDelivery;
@@ -26,11 +25,9 @@ class ProductDelivery extends StatelessWidget {
 
     if (pickUpAddressDeliveryIndex >= 0) {
       if (product.pickUpAddress != null)
-        pickUpAddressDelivery =
-            product.deliveryTypes.elementAt(pickUpAddressDeliveryIndex);
+        pickUpAddressDelivery = product.deliveryTypes.elementAt(pickUpAddressDeliveryIndex);
 
-      otherDeliveries = [...product.deliveryTypes]
-        ..removeAt(pickUpAddressDeliveryIndex);
+      otherDeliveries = [...product.deliveryTypes]..removeAt(pickUpAddressDeliveryIndex);
     } else
       otherDeliveries = product.deliveryTypes;
 

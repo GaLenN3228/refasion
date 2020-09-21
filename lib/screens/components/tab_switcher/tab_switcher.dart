@@ -173,7 +173,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                         HapticFeedback.selectionClick();
 
                         await onClose?.call();
-                        userAddressesRepository.dispose();
+                        userAddressesRepository?.dispose();
 
                         Navigator.of(context).pop();
 
@@ -183,8 +183,9 @@ class _TabSwitcherState extends State<TabSwitcher> {
                       onFinish: (id) async {
                         HapticFeedback.lightImpact();
 
-                        await onFinish?.call(deliveryType.items.first.id, id);
-                        userAddressesRepository.dispose();
+                        await onFinish?.call(
+                            deliveryType.deliveryOptions.first.deliveryCompany.id, id);
+                        userAddressesRepository?.dispose();
 
                         Navigator.of(context).pop();
 

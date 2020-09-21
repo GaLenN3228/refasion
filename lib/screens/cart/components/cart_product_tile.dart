@@ -1,28 +1,106 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_product.dart';
+import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/cart/components/brand.dart';
 import 'package:refashioned_app/screens/cart/components/price.dart';
 import 'package:refashioned_app/screens/cart/components/size.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox_listenable.dart';
+import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/custom_dialog/dialog.dart' as CustomDialog;
 
-class CartProductTile extends StatelessWidget {
+class CartProductTile extends StatefulWidget {
   final CartProduct cartProduct;
   final Function() onProductPush;
   final Function() onSelect;
 
   const CartProductTile({this.cartProduct, this.onProductPush, this.onSelect});
 
+  @override
+  _CartProductTileState createState() => _CartProductTileState();
+}
+
+class _CartProductTileState extends State<CartProductTile> {
   final bool colored = false;
+
+  AddRemoveFavouriteRepository addRemoveFavouriteRepository;
+
+  CartRepository cartRepository;
+
+  @override
+  initState() {
+    addRemoveFavouriteRepository = AddRemoveFavouriteRepository();
+
+    cartRepository = Provider.of<CartRepository>(context, listen: false);
+
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    addRemoveFavouriteRepository = AddRemoveFavouriteRepository();
+
+    super.dispose();
+  }
+
+  addToFavorites() async => await addRemoveFavouriteRepository
+      .addToFavourites((widget.cartProduct.product..isFavourite = true).id);
+
+  removeFromCart() async => await cartRepository.removeFromCart(widget.cartProduct.id);
+
+  dialog() => showDialog(
+        context: context,
+        builder: (dialogContext) => CustomDialog.Dialog(
+          dialogContent: [
+            DialogItemContent(
+              "Подробнее",
+              () {
+                Navigator.of(dialogContext).pop();
+                widget.onProductPush?.call();
+              },
+              DialogItemType.item,
+              icon: IconAsset.info,
+            ),
+            if (!widget.cartProduct.product.isFavourite)
+              DialogItemContent(
+                "Перенести в избранное",
+                () async {
+                  await addToFavorites();
+                  await removeFromCart();
+                  Navigator.of(dialogContext).pop();
+                },
+                DialogItemType.item,
+                icon: IconAsset.favoriteBorder,
+              ),
+            DialogItemContent(
+              "Удалить из корзины",
+              () async {
+                await removeFromCart();
+                Navigator.of(dialogContext).pop();
+              },
+              DialogItemType.item,
+              icon: IconAsset.delete,
+              color: Colors.red,
+            ),
+            DialogItemContent(
+              "Отменить",
+              () => Navigator.of(dialogContext).pop(),
+              DialogItemType.system,
+            )
+          ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
-    final product = cartProduct.product;
+    final product = widget.cartProduct.product;
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: onProductPush ?? () {},
+      onTap: widget.onSelect,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Container(
@@ -31,14 +109,10 @@ class CartProductTile extends StatelessWidget {
             children: [
               Container(
                 color: colored ? Colors.pinkAccent : null,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: onSelect,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: RefashionedCheckboxListenable(
-                      valueNotifier: cartProduct.selected,
-                    ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: RefashionedCheckboxListenable(
+                    valueNotifier: widget.cartProduct.selected,
                   ),
                 ),
               ),
@@ -81,9 +155,13 @@ class CartProductTile extends StatelessWidget {
               ),
               Container(
                 color: colored ? Colors.amberAccent : null,
-                child: SVGIcon(
-                  icon: IconAsset.more,
-                  size: 24,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: dialog,
+                  child: SVGIcon(
+                    icon: IconAsset.more,
+                    size: 24,
+                  ),
                 ),
               )
             ],
