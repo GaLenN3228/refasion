@@ -37,7 +37,7 @@ class AuthorizedProfilePage extends StatelessWidget {
       color: Colors.transparent,
       child: Container(
         color: Color(0xFF373A3F),
-        height: 150,
+        height: MediaQuery.of(context).size.height * 0.2,
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.only(left: 20, right: 20, top: 50),

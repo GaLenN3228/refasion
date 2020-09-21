@@ -123,7 +123,7 @@ class _CitySelectorState extends State<CitySelector> {
 
                               if (result) {
                                 if (widget.onFirstLaunch)
-                                  Future.delayed(Duration(milliseconds: 300), () {
+                                  Future.delayed(Duration(milliseconds: 200), () {
                                     push(PhonePage(
                                       needDismiss: false,
                                       onAuthorizationDone: (context) {
