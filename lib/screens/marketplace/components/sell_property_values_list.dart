@@ -76,11 +76,11 @@ class _SellPropertyValuesListState extends State<SellPropertyValuesList> {
                     Positioned(
                       left: 0,
                       right: 0,
-                      bottom: 0,
+                      bottom: 20,
                       child: widget.multiselection
                           ? Padding(
                               padding:
-                                  const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
+                                  const EdgeInsets.only(left: 20, right: 20),
                               child: Button(
                                 "ВЫБРАТЬ",
                                 buttonStyle: !isPropertiesListEmpty && widget.required

@@ -186,7 +186,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(
-                20, 20, 20, MediaQuery.of(context).padding.bottom + 20),
+                20, 20, 20, 20),
             child: RefashionedButton(
               states: buttonState,
               statesData: buttonStatesData,

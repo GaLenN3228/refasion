@@ -42,7 +42,9 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
     priceFormatter = PriceFormatter();
 
     textController = TextEditingController(
-        text: widget.initialData != null ? priceFormatter.format(widget.initialData.toString()) : null);
+        text: widget.initialData != null
+            ? priceFormatter.format(widget.initialData.toString())
+            : null);
     prices = {PriceButtonType.tradeIn: 0, PriceButtonType.diy: 0};
 
     textController.text = "";
@@ -54,7 +56,8 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
     _calcProductPrice = Provider.of<CalcProductPrice>(context, listen: false);
     _calcProductPrice.addListener(() {
       var price = 0;
-      if (_calcProductPrice.isLoaded || (_calcProductPrice.isLoading && _calcProductPrice.response != null)){
+      if (_calcProductPrice.isLoaded ||
+          (_calcProductPrice.isLoading && _calcProductPrice.response != null)) {
         price = _calcProductPrice.response.content.cash;
       } else {
         _calcProductPrice.response = null;
@@ -151,11 +154,12 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                           cursorColor: Color(0xFFE6E6E6),
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(bottom: 10),
-                            border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
-                            focusedBorder:
-                                UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
-                            enabledBorder:
-                                UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
+                            border: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
                             hintText: "   ₽",
                             hintStyle: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
                           ),
@@ -177,7 +181,10 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                         ),
                         Text(
                           "Как рассчитывается стоимость вещи?",
-                          style: Theme.of(context).textTheme.bodyText2.copyWith(decoration: TextDecoration.underline),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              .copyWith(decoration: TextDecoration.underline),
                         ),
                       ],
                     ),
@@ -191,10 +198,13 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
               ),
             ),
           ),
-          BottomButton(
-            title: "Продолжить".toUpperCase(),
-            enabled: canPush,
-            action: () => widget.onPush(),
+          Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: BottomButton(
+              title: "Продолжить".toUpperCase(),
+              enabled: canPush,
+              action: () => widget.onPush(),
+            ),
           ),
           AnimatedContainer(
             height: keyboardVisible ? bottomPadding : 0,
