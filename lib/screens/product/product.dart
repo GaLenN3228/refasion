@@ -187,7 +187,7 @@ class _ProductPageState extends State<ProductPage> {
             children: [
               ListView(
                 padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
+                    bottom: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 22.0),
                 children: <Widget>[
                   ProductSlider(
                     images: product.images,

@@ -27,7 +27,7 @@ class CategoryPage extends StatelessWidget {
       backgroundColor: Colors.white,
       child: CategoriesList(
         categories: topCategory.children,
-        bottomPadding: 100,
+        bottomPadding: 110,
         onPush: onPush,
         appBar: RefashionedTopBar(
           data: TopBarData.simple(
