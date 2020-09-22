@@ -147,6 +147,7 @@ class _DescriptionPageState extends State<DescriptionPage> with WidgetsBindingOb
             ),
           ),
           BottomButton(
+            bottomPadding: 20,
             title: "Продолжить".toUpperCase(),
             enabled: canPush,
             action: () => widget.onPush(),

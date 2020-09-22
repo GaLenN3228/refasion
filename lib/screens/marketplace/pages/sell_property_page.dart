@@ -29,7 +29,7 @@ class _SellPropertyPageState extends State<SellPropertyPage> {
       child: SellPropertyValuesList(
           required: widget.sellProperty.isRequired,
           values: widget.sellProperty.values,
-          bottomPadding: 110,
+          bottomPadding: 50,
           appBar: RefashionedTopBar(
             data: TopBarData.simple(
               onBack: () => Navigator.of(context).pop(),
