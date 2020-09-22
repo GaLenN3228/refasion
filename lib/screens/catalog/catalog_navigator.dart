@@ -259,7 +259,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                 .then(
               (flag) {
                 topPanelController.needShow = true;
-                callback();
+                // callback();
               },
             ),
           );
