@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
@@ -19,7 +20,8 @@ class PhotosPage extends StatefulWidget {
   final Function(List<String>) onUpdate;
   final Function() onPush;
 
-  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.initialData}) : super(key: key);
+  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.initialData})
+      : super(key: key);
 
   @override
   _PhotosPageState createState() => _PhotosPageState();
@@ -32,16 +34,29 @@ class _PhotosPageState extends State<PhotosPage> {
   Map<int, File> images = {0: null, 1: null, 2: null};
 
   Future getImage(int index) async {
+    HapticFeedback.lightImpact();
+
     showDialog(
         context: context,
         builder: (dialogContext) {
           this.dialogContext = dialogContext;
           return CustomDialog.Dialog(
             dialogContent: [
-              DialogItemContent("Сделать фото", () => openCamera(index), DialogItemType.item, icon: IconAsset.camera),
-              DialogItemContent("Выбрать из галереи", () => openGallery(index), DialogItemType.item,
-                  icon: IconAsset.image),
-              DialogItemContent("Закрыть", () => Navigator.pop(dialogContext), DialogItemType.system)
+              DialogItemContent("Сделать фото", () {
+                HapticFeedback.selectionClick();
+
+                return openCamera(index);
+              }, DialogItemType.item, icon: IconAsset.camera),
+              DialogItemContent("Выбрать из галереи", () {
+                HapticFeedback.selectionClick();
+
+                return openGallery(index);
+              }, DialogItemType.item, icon: IconAsset.image),
+              DialogItemContent("Закрыть", () {
+                HapticFeedback.lightImpact();
+
+                Navigator.pop(dialogContext);
+              }, DialogItemType.system)
             ],
           );
         });

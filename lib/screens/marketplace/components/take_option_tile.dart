@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox_listenable.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
@@ -10,8 +11,7 @@ class TakeOptionTile extends StatefulWidget {
   final Function() onUpdate;
   final Function() action;
 
-  const TakeOptionTile(
-      {Key key, this.option, this.valueNotifier, this.onUpdate, this.action})
+  const TakeOptionTile({Key key, this.option, this.valueNotifier, this.onUpdate, this.action})
       : super(key: key);
 
   @override
@@ -35,8 +35,7 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
       case TakeOption.courier:
         icon = IconAsset.expressDelivery;
         title = "Экспресс-доставка по городу";
-        subtitle =
-            "Курьер приедет по адресу продавца и отвезет вещь покупателю.";
+        subtitle = "Курьер приедет по адресу продавца и отвезет вещь покупателю.";
         break;
       case TakeOption.office:
         icon = IconAsset.location;
@@ -53,6 +52,8 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
+        HapticFeedback.selectionClick();
+
         widget.valueNotifier.value = !widget.valueNotifier.value;
         widget.onUpdate();
       },
@@ -64,8 +65,7 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                   child: SVGIcon(
                     icon: icon,
                     size: 24,
@@ -89,11 +89,9 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
                       widget.option == TakeOption.office
                           ? GestureDetector(
                               behavior: HitTestBehavior.translucent,
-                              onTap:
-                                  widget.action != null ? widget.action : () {},
+                              onTap: widget.action != null ? widget.action : () {},
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
+                                padding: const EdgeInsets.symmetric(vertical: 10),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -102,9 +100,7 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
-                                          .copyWith(
-                                              decoration:
-                                                  TextDecoration.underline),
+                                          .copyWith(decoration: TextDecoration.underline),
                                     ),
                                     RotatedBox(
                                       quarterTurns: 2,
@@ -122,8 +118,7 @@ class _TakeOptionTileState extends State<TakeOptionTile> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: RefashionedCheckboxListenable(
                     valueNotifier: widget.valueNotifier,
                   ),

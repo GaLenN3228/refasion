@@ -36,7 +36,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
     return Padding(
       padding: const EdgeInsets.only(left: 2, right: 2),
       child: GestureDetector(
-        onTap: () => {widget.onPush(widget.product), HapticFeedback.vibrate()},
+        onTap: () => widget.onPush?.call(widget.product),
         child: new Card(
           shadowColor: Colors.transparent,
           child: Column(

@@ -135,10 +135,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
           Expanded(
             child: RefashionedButton(
               height: 40,
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                widget.openDeliveryTypesSelector();
-              },
+              onTap: widget.openDeliveryTypesSelector?.call,
               data: ButtonData(
                 buttonContainerData: ButtonContainerData(
                   decorationType: ButtonDecorationType.black,

@@ -17,7 +17,6 @@ import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
-import 'package:refashioned_app/screens/delivery/pages/map_page.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
@@ -162,27 +161,35 @@ class _CartNavigatorState extends State<CartNavigator> {
         return CartPage(
           openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
           onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
-          onCheckoutPush: (order) => Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) =>
-                  _routeBuilder(context, CartNavigatorRoutes.checkout, cart: cart, order: order),
-              settings: RouteSettings(
-                name: CartNavigatorRoutes.checkout,
+          onCheckoutPush: (order) {
+            HapticFeedback.mediumImpact();
+
+            return Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) =>
+                    _routeBuilder(context, CartNavigatorRoutes.checkout, cart: cart, order: order),
+                settings: RouteSettings(
+                  name: CartNavigatorRoutes.checkout,
+                ),
               ),
-            ),
-          ),
-          onProductPush: (product) => Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (context) => _routeBuilder(
-                context,
-                CartNavigatorRoutes.product,
-                product: product,
+            );
+          },
+          onProductPush: (product) {
+            HapticFeedback.mediumImpact();
+
+            return Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(
+                  context,
+                  CartNavigatorRoutes.product,
+                  product: product,
+                ),
+                settings: RouteSettings(
+                  name: CartNavigatorRoutes.product,
+                ),
               ),
-              settings: RouteSettings(
-                name: CartNavigatorRoutes.product,
-              ),
-            ),
-          ),
+            );
+          },
         );
 
       case CartNavigatorRoutes.product:
@@ -208,6 +215,8 @@ class _CartNavigatorState extends State<CartNavigator> {
 
               await getOrderRepository.update(orderId);
 
+              HapticFeedback.mediumImpact();
+
               return Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => _routeBuilder(
@@ -217,32 +226,40 @@ class _CartNavigatorState extends State<CartNavigator> {
                 ),
               );
             },
-            onProductPush: (product) => Navigator.of(context)
-                .push(
-                  CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(
-                      context,
-                      CartNavigatorRoutes.product,
-                      product: product,
-                    ),
-                    settings: RouteSettings(
-                      name: CartNavigatorRoutes.product,
-                    ),
-                  ),
-                )
-                .then((value) => topPanelController.needShow = false),
-            onSubCategoryClick: (parameters, title) => Navigator.of(context)
-                .push(
-                  CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, CartNavigatorRoutes.products,
+            onProductPush: (product) {
+              HapticFeedback.mediumImpact();
+
+              return Navigator.of(context)
+                  .push(
+                    CupertinoPageRoute(
+                      builder: (context) => _routeBuilder(
+                        context,
+                        CartNavigatorRoutes.product,
                         product: product,
-                        category: category,
-                        parameters: parameters,
-                        productTitle: title),
-                    settings: RouteSettings(name: CartNavigatorRoutes.products),
-                  ),
-                )
-                .then((value) => topPanelController.needShow = false),
+                      ),
+                      settings: RouteSettings(
+                        name: CartNavigatorRoutes.product,
+                      ),
+                    ),
+                  )
+                  .then((value) => topPanelController.needShow = false);
+            },
+            onSubCategoryClick: (parameters, title) {
+              HapticFeedback.mediumImpact();
+
+              return Navigator.of(context)
+                  .push(
+                    CupertinoPageRoute(
+                      builder: (context) => _routeBuilder(context, CartNavigatorRoutes.products,
+                          product: product,
+                          category: category,
+                          parameters: parameters,
+                          productTitle: title),
+                      settings: RouteSettings(name: CartNavigatorRoutes.products),
+                    ),
+                  )
+                  .then((value) => topPanelController.needShow = false);
+            },
             onPickupAddressPush: widget.openPickUpAddressMap?.call,
           ),
         );
@@ -258,19 +275,23 @@ class _CartNavigatorState extends State<CartNavigator> {
             searchResult: searchResult,
             topCategory: category,
             title: productTitle,
-            onPush: (product, {callback}) => Navigator.of(context)
-                .push(
-              CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, CartNavigatorRoutes.product,
-                    product: product, category: category),
-              ),
-            )
-                .then(
-              (flag) {
-                topPanelController.needShow = true;
-                callback();
-              },
-            ),
+            onPush: (product, {callback}) {
+              HapticFeedback.mediumImpact();
+
+              return Navigator.of(context)
+                  .push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(context, CartNavigatorRoutes.product,
+                      product: product, category: category),
+                ),
+              )
+                  .then(
+                (flag) {
+                  topPanelController.needShow = true;
+                  callback();
+                },
+              );
+            },
           );
         });
 
@@ -284,16 +305,20 @@ class _CartNavigatorState extends State<CartNavigator> {
                   create: (_) => AddRemoveFavouriteRepository())
             ],
             builder: (context, _) {
-              return FavouritesPage(onPush: (product) {
-                Navigator.of(context)
-                    .push(
-                      CupertinoPageRoute(
-                        builder: (context) => _routeBuilder(context, CartNavigatorRoutes.product,
-                            product: product, category: category),
-                      ),
-                    )
-                    .then((value) => topPanelController.needShow = false);
-              });
+              return FavouritesPage(
+                onPush: (product) {
+                  HapticFeedback.mediumImpact();
+
+                  Navigator.of(context)
+                      .push(
+                        CupertinoPageRoute(
+                          builder: (context) => _routeBuilder(context, CartNavigatorRoutes.product,
+                              product: product, category: category),
+                        ),
+                      )
+                      .then((value) => topPanelController.needShow = false);
+                },
+              );
             });
 
       case CartNavigatorRoutes.checkout:

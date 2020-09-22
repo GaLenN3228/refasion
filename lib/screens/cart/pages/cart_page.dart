@@ -141,7 +141,11 @@ class _CartPageState extends State<CartPage> {
                     middleData: TBMiddleData.title("Корзина"),
                     rightButtonData: TBButtonData.text(
                       repository.selectionActionLabel,
-                      onTap: repository.selectionAction,
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+
+                        repository.selectionAction?.call();
+                      },
                     ),
                   ),
                 ),

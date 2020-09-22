@@ -59,6 +59,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
   }
 
   tabListener() {
+    HapticFeedback.mediumImpact();
+
     switch (widget.currentTab.value) {
       case BottomTab.home:
       case BottomTab.catalog:
@@ -72,6 +74,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
   }
 
   onTabRefresh() {
+    HapticFeedback.mediumImpact();
+
     final canPop = navigatorKeys[widget.currentTab.value]?.currentState?.canPop() ?? false;
 
     if (canPop)
@@ -88,23 +92,30 @@ class _TabSwitcherState extends State<TabSwitcher> {
     }
   }
 
-  pushPageOnTop(Widget page) =>
-      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => page));
+  pushPageOnTop(Widget page) {
+    HapticFeedback.mediumImpact();
 
-  openPickUpAddressMap(PickPoint pickPoint) => Navigator.of(context).push(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
-            position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
-            child: ChangeNotifierProvider<SizeRepository>(
-              create: (_) => SizeRepository(),
-              builder: (context, _) => MapPage(
-                pickPoint: pickPoint,
-                onClose: () => Navigator.of(context).pop(),
-              ),
+    return Navigator.of(context).push(CupertinoPageRoute(builder: (context) => page));
+  }
+
+  openPickUpAddressMap(PickPoint pickPoint) {
+    HapticFeedback.mediumImpact();
+
+    return Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+          position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+          child: ChangeNotifierProvider<SizeRepository>(
+            create: (_) => SizeRepository(),
+            builder: (context, _) => MapPage(
+              pickPoint: pickPoint,
+              onClose: () => Navigator.of(context).pop(),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 
   openDeliveryTypesSelector(
     BuildContext context,
@@ -175,6 +186,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
               selected = true;
 
               Navigator.of(context).pop();
+
+              HapticFeedback.mediumImpact();
 
               Navigator.of(context).push(
                 PageRouteBuilder(
@@ -284,28 +297,35 @@ class _TabSwitcherState extends State<TabSwitcher> {
                     widget.currentTab,
                     () => {
                       BaseRepository.isAuthorized().then((isAuthorized) {
-                        return isAuthorized
-                            ? Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  pageBuilder: (context, animation, secondaryAnimation) =>
-                                      SlideTransition(
-                                    position: Tween(begin: Offset(0, 1), end: Offset.zero)
-                                        .animate(animation),
-                                    child: ChangeNotifierProvider<SizeRepository>(
-                                      create: (_) => SizeRepository(),
-                                      builder: (context, _) => MarketplaceNavigator(
-                                        onClose: () => Navigator.of(context).pop(),
-                                      ),
-                                    ),
+                        if (isAuthorized) {
+                          HapticFeedback.mediumImpact();
+
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) =>
+                                  SlideTransition(
+                                position:
+                                    Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                                child: ChangeNotifierProvider<SizeRepository>(
+                                  create: (_) => SizeRepository(),
+                                  builder: (context, _) => MarketplaceNavigator(
+                                    onClose: () {
+                                      HapticFeedback.mediumImpact();
+
+                                      Navigator.of(context).pop();
+                                    },
                                   ),
                                 ),
-                              )
-                            : showCupertinoModalBottomSheet(
-                                backgroundColor: Colors.white,
-                                expand: false,
-                                context: context,
-                                useRootNavigator: true,
-                                builder: (context, controller) => AuthorizationSheet());
+                              ),
+                            ),
+                          );
+                        } else
+                          showCupertinoModalBottomSheet(
+                              backgroundColor: Colors.white,
+                              expand: false,
+                              context: context,
+                              useRootNavigator: true,
+                              builder: (context, controller) => AuthorizationSheet());
                       })
                     },
                     onTabRefresh,

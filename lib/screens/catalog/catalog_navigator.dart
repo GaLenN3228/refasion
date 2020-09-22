@@ -140,6 +140,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         return CatalogRootPage(
           categories: categories,
           onPush: (category) {
+            HapticFeedback.mediumImpact();
+
             final newRoute = category.children.isNotEmpty
                 ? CatalogNavigatorRoutes.categories
                 : CatalogNavigatorRoutes.category;
@@ -152,14 +154,18 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                 )
                 .then((value) => topPanelController.needShowBack = false);
           },
-          onFavouritesClick: () => Navigator.of(context)
-              .push(
-                MaterialWithModalsPageRoute(
-                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.favourites,
-                      category: category, parameters: parameters),
-                ),
-              )
-              .then((value) => topPanelController.needShow = true),
+          onFavouritesClick: () {
+            HapticFeedback.mediumImpact();
+
+            return Navigator.of(context)
+                .push(
+                  MaterialWithModalsPageRoute(
+                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.favourites,
+                        category: category, parameters: parameters),
+                  ),
+                )
+                .then((value) => topPanelController.needShow = true);
+          },
         );
 
       case CatalogNavigatorRoutes.categories:
@@ -171,6 +177,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             final newRoute = category.children.isNotEmpty
                 ? CatalogNavigatorRoutes.category
                 : CatalogNavigatorRoutes.products;
+
+            HapticFeedback.mediumImpact();
 
             return Navigator.of(context)
                 .push(
@@ -193,6 +201,9 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             level: CategoryLevel.category,
             onPush: (_, {callback}) {
               Provider.of<CategoryBrandsRepository>(context, listen: false).response = null;
+
+              HapticFeedback.mediumImpact();
+
               return Navigator.of(context)
                   .push(
                 CupertinoPageRoute(
@@ -206,6 +217,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
               });
             },
             onBrandsPush: ({callback}) {
+              HapticFeedback.mediumImpact();
+
               Navigator.of(context)
                   .push(
                 CupertinoPageRoute(
@@ -231,17 +244,21 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             builder: (context, _) {
               return CategoryBrandsPage(
                 topCategory: category,
-                onPush: (_, brands, {callback}) => Navigator.of(context)
-                    .push(
-                  CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
-                        category: category, brands: brands),
-                    settings: RouteSettings(name: CatalogNavigatorRoutes.products),
-                  ),
-                )
-                    .then((flag) {
-                  callback();
-                }),
+                onPush: (_, brands, {callback}) {
+                  HapticFeedback.mediumImpact();
+
+                  return Navigator.of(context)
+                      .push(
+                    CupertinoPageRoute(
+                      builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
+                          category: category, brands: brands),
+                      settings: RouteSettings(name: CatalogNavigatorRoutes.products),
+                    ),
+                  )
+                      .then((flag) {
+                    callback();
+                  });
+                },
               );
             });
 
@@ -256,19 +273,23 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             searchResult: searchResult,
             topCategory: category,
             title: productTitle,
-            onPush: (product, {callback}) => Navigator.of(context)
-                .push(
-              CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
-                    product: product, category: category),
-              ),
-            )
-                .then(
-              (flag) {
-                topPanelController.needShow = true;
-                // callback();
-              },
-            ),
+            onPush: (product, {callback}) {
+              HapticFeedback.mediumImpact();
+
+              return Navigator.of(context)
+                  .push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                      product: product, category: category),
+                ),
+              )
+                  .then(
+                (flag) {
+                  topPanelController.needShow = true;
+                  // callback();
+                },
+              );
+            },
           );
         });
 
@@ -280,31 +301,43 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           return ProductPage(
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
-            onProductPush: (product) => Navigator.of(context)
-                .push(
-                  CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
-                        product: product, category: category),
-                  ),
-                )
-                .then((value) => topPanelController.needShow = false),
-            onSellerPush: (seller) => Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
-              ),
-            ),
-            onSubCategoryClick: (parameters, title) => Navigator.of(context)
-                .push(
-                  CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
-                        product: product,
-                        category: category,
-                        parameters: parameters,
-                        productTitle: title),
-                  ),
-                )
-                .then((value) => topPanelController.needShow = false),
+            onProductPush: (product) {
+              HapticFeedback.mediumImpact();
+
+              return Navigator.of(context)
+                  .push(
+                    CupertinoPageRoute(
+                      builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                          product: product, category: category),
+                    ),
+                  )
+                  .then((value) => topPanelController.needShow = false);
+            },
+            onSellerPush: (seller) {
+              HapticFeedback.mediumImpact();
+
+              return Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) =>
+                      _routeBuilder(context, CatalogNavigatorRoutes.seller, seller: seller),
+                ),
+              );
+            },
+            onSubCategoryClick: (parameters, title) {
+              HapticFeedback.mediumImpact();
+
+              return Navigator.of(context)
+                  .push(
+                    CupertinoPageRoute(
+                      builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
+                          product: product,
+                          category: category,
+                          parameters: parameters,
+                          productTitle: title),
+                    ),
+                  )
+                  .then((value) => topPanelController.needShow = false);
+            },
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
             onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
               final parameters = jsonEncode([
@@ -320,6 +353,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
               final orderId = createOrderRepository.response?.content?.id;
 
               await getOrderRepository.update(orderId);
+
+              HapticFeedback.mediumImpact();
 
               Navigator.of(context).push(
                 CupertinoPageRoute(
@@ -338,14 +373,18 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
       case CatalogNavigatorRoutes.seller:
         return SellerPage(
           seller: seller,
-          onProductPush: (product) => Navigator.of(context)
-              .push(
-                CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
-                      product: product, category: category),
-                ),
-              )
-              .then((value) => topPanelController.needShow = true),
+          onProductPush: (product) {
+            HapticFeedback.mediumImpact();
+
+            return Navigator.of(context)
+                .push(
+                  CupertinoPageRoute(
+                    builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                        product: product, category: category),
+                  ),
+                )
+                .then((value) => topPanelController.needShow = true);
+          },
         );
 
       case CatalogNavigatorRoutes.favourites:
@@ -359,6 +398,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             ],
             builder: (context, _) {
               return FavouritesPage(onPush: (product) {
+                HapticFeedback.mediumImpact();
+
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(
