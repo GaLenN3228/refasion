@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
+import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/products/components/products_item.dart';
@@ -31,11 +32,9 @@ class _FavouritesPageState extends State<FavouritesPage> {
     loadIcon = SizedBox(
       width: 25.0,
       height: 25.0,
-      child: defaultTargetPlatform ==
-          TargetPlatform.iOS
+      child: defaultTargetPlatform == TargetPlatform.iOS
           ? const CupertinoActivityIndicator()
-          : const CircularProgressIndicator(
-          strokeWidth: 2.0),
+          : const CircularProgressIndicator(strokeWidth: 2.0),
     );
     return Scaffold(
       backgroundColor: Colors.white,
@@ -47,8 +46,10 @@ class _FavouritesPageState extends State<FavouritesPage> {
               middleText: "ИЗБРАННОЕ",
             ),
           ),
-          Consumer<FavouritesProductsRepository>(builder: (context, favouritesProductsRepository, child) {
-            if (favouritesProductsRepository.isLoading && favouritesProductsRepository.response == null)
+          Consumer<FavouritesProductsRepository>(
+              builder: (context, favouritesProductsRepository, child) {
+            if (favouritesProductsRepository.isLoading &&
+                favouritesProductsRepository.response == null)
               return Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
@@ -63,6 +64,47 @@ class _FavouritesPageState extends State<FavouritesPage> {
               );
 
             var favouriteProducts = favouritesProductsRepository.response.content.products;
+
+            if (favouriteProducts.isEmpty)
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: SVGIcon(
+                        icon: IconAsset.favoriteBorder,
+                        size: 48,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: SizedBox(
+                        width: 250,
+                        child: Text(
+                          "Избранных товаров нет",
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: SizedBox(
+                        width: 230,
+                        child: Text(
+                          "Добавьте товары в избранное для быстрого доступа к ним",
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
 
             return Container(
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 50),
