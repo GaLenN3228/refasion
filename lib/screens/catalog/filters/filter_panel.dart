@@ -62,7 +62,7 @@ class _FilterPanelState extends State<FilterPanel> {
         Positioned(
           left: 0,
           right: 0,
-          bottom: 0,
+          bottom: 20,
           child: BottomButton(
             action: () {
               widget.filter.save();

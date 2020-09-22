@@ -47,16 +47,10 @@ class _PickUpPointsPageState extends State<PickUpPointsPage> {
       child: Column(
         children: [
           RefashionedTopBar(
-            data: TopBarData(
-              leftButtonData: TBButtonData.icon(
-                TBIconType.back,
-                onTap: () => Navigator.of(context).pop(),
-              ),
-              middleData: TBMiddleData.title("Пункты отправлений"),
+            data: TopBarData.simple(
+              middleText: "Пункты отправлений",
+              onClose: () => Navigator.of(context).pop(),
             ),
-          ),
-          SizedBox(
-            height: 8,
           ),
           Expanded(
             child: MapsPickerPage(
