@@ -40,7 +40,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
     super.initState();
   }
 
-  addToCart() {
+  addToCart() async {
     if (addToCartButtonState.value != ButtonState.done) {
       HapticFeedback.mediumImpact();
       cartRepository?.addToCart(widget.productId);
@@ -49,7 +49,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
   }
 
   addToCartRepositoryListener() {
-    if (cartRepository != null) {
+    if (cartRepository != null && cartRepository.addProduct.lastProductId == widget.productId) {
       switch (cartRepository.addProduct.status) {
         case Status.LOADING:
           addToCartButtonState.value = ButtonState.loading;
