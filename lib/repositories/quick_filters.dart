@@ -25,7 +25,7 @@ class QuickFiltersRepository extends BaseRepository<List<QuickFilter>> {
           response.content
               .where((filter) => filter.selected && filter.values.id != null)
               .map((filter) => filter.values.id)
-              .join('&');
+              .join(',');
     response.content.forEach((filter) {
       if (filter.selected && filter.values.price != null) {
         requestParameters += "&min_price=" + filter.values.price.first.toString();
