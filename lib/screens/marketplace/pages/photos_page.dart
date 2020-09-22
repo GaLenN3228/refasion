@@ -124,7 +124,7 @@ class _PhotosPageState extends State<PhotosPage> {
           Positioned(
               left: 0,
               right: 0,
-              bottom: 0,
+              bottom: 20,
               child: BottomButton(
                 title: "ПРОДОЛЖИТЬ",
                 action: widget.onPush,
