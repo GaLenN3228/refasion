@@ -33,7 +33,7 @@ class BottomButton extends StatelessWidget {
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-            20, 0, 20, bottomPadding ?? (defaultTargetPlatform == TargetPlatform.iOS ? 32 : 20)),
+            20, 0, 20, bottomPadding ?? (defaultTargetPlatform == TargetPlatform.iOS ? MediaQuery.of(context).padding.bottom : 20)),
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: enabled ? action : () {},
