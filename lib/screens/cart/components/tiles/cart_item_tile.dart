@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_item.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/product.dart';
-import 'package:refashioned_app/repositories/cart.dart';
-import 'package:refashioned_app/screens/cart/components/cart_product_tile.dart';
-import 'package:refashioned_app/screens/cart/components/delivery_data_tile.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/cart_product_tile.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/delivery_data_tile.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 
 class CartItemTile extends StatefulWidget {

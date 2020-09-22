@@ -1,50 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/cart/cart.dart';
-import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/repositories/base.dart';
+import 'package:refashioned_app/repositories/cart/add_product.dart';
+import 'package:refashioned_app/repositories/cart/get_item_delivery_types.dart';
+import 'package:refashioned_app/repositories/cart/remove_item.dart';
+import 'package:refashioned_app/repositories/cart/set_item_delivery_type.dart';
 import 'package:refashioned_app/services/api_service.dart';
-import 'base.dart';
-
-class AddProductToCartRepository extends BaseRepository {
-  String productId;
-
-  Future<void> update(String productId) => apiCall(
-        () async {
-          this.productId = productId;
-          response =
-              BaseResponse.fromJson((await ApiService.addProductToCart(productId)).data, null);
-        },
-      );
-}
-
-class RemoveItemFromCartRepository extends BaseRepository {
-  Future<void> update(String itemId) => apiCall(
-        () async {
-          response =
-              BaseResponse.fromJson((await ApiService.removeItemFromCart(itemId)).data, null);
-        },
-      );
-}
-
-class GetCartItemDeliveryTypesRepository extends BaseRepository<List<DeliveryType>> {
-  Future<void> update(String itemId) => apiCall(
-        () async {
-          response = BaseResponse.fromJson((await ApiService.getCartItemDeliveryTypes(itemId)).data,
-              (contentJson) => [for (final type in contentJson) DeliveryType.fromJson(type)]);
-        },
-      );
-}
-
-class SetCartItemDeliveryTypeRepository extends BaseRepository {
-  Future<void> update(String itemId, String deliveryCompanyId, String deliveryObjectId) => apiCall(
-        () async {
-          response = BaseResponse.fromJson(
-              (await ApiService.setCartItemDeliveryType(
-                      itemId, deliveryCompanyId, deliveryObjectId))
-                  .data,
-              null);
-        },
-      );
-}
 
 class CartRepository extends BaseRepository<Cart> {
   AddProductToCartRepository addProduct;
@@ -61,6 +23,9 @@ class CartRepository extends BaseRepository<Cart> {
 
   bool canMakeOrder;
 
+  // List<int> scheme;
+  // GlobalKey<AnimatedListState> rootListKey;
+
   CartRepository() {
     addProduct = AddProductToCartRepository();
     removeItem = RemoveItemFromCartRepository();
@@ -75,6 +40,9 @@ class CartRepository extends BaseRepository<Cart> {
     selectionAction = () {};
 
     canMakeOrder = false;
+
+    // scheme = [1, 2];
+    // rootListKey = GlobalKey<AnimatedListState>();
 
     _update();
   }
@@ -120,6 +88,13 @@ class CartRepository extends BaseRepository<Cart> {
     notifyListeners();
   }
 
+  // updateScheme() {
+  //   scheme = response?.content?.groups?.map((cartItem) => cartItem.cartProducts.length)?.toList() ??
+  //       [1, 2];
+
+  //   notifyListeners();
+  // }
+
   bool select(String productId, {bool value}) {
     final group = response?.content?.findGroupOfProduct(productId);
     if (group == null) {
@@ -164,13 +139,14 @@ class CartRepository extends BaseRepository<Cart> {
     await setDeliveryType.update(itemId, deliveryCompanyId, deliveryObjectId);
     if (setDeliveryType.response.status.code == 204) {
       if (pendingIDs.isEmpty) {
-        final list = response.content
-            ?.getGroup(itemId)
-            ?.cartProducts
-            ?.map((cartProduct) => cartProduct.id)
-            ?.toList();
+        final groupProducts = response.content?.getGroup(itemId)?.cartProducts;
 
-        if (list != null) pendingIDs.addAll(list);
+        final list = groupProducts?.fold(List<String>(), (oldList, cartProduct) {
+          if (!cartProduct.selected.value) oldList.add(cartProduct.id);
+          return oldList;
+        });
+
+        if (list != null && list?.length == groupProducts?.length) pendingIDs.addAll(list);
       }
       await _update();
     }
@@ -191,8 +167,15 @@ class CartRepository extends BaseRepository<Cart> {
 
   Future<void> _update() => apiCall(
         () async {
+          // final seconds = 0;
+          // updateScheme();
+
+          // await Future.delayed(Duration(seconds: seconds));
+
           response = BaseResponse.fromJson(
               (await ApiService.getCart()).data, (contentJson) => Cart.fromJson(contentJson));
+
+          // updateScheme();
 
           [...pendingIDs, ...selectedIDs].forEach((productId) => select(productId, value: true));
           pendingIDs.clear();

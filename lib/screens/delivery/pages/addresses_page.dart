@@ -39,8 +39,7 @@ class _AddressesPageState extends State<AddressesPage> {
       case Delivery.PICKUP_POINT:
         emptyStateTitle = "Нет ПВЗ";
         callToAction = "Выберите удобный пункт выдачи заказов";
-        bottomText =
-            "Чтобы выбрать доставку по адресу измените способ получения в корзине";
+        bottomText = "Чтобы выбрать доставку по адресу измените способ получения";
 
         break;
 
@@ -48,8 +47,7 @@ class _AddressesPageState extends State<AddressesPage> {
       case Delivery.EXPRESS_DEVILERY:
         emptyStateTitle = "Cписок адресов пуст";
         callToAction = "Выберите удобный адрес получения заказа";
-        bottomText =
-            "Чтобы выбрать доставку в пункт выдачи измените способ получения в корзине";
+        bottomText = "Чтобы выбрать доставку в пункт выдачи измените способ получения";
 
         break;
 

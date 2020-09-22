@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/product.dart';
-import 'package:refashioned_app/repositories/cart.dart';
-import 'package:refashioned_app/screens/cart/components/cart_item_tile.dart';
-import 'package:refashioned_app/screens/cart/components/price_total.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/cart_item_tile.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/summary_tile.dart';
 import 'package:refashioned_app/screens/components/button/button.dart';
 import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
@@ -97,142 +97,169 @@ class _CartPageState extends State<CartPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final repository = context.watch<CartRepository>();
-
-    final cart = repository?.response?.content;
-
-    buttonState.value = repository.canMakeOrder ? ButtonState.enabled : ButtonState.disabled;
-
-    return CupertinoPageScaffold(
-      backgroundColor: Colors.white,
-      child: Column(
-        children: <Widget>[
-          RefashionedTopBar(
-            data: TopBarData(
-              type: TBType.MATERIAL,
-              theme: TBTheme.DARK,
-              middleData: TBMiddleData.title("Корзина"),
-              rightButtonData: TBButtonData.text(
-                repository.selectionActionLabel,
-                onTap: repository.selectionAction,
-              ),
-            ),
-          ),
-          Expanded(
-            child: repository.isLoaded && cart != null && cart.groups.isNotEmpty
-                ? Stack(
-                    children: [
-                      ListView(
-                        padding: EdgeInsets.fromLTRB(
-                            15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-                            child: Text(
-                              cart.text,
-                              style: Theme.of(context).textTheme.headline2,
-                            ),
-                          ),
-                          for (final group in cart.groups)
-                            CartItemTile(
-                              cartItem: group,
-                              openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-                              onProductPush: widget.onProductPush,
-                            ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: CartPriceTotal(
-                              currentPriceAmount: cart.totalCurrentPrice,
-                              discountPriceAmount: cart.totalDiscountPrice,
-                            ),
-                          )
-                        ],
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: MediaQuery.of(context).padding.bottom + 65.0,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: RefashionedButton(
-                            states: buttonState,
-                            statesData: buttonStatesData,
-                            animateContent: false,
-                            onTap: onCheckoutPush,
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: SVGIcon(
-                              icon: IconAsset.cartThin,
-                              size: 48,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: SizedBox(
-                              width: 250,
-                              child: Text(
-                                "В корзине пока пусто",
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                style: Theme.of(context).textTheme.headline1,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: SizedBox(
-                              width: 230,
-                              child: Text(
-                                "Вы ещё не положили в корзину ни одной вещи",
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                style: Theme.of(context).textTheme.bodyText2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(28),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: widget.onCatalogPush,
-                          child: Container(
-                            width: 180,
-                            height: 35,
-                            decoration: ShapeDecoration(
-                              color: primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Перейти в каталог".toUpperCase(),
-                              style: Theme.of(context).textTheme.subtitle1.copyWith(
-                                    color: Colors.white,
-                                  ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
+  Widget build(BuildContext context) => Consumer<CartRepository>(
+        builder: (context, repository, _) {
+          if (repository.isLoading)
+            return CupertinoPageScaffold(
+              child: Column(
+                children: [
+                  RefashionedTopBar(
+                    data: TopBarData(
+                      type: TBType.MATERIAL,
+                      theme: TBTheme.DARK,
+                      middleData: TBMiddleData.title("Корзина"),
+                    ),
                   ),
-          )
-        ],
-      ),
-    );
-  }
+                  Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1,
+                        backgroundColor: accentColor,
+                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0,
+                  ),
+                ],
+              ),
+            );
+
+          final cart = repository?.response?.content;
+
+          buttonState.value = repository.canMakeOrder ? ButtonState.enabled : ButtonState.disabled;
+
+          return CupertinoPageScaffold(
+            backgroundColor: Colors.white,
+            child: Column(
+              children: <Widget>[
+                RefashionedTopBar(
+                  data: TopBarData(
+                    type: TBType.MATERIAL,
+                    theme: TBTheme.DARK,
+                    middleData: TBMiddleData.title("Корзина"),
+                    rightButtonData: TBButtonData.text(
+                      repository.selectionActionLabel,
+                      onTap: repository.selectionAction,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: repository.isLoaded && cart != null && cart.groups.isNotEmpty
+                      ? Stack(
+                          children: [
+                            ListView(
+                              padding: EdgeInsets.fromLTRB(15, 0, 15,
+                                  MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                                  child: Text(
+                                    cart.text,
+                                    style: Theme.of(context).textTheme.headline2,
+                                  ),
+                                ),
+                                for (final group in cart.groups)
+                                  CartItemTile(
+                                    cartItem: group,
+                                    openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
+                                    onProductPush: widget.onProductPush,
+                                  ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                                  child: SummaryTile(
+                                    currentPriceAmount: cart.totalCurrentPrice,
+                                    discountPriceAmount: cart.totalDiscountPrice,
+                                  ),
+                                )
+                              ],
+                            ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: MediaQuery.of(context).padding.bottom + 65.0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: RefashionedButton(
+                                  states: buttonState,
+                                  statesData: buttonStatesData,
+                                  animateContent: false,
+                                  onTap: onCheckoutPush,
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: SVGIcon(
+                                    icon: IconAsset.cartThin,
+                                    size: 48,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: SizedBox(
+                                    width: 250,
+                                    child: Text(
+                                      "В корзине пока пусто",
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      style: Theme.of(context).textTheme.headline1,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: SizedBox(
+                                    width: 230,
+                                    child: Text(
+                                      "Вы ещё не положили в корзину ни одной вещи",
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      style: Theme.of(context).textTheme.bodyText2,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(28),
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: widget.onCatalogPush,
+                                child: Container(
+                                  width: 180,
+                                  height: 35,
+                                  decoration: ShapeDecoration(
+                                    color: primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "Перейти в каталог".toUpperCase(),
+                                    style: Theme.of(context).textTheme.subtitle1.copyWith(
+                                          color: Colors.white,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                )
+              ],
+            ),
+          );
+        },
+      );
 }

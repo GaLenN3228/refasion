@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/base.dart';
-import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/size.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/repositories/user_addresses.dart';

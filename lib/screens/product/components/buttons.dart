@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/base.dart';
-import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/screens/components/button/button.dart';
 import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
 import 'package:refashioned_app/screens/components/button/components/button_icon.dart';
@@ -13,8 +13,7 @@ class ProductBottomButtons extends StatefulWidget {
   final Function() onCartPush;
   final Function() openDeliveryTypesSelector;
 
-  const ProductBottomButtons(
-      {this.productId, this.onCartPush, this.openDeliveryTypesSelector});
+  const ProductBottomButtons({this.productId, this.onCartPush, this.openDeliveryTypesSelector});
   @override
   _ProductBottomButtonsState createState() => _ProductBottomButtonsState();
 }
@@ -30,8 +29,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
     cartRepository = Provider.of<CartRepository>(context, listen: false);
 
-    if (cartRepository != null)
-      addToCartButtonState.value = ButtonState.enabled;
+    if (cartRepository != null) addToCartButtonState.value = ButtonState.enabled;
 
     if (cartRepository.checkPresence(widget.productId))
       addToCartButtonState.value = ButtonState.done;
@@ -51,7 +49,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
   }
 
   addToCartRepositoryListener() {
-    if (cartRepository != null && cartRepository.addProduct.productId == widget.productId) {
+    if (cartRepository != null) {
       switch (cartRepository.addProduct.status) {
         case Status.LOADING:
           addToCartButtonState.value = ButtonState.loading;

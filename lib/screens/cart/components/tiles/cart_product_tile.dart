@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_product.dart';
-import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/screens/cart/components/brand.dart';
-import 'package:refashioned_app/screens/cart/components/price.dart';
-import 'package:refashioned_app/screens/cart/components/size.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/product/brand.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/product/price.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/product/size.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox_listenable.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
@@ -158,9 +158,12 @@ class _CartProductTileState extends State<CartProductTile> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: dialog,
-                  child: SVGIcon(
-                    icon: IconAsset.more,
-                    size: 24,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                    child: SVGIcon(
+                      icon: IconAsset.more,
+                      size: 24,
+                    ),
                   ),
                 ),
               )
