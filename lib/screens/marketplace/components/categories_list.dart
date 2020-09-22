@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/models/category.dart' as RefCategory;
 import 'package:refashioned_app/screens/catalog/components/category_tile.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
+import 'package:flutter/foundation.dart';
 
 class CategoriesList extends StatefulWidget {
   final Widget header;
   final Widget appBar;
-  final List<Category> categories;
-  final Function(Category) onPush;
-  final Function(List<Category>) onUpdate;
+  final List<RefCategory.Category> categories;
+  final Function(RefCategory.Category) onPush;
+  final Function(List<RefCategory.Category>) onUpdate;
   final bool multiselection;
   final double bottomPadding;
   final ScrollController scrollController;
@@ -36,13 +37,11 @@ class CategoriesList extends StatefulWidget {
 }
 
 class _CategoriesListState extends State<CategoriesList> {
-  List<Category> selectedSubcategories;
-
-  bool qwe = false;
+  List<RefCategory.Category> selectedSubcategories;
 
   @override
   void initState() {
-    selectedSubcategories = List<Category>();
+    selectedSubcategories = List<RefCategory.Category>();
 
     super.initState();
   }
@@ -52,7 +51,7 @@ class _CategoriesListState extends State<CategoriesList> {
     super.dispose();
   }
 
-  update(Category category) {
+  update(RefCategory.Category category) {
     final index = selectedSubcategories.indexOf(category);
 
     setState(() {
@@ -97,11 +96,14 @@ class _CategoriesListState extends State<CategoriesList> {
                     Positioned(
                       left: 0,
                       right: 0,
-                      bottom: qwe ? 32 : 20 + MediaQuery.of(context).padding.bottom,
+                      bottom: 0,
                       child: widget.multiselection
                           ? Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 20),
+                              padding: EdgeInsets.only(
+                                  left: 20,
+                                  right: 20,
+                                  top: 10,
+                                  bottom: defaultTargetPlatform == TargetPlatform.iOS ? 32 : 20),
                               child: Button(
                                 "ВЫБРАТЬ",
                                 buttonStyle: selectedSubcategories.isNotEmpty
@@ -114,11 +116,7 @@ class _CategoriesListState extends State<CategoriesList> {
                                     ? () {
                                         widget.onUpdate(selectedSubcategories);
                                       }
-                                    : () {
-                                  setState(() {
-                                    qwe = !qwe;
-                                  });
-                                },
+                                    : () {},
                               ))
                           : SizedBox(),
                     )

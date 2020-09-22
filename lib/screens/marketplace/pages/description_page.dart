@@ -146,13 +146,10 @@ class _DescriptionPageState extends State<DescriptionPage> with WidgetsBindingOb
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 20),
-            child: BottomButton(
-              title: "Продолжить".toUpperCase(),
-              enabled: canPush,
-              action: () => widget.onPush(),
-            ),
+          BottomButton(
+            title: "Продолжить".toUpperCase(),
+            enabled: canPush,
+            action: () => widget.onPush(),
           ),
           AnimatedContainer(
             height: keyboardVisible ? bottomPadding : 0,
