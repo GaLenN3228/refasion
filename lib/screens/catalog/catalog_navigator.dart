@@ -9,6 +9,7 @@ import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/order/order_item.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
@@ -40,12 +41,18 @@ class CatalogNavigatorRoutes {
 }
 
 class CatalogNavigator extends StatefulWidget {
-  CatalogNavigator({this.navigatorKey, this.changeTabTo, this.openDeliveryTypesSelector});
+  CatalogNavigator(
+      {this.navigatorKey,
+      this.changeTabTo,
+      this.openDeliveryTypesSelector,
+      this.openPickUpAddressMap});
 
   _CatalogNavigatorState _catalogNavigatorState;
 
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
+
+  final Function(PickPoint) openPickUpAddressMap;
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -324,6 +331,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                 ),
               );
             },
+            onPickupAddressPush: widget.openPickUpAddressMap?.call,
           );
         });
 

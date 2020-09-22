@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
@@ -18,6 +19,7 @@ import 'package:refashioned_app/screens/components/scaffold/components/collect_w
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/delivery/components/delivery_options_panel.dart';
 import 'package:refashioned_app/screens/delivery/delivery_navigator.dart';
+import 'package:refashioned_app/screens/delivery/pages/map_page.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 
 //Используемый паттерн: https://medium.com/coding-with-flutter/flutter-case-study-multiple-navigators-with-bottomnavigationbar-90eb6caa6dbf
@@ -88,6 +90,21 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
   pushPageOnTop(Widget page) =>
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => page));
+
+  openPickUpAddressMap(PickPoint pickPoint) => Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+            position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+            child: ChangeNotifierProvider<SizeRepository>(
+              create: (_) => SizeRepository(),
+              builder: (context, _) => MapPage(
+                pickPoint: pickPoint,
+                onClose: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ),
+        ),
+      );
 
   openDeliveryTypesSelector(
     BuildContext context,
@@ -227,6 +244,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               widget.currentTab,
               onTabRefresh: onTabRefresh,
               pushPageOnTop: pushPageOnTop,
+              openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
             ),
             TabView(
@@ -234,6 +252,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               widget.currentTab,
               pushPageOnTop: pushPageOnTop,
               onTabRefresh: onTabRefresh,
+              openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
             ),
             TabView(
@@ -241,6 +260,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               widget.currentTab,
               onTabRefresh: onTabRefresh,
               pushPageOnTop: pushPageOnTop,
+              openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
             ),
             TabView(
@@ -248,6 +268,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               widget.currentTab,
               onTabRefresh: onTabRefresh,
               pushPageOnTop: pushPageOnTop,
+              openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
             ),
             Positioned(
@@ -268,16 +289,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                 PageRouteBuilder(
                                   pageBuilder: (context, animation, secondaryAnimation) =>
                                       SlideTransition(
-                                          position: Tween(begin: Offset(0, 1), end: Offset.zero)
-                                              .animate(animation),
-                                          child:
-                                              ChangeNotifierProvider<SizeRepository>(create: (_) {
-                                            return SizeRepository();
-                                          }, builder: (context, _) {
-                                            return MarketplaceNavigator(
-                                              onClose: () => Navigator.of(context).pop(),
-                                            );
-                                          })),
+                                    position: Tween(begin: Offset(0, 1), end: Offset.zero)
+                                        .animate(animation),
+                                    child: ChangeNotifierProvider<SizeRepository>(
+                                      create: (_) => SizeRepository(),
+                                      builder: (context, _) => MarketplaceNavigator(
+                                        onClose: () => Navigator.of(context).pop(),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               )
                             : showCupertinoModalBottomSheet(

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
@@ -32,6 +33,7 @@ class ProductPage extends StatefulWidget {
   final Function(Seller) onSellerPush;
   final Function(String parameters, String title) onSubCategoryClick;
   final Function() onCartPush;
+  final Function(PickPoint) onPickupAddressPush;
 
   final Function(String deliveryCompanyId, String deliveryObjectId) onCheckoutPush;
 
@@ -52,6 +54,7 @@ class ProductPage extends StatefulWidget {
     this.onCartPush,
     this.openDeliveryTypesSelector,
     this.onCheckoutPush,
+    this.onPickupAddressPush,
   }) : assert(product != null);
 
   @override
@@ -212,6 +215,7 @@ class _ProductPageState extends State<ProductPage> {
                         ),
                         ProductDelivery(
                           product: product,
+                          onPickupAddressPush: widget.onPickupAddressPush,
                         ),
                         ProductAdditional(
                           product: product,

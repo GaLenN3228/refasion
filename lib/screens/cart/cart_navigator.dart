@@ -8,6 +8,7 @@ import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/order/order_item.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
@@ -16,6 +17,7 @@ import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
+import 'package:refashioned_app/screens/delivery/pages/map_page.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
@@ -78,8 +80,14 @@ class CartNavigator extends StatefulWidget {
   _CartNavigatorState _cartNavigatorState;
 
   final Function(BottomTab) changeTabTo;
+  final Function(PickPoint) openPickUpAddressMap;
 
-  CartNavigator({Key key, this.navigatorKey, this.changeTabTo, this.openDeliveryTypesSelector})
+  CartNavigator(
+      {Key key,
+      this.navigatorKey,
+      this.changeTabTo,
+      this.openDeliveryTypesSelector,
+      this.openPickUpAddressMap})
       : super(key: key);
 
   void pushFavourites(BuildContext context) {
@@ -117,6 +125,8 @@ class _CartNavigatorState extends State<CartNavigator> {
   CreateOrderRepository createOrderRepository;
 
   GetOrderRepository getOrderRepository;
+
+  DeliveryType selectedDeliveryType;
 
   @override
   initState() {
@@ -233,6 +243,7 @@ class _CartNavigatorState extends State<CartNavigator> {
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
+            onPickupAddressPush: widget.openPickUpAddressMap?.call,
           ),
         );
 

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
@@ -51,8 +52,10 @@ class ProfileNavigator extends StatefulWidget {
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
   final Function(Widget) pushPageOnTop;
+  final Function(PickPoint) openPickUpAddressMap;
 
-  ProfileNavigator({this.navigatorKey, this.changeTabTo, this.pushPageOnTop});
+  ProfileNavigator(
+      {this.navigatorKey, this.changeTabTo, this.pushPageOnTop, this.openPickUpAddressMap});
 
   _ProfileNavigatorState _mapPageState;
 
@@ -178,6 +181,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
           return ProductPage(
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
+            onPickupAddressPush: widget.openPickUpAddressMap?.call,
             onProductPush: (product) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(

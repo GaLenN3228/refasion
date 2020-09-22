@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
@@ -24,8 +25,9 @@ class HomeNavigatorRoutes {
 class HomeNavigator extends StatelessWidget {
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
+  final Function(PickPoint) openPickUpAddressMap;
 
-  HomeNavigator({this.navigatorKey, this.changeTabTo});
+  HomeNavigator({this.navigatorKey, this.changeTabTo, this.openPickUpAddressMap});
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -43,7 +45,8 @@ class HomeNavigator extends StatelessWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products, searchResult: searchResult),
+            builder: (context) =>
+                _routeBuilder(context, HomeNavigatorRoutes.products, searchResult: searchResult),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -76,8 +79,8 @@ class HomeNavigator extends StatelessWidget {
             onPush: (product, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, HomeNavigatorRoutes.product, product: product, category: category),
+                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
+                    product: product, category: category),
               ),
             )
                 .then(
@@ -97,11 +100,12 @@ class HomeNavigator extends StatelessWidget {
           return ProductPage(
             product: product,
             onCartPush: () => changeTabTo(BottomTab.cart),
+            onPickupAddressPush: openPickUpAddressMap?.call,
             onProductPush: (product) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) =>
-                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product, category: category),
+                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
+                        product: product, category: category),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
@@ -109,7 +113,10 @@ class HomeNavigator extends StatelessWidget {
                 .push(
                   CupertinoPageRoute(
                     builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
-                        product: product, category: category, parameters: parameters, productTitle: title),
+                        product: product,
+                        category: category,
+                        parameters: parameters,
+                        productTitle: title),
                     settings: RouteSettings(name: HomeNavigatorRoutes.products),
                   ),
                 )
@@ -123,7 +130,8 @@ class HomeNavigator extends StatelessWidget {
             providers: [
               ChangeNotifierProvider<FavouritesProductsRepository>(
                   create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+              ChangeNotifierProvider<AddRemoveFavouriteRepository>(
+                  create: (_) => AddRemoveFavouriteRepository())
             ],
             builder: (context, _) {
               return FavouritesPage(onPush: (product) {
@@ -152,14 +160,12 @@ class HomeNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Navigator(
       key: navigatorKey,
       initialRoute: HomeNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
-          builder: (context) =>
-              _routeBuilder(context, routeSettings.name),
+          builder: (context) => _routeBuilder(context, routeSettings.name),
         );
       },
     );
