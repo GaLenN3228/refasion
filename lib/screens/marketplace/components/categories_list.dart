@@ -38,6 +38,8 @@ class CategoriesList extends StatefulWidget {
 class _CategoriesListState extends State<CategoriesList> {
   List<Category> selectedSubcategories;
 
+  bool qwe = false;
+
   @override
   void initState() {
     selectedSubcategories = List<Category>();
@@ -95,7 +97,7 @@ class _CategoriesListState extends State<CategoriesList> {
                     Positioned(
                       left: 0,
                       right: 0,
-                      bottom: 20,
+                      bottom: qwe ? 32 : 20 + MediaQuery.of(context).padding.bottom,
                       child: widget.multiselection
                           ? Padding(
                               padding:
@@ -112,7 +114,11 @@ class _CategoriesListState extends State<CategoriesList> {
                                     ? () {
                                         widget.onUpdate(selectedSubcategories);
                                       }
-                                    : () {},
+                                    : () {
+                                  setState(() {
+                                    qwe = !qwe;
+                                  });
+                                },
                               ))
                           : SizedBox(),
                     )
