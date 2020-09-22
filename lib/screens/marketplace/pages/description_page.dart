@@ -15,20 +15,14 @@ class DescriptionPage extends StatefulWidget {
   final FocusNode focusNode;
 
   const DescriptionPage(
-      {Key key,
-      this.onPush,
-      this.onClose,
-      this.focusNode,
-      this.onUpdate,
-      this.initialData})
+      {Key key, this.onPush, this.onClose, this.focusNode, this.onUpdate, this.initialData})
       : super(key: key);
 
   @override
   _DescriptionPageState createState() => _DescriptionPageState();
 }
 
-class _DescriptionPageState extends State<DescriptionPage>
-    with WidgetsBindingObserver {
+class _DescriptionPageState extends State<DescriptionPage> with WidgetsBindingObserver {
   final double bottomPadding = 16;
 
   TextEditingController textEditingController;
@@ -51,8 +45,7 @@ class _DescriptionPageState extends State<DescriptionPage>
     final newtext = textEditingController.text;
     widget.onUpdate(newtext);
 
-    if (newtext.isNotEmpty != canPush)
-      setState(() => canPush = newtext.isNotEmpty);
+    if (newtext.isNotEmpty != canPush) setState(() => canPush = newtext.isNotEmpty);
   }
 
   @override
@@ -103,8 +96,7 @@ class _DescriptionPageState extends State<DescriptionPage>
       renderBox.size.width,
       renderBox.size.height,
     );
-    final keyboardTopPixels =
-        window.physicalSize.height - window.viewInsets.bottom;
+    final keyboardTopPixels = window.physicalSize.height - window.viewInsets.bottom;
     final keyboardTopPoints = keyboardTopPixels / window.devicePixelRatio;
     final overlap = widgetRect.bottom - keyboardTopPoints;
 
@@ -139,10 +131,8 @@ class _DescriptionPageState extends State<DescriptionPage>
                   maxLines: null,
                   autofocus: true,
                   focusNode: widget.focusNode,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline1
-                      .copyWith(fontWeight: FontWeight.normal),
+                  style:
+                      Theme.of(context).textTheme.headline1.copyWith(fontWeight: FontWeight.normal),
                   cursorWidth: 2.0,
                   cursorRadius: Radius.circular(2.0),
                   cursorColor: Color(0xFFE6E6E6),
@@ -150,8 +140,7 @@ class _DescriptionPageState extends State<DescriptionPage>
                     border: InputBorder.none,
                     hintText: "Опишите вашу вещь",
                     hintStyle: Theme.of(context).textTheme.headline1.copyWith(
-                        color: Color.fromRGBO(0, 0, 0, 0.25),
-                        fontWeight: FontWeight.normal),
+                        color: Color.fromRGBO(0, 0, 0, 0.25), fontWeight: FontWeight.normal),
                   ),
                 ),
               ),

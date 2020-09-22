@@ -27,6 +27,7 @@ import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
 import 'package:refashioned_app/screens/seller/seller_page.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class CatalogNavigatorRoutes {
   static const String root = '/';
@@ -434,11 +435,15 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
 
     if (catalogRepository.isLoading)
       return Center(
-        child: Text(
-          "Загрузка",
-          style: Theme.of(context).textTheme.bodyText1,
+          child: SizedBox(
+        height: 32.0,
+        width: 32.0,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          backgroundColor: accentColor,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
         ),
-      );
+      ));
 
     if (catalogRepository.loadingFailed || catalogRepository.getStatusCode != 200)
       return Center(

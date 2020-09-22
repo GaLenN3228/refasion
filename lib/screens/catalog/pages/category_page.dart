@@ -152,7 +152,7 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
                               },
                               title: title,
                               subtitle: subtitle,
-                              bottomPadding: MediaQuery.of(context).padding.bottom + 80,
+                              bottomPadding: MediaQuery.of(context).padding.bottom + 70,
                             );
                           },
                         ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../utils/colors.dart';
@@ -32,7 +33,7 @@ class BottomButton extends StatelessWidget {
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-            20, 0, 20, bottomPadding ?? MediaQuery.of(context).padding.bottom),
+            20, 0, 20, bottomPadding ?? (defaultTargetPlatform == TargetPlatform.iOS ? MediaQuery.of(context).padding.bottom : 20)),
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: enabled ? action : () {},

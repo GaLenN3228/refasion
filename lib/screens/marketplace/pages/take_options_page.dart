@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/screens/components/button/button.dart';
@@ -186,7 +187,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(
-                20, 20, 20, 20),
+                20, 20, 20, defaultTargetPlatform == TargetPlatform.iOS ? 31 : 20),
             child: RefashionedButton(
               states: buttonState,
               statesData: buttonStatesData,

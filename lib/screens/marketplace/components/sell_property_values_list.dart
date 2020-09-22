@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/sell_property.dart';
@@ -79,11 +80,11 @@ class _SellPropertyValuesListState extends State<SellPropertyValuesList> {
                     Positioned(
                       left: 0,
                       right: 0,
-                      bottom: 0,
+                      bottom: defaultTargetPlatform == TargetPlatform.iOS ? 31 : 20,
                       child: widget.multiselection
                           ? Padding(
                               padding:
-                                  const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
+                                  const EdgeInsets.only(left: 20, right: 20),
                               child: Button(
                                 "ВЫБРАТЬ",
                                 buttonStyle: !isPropertiesListEmpty && widget.required
