@@ -9,12 +9,11 @@ class ProductDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (product.description == null &&
-        product.article == null &&
-        product.properties == null) return SizedBox();
+    if (product.description == null && product.article == null && product.properties == null)
+      return SizedBox();
 
     return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
+      padding: const EdgeInsets.only(top: 10, bottom: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

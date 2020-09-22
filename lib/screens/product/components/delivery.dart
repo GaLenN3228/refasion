@@ -37,7 +37,7 @@ class ProductDelivery extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: 15),
           child: ItemsDivider(
             padding: 0,
           ),
@@ -105,7 +105,7 @@ class ProductDelivery extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 child: ItemsDivider(
                   padding: 0,
                 ),
@@ -113,7 +113,7 @@ class ProductDelivery extends StatelessWidget {
             ],
           ),
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: 15),
           child: Column(
             children: otherDeliveryTypes
                 .map(
