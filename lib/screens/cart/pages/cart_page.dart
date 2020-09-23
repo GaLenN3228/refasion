@@ -83,8 +83,6 @@ class _CartPageState extends State<CartPage> {
 
   onCheckoutPush() {
     if (buttonState.value == ButtonState.enabled) {
-      HapticFeedback.lightImpact();
-
       widget.onCheckoutPush?.call(null);
     }
   }

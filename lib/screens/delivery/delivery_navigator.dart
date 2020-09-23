@@ -97,7 +97,6 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           onFinish: widget.onFinish,
           userAddresses: userAddresses,
           onAddAddress: () {
-            HapticFeedback.lightImpact();
             Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.map);
           },
         );
@@ -109,7 +108,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           onFinish: widget.onFinish,
           onAddressPush: (newAddress) {
             selectedAddress = newAddress;
-            HapticFeedback.lightImpact();
+
             Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.info);
           },
         );

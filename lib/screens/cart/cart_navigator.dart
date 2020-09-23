@@ -162,8 +162,6 @@ class _CartNavigatorState extends State<CartNavigator> {
           openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
           onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
           onCheckoutPush: (order) {
-            HapticFeedback.mediumImpact();
-
             return Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) =>
@@ -175,8 +173,6 @@ class _CartNavigatorState extends State<CartNavigator> {
             );
           },
           onProductPush: (product) {
-            HapticFeedback.mediumImpact();
-
             return Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
@@ -215,8 +211,6 @@ class _CartNavigatorState extends State<CartNavigator> {
 
               await getOrderRepository.update(orderId);
 
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => _routeBuilder(
@@ -227,8 +221,6 @@ class _CartNavigatorState extends State<CartNavigator> {
               );
             },
             onProductPush: (product) {
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context)
                   .push(
                     CupertinoPageRoute(
@@ -245,8 +237,6 @@ class _CartNavigatorState extends State<CartNavigator> {
                   .then((value) => topPanelController.needShow = false);
             },
             onSubCategoryClick: (parameters, title) {
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context)
                   .push(
                     CupertinoPageRoute(
@@ -276,8 +266,6 @@ class _CartNavigatorState extends State<CartNavigator> {
             topCategory: category,
             title: productTitle,
             onPush: (product, {callback}) {
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context)
                   .push(
                 CupertinoPageRoute(
@@ -307,8 +295,6 @@ class _CartNavigatorState extends State<CartNavigator> {
             builder: (context, _) {
               return FavouritesPage(
                 onPush: (product) {
-                  HapticFeedback.mediumImpact();
-
                   Navigator.of(context)
                       .push(
                         CupertinoPageRoute(

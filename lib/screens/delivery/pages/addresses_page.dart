@@ -79,8 +79,6 @@ class _AddressesPageState extends State<AddressesPage> {
               deliveryType: widget.deliveryType,
               onAddAddress: widget.onAddAddress,
               onSelectAddress: (id) {
-                HapticFeedback.lightImpact();
-
                 widget.onFinish?.call(id);
               },
               emptyStateTitle: emptyStateTitle,

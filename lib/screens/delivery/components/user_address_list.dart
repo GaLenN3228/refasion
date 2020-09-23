@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/screens/components/button/button.dart';
@@ -44,6 +45,8 @@ class _UserAddressesListState extends State<UserAddressesList> {
   }
 
   onSelect(String id) {
+    HapticFeedback.selectionClick();
+
     setState(() {
       selectedUserAddressId = id;
     });

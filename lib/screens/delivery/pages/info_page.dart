@@ -161,11 +161,9 @@ class _InfoPageState extends State<InfoPage> {
     }
 
     if (id != null) {
-      HapticFeedback.lightImpact();
-
       widget.onFinish?.call(id);
     } else
-      HapticFeedback.heavyImpact();
+      HapticFeedback.vibrate();
   }
 
   @override

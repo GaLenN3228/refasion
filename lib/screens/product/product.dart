@@ -124,7 +124,7 @@ class _ProductPageState extends State<ProductPage> {
                     iconColor: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
                     animated: true,
                     onTap: () async {
-                      HapticFeedback.vibrate();
+                      HapticFeedback.heavyImpact();
                       await BaseRepository.isAuthorized().then((isAuthorized) {
                         isAuthorized
                             ? widget.product.isFavourite

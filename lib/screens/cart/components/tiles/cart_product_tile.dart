@@ -53,8 +53,6 @@ class _CartProductTileState extends State<CartProductTile> {
   removeFromCart() async => await cartRepository.removeFromCart(widget.cartProduct.id);
 
   dialog() {
-    HapticFeedback.lightImpact();
-
     return showDialog(
       context: context,
       builder: (dialogContext) => CustomDialog.Dialog(
@@ -72,8 +70,6 @@ class _CartProductTileState extends State<CartProductTile> {
             DialogItemContent(
               "Перенести в избранное",
               () async {
-                HapticFeedback.heavyImpact();
-
                 await addToFavorites();
                 await removeFromCart();
 
@@ -85,8 +81,6 @@ class _CartProductTileState extends State<CartProductTile> {
           DialogItemContent(
             "Удалить из корзины",
             () async {
-              HapticFeedback.heavyImpact();
-
               await removeFromCart();
 
               Navigator.of(dialogContext).pop();
