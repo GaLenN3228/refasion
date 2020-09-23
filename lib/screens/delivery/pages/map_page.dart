@@ -141,8 +141,6 @@ class _MapPageState extends State<MapPage> {
   }
 
   showBottomSheet() {
-    HapticFeedback.lightImpact();
-
     showCupertinoModalBottomSheet(
       expand: true,
       context: context,

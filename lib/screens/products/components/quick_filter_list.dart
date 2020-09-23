@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/repositories/quick_filters.dart';
 import 'package:refashioned_app/screens/products/components/quick_filter_item.dart';
@@ -12,7 +13,12 @@ class QuickFilterList extends StatefulWidget {
   final Function() updateProducts;
 
   const QuickFilterList(
-      {Key key, this.horizontalHeight: 30.0, this.padding, this.updateProducts, this.topCategory, this.categories})
+      {Key key,
+      this.horizontalHeight: 30.0,
+      this.padding,
+      this.updateProducts,
+      this.topCategory,
+      this.categories})
       : super(key: key);
 
   @override
@@ -41,10 +47,9 @@ class _QuickFilterListState extends State<QuickFilterList> {
                   return QuickFilterItem(
                       topCategory: widget.topCategory,
                       categories: widget.categories,
-                      isNavigationButton:
-                          widget.topCategory != null && widget.categories != null
-                              ? index == 0
-                              : false,
+                      isNavigationButton: widget.topCategory != null && widget.categories != null
+                          ? index == 0
+                          : false,
                       horizontalHeight: widget.horizontalHeight,
                       filterValue: widget.topCategory != null && widget.categories != null
                           ? ((index > 0)
@@ -52,6 +57,8 @@ class _QuickFilterListState extends State<QuickFilterList> {
                               : null)
                           : quickFiltersRepository.response.content.elementAt(index),
                       onSelect: (urlParameter, prices) {
+                        HapticFeedback.selectionClick();
+
                         setState(() {
                           quickFiltersRepository.update(id: urlParameter, price: prices);
                         });

@@ -195,8 +195,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             sections: categories,
             onClose: widget.onClose,
             onPush: (category) {
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => _routeBuilder(
@@ -214,8 +212,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           section: category,
           onClose: widget.onClose,
           onPush: (category) {
-            HapticFeedback.mediumImpact();
-
             return Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) =>
@@ -231,8 +227,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             topCategory: category,
             onClose: widget.onClose,
             onPush: (pushedCategory) {
-              HapticFeedback.mediumImpact();
-
               if (pushedCategory.children.isNotEmpty) {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
@@ -272,8 +266,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             var sizeRepository = Provider.of<SizeRepository>(context, listen: false);
             sizeRepository.getSizes(chosenCategory.id);
 
-            HapticFeedback.mediumImpact();
-
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.photos,
@@ -294,8 +286,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
                 sellPropertiesRepository.isLoaded &&
                 sellPropertiesRepository.response.status.code == 200 &&
                 sellPropertiesRepository.response.content.requiredProperties.isNotEmpty);
-
-            HapticFeedback.mediumImpact();
 
             Navigator.of(context).push(
               CupertinoPageRoute(
@@ -321,8 +311,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         return SizesPage(
           onBack: Navigator.of(context).pop,
           onPush: (sizes) {
-            HapticFeedback.mediumImpact();
-
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) {
@@ -342,8 +330,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
                 sellPropertiesRepository.isLoaded &&
                 sellPropertiesRepository.response.status.code == 200 &&
                 sellPropertiesRepository.response.content.requiredProperties.isNotEmpty);
-
-            HapticFeedback.mediumImpact();
 
             Navigator.of(context).push(
               CupertinoPageRoute(
@@ -373,8 +359,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           initialData: productData.properties,
           onUpdate: () => productData.updateProperties(sellProperty),
           onPush: () {
-            HapticFeedback.mediumImpact();
-
             if (sellPropertyIndex < sellProperties.length - 1)
               Navigator.of(context).push(
                 CupertinoPageRoute(
@@ -402,8 +386,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             initialData: productData.description,
             onUpdate: (description) => productData.updateDescription(description),
             onPush: () {
-              HapticFeedback.mediumImpact();
-
               Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.brand),
@@ -423,8 +405,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             productData.updateBrand(brand);
           },
           onPush: () {
-            HapticFeedback.mediumImpact();
-
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.price),
@@ -444,8 +424,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             initialData: productData.price,
             onUpdate: (price) => productData.updatePrice(price),
             onPush: () {
-              HapticFeedback.mediumImpact();
-
               Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) =>
@@ -463,8 +441,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           initialData: productData.card,
           onUpdate: (card) => productData.updateCard(card),
           onPush: () {
-            HapticFeedback.mediumImpact();
-
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.addresses),
@@ -480,8 +456,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           initialData: productData.address,
           onUpdate: (address) => productData.updateAddress(address),
           onPush: () {
-            HapticFeedback.lightImpact();
-
             Navigator.of(context).push(
               MaterialWithModalsPageRoute(
                 builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.newAddress),
@@ -490,8 +464,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             );
           },
           onSkip: () {
-            HapticFeedback.mediumImpact();
-
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) =>
@@ -505,8 +477,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       case MarketplaceNavigatorRoutes.newAddress:
         return NewAddressPage(
           onAddressPush: (address) {
-            HapticFeedback.mediumImpact();
-
             productData.updateAddress(address);
 
             Navigator.of(context).push(
@@ -523,8 +493,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         return TakeOptionsPage(
           address: productData.address,
           onPush: (options) {
-            HapticFeedback.mediumImpact();
-
             productData.updateTakeOptions(options);
 
             Navigator.of(context).push(
@@ -536,8 +504,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             );
           },
           showPickUpPoints: () {
-            HapticFeedback.lightImpact();
-
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) =>

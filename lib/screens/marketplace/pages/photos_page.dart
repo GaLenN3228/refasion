@@ -34,8 +34,6 @@ class _PhotosPageState extends State<PhotosPage> {
   Map<int, File> images = {0: null, 1: null, 2: null};
 
   Future getImage(int index) async {
-    HapticFeedback.lightImpact();
-
     showDialog(
         context: context,
         builder: (dialogContext) {
@@ -43,18 +41,12 @@ class _PhotosPageState extends State<PhotosPage> {
           return CustomDialog.Dialog(
             dialogContent: [
               DialogItemContent("Сделать фото", () {
-                HapticFeedback.selectionClick();
-
                 return openCamera(index);
               }, DialogItemType.item, icon: IconAsset.camera),
               DialogItemContent("Выбрать из галереи", () {
-                HapticFeedback.selectionClick();
-
                 return openGallery(index);
               }, DialogItemType.item, icon: IconAsset.image),
               DialogItemContent("Закрыть", () {
-                HapticFeedback.lightImpact();
-
                 Navigator.pop(dialogContext);
               }, DialogItemType.system)
             ],

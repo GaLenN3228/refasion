@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/marketplace/components/sell_property_values_list.dart';
@@ -40,6 +41,8 @@ class _SellPropertyPageState extends State<SellPropertyPage> {
           ),
           multiselection: widget.sellProperty.multiselection,
           onUpdate: (id) {
+            if (widget.sellProperty.multiselection) HapticFeedback.selectionClick();
+
             setState(() {
               widget.sellProperty.update(id);
             });

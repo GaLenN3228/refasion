@@ -59,8 +59,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
   }
 
   tabListener() {
-    HapticFeedback.mediumImpact();
-
     switch (widget.currentTab.value) {
       case BottomTab.home:
       case BottomTab.catalog:
@@ -74,8 +72,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
   }
 
   onTabRefresh() {
-    HapticFeedback.mediumImpact();
-
     final canPop = navigatorKeys[widget.currentTab.value]?.currentState?.canPop() ?? false;
 
     if (canPop)
@@ -93,14 +89,10 @@ class _TabSwitcherState extends State<TabSwitcher> {
   }
 
   pushPageOnTop(Widget page) {
-    HapticFeedback.mediumImpact();
-
     return Navigator.of(context).push(CupertinoPageRoute(builder: (context) => page));
   }
 
   openPickUpAddressMap(PickPoint pickPoint) {
-    HapticFeedback.mediumImpact();
-
     return Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
@@ -173,21 +165,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
       userAddresses = userAddressesRepository.response?.content ?? [];
 
       if (types != null && types.isNotEmpty) {
-        HapticFeedback.lightImpact();
-
         await showMaterialModalBottomSheet(
           expand: false,
           context: context,
           useRootNavigator: true,
           builder: (context, controller) => DeliveryOptionsPanel(
             onPush: (deliveryType) {
-              HapticFeedback.selectionClick();
-
               selected = true;
 
               Navigator.of(context).pop();
-
-              HapticFeedback.mediumImpact();
 
               Navigator.of(context).push(
                 PageRouteBuilder(
@@ -197,8 +183,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
                       deliveryType: deliveryType,
                       userAddresses: userAddresses,
                       onClose: () async {
-                        HapticFeedback.selectionClick();
-
                         await onClose?.call();
                         userAddressesRepository?.dispose();
 
@@ -208,8 +192,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
                           SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
                       },
                       onFinish: (id) async {
-                        HapticFeedback.lightImpact();
-
                         await onFinish?.call(
                             deliveryType.deliveryOptions.first.deliveryCompany.id, id);
                         userAddressesRepository?.dispose();
@@ -298,8 +280,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
                     () => {
                       BaseRepository.isAuthorized().then((isAuthorized) {
                         if (isAuthorized) {
-                          HapticFeedback.mediumImpact();
-
                           Navigator.of(context).push(
                             PageRouteBuilder(
                               pageBuilder: (context, animation, secondaryAnimation) =>
@@ -310,8 +290,6 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                   create: (_) => SizeRepository(),
                                   builder: (context, _) => MarketplaceNavigator(
                                     onClose: () {
-                                      HapticFeedback.mediumImpact();
-
                                       Navigator.of(context).pop();
                                     },
                                   ),

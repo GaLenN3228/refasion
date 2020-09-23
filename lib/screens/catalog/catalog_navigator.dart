@@ -142,8 +142,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         return CatalogRootPage(
           categories: categories,
           onPush: (category) {
-            HapticFeedback.mediumImpact();
-
             final newRoute = category.children.isNotEmpty
                 ? CatalogNavigatorRoutes.categories
                 : CatalogNavigatorRoutes.category;
@@ -157,8 +155,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                 .then((value) => topPanelController.needShowBack = false);
           },
           onFavouritesClick: () {
-            HapticFeedback.mediumImpact();
-
             return Navigator.of(context)
                 .push(
                   MaterialWithModalsPageRoute(
@@ -179,8 +175,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             final newRoute = category.children.isNotEmpty
                 ? CatalogNavigatorRoutes.category
                 : CatalogNavigatorRoutes.products;
-
-            HapticFeedback.mediumImpact();
 
             return Navigator.of(context)
                 .push(
@@ -204,8 +198,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             onPush: (_, {callback}) {
               Provider.of<CategoryBrandsRepository>(context, listen: false).response = null;
 
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context)
                   .push(
                 CupertinoPageRoute(
@@ -219,8 +211,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
               });
             },
             onBrandsPush: ({callback}) {
-              HapticFeedback.mediumImpact();
-
               Navigator.of(context)
                   .push(
                 CupertinoPageRoute(
@@ -247,8 +237,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
               return CategoryBrandsPage(
                 topCategory: category,
                 onPush: (_, brands, {callback}) {
-                  HapticFeedback.mediumImpact();
-
                   return Navigator.of(context)
                       .push(
                     CupertinoPageRoute(
@@ -267,37 +255,31 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
       case CatalogNavigatorRoutes.products:
         topPanelController.needShow = true;
         topPanelController.needShowBack = true;
-        return MultiProvider(
-            providers: [
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(
-                create: (_) => AddRemoveFavouriteRepository(),
-              ),
-            ],
-            builder: (context, _) {
-              return ProductsPage(
-                parameters: parameters,
-                searchResult: searchResult,
-                topCategory: category,
-                title: productTitle,
-                onPush: (product, {callback}) {
-                  HapticFeedback.mediumImpact();
-
-                  return Navigator.of(context)
-                      .push(
-                    CupertinoPageRoute(
-                      builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
-                          product: product, category: category),
-                    ),
-                  )
-                      .then(
-                    (flag) {
-                      topPanelController.needShow = true;
-                      // callback();
-                    },
-                  );
+        return ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) {
+          return AddRemoveFavouriteRepository();
+        }, builder: (context, _) {
+          return ProductsPage(
+            parameters: parameters,
+            searchResult: searchResult,
+            topCategory: category,
+            title: productTitle,
+            onPush: (product, {callback}) {
+              return Navigator.of(context)
+                  .push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                      product: product, category: category),
+                ),
+              )
+                  .then(
+                (flag) {
+                  topPanelController.needShow = true;
+                  // callback();
                 },
               );
-            });
+            },
+          );
+        });
 
       case CatalogNavigatorRoutes.product:
         topPanelController.needShow = false;
@@ -308,8 +290,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             onProductPush: (product) {
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context)
                   .push(
                     CupertinoPageRoute(
@@ -320,8 +300,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                   .then((value) => topPanelController.needShow = false);
             },
             onSellerPush: (seller) {
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) =>
@@ -330,8 +308,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
               );
             },
             onSubCategoryClick: (parameters, title) {
-              HapticFeedback.mediumImpact();
-
               return Navigator.of(context)
                   .push(
                     CupertinoPageRoute(
@@ -360,8 +336,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
 
               await getOrderRepository.update(orderId);
 
-              HapticFeedback.mediumImpact();
-
               Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => _routeBuilder(
@@ -380,8 +354,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         return SellerPage(
           seller: seller,
           onProductPush: (product) {
-            HapticFeedback.mediumImpact();
-
             return Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
@@ -404,8 +376,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             ],
             builder: (context, _) {
               return FavouritesPage(onPush: (product) {
-                HapticFeedback.mediumImpact();
-
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(

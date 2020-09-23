@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/models/category.dart';
@@ -86,6 +87,8 @@ class _CategoryBrandsPageState extends State<CategoryBrandsPage> {
                   (brand) => CategoryBrandItem(
                     brand: brand,
                     onSelect: (id) {
+                      HapticFeedback.selectionClick();
+
                       setState(() {
                         categoryBrandsRepository.update(brand.id);
                         updateCount();
@@ -145,7 +148,11 @@ class _CategoryBrandsPageState extends State<CategoryBrandsPage> {
                         return BottomButton(
                           action: () {
                             widget.onPush(
-                                widget.topCategory..children.forEach((element) {element.selected = false;}), categoryBrandsRepository.response.content,
+                                widget.topCategory
+                                  ..children.forEach((element) {
+                                    element.selected = false;
+                                  }),
+                                categoryBrandsRepository.response.content,
                                 callback: updateCount);
                           },
                           title: title,

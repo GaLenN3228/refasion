@@ -42,7 +42,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
   addToCart() async {
     if (addToCartButtonState.value != ButtonState.done) {
-      HapticFeedback.mediumImpact();
+      HapticFeedback.heavyImpact();
       cartRepository?.addToCart(widget.productId);
     } else
       widget.onCartPush();

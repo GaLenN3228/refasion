@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
@@ -49,6 +50,7 @@ class _FilterPanelState extends State<FilterPanel> {
                 child: SelectableList(
                   values: widget.filter.values,
                   onSelect: (id) {
+                    HapticFeedback.selectionClick();
                     setState(() {
                       widget.filter.update(id: id);
                     });

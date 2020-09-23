@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/screens/catalog/components/category_brands.dart';
@@ -18,7 +19,8 @@ class CategoryPage extends StatefulWidget {
   final Function(Category, {dynamic callback}) onPush;
   final Function({dynamic callback}) onBrandsPush;
 
-  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onBrandsPush}) : super(key: key);
+  const CategoryPage({Key key, this.topCategory, this.onPush, this.level, this.onBrandsPush})
+      : super(key: key);
 
   @override
   _CategoryPageState createState() => _CategoryPageState();
@@ -34,7 +36,9 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
   }
 
   prepareParameters() {
-    final selectedIdList = widget.topCategory.children.where((category) => category.selected).map((category) => category.id);
+    final selectedIdList = widget.topCategory.children
+        .where((category) => category.selected)
+        .map((category) => category.id);
 
     if (selectedIdList.isNotEmpty && widget.level == CategoryLevel.category)
       countParameters = "?p=" + selectedIdList.join(',');
@@ -59,7 +63,8 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
     ProductsCountRepository productCountRepository;
     if (widget.level == CategoryLevel.category) {
       productCountRepository = context.watch<ProductsCountRepository>();
-      if (topCategoryCount == null || topCategoryCount.isEmpty) topCategoryCount = productCountRepository.response?.content?.getCountText;
+      if (topCategoryCount == null || topCategoryCount.isEmpty)
+        topCategoryCount = productCountRepository.response?.content?.getCountText;
     }
     final widgets = (widget.level == CategoryLevel.category
         ? <Widget>[
@@ -78,7 +83,10 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
                         callback: updateCount);
                   },
                 ),
-                GestureDetector(behavior: HitTestBehavior.translucent, onTap: () => {widget.onBrandsPush(callback: updateCount)}, child: CategoryBrands())
+                GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () => {widget.onBrandsPush(callback: updateCount)},
+                    child: CategoryBrands())
               ],
             )
           ]
@@ -89,6 +97,8 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
                 (category) => CategoryFilterItem(
                   category: category,
                   onSelect: (id) {
+                    HapticFeedback.selectionClick();
+
                     setState(() {
                       widget.topCategory.updateChild(category.id);
                       updateCount();
@@ -117,7 +127,8 @@ class _CategoryPageState extends State<CategoryPage> with WidgetsBindingObserver
             child: Stack(
               children: [
                 ListView.separated(
-                  padding: EdgeInsets.only(bottom: widget.level == CategoryLevel.category ? 99.0 + 55.0 : 99.0),
+                  padding: EdgeInsets.only(
+                      bottom: widget.level == CategoryLevel.category ? 99.0 + 55.0 : 99.0),
                   itemCount: widgets.length,
                   itemBuilder: (context, index) {
                     return widgets.elementAt(index);
