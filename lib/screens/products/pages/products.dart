@@ -228,7 +228,7 @@ class _ProductsPageState extends State<ProductsPage> {
                             categoryId:
                                 quickFiltersCategories != null && quickFiltersCategories.isNotEmpty
                                     ? quickFiltersCategories.elementAt(0).id
-                                    : widget.topCategory.id,
+                                    : (widget.topCategory?.id ?? widget.parameters.replaceAll("?p=", "")),
                             onApply: () {
                               syncFilters(false);
                               updateProducts(context);

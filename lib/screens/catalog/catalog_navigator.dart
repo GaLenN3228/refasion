@@ -313,7 +313,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                     CupertinoPageRoute(
                       builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
                           product: product,
-                          category: category,
                           parameters: parameters,
                           productTitle: title),
                     ),
