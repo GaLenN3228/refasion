@@ -1,6 +1,6 @@
 class DeliveryData {
   final DateTime deliveryDay;
-  final num cost;
+  final int cost;
   final String text;
 
   const DeliveryData({this.deliveryDay, this.cost, this.text});

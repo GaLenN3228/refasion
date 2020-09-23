@@ -7,10 +7,8 @@ import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/cart_item_tile.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/order_button.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/summary_tile.dart';
-import 'package:refashioned_app/screens/components/button/button.dart';
-import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
-import 'package:refashioned_app/screens/components/button/components/button_title.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
@@ -50,50 +48,6 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  ValueNotifier<ButtonState> buttonState;
-  Map<ButtonState, ButtonData> buttonStatesData;
-
-  @override
-  initState() {
-    buttonStatesData = {
-      ButtonState.enabled: ButtonData(
-        buttonContainerData: ButtonContainerData(
-          decorationType: ButtonDecorationType.black,
-        ),
-        titleData: ButtonTitleData(
-          text: "Перейти к оформлению",
-          color: ButtonTitleColor.white,
-        ),
-      ),
-      ButtonState.disabled: ButtonData(
-        buttonContainerData: ButtonContainerData(
-          decorationType: ButtonDecorationType.gray,
-        ),
-        titleData: ButtonTitleData(
-          text: "Перейти к оформлению",
-          color: ButtonTitleColor.white,
-        ),
-      ),
-    };
-
-    buttonState = ValueNotifier(ButtonState.disabled);
-
-    super.initState();
-  }
-
-  onCheckoutPush() {
-    if (buttonState.value == ButtonState.enabled) {
-      widget.onCheckoutPush?.call(null);
-    }
-  }
-
-  @override
-  void dispose() {
-    buttonState.dispose();
-
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) => Consumer<CartRepository>(
         builder: (context, repository, _) {
@@ -125,8 +79,6 @@ class _CartPageState extends State<CartPage> {
             );
 
           final cart = repository?.response?.content;
-
-          buttonState.value = repository.canMakeOrder ? ButtonState.enabled : ButtonState.disabled;
 
           return CupertinoPageScaffold(
             backgroundColor: Colors.white,
@@ -171,8 +123,7 @@ class _CartPageState extends State<CartPage> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 5),
                                   child: SummaryTile(
-                                    currentPriceAmount: cart.totalCurrentPrice,
-                                    discountPriceAmount: cart.totalDiscountPrice,
+                                    cartSummary: repository.summary,
                                   ),
                                 )
                               ],
@@ -181,14 +132,9 @@ class _CartPageState extends State<CartPage> {
                               left: 0,
                               right: 0,
                               bottom: MediaQuery.of(context).padding.bottom + 65.0,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: RefashionedButton(
-                                  states: buttonState,
-                                  statesData: buttonStatesData,
-                                  animateContent: false,
-                                  onTap: onCheckoutPush,
-                                ),
+                              child: CartOrderButton(
+                                cartSummary: repository.summary,
+                                onCheckoutPush: () => widget.onCheckoutPush?.call(null),
                               ),
                             )
                           ],

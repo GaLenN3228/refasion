@@ -1,54 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:refashioned_app/models/cart/cart_summary.dart';
+import 'package:refashioned_app/models/cart/delivery_company.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/summary_line.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 
-class SummaryTile extends StatelessWidget {
-  final num discountPriceAmount;
-  final num currentPriceAmount;
+final _shippingText = {
+  Delivery.PICKUP_ADDRESS: "Самовывоз от продавца",
+  Delivery.PICKUP_POINT: "Доставка в пункт выдачи",
+  Delivery.COURIER_DELIVERY: "Курьерская доставка",
+  Delivery.EXPRESS_DEVILERY: "Экспресс-доставка",
+};
 
-  const SummaryTile({@required this.discountPriceAmount, @required this.currentPriceAmount});
+class SummaryTile extends StatelessWidget {
+  final CartSummary cartSummary;
+
+  const SummaryTile({this.cartSummary});
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-    TextStyle textStyle = textTheme.bodyText2.copyWith(height: 2);
-    final numberFormat = NumberFormat("#,###", "ru_Ru");
     return Column(
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "Общая стоимость",
-              style: textStyle,
-            ),
-            Text("${numberFormat.format(discountPriceAmount)} ₽", style: textStyle)
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "Скидка на товары",
-              style: textStyle,
-            ),
-            Text("${numberFormat.format(currentPriceAmount - discountPriceAmount)} ₽",
-                style: textStyle)
-          ],
-        ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15),
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: SummaryLine(label: "Общая стоимость", value: cartSummary.price),
+        ),
+        if (cartSummary.discount != 0)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: SummaryLine(label: "Скидка на вещи", value: -cartSummary.discount),
+          ),
+        ...cartSummary.shippingCost
+            .map(
+              (shipping) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: SummaryLine(label: _shippingText[shipping.shipping], value: shipping.cost),
+              ),
+            )
+            .toList(),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: ItemsDivider(padding: 0),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "Итого",
-              style: textTheme.headline2,
-            ),
-            Text("${numberFormat.format(currentPriceAmount)} ₽", style: textTheme.headline2)
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: SummaryLine(
+            label: "Итого",
+            value: cartSummary.total,
+            textStyle: Theme.of(context).textTheme.headline2,
+          ),
         ),
       ],
     );
