@@ -74,15 +74,25 @@ class _UserAddressesListState extends State<UserAddressesList> {
                     ))
                 .toList(),
             ...[
-              Padding(
-                padding: const EdgeInsets.only(top: 25, bottom: 10),
-                child: SizedBox(
-                  width: 150,
-                  child: BorderButton(
-                    type: BorderButtonType.newAddress,
-                    onTap: widget.onAddAddress,
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 25, bottom: 10),
+                    child: SizedBox(
+                      width: 150,
+                      child: BorderButton(
+                        type: BorderButtonType.newAddress,
+                        onTap: widget.onAddAddress,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
