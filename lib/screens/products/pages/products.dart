@@ -46,6 +46,7 @@ class _ProductsPageState extends State<ProductsPage> {
   @override
   void initState() {
     filtersRepository = Provider.of<FiltersRepository>(context, listen: false);
+    filtersRepository.needUpdate = true;
     sortMethodsRepository = SortMethodsRepository();
 
     categoryBrandsRepository = Provider.of<CategoryBrandsRepository>(context, listen: false);
@@ -210,6 +211,7 @@ class _ProductsPageState extends State<ProductsPage> {
                           updateProducts: ({categories}) {
                             syncFilters(true);
                             updateProducts(context);
+                            filtersRepository.needUpdate = true;
                           }),
                     ),
                     ProductsTitle(
