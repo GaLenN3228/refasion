@@ -31,7 +31,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
   void initState() {
     filtersRepository = Provider.of<FiltersRepository>(context, listen: false);
     //TODO refactor, change id to parent category id, need changes on db side
-    if (filtersRepository.response == null) filtersRepository.getFilters(widget.categoryId);
+    filtersRepository.getFilters(widget.categoryId);
 
     widget.scrollController.addListener(scrollControllerListener);
 
