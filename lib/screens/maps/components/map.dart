@@ -62,7 +62,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   YandexMapController controller;
-  PermissionStatus _permissionStatus = PermissionStatus.unknown;
+  PermissionStatus _permissionStatus = PermissionStatus.undetermined;
 
   Placemark selectedPlaceMark;
   MarkerType markersType = MarkerType.SMALL;
@@ -101,10 +101,13 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> _requestPermission() async {
-    final List<PermissionGroup> permissions = <PermissionGroup>[PermissionGroup.location];
-    final Map<PermissionGroup, PermissionStatus> permissionRequestResult =
-        await PermissionHandler().requestPermissions(permissions);
-    _permissionStatus = permissionRequestResult[PermissionGroup.location];
+    // final List<PermissionGroup> permissions = <PermissionGroup>[PermissionGroup.location];
+    // final Map<PermissionGroup, PermissionStatus> permissionRequestResult =
+    //     await Permission().requestPermissions(permissions);
+    // _permissionStatus = permissionRequestResult[PermissionGroup.location];
+
+    _permissionStatus = await Permission.location.request(); // for permission_handler 5.0.1+1
+
     _mapCameraFirstInit();
   }
 
@@ -128,12 +131,14 @@ class _MapPageState extends State<MapPage> {
 
   void _callOnMapCameraListener(bool isFinal) {
     if (_allowStartMapCameraListener) {
-      if (widget.onMapCameraListener != null) widget.onMapCameraListener(MapCameraListenerStatus.STARTED);
+      if (widget.onMapCameraListener != null)
+        widget.onMapCameraListener(MapCameraListenerStatus.STARTED);
       _allowStartMapCameraListener = false;
     }
     if (isFinal) {
       if (widget.onMapCameraListener != null && _allowFinishMapCameraListener)
-        widget.onMapCameraListener(MapCameraListenerStatus.COMPLETED, point: controller.getTargetPoint());
+        widget.onMapCameraListener(MapCameraListenerStatus.COMPLETED,
+            point: controller.getTargetPoint());
       _allowStartMapCameraListener = true;
       _allowFinishMapCameraListener = true;
     }
@@ -147,12 +152,12 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> _moveToPoint(double zoom, Point point) async {
     // if (_permissionStatus == PermissionStatus.granted) {
-      _allowFinishMapCameraListener = false;
-      _allowStartMapCameraListener = false;
-      await controller.move(
-          zoom: zoom,
-          point: Point(latitude: point.latitude, longitude: point.longitude),
-          animation: const MapAnimation(smooth: true, duration: 2.0));
+    _allowFinishMapCameraListener = false;
+    _allowStartMapCameraListener = false;
+    await controller.move(
+        zoom: zoom,
+        point: Point(latitude: point.latitude, longitude: point.longitude),
+        animation: const MapAnimation(smooth: true, duration: 2.0));
     // }
   }
 
@@ -165,7 +170,10 @@ class _MapPageState extends State<MapPage> {
         selectedPlaceMark = placeMark;
         _changeSelectedPlaceMarkIcon();
         _moveToPoint(
-            MapPage.ZOOM_TO_POINT_VALUE, Point(latitude: pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF, longitude: pickPoint.longitude));
+            MapPage.ZOOM_TO_POINT_VALUE,
+            Point(
+                latitude: pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF,
+                longitude: pickPoint.longitude));
         widget.onMarkerClick(pickPoint);
       },
     );
@@ -188,7 +196,10 @@ class _MapPageState extends State<MapPage> {
               element.latitude == selectedPlaceMark.point.latitude &&
               element.longitude == selectedPlaceMark.point.longitude);
           _moveToPoint(
-              MapPage.ZOOM_TO_POINT_VALUE, Point(latitude: pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF, longitude: pickPoint.longitude));
+              MapPage.ZOOM_TO_POINT_VALUE,
+              Point(
+                  latitude: pickPoint.latitude - MapPage.ZOOM_SELECTED_MARKER_DIFF,
+                  longitude: pickPoint.longitude));
           widget.onMarkerClick(pickPoint);
         },
       );
@@ -197,13 +208,17 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _changeSelectedPlaceMarkIcon() {
-    if (selectedPlaceMark != null) controller.changePlacemarkIcon(selectedPlaceMark, MapPage.MARKER_ICON_SELECTED);
+    if (selectedPlaceMark != null)
+      controller.changePlacemarkIcon(selectedPlaceMark, MapPage.MARKER_ICON_SELECTED);
   }
 
   void _resetSelectedPlaceMarkIcon() {
     if (selectedPlaceMark != null)
       controller.changePlacemarkIcon(
-          selectedPlaceMark, markersType == MarkerType.MEDIUM ? MapPage.MARKER_ICON_MEDIUM : MapPage.MARKER_ICON_SMALL);
+          selectedPlaceMark,
+          markersType == MarkerType.MEDIUM
+              ? MapPage.MARKER_ICON_MEDIUM
+              : MapPage.MARKER_ICON_SMALL);
   }
 
   void _resetSelectedPlaceMark() {

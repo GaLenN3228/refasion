@@ -4,7 +4,7 @@ PODS:
     - Flutter
   - path_provider (0.0.1):
     - Flutter
-  - permission_handler (3.3.0):
+  - "permission_handler (5.0.1+1)":
     - Flutter
   - shared_preferences (0.0.1):
     - Flutter
@@ -52,13 +52,13 @@ SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  permission_handler: 67637977b227d62d46bfbf524f335f8568de5a73
+  permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   yandex_mapkit: 808e1857438445c61e2789a9e4374b230a0a97ca
   YandexMapKit: ecd4b78de34a35df63d066ac299e6fd0fe46d1ba
   YandexMapKitSearch: b46ddd1c80e2e35d006cdfc4ab88070a50cebeda
   YandexRuntime: 2d55244d06267106cf9b00c25a1e63f72a73b6fd
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: f16111d35c57228ea532cf504f453099ab1dbcbd
 
 COCOAPODS: 1.9.3
