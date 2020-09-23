@@ -53,7 +53,6 @@ class _ProductsPageState extends State<ProductsPage> {
     filtersRepository.addListener(repositoryListener);
     sortMethodsRepository.addListener(repositoryListener);
 
-    filtersRepository.getFilters(widget.topCategory.id);
     sortMethodsRepository.getSortMethods();
 
     if (widget.searchResult != null) {
@@ -66,12 +65,20 @@ class _ProductsPageState extends State<ProductsPage> {
       quickFiltersCategories = List()
         ..addAll(widget.topCategory.children.map((e) => Category.clone(e)).toList());
       selectedBrands = List()
-        ..addAll(categoryBrandsRepository.response.content.where((element) => element.selected).map((e) => Brand.clone(e)).toList());
+        ..addAll(categoryBrandsRepository.response.content
+            .where((element) => element.selected)
+            .map((e) => Brand.clone(e))
+            .toList());
     } else {
       initialParameters = widget.topCategory.getRequestParameters();
       quickFiltersCategories = List()
         ..addAll(widget.topCategory.children.map((e) => Category.clone(e)).toList());
     }
+
+    //TODO refactor, change id to parent category id
+    filtersRepository.getFilters(quickFiltersCategories != null && quickFiltersCategories.isNotEmpty
+        ? quickFiltersCategories.elementAt(0).id
+        : widget.topCategory.id);
 
     super.initState();
   }
