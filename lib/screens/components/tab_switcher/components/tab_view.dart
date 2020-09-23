@@ -152,6 +152,8 @@ class TabView extends StatelessWidget {
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
+              ChangeNotifierProvider<CategoryBrandsRepository>(
+                  create: (_) => CategoryBrandsRepository())
             ],
             child: SearchWrapper(
               content: profileNavigator,

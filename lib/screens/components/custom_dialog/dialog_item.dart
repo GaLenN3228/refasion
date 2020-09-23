@@ -11,34 +11,38 @@ class DialogItem extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: GestureDetector(
+    return GestureDetector(
         onTap: dialogItemContent?.onClick,
-        child: Row(
-          children: [
-            SVGIcon(
-              icon: dialogItemContent.icon,
-              color: dialogItemContent.color ?? primaryColor,
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  dialogItemContent.text,
-                  style: dialogItemContent.dialogItemType == DialogItemType.system
-                      ? textTheme.headline6
-                      : textTheme.headline5.copyWith(color: dialogItemContent.color ?? primaryColor),
-                  maxLines: 1,
+        child: Padding(
+          padding: EdgeInsets.only(left: 15, right: 15),
+          child: Container(
+            padding: EdgeInsets.only(top: 15, bottom: 15),
+            color: Colors.white,
+            child: Row(
+              children: [
+                SVGIcon(
+                  icon: dialogItemContent.icon,
+                  color: dialogItemContent.color ?? primaryColor,
                 ),
-              ),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      dialogItemContent.text,
+                      style: dialogItemContent.dialogItemType == DialogItemType.system
+                          ? textTheme.headline6
+                          : textTheme.headline5
+                              .copyWith(color: dialogItemContent.color ?? primaryColor),
+                      maxLines: 1,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 30,
+                ),
+              ],
             ),
-            SizedBox(
-              width: 30,
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
 
