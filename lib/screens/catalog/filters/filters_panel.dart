@@ -2,23 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
+import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filter_tile.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/filters_title.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class FiltersPanel extends StatefulWidget {
   final String root;
-  final List<Filter> filters;
   final Function() updateProducts;
   final ScrollController scrollController;
+  final String categoryId;
 
   const FiltersPanel(
-      {Key key,
-      this.filters,
-      this.updateProducts,
-      this.root,
-      this.scrollController})
+      {Key key, this.updateProducts, this.root, this.scrollController, this.categoryId})
       : super(key: key);
 
   @override
@@ -27,10 +25,13 @@ class FiltersPanel extends StatefulWidget {
 
 class _FiltersPanelState extends State<FiltersPanel> {
   String countParameters;
+  FiltersRepository filtersRepository;
 
   @override
   void initState() {
-    countParameters = getParameters(widget.filters);
+    filtersRepository = Provider.of<FiltersRepository>(context, listen: false);
+    //TODO refactor, change id to parent category id, need changes on db side
+    filtersRepository.getFilters(widget.categoryId);
 
     widget.scrollController.addListener(scrollControllerListener);
 
@@ -46,31 +47,51 @@ class _FiltersPanelState extends State<FiltersPanel> {
     super.dispose();
   }
 
-  String getParameters(List<Filter> filters) => filters.fold(widget.root,
-      (parameters, filter) => parameters + filter.getRequestParameters());
+  String getParameters(List<Filter> filters) =>
+      filters.fold(widget.root, (parameters, filter) => parameters + filter.getRequestParameters());
 
   updateCount(BuildContext context) async {
     setState(() {
-      countParameters = getParameters(widget.filters);
+      countParameters = getParameters(filtersRepository.response.content);
     });
 
-    Provider.of<ProductsCountRepository>(context, listen: false)
-        .getProductsCount(countParameters);
+    Provider.of<ProductsCountRepository>(context, listen: false).getProductsCount(countParameters);
   }
 
   resetFilters(BuildContext context) async {
     setState(() {
-      widget.filters.forEach((filter) => filter.reset());
+      filtersRepository.response.content.forEach((filter) => filter.reset());
 
       countParameters = widget.root;
     });
 
-    Provider.of<ProductsCountRepository>(context, listen: false)
-        .getProductsCount(countParameters);
+    Provider.of<ProductsCountRepository>(context, listen: false).getProductsCount(countParameters);
   }
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FiltersRepository>();
+    if (filtersRepository.isLoading)
+      return Center(
+          child: SizedBox(
+        height: 32.0,
+        width: 32.0,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          backgroundColor: accentColor,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
+      ));
+
+    if (filtersRepository.loadingFailed)
+      return Center(
+        child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+      );
+
+    if (filtersRepository.isLoaded){
+      countParameters = getParameters(filtersRepository.response.content);
+    }
+
     return ChangeNotifierProvider<ProductsCountRepository>(
       create: (_) {
         return ProductsCountRepository()..getProductsCount(countParameters);
@@ -85,17 +106,17 @@ class _FiltersPanelState extends State<FiltersPanel> {
                   children: <Widget>[
                     FiltersTitle(
                       onClose: () {
-                        widget.filters.forEach(
-                            (filter) => filter.reset(toPrevious: true));
+                        filtersRepository.response.content
+                            .forEach((filter) => filter.reset(toPrevious: true));
                       },
                       onReset: () => resetFilters(context),
-                      canReset: widget.filters
+                      canReset: filtersRepository.response.content
                           .where((filter) => filter.modified)
                           .isNotEmpty,
                     ),
                     Expanded(
                       child: ListView(
-                        children: widget.filters
+                        children: filtersRepository.response.content
                             .asMap()
                             .entries
                             .map(
@@ -104,8 +125,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
                                 children: [
                                   if (entry.key != 0) ItemsDivider(),
                                   FilterTile(
-                                      filter: entry.value,
-                                      onUpdate: () => updateCount(context)),
+                                      filter: entry.value, onUpdate: () => updateCount(context)),
                                 ],
                               ),
                             )
@@ -119,11 +139,10 @@ class _FiltersPanelState extends State<FiltersPanel> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: 64,
+              bottom: 0,
               child: Builder(
                 builder: (context) {
-                  final productCountRepository =
-                      context.watch<ProductsCountRepository>();
+                  final productCountRepository = context.watch<ProductsCountRepository>();
 
                   String title = "";
                   String subtitle = "";
@@ -136,15 +155,13 @@ class _FiltersPanelState extends State<FiltersPanel> {
                     subtitle = "Мы уже работаем над её исправлением";
                   } else {
                     title = "ПОКАЗАТЬ";
-                    subtitle = productCountRepository
-                        .response.content.getCountText;
+                    subtitle = productCountRepository.response.content.getCountText;
                   }
                   return BottomButton(
                     action: () {
-                      widget.filters.forEach((filter) => filter.save());
+                      filtersRepository.response.content.forEach((filter) => filter.save());
 
-                      if (widget.updateProducts != null)
-                        widget.updateProducts();
+                      if (widget.updateProducts != null) widget.updateProducts();
 
                       Navigator.of(context).pop();
                     },

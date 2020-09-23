@@ -5,6 +5,7 @@ import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/utils/colors.dart';
@@ -29,6 +30,9 @@ class RefashionApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<CodeAuthorizationRepository>(
             create: (_) => CodeAuthorizationRepository(),
+          ),
+          ChangeNotifierProvider<FiltersRepository>(
+            create: (_) => FiltersRepository(),
           ),
           Provider<SizesProvider>(
             create: (_) => SizesProvider(),

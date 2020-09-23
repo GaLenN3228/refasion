@@ -45,7 +45,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   void initState() {
-    filtersRepository = FiltersRepository();
+    filtersRepository = Provider.of<FiltersRepository>(context, listen: false);
     sortMethodsRepository = SortMethodsRepository();
 
     categoryBrandsRepository = Provider.of<CategoryBrandsRepository>(context, listen: false);
@@ -74,11 +74,6 @@ class _ProductsPageState extends State<ProductsPage> {
       quickFiltersCategories = List()
         ..addAll(widget.topCategory.children.map((e) => Category.clone(e)).toList());
     }
-
-    //TODO refactor, change id to parent category id
-    filtersRepository.getFilters(quickFiltersCategories != null && quickFiltersCategories.isNotEmpty
-        ? quickFiltersCategories.elementAt(0).id
-        : widget.topCategory.id);
 
     super.initState();
   }
@@ -203,7 +198,7 @@ class _ProductsPageState extends State<ProductsPage> {
         builder: (context, _) {
           quickFiltersRepository = Provider.of<QuickFiltersRepository>(context, listen: false);
           syncFilters(true);
-          return (filtersRepository.isLoaded && sortMethodsRepository.isLoaded)
+          return (sortMethodsRepository.isLoaded)
               ? Column(
                   children: [
                     Container(
@@ -228,7 +223,10 @@ class _ProductsPageState extends State<ProductsPage> {
                         children: [
                           FiltersButton(
                             root: initialParameters,
-                            filters: filtersRepository.response.content,
+                            categoryId:
+                                quickFiltersCategories != null && quickFiltersCategories.isNotEmpty
+                                    ? quickFiltersCategories.elementAt(0).id
+                                    : widget.topCategory.id,
                             onApply: () {
                               syncFilters(false);
                               updateProducts(context);
