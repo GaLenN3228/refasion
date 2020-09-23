@@ -119,6 +119,7 @@ class TabView extends StatelessWidget {
           navigatorKey: navigatorKeys[tab],
           openPickUpAddressMap: openPickUpAddressMap,
           changeTabTo: changeTabTo,
+          openDeliveryTypesSelector: openDeliveryTypesSelector,
         );
         content = MultiProvider(
             providers: [
@@ -147,6 +148,7 @@ class TabView extends StatelessWidget {
           changeTabTo: changeTabTo,
           pushPageOnTop: pushPageOnTop,
           openPickUpAddressMap: openPickUpAddressMap,
+          openDeliveryTypesSelector: openDeliveryTypesSelector,
         );
         content = MultiProvider(
             providers: [

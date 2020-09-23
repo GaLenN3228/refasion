@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/models/order/order.dart';
+import 'package:refashioned_app/models/order/order_item.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
@@ -10,6 +15,7 @@ import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
@@ -26,6 +32,7 @@ class ProfileNavigatorRoutes {
   static const String products = '/products';
   static const String product = '/product';
   static const String favourites = '/favourites';
+  static const String checkout = '/checkout';
 }
 
 class ProfileNavigatorObserver extends NavigatorObserver {
@@ -54,8 +61,25 @@ class ProfileNavigator extends StatefulWidget {
   final Function(Widget) pushPageOnTop;
   final Function(PickPoint) openPickUpAddressMap;
 
+  CreateOrderRepository createOrderRepository;
+
+  GetOrderRepository getOrderRepository;
+
+  final Function(
+    BuildContext,
+    String, {
+    List<DeliveryType> deliveryTypes,
+    Function() onClose,
+    Function(String, String) onFinish,
+    SystemUiOverlayStyle originalOverlayStyle,
+  }) openDeliveryTypesSelector;
+
   ProfileNavigator(
-      {this.navigatorKey, this.changeTabTo, this.pushPageOnTop, this.openPickUpAddressMap});
+      {this.navigatorKey,
+      this.changeTabTo,
+      this.pushPageOnTop,
+      this.openPickUpAddressMap,
+      this.openDeliveryTypesSelector});
 
   _ProfileNavigatorState _mapPageState;
 
@@ -83,7 +107,10 @@ class ProfileNavigator extends StatefulWidget {
             settings: RouteSettings(name: ProfileNavigatorRoutes.products),
           ),
         )
-        .then((value) => topPanelController.needShow = true);
+        .then((value) {
+      topPanelController.needShow = true;
+      topPanelController.needShowBack = false;
+    });
   }
 
   @override
@@ -94,12 +121,35 @@ class ProfileNavigator extends StatefulWidget {
 }
 
 class _ProfileNavigatorState extends State<ProfileNavigator> {
+  CreateOrderRepository createOrderRepository;
+
+  GetOrderRepository getOrderRepository;
+
+
+  @override
+  void initState() {
+    createOrderRepository = CreateOrderRepository();
+
+    getOrderRepository = GetOrderRepository();
+    super.initState();
+  }
+
+
+  @override
+  void dispose() {
+    createOrderRepository.dispose();
+
+    getOrderRepository.dispose();
+    super.dispose();
+  }
+
   Widget _routeBuilder(BuildContext context, String route,
       {bool isAuthorized,
       Category category,
       Product product,
       Seller seller,
       String parameters,
+      Order order,
       String productTitle,
       SearchResult searchResult}) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -203,6 +253,32 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
+            openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
+            onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
+              final parameters = jsonEncode([
+                OrderItem(
+                  deliveryCompany: deliveryCompanyId,
+                  deliveryObjectId: deliveryObjectId,
+                  products: [product.id],
+                ),
+              ]);
+
+              await createOrderRepository.update(parameters);
+
+              final orderId = createOrderRepository.response?.content?.id;
+
+              await getOrderRepository.update(orderId);
+
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(
+                    context,
+                    ProfileNavigatorRoutes.checkout,
+                    order: createOrderRepository.response?.content,
+                  ),
+                ),
+              );
+            },
           );
         });
 

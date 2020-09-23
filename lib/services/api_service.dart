@@ -207,7 +207,8 @@ class ApiService {
 
   static Future<Response> getFilters(String category) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    return dioClient.get(Url.filters, queryParameters: {"category": category});
+    return dioClient.get(Url.filters,
+        queryParameters: category != null ? {"category": category} : null);
   }
 
   static Future<Response> getSortMethods() async {

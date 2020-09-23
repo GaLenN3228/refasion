@@ -92,11 +92,13 @@ class _ProductsPageState extends State<ProductsPage> {
   updateProducts(BuildContext context) {
     if (quickFiltersCategories != null)
       initialParameters = "?p=" +
-          (quickFiltersCategories.where((category) => category.selected).isNotEmpty
+          (quickFiltersCategories
+              .where((category) => category.selected)
+              .isNotEmpty
               ? quickFiltersCategories
-                  .where((category) => category.selected)
-                  .map((category) => category.id)
-                  .join(',')
+              .where((category) => category.selected)
+              .map((category) => category.id)
+              .join(',')
               : widget.topCategory.id);
     else if (widget.topCategory != null)
       initialParameters = widget.topCategory.getRequestParameters();
@@ -105,13 +107,13 @@ class _ProductsPageState extends State<ProductsPage> {
 
     final filtersParameters = filtersRepository.isLoaded && filtersRepository.getStatusCode == 200
         ? filtersRepository.response.content
-            .fold("", (parameters, filter) => parameters + filter.getRequestParameters())
+        .fold("", (parameters, filter) => parameters + filter.getRequestParameters())
         : "";
 
     final sortParameters =
-        sortMethodsRepository.isLoaded && sortMethodsRepository.getStatusCode == 200
-            ? sortMethodsRepository.response.content.getRequestParameters()
-            : "";
+    sortMethodsRepository.isLoaded && sortMethodsRepository.getStatusCode == 200
+        ? sortMethodsRepository.response.content.getRequestParameters()
+        : "";
 
     String newParameters =
         initialParameters + filtersParameters + sortParameters + quickFiltersParameters;
@@ -165,7 +167,9 @@ class _ProductsPageState extends State<ProductsPage> {
           filtersRepository.response.content
               .where((filter) => filter.parameter == Parameter.brand)
               .forEach((filter) {
-            filter.values.firstWhere((filterValue) => filterValue.id == element.id).selected = true;
+            filter.values
+                .firstWhere((filterValue) => filterValue.id == element.id)
+                .selected = true;
             filter.isModified();
           });
         });
@@ -193,72 +197,79 @@ class _ProductsPageState extends State<ProductsPage> {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider<ProductsRepository>(
-              create: (_) => ProductsRepository()..getProducts(initialParameters)),
-          ChangeNotifierProvider(create: (_) => QuickFiltersRepository()..getQuickFilters())
+              create: (_) =>
+              ProductsRepository()
+                ..getProducts(initialParameters)),
+          ChangeNotifierProvider(create: (_) =>
+          QuickFiltersRepository()
+            ..getQuickFilters())
         ],
         builder: (context, _) {
           quickFiltersRepository = Provider.of<QuickFiltersRepository>(context, listen: false);
           syncFilters(true);
           return (sortMethodsRepository.isLoaded)
               ? Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 8),
+                child: QuickFilterList(
+                    topCategory: widget.topCategory,
+                    categories: quickFiltersCategories,
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    updateProducts: ({categories}) {
+                      syncFilters(true);
+                      updateProducts(context);
+                      filtersRepository.needUpdate = true;
+                    }),
+              ),
+              ProductsTitle(
+                  categoryName: (widget.searchResult != null)
+                      ? widget.searchResult.name
+                      : (widget.title != null) ? widget.title : widget.topCategory.name),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 15, 15, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 8),
-                      child: QuickFilterList(
-                          topCategory: widget.topCategory,
-                          categories: quickFiltersCategories,
-                          padding: const EdgeInsets.only(left: 20, right: 20),
-                          updateProducts: ({categories}) {
-                            syncFilters(true);
-                            updateProducts(context);
-                            filtersRepository.needUpdate = true;
-                          }),
+                    FiltersButton(
+                      root: initialParameters,
+                      categoryId:
+                      quickFiltersCategories != null && quickFiltersCategories.isNotEmpty
+                          ? quickFiltersCategories
+                          .elementAt(0)
+                          .id
+                          : (widget.topCategory?.id ?? widget.parameters?.replaceAll("?p=", "") ??
+                          widget.searchResult?.id),
+                      onApply: () {
+                        syncFilters(false);
+                        updateProducts(context);
+                      },
                     ),
-                    ProductsTitle(
-                        categoryName: (widget.searchResult != null)
-                            ? widget.searchResult.name
-                            : (widget.title != null) ? widget.title : widget.topCategory.name),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 15, 15, 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          FiltersButton(
-                            root: initialParameters,
-                            categoryId:
-                                quickFiltersCategories != null && quickFiltersCategories.isNotEmpty
-                                    ? quickFiltersCategories.elementAt(0).id
-                                    : (widget.topCategory?.id ?? widget.parameters.replaceAll("?p=", "")),
-                            onApply: () {
-                              syncFilters(false);
-                              updateProducts(context);
-                            },
-                          ),
-                          SortingButton(
-                            sort: sortMethodsRepository.response.content,
-                            onUpdate: () {
-                              syncFilters(false);
-                              updateProducts(context);
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ProductsPageContent(
-                        onPush: (product) {
-                          widget.onPush(
-                            product,
-                            callback: () {
-                              syncFilters(true);
-                              updateProducts(context);
-                            },
-                          );
-                        },
-                      ),
-                    ),
+                    SortingButton(
+                      sort: sortMethodsRepository.response.content,
+                      onUpdate: () {
+                        syncFilters(false);
+                        updateProducts(context);
+                      },
+                    )
                   ],
-                )
+                ),
+              ),
+              Expanded(
+                child: ProductsPageContent(
+                  onPush: (product) {
+                    widget.onPush(
+                      product,
+                      callback: () {
+                        syncFilters(true);
+                        updateProducts(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          )
               : SizedBox();
         },
       ),

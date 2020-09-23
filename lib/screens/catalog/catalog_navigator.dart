@@ -72,13 +72,15 @@ class CatalogNavigator extends StatefulWidget {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     Navigator.of(context)
         .push(
-          CupertinoPageRoute(
-            builder: (context) => _catalogNavigatorState._routeBuilder(
-                context, CatalogNavigatorRoutes.products,
-                searchResult: searchResult),
-          ),
-        )
-        .then((value) => topPanelController.needShow = true);
+      CupertinoPageRoute(
+        builder: (context) => _catalogNavigatorState
+            ._routeBuilder(context, CatalogNavigatorRoutes.products, searchResult: searchResult),
+      ),
+    )
+        .then((value) {
+      topPanelController.needShow = true;
+      topPanelController.needShowBack = false;
+    });
   }
 
   final Function(
@@ -312,9 +314,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                   .push(
                     CupertinoPageRoute(
                       builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.products,
-                          product: product,
-                          parameters: parameters,
-                          productTitle: title),
+                          product: product, parameters: parameters, productTitle: title),
                     ),
                   )
                   .then((value) => topPanelController.needShow = false);
