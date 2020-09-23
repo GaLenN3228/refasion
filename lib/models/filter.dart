@@ -85,6 +85,23 @@ class Filter {
             previousPrices: null,
             prices: null);
 
+      case Parameter.size:
+        final values = [
+          for (final value in jsonValue)
+            if (value['code'].toString().contains("RU"))
+              for (final sizeValue in value['values'])
+                FilterValue.fromJson(sizeValue)
+        ];
+
+        return Filter(
+            name: json['name'],
+            type: json['type'],
+            parameter: parameter,
+            previousValues: values.map((e) => FilterValue.clone(e)).toList(),
+            values: List.from(values),
+            previousPrices: null,
+            prices: null);
+
       default:
         final values = [for (final value in jsonValue) FilterValue.fromJson(value)];
 
@@ -222,10 +239,17 @@ class FilterValue {
 
   FilterValue({this.id, this.value, this.selected: false});
 
-  factory FilterValue.fromJson(Map<String, dynamic> json, {Parameter parameter}) =>
-      parameter != null && parameter == Parameter.brand
-          ? FilterValue(id: json['id'], value: json['name'])
-          : FilterValue(id: json['id'], value: json['value']);
+  factory FilterValue.fromJson(Map<String, dynamic> json, {Parameter parameter}) {
+    if (parameter != null) {
+      switch (parameter) {
+        case Parameter.brand:
+          return FilterValue(id: json['id'], value: json['name']);
+        default:
+          return FilterValue(id: json['id'], value: json['value']);
+      }
+    } else
+      return FilterValue(id: json['id'], value: json['value']);
+  }
 
   factory FilterValue.clone(FilterValue other) =>
       FilterValue(id: other.id, value: other.value, selected: other.selected);

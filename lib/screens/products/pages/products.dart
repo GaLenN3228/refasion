@@ -53,7 +53,7 @@ class _ProductsPageState extends State<ProductsPage> {
     filtersRepository.addListener(repositoryListener);
     sortMethodsRepository.addListener(repositoryListener);
 
-    filtersRepository.getFilters();
+    filtersRepository.getFilters(widget.topCategory.id);
     sortMethodsRepository.getSortMethods();
 
     if (widget.searchResult != null) {

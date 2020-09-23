@@ -8,11 +8,11 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = false;
+  static const LOG_ENABLE = true;
 
   //ADDRESSES
 
-  static const LOG_ADDRESSES = false;
+  static const LOG_ADDRESSES = true;
 
   static Future<Response> findAddressesByQuery(String query, {String city}) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ADDRESSES || LOG_ENABLE);
@@ -205,9 +205,9 @@ class ApiService {
         .then((dio) => dio.get(Url.properties, queryParameters: {"category": category}));
   }
 
-  static Future<Response> getFilters() async {
+  static Future<Response> getFilters(String category) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    return dioClient.get(Url.filters);
+    return dioClient.get(Url.filters, queryParameters: {"category": category});
   }
 
   static Future<Response> getSortMethods() async {

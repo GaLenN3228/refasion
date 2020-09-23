@@ -5,8 +5,8 @@ import '../services/api_service.dart';
 import 'base.dart';
 
 class FiltersRepository extends BaseRepository<List<Filter>> {
-  Future<void> getFilters() => apiCall(() async {
-        response = BaseResponse.fromJson((await ApiService.getFilters()).data,
+  Future<void> getFilters(String category) => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.getFilters(category)).data,
             (contentJson) => [for (final filter in contentJson) Filter.fromJson(filter)]);
       });
 }
