@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/cart/cart.dart';
+import 'package:refashioned_app/models/cart/cart_summary.dart';
+import 'package:refashioned_app/models/cart/delivery_company.dart';
+import 'package:refashioned_app/models/cart/shipping_cost.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart/add_product.dart';
 import 'package:refashioned_app/repositories/cart/get_item_delivery_types.dart';
@@ -22,6 +24,8 @@ class CartRepository extends BaseRepository<Cart> {
   Function() selectionAction;
 
   bool canMakeOrder;
+
+  CartSummary summary;
 
   // List<int> scheme;
   // GlobalKey<AnimatedListState> rootListKey;
@@ -84,8 +88,51 @@ class CartRepository extends BaseRepository<Cart> {
       selectionAction = () {};
       canMakeOrder = false;
     }
+  }
 
-    notifyListeners();
+  updateSummary() {
+    int count = 0;
+    int price = 0;
+    int discout = 0;
+
+    int selectedCount = 0;
+    int selectedPrice = 0;
+    int selectedDiscout = 0;
+
+    List<ShippingCost> shippingCost = [];
+
+    bool hasPickUpAddress = false;
+
+    response.content?.groups?.forEach((cartItem) {
+      final summary = cartItem.getSummary();
+
+      selectedCount += summary.selectedCount;
+      selectedPrice += summary.selectedPrice;
+      selectedDiscout += summary.selectedDiscount;
+
+      count += summary.count;
+      price += summary.price;
+      discout += summary.discount;
+
+      final itemShippingCost = summary.shippingCost;
+
+      if (itemShippingCost != null &&
+          summary.selectedCount > 0 &&
+          (!hasPickUpAddress || itemShippingCost.shipping != Delivery.PICKUP_ADDRESS)) {
+        shippingCost.add(itemShippingCost);
+        hasPickUpAddress = itemShippingCost.shipping == Delivery.PICKUP_ADDRESS;
+      }
+    });
+
+    summary = CartSummary(
+      count,
+      price,
+      discout,
+      selectedCount,
+      selectedPrice,
+      selectedDiscout,
+      shippingCost,
+    );
   }
 
   // updateScheme() {
@@ -120,6 +167,10 @@ class CartRepository extends BaseRepository<Cart> {
     } else if (!selected && wasSelected) selectedIDs.remove(id);
 
     updateSelectionAction();
+
+    updateSummary();
+
+    notifyListeners();
 
     return true;
   }
@@ -177,10 +228,16 @@ class CartRepository extends BaseRepository<Cart> {
 
           // updateScheme();
 
-          [...pendingIDs, ...selectedIDs].forEach((productId) => select(productId, value: true));
+          final newSelected = [...pendingIDs, ...selectedIDs];
           pendingIDs.clear();
 
-          updateSelectionAction();
+          if (newSelected.isNotEmpty)
+            newSelected.forEach((productId) => select(productId, value: true));
+          else {
+            updateSelectionAction();
+
+            updateSummary();
+          }
         },
       );
 }

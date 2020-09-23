@@ -1,6 +1,8 @@
 import 'package:refashioned_app/models/cart/cart_product.dart';
 import 'package:refashioned_app/models/cart/delivery_data.dart';
 import 'package:refashioned_app/models/cart/delivery_option.dart';
+import 'package:refashioned_app/models/cart/item_summary.dart';
+import 'package:refashioned_app/models/cart/shipping_cost.dart';
 
 class CartItem {
   final DeliveryOption deliveryOption;
@@ -27,6 +29,47 @@ class CartItem {
       );
 
   update(bool value) => cartProducts.forEach((cartProduct) => cartProduct.update(value: value));
+
+  CartItemSummary getSummary() {
+    int count = 0;
+    int price = 0;
+    int discout = 0;
+
+    int selectedCount = 0;
+    int selectedPrice = 0;
+    int selectedDiscout = 0;
+
+    cartProducts.forEach((cartProduct) {
+      if (cartProduct.selected.value) {
+        selectedCount++;
+        selectedPrice += cartProduct.product.currentPrice;
+
+        if (cartProduct.product.discountPrice != null)
+          selectedDiscout += (cartProduct.product.currentPrice - cartProduct.product.discountPrice);
+      }
+
+      count++;
+      price += cartProduct.product.currentPrice;
+
+      if (cartProduct.product.discountPrice != null)
+        discout += (cartProduct.product.currentPrice - cartProduct.product.discountPrice);
+    });
+
+    return CartItemSummary(
+      count: count,
+      price: price,
+      discount: discout,
+      selectedCount: selectedCount,
+      selectedPrice: selectedPrice,
+      selectedDiscount: selectedDiscout,
+      shippingCost: deliveryOption?.deliveryCompany?.type != null
+          ? ShippingCost(
+              shipping: deliveryOption.deliveryCompany.type,
+              cost: deliveryData.cost,
+            )
+          : null,
+    );
+  }
 
   @override
   String toString() => "cart item with id " + id.toString();
