@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/search.dart';
 import 'package:refashioned_app/screens/cart/cart_navigator.dart';
@@ -24,6 +25,8 @@ class TabView extends StatelessWidget {
   final BottomTab tab;
   final ValueNotifier<BottomTab> currentTab;
   final Function(Widget) pushPageOnTop;
+  final Function(PickPoint) openPickUpAddressMap;
+
   final Function() onTabRefresh;
 
   final Function(
@@ -36,7 +39,10 @@ class TabView extends StatelessWidget {
   }) openDeliveryTypesSelector;
 
   TabView(this.tab, this.currentTab,
-      {this.pushPageOnTop, this.onTabRefresh, this.openDeliveryTypesSelector});
+      {this.pushPageOnTop,
+      this.onTabRefresh,
+      this.openDeliveryTypesSelector,
+      this.openPickUpAddressMap});
 
   changeTabTo(BottomTab newBottomTab) {
     if (newBottomTab == tab && onTabRefresh != null)
@@ -55,6 +61,7 @@ class TabView extends StatelessWidget {
         var catalogNavigator = CatalogNavigator(
           navigatorKey: navigatorKeys[tab],
           changeTabTo: changeTabTo,
+          openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
         );
         content = MultiProvider(
@@ -83,6 +90,7 @@ class TabView extends StatelessWidget {
         var cartNavigator = CartNavigator(
           navigatorKey: navigatorKeys[tab],
           changeTabTo: changeTabTo,
+          openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
         );
         content = MultiProvider(
@@ -105,8 +113,11 @@ class TabView extends StatelessWidget {
         break;
 
       case BottomTab.home:
-        var homeNavigator =
-            HomeNavigator(navigatorKey: navigatorKeys[tab], changeTabTo: changeTabTo);
+        var homeNavigator = HomeNavigator(
+          navigatorKey: navigatorKeys[tab],
+          openPickUpAddressMap: openPickUpAddressMap,
+          changeTabTo: changeTabTo,
+        );
         content = MultiProvider(
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
@@ -131,6 +142,7 @@ class TabView extends StatelessWidget {
           navigatorKey: navigatorKeys[tab],
           changeTabTo: changeTabTo,
           pushPageOnTop: pushPageOnTop,
+          openPickUpAddressMap: openPickUpAddressMap,
         );
         content = MultiProvider(
             providers: [

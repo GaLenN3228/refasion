@@ -3,13 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/base.dart';
-import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProductsItem extends StatefulWidget {
@@ -37,7 +36,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
     return Padding(
       padding: const EdgeInsets.only(left: 2, right: 2),
       child: GestureDetector(
-        onTap: () => {widget.onPush(widget.product), HapticFeedback.vibrate()},
+        onTap: () => widget.onPush?.call(widget.product),
         child: new Card(
           shadowColor: Colors.transparent,
           child: Column(

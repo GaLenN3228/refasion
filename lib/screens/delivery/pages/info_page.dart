@@ -12,24 +12,14 @@ import 'package:refashioned_app/repositories/user_pickpoints.dart';
 import 'package:refashioned_app/screens/components/button/button.dart';
 import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
-import 'package:refashioned_app/screens/components/checkbox/checkbox.dart';
 import 'package:refashioned_app/screens/components/checkbox/stateful.dart';
 import 'package:refashioned_app/screens/components/textfield/ref_textfield.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
-enum InfoField {
-  appartment,
-  porch,
-  floor,
-  intercom,
-  comment,
-  fio,
-  phone,
-  email
-}
+enum InfoField { appartment, porch, floor, intercom, comment, fio, phone, email }
 
-class RecipientInfoPage extends StatefulWidget {
+class InfoPage extends StatefulWidget {
   final PickPoint pickpoint;
   final DeliveryType deliveryType;
   final String cartItemId;
@@ -39,19 +29,14 @@ class RecipientInfoPage extends StatefulWidget {
 
   static final formKey = GlobalKey<FormState>();
 
-  const RecipientInfoPage(
-      {Key key,
-      this.onClose,
-      this.pickpoint,
-      this.deliveryType,
-      this.onFinish,
-      this.cartItemId})
+  const InfoPage(
+      {Key key, this.onClose, this.pickpoint, this.deliveryType, this.onFinish, this.cartItemId})
       : super(key: key);
   @override
-  _RecipientInfoPageState createState() => _RecipientInfoPageState();
+  _InfoPageState createState() => _InfoPageState();
 }
 
-class _RecipientInfoPageState extends State<RecipientInfoPage> {
+class _InfoPageState extends State<InfoPage> {
   bool courierDelivery;
 
   ValueNotifier<ButtonState> buttonState;
@@ -89,8 +74,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
         widget.deliveryType.type == Delivery.EXPRESS_DEVILERY;
 
     if (courierDelivery) {
-      info = Map.fromIterable(InfoField.values,
-          key: (value) => value, value: (_) => "");
+      info = Map.fromIterable(InfoField.values, key: (value) => value, value: (_) => "");
       addressText = "Адрес доставки";
     } else {
       info = Map.fromIterable([InfoField.fio, InfoField.phone, InfoField.email],
@@ -112,9 +96,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
 
   check() {
     final check = info.entries.fold(
-        true,
-        (previousValue, element) =>
-            previousValue && fieldCheck(element.key, element.value));
+        true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
 
     buttonState.value = check ? ButtonState.enabled : ButtonState.disabled;
   }
@@ -124,8 +106,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
       case InfoField.phone:
         return text.length == 11;
       case InfoField.email:
-        return RegExp(
-                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
             .hasMatch(text);
       case InfoField.appartment:
         return text.isNotEmpty || privateHouse;
@@ -153,8 +134,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
           phone: info[InfoField.phone],
         );
 
-        await addUserPickPointRepository
-            .update(jsonEncode(userAddress.toJson()));
+        await addUserPickPointRepository.update(jsonEncode(userAddress.toJson()));
         id = addUserPickPointRepository?.response?.content?.pickpoint;
 
         break;
@@ -212,14 +192,10 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
               ),
               Expanded(
                 child: Form(
-                  key: RecipientInfoPage.formKey,
+                  key: InfoPage.formKey,
                   child: ListView(
                     padding: EdgeInsets.fromLTRB(
-                        20,
-                        0,
-                        20,
-                        max(MediaQuery.of(context).padding.bottom, 20.0) +
-                            65.0),
+                        20, 0, 20, max(MediaQuery.of(context).padding.bottom, 20.0) + 65.0),
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
@@ -271,8 +247,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                       children: [
                                         RefashionedCheckboxStateful(
                                           value: privateHouse,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10),
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
                                           onUpdate: (value) {
                                             privateHouse = value;
                                             check();
@@ -280,9 +255,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                         ),
                                         Text(
                                           "Частный дом",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1,
+                                          style: Theme.of(context).textTheme.bodyText1,
                                         ),
                                       ],
                                     ),
@@ -299,8 +272,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                     child: RefashionedTextField(
                                       hintText: "Подъезд",
                                       keyboardType: TextInputType.number,
-                                      onSearchUpdate: (text) =>
-                                          onUpdate(InfoField.porch, text),
+                                      onSearchUpdate: (text) => onUpdate(InfoField.porch, text),
                                     ),
                                   ),
                                   SizedBox(
@@ -311,8 +283,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                     child: RefashionedTextField(
                                       hintText: "Этаж",
                                       keyboardType: TextInputType.number,
-                                      onSearchUpdate: (text) =>
-                                          onUpdate(InfoField.floor, text),
+                                      onSearchUpdate: (text) => onUpdate(InfoField.floor, text),
                                     ),
                                   ),
                                   SizedBox(
@@ -322,8 +293,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                                     flex: 1,
                                     child: RefashionedTextField(
                                       hintText: "Домофон",
-                                      onSearchUpdate: (text) =>
-                                          onUpdate(InfoField.intercom, text),
+                                      onSearchUpdate: (text) => onUpdate(InfoField.intercom, text),
                                     ),
                                   ),
                                 ],
@@ -333,8 +303,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: RefashionedTextField(
                                 hintText: "Комментарий курьеру",
-                                onSearchUpdate: (text) =>
-                                    onUpdate(InfoField.comment, text),
+                                onSearchUpdate: (text) => onUpdate(InfoField.comment, text),
                               ),
                             ),
                           ],
@@ -355,8 +324,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                           autofocus: !courierDelivery,
                           keyboardType: TextInputType.name,
                           hintText: "ФИО",
-                          onSearchUpdate: (text) =>
-                              onUpdate(InfoField.fio, text),
+                          onSearchUpdate: (text) => onUpdate(InfoField.fio, text),
                         ),
                       ),
                       Padding(
@@ -374,8 +342,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                         child: RefashionedTextField(
                           hintText: "Телефон",
                           keyboardType: TextInputType.phone,
-                          onSearchUpdate: (text) =>
-                              onUpdate(InfoField.phone, text),
+                          onSearchUpdate: (text) => onUpdate(InfoField.phone, text),
                         ),
                       ),
                       SizedBox(
@@ -386,8 +353,7 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
                         child: RefashionedTextField(
                           hintText: "Электронная почта",
                           keyboardType: TextInputType.emailAddress,
-                          onSearchUpdate: (text) =>
-                              onUpdate(InfoField.email, text),
+                          onSearchUpdate: (text) => onUpdate(InfoField.email, text),
                         ),
                       ),
                       Padding(
@@ -408,8 +374,8 @@ class _RecipientInfoPageState extends State<RecipientInfoPage> {
             right: 0,
             bottom: 0,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  20, 10, 20, max(MediaQuery.of(context).padding.bottom, 20)),
+              padding:
+                  EdgeInsets.fromLTRB(20, 10, 20, max(MediaQuery.of(context).padding.bottom, 20)),
               child: RefashionedButton(
                 states: buttonState,
                 statesData: buttonStatesData,

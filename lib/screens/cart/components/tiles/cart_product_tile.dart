@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_product.dart';
-import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/screens/cart/components/brand.dart';
-import 'package:refashioned_app/screens/cart/components/price.dart';
-import 'package:refashioned_app/screens/cart/components/size.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/product/brand.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/product/price.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/product/size.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox_listenable.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
@@ -51,48 +52,58 @@ class _CartProductTileState extends State<CartProductTile> {
 
   removeFromCart() async => await cartRepository.removeFromCart(widget.cartProduct.id);
 
-  dialog() => showDialog(
-        context: context,
-        builder: (dialogContext) => CustomDialog.Dialog(
-          dialogContent: [
+  dialog() {
+    HapticFeedback.lightImpact();
+
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => CustomDialog.Dialog(
+        dialogContent: [
+          DialogItemContent(
+            "Подробнее",
+            () {
+              Navigator.of(dialogContext).pop();
+              widget.onProductPush?.call();
+            },
+            DialogItemType.item,
+            icon: IconAsset.info,
+          ),
+          if (!widget.cartProduct.product.isFavourite)
             DialogItemContent(
-              "Подробнее",
-              () {
-                Navigator.of(dialogContext).pop();
-                widget.onProductPush?.call();
-              },
-              DialogItemType.item,
-              icon: IconAsset.info,
-            ),
-            if (!widget.cartProduct.product.isFavourite)
-              DialogItemContent(
-                "Перенести в избранное",
-                () async {
-                  await addToFavorites();
-                  await removeFromCart();
-                  Navigator.of(dialogContext).pop();
-                },
-                DialogItemType.item,
-                icon: IconAsset.favoriteBorder,
-              ),
-            DialogItemContent(
-              "Удалить из корзины",
+              "Перенести в избранное",
               () async {
+                HapticFeedback.heavyImpact();
+
+                await addToFavorites();
                 await removeFromCart();
+
                 Navigator.of(dialogContext).pop();
               },
               DialogItemType.item,
-              icon: IconAsset.delete,
-              color: Colors.red,
+              icon: IconAsset.favoriteBorder,
             ),
-            DialogItemContent(
-              "Отменить",
-              () => Navigator.of(dialogContext).pop(),
-              DialogItemType.system,
-            )
-          ],
-        ),
-      );
+          DialogItemContent(
+            "Удалить из корзины",
+            () async {
+              HapticFeedback.heavyImpact();
+
+              await removeFromCart();
+
+              Navigator.of(dialogContext).pop();
+            },
+            DialogItemType.item,
+            icon: IconAsset.delete,
+            color: Colors.red,
+          ),
+          DialogItemContent(
+            "Отменить",
+            () => Navigator.of(dialogContext).pop(),
+            DialogItemType.system,
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,9 +169,12 @@ class _CartProductTileState extends State<CartProductTile> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: dialog,
-                  child: SVGIcon(
-                    icon: IconAsset.more,
-                    size: 24,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                    child: SVGIcon(
+                      icon: IconAsset.more,
+                      size: 24,
+                    ),
                   ),
                 ),
               )

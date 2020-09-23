@@ -7,12 +7,12 @@ import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/screens/delivery/pages/addresses_page.dart';
 import 'package:refashioned_app/screens/delivery/pages/map_page.dart';
-import 'package:refashioned_app/screens/delivery/pages/recipient_info_page.dart';
+import 'package:refashioned_app/screens/delivery/pages/info_page.dart';
 
 class DeliveryNavigatorRoutes {
-  static const String addresses = '/';
+  static const String addresses = '/address';
   static const String map = '/map';
-  static const String recipientInfo = '/recipientInfo';
+  static const String info = '/info';
 }
 
 class DeliveryNavigatorObserver extends NavigatorObserver {
@@ -21,7 +21,7 @@ class DeliveryNavigatorObserver extends NavigatorObserver {
     switch (previousRoute?.settings?.name) {
       case DeliveryNavigatorRoutes.addresses:
       case DeliveryNavigatorRoutes.map:
-      case DeliveryNavigatorRoutes.recipientInfo:
+      case DeliveryNavigatorRoutes.info:
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
 
@@ -31,21 +31,6 @@ class DeliveryNavigatorObserver extends NavigatorObserver {
 
     super.didPop(route, previousRoute);
   }
-
-  // @override
-  // void didPush(Route route, Route previousRoute) {
-  //   switch (route?.settings?.name) {
-  //     case DeliveryNavigatorRoutes.addresses:
-  //     case DeliveryNavigatorRoutes.map:
-  //     case DeliveryNavigatorRoutes.recipientInfo:
-  //       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-  //       break;
-
-  //     default:
-  //       break;
-  //   }
-  //   super.didPush(route, previousRoute);
-  // }
 }
 
 class DeliveryNavigator extends StatefulWidget {
@@ -68,6 +53,8 @@ class DeliveryNavigator extends StatefulWidget {
 }
 
 class _DeliveryNavigatorState extends State<DeliveryNavigator> {
+  String initialRoute;
+
   List<UserAddress> userAddresses;
   PickPoint selectedAddress;
 
@@ -91,10 +78,15 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
         userAddresses = [];
         break;
     }
+
+    initialRoute = widget.deliveryType.type == Delivery.PICKUP_ADDRESS || userAddresses.isEmpty
+        ? DeliveryNavigatorRoutes.map
+        : DeliveryNavigatorRoutes.addresses;
+
     super.initState();
   }
 
-  Widget _routeBuilder(BuildContext context, String route) {
+  Widget route(BuildContext context, String route) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     switch (route) {
@@ -106,7 +98,6 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           userAddresses: userAddresses,
           onAddAddress: () {
             HapticFeedback.lightImpact();
-
             Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.map);
           },
         );
@@ -118,15 +109,13 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           onFinish: widget.onFinish,
           onAddressPush: (newAddress) {
             selectedAddress = newAddress;
-
             HapticFeedback.lightImpact();
-
-            Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.recipientInfo);
+            Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.info);
           },
         );
 
-      case DeliveryNavigatorRoutes.recipientInfo:
-        return RecipientInfoPage(
+      case DeliveryNavigatorRoutes.info:
+        return InfoPage(
           pickpoint: selectedAddress,
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
@@ -138,7 +127,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           backgroundColor: Colors.white,
           child: Center(
             child: Text(
-              "Default",
+              "Маршрут " + route.toString(),
               style: Theme.of(context).textTheme.headline1,
             ),
           ),
@@ -147,24 +136,19 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final initialRoute =
-        widget.deliveryType.type == Delivery.PICKUP_ADDRESS || userAddresses.isEmpty
-            ? DeliveryNavigatorRoutes.map
-            : DeliveryNavigatorRoutes.addresses;
-
-    return Navigator(
-      initialRoute: initialRoute,
-      observers: [DeliveryNavigatorObserver()],
-      onGenerateInitialRoutes: (navigator, initialRoute) => [
-        CupertinoPageRoute(
-          builder: (context) => _routeBuilder(context, initialRoute),
-        )
-      ],
-      onGenerateRoute: (routeSettings) => CupertinoPageRoute(
-        builder: (context) => _routeBuilder(context, routeSettings.name),
-        settings: routeSettings,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Navigator(
+        initialRoute: initialRoute,
+        observers: [
+          DeliveryNavigatorObserver(),
+        ],
+        onGenerateInitialRoutes: (navigator, initialRoute) => [
+          CupertinoPageRoute(
+            builder: (context) => route(context, initialRoute),
+          )
+        ],
+        onGenerateRoute: (routeSettings) => CupertinoPageRoute(
+          builder: (context) => route(context, routeSettings.name),
+          settings: routeSettings,
+        ),
+      );
 }

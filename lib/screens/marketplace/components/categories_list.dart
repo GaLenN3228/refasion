@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart' as RefCategory;
 import 'package:refashioned_app/screens/catalog/components/category_tile.dart';
 import 'package:refashioned_app/screens/components/button.dart';
@@ -69,9 +70,11 @@ class _CategoriesListState extends State<CategoriesList> {
             category: category,
             selected: widget.multiselection ? selectedSubcategories.contains(category) : null,
             onPush: () {
-              if (widget.multiselection)
+              if (widget.multiselection) {
+                HapticFeedback.selectionClick();
+
                 update(category);
-              else if (widget.onPush != null) widget.onPush(category);
+              } else if (widget.onPush != null) widget.onPush(category);
             }))
         .toList();
     return Column(

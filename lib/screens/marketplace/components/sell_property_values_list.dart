@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/sell_property.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
@@ -49,6 +50,8 @@ class _SellPropertyValuesListState extends State<SellPropertyValuesList> {
             sellPropertyValue: value,
             selected: widget.multiselection ? value.selected : null,
             onPush: () {
+              if (widget.multiselection) HapticFeedback.selectionClick();
+
               if (widget.onUpdate != null) widget.onUpdate(value.id);
             },
           ),

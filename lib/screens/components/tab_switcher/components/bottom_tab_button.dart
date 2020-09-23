@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/cart.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -12,8 +13,7 @@ class BottomTabButton extends StatefulWidget {
   final Function() customOnPush;
   final Function() onTabRefresh;
 
-  const BottomTabButton(this.tab,
-      {this.currentTab, this.customOnPush, this.onTabRefresh});
+  const BottomTabButton(this.tab, {this.currentTab, this.customOnPush, this.onTabRefresh});
 
   @override
   _BottomTabButtonState createState() => _BottomTabButtonState();
@@ -58,8 +58,7 @@ class _BottomTabButtonState extends State<BottomTabButton> {
         onTap: () {
           if (widget.customOnPush != null)
             widget.customOnPush();
-          else if (widget.currentTab.value == widget.tab &&
-              widget.onTabRefresh != null)
+          else if (widget.currentTab.value == widget.tab && widget.onTabRefresh != null)
             widget.onTabRefresh();
           else
             widget.currentTab.value = widget.tab;
@@ -87,11 +86,9 @@ class _BottomTabButtonState extends State<BottomTabButton> {
                     (widget.tab == BottomTab.cart)
                         ? Consumer<CartRepository>(
                             builder: (context, model, child) {
-                              final count =
-                                  model?.response?.content?.productsCount;
+                              final count = model?.response?.content?.productsCount;
 
-                              if (count == null || count == 0)
-                                return SizedBox();
+                              if (count == null || count == 0) return SizedBox();
 
                               return Positioned.fill(
                                 child: Align(
@@ -100,21 +97,15 @@ class _BottomTabButtonState extends State<BottomTabButton> {
                                     width: 15,
                                     height: 15,
                                     decoration: new BoxDecoration(
-                                      color:
-                                          selected ? primaryColor : accentColor,
+                                      color: selected ? primaryColor : accentColor,
                                       shape: BoxShape.circle,
                                     ),
                                     child: Text(
                                       count.toString(),
                                       textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .subtitle1
-                                          .copyWith(
-                                              fontFamily: "SF Compact Display",
-                                              color: selected
-                                                  ? accentColor
-                                                  : primaryColor),
+                                      style: Theme.of(context).textTheme.subtitle1.copyWith(
+                                          fontFamily: "SF Compact Display",
+                                          color: selected ? accentColor : primaryColor),
                                     ),
                                   ),
                                 ),
