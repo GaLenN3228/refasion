@@ -15,6 +15,7 @@ import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
+import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
@@ -266,33 +267,37 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
       case CatalogNavigatorRoutes.products:
         topPanelController.needShow = true;
         topPanelController.needShowBack = true;
-        return ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) {
-          return AddRemoveFavouriteRepository();
-        }, builder: (context, _) {
-          return ProductsPage(
-            parameters: parameters,
-            searchResult: searchResult,
-            topCategory: category,
-            title: productTitle,
-            onPush: (product, {callback}) {
-              HapticFeedback.mediumImpact();
+        return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<AddRemoveFavouriteRepository>(
+                create: (_) => AddRemoveFavouriteRepository(),
+              ),
+            ],
+            builder: (context, _) {
+              return ProductsPage(
+                parameters: parameters,
+                searchResult: searchResult,
+                topCategory: category,
+                title: productTitle,
+                onPush: (product, {callback}) {
+                  HapticFeedback.mediumImpact();
 
-              return Navigator.of(context)
-                  .push(
-                CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
-                      product: product, category: category),
-                ),
-              )
-                  .then(
-                (flag) {
-                  topPanelController.needShow = true;
-                  // callback();
+                  return Navigator.of(context)
+                      .push(
+                    CupertinoPageRoute(
+                      builder: (context) => _routeBuilder(context, CatalogNavigatorRoutes.product,
+                          product: product, category: category),
+                    ),
+                  )
+                      .then(
+                    (flag) {
+                      topPanelController.needShow = true;
+                      // callback();
+                    },
+                  );
                 },
               );
-            },
-          );
-        });
+            });
 
       case CatalogNavigatorRoutes.product:
         topPanelController.needShow = false;

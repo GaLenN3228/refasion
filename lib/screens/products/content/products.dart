@@ -18,11 +18,15 @@ class ProductsPageContent extends StatelessWidget {
     final ProductsRepository productsRepository = context.watch<ProductsRepository>();
     if (productsRepository.isLoading)
       return Center(
+          child: SizedBox(
+        height: 32.0,
+        width: 32.0,
         child: CircularProgressIndicator(
+          strokeWidth: 2,
           backgroundColor: accentColor,
           valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
         ),
-      );
+      ));
 
     if (productsRepository.loadingFailed)
       return Center(
