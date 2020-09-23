@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
@@ -7,8 +8,7 @@ class FilterTileRange extends StatefulWidget {
   final Filter filter;
   final Function() onUpdate;
 
-  const FilterTileRange({Key key, this.filter, this.onUpdate})
-      : super(key: key);
+  const FilterTileRange({Key key, this.filter, this.onUpdate}) : super(key: key);
 
   @override
   _FilterTileRangeState createState() => _FilterTileRangeState();
@@ -59,10 +59,8 @@ class _FilterTileRangeState extends State<FilterTileRange> {
                   )
                 : Text(
                     widget.filter.name,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        .copyWith(fontWeight: FontWeight.w500),
+                    style:
+                        Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
                   ),
           ),
           SizedBox(
@@ -73,6 +71,8 @@ class _FilterTileRangeState extends State<FilterTileRange> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             values: widget.filter.values,
             onSelect: (id) {
+              HapticFeedback.selectionClick();
+
               setState(() {
                 widget.filter.update(id: id);
               });

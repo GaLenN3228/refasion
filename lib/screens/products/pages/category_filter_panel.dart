@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
@@ -11,7 +12,8 @@ class CategoryFilterPanel extends StatefulWidget {
   final List<Category> categories;
   final Category topCategory;
 
-  const CategoryFilterPanel({Key key, this.updateProducts, this.topCategory, this.categories}) : super(key: key);
+  const CategoryFilterPanel({Key key, this.updateProducts, this.topCategory, this.categories})
+      : super(key: key);
 
   @override
   _CategoryFilterPanelState createState() => _CategoryFilterPanelState();
@@ -22,7 +24,7 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
 
   prepareParameters() {
     final selectedIdList =
-    widget.categories.where((category) => category.selected).map((category) => category.id);
+        widget.categories.where((category) => category.selected).map((category) => category.id);
     if (selectedIdList.isNotEmpty)
       categoryFiltersParameters = "?p=" + selectedIdList.join(',');
     else
@@ -44,13 +46,15 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
   }
 
   updateCategory(BuildContext context, {String id}) {
-    if (id != null && id.isNotEmpty) widget.categories.firstWhere((category) => category.id == id).update();
+    if (id != null && id.isNotEmpty)
+      widget.categories.firstWhere((category) => category.id == id).update();
     prepareParameters();
     updateCount(context);
   }
 
   updateCount(BuildContext context) {
-    Provider.of<ProductsCountRepository>(context, listen: false).getProductsCount(categoryFiltersParameters);
+    Provider.of<ProductsCountRepository>(context, listen: false)
+        .getProductsCount(categoryFiltersParameters);
   }
 
   @override
@@ -84,6 +88,8 @@ class _CategoryFilterPanelState extends State<CategoryFilterPanel> {
                       child: CategoryFilterList(
                         values: widget.categories,
                         onSelect: (id) {
+                          HapticFeedback.selectionClick();
+
                           setState(() {
                             updateCategory(context, id: id);
                           });
