@@ -24,17 +24,14 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>${PRODUCT_NAME} uses user location to simplify navigation and search of an user address or a nearest pickup office</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>${PRODUCT_NAME} uses user location to simplify navigation and search of an user address or a nearest pickup office</string>
-
 	<key>NSCameraUsageDescription</key>
 	<string>${PRODUCT_NAME} uses camera to take photos of selling items</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>${PRODUCT_NAME} uses user location to simplify navigation and search of an user address or a nearest pickup office</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>${PRODUCT_NAME} uses user location to simplify navigation and search of an user address or a nearest pickup office</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>${PRODUCT_NAME} uses images from library as selling item photos </string>
-
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
