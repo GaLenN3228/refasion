@@ -62,7 +62,7 @@ class CartItem {
       selectedCount: selectedCount,
       selectedPrice: selectedPrice,
       selectedDiscount: selectedDiscout,
-      shippingCost: deliveryOption?.deliveryCompany?.type != null
+      shippingCost: deliveryOption?.deliveryCompany?.type != null && deliveryData?.cost != null
           ? ShippingCost(
               shipping: deliveryOption.deliveryCompany.type,
               cost: deliveryData.cost,
