@@ -30,6 +30,22 @@ class CartItem {
 
   update(bool value) => cartProducts.forEach((cartProduct) => cartProduct.update(value: value));
 
+  Map<String, dynamic> getOrderParameters() {
+    final items = cartProducts
+        .where((cartProduct) => cartProduct.selected.value)
+        .map((cartProduct) => cartProduct.id)
+        .toList();
+
+    if (items.isNotEmpty)
+      return {
+        "delivery_company": deliveryOption.deliveryCompany.id,
+        "delivery_object_id": deliveryOption.deliveryObject.id,
+        "products": items,
+      };
+    else
+      return null;
+  }
+
   CartItemSummary getSummary() {
     int count = 0;
     int price = 0;

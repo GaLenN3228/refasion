@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/cart/cart.dart';
 import 'package:refashioned_app/models/cart/cart_summary.dart';
@@ -26,6 +28,8 @@ class CartRepository extends BaseRepository<Cart> {
   bool canMakeOrder;
 
   CartSummary summary;
+
+  String orderParameters;
 
   // List<int> scheme;
   // GlobalKey<AnimatedListState> rootListKey;
@@ -62,7 +66,7 @@ class CartRepository extends BaseRepository<Cart> {
     super.dispose();
   }
 
-  updateSelectionAction() {
+  _updateSelectionAction() {
     final itemsWithSelectedDelivery = response?.content?.groups
         ?.where((cartItem) => cartItem.deliveryData != null && cartItem.deliveryOption != null)
         ?.toList();
@@ -90,7 +94,7 @@ class CartRepository extends BaseRepository<Cart> {
     }
   }
 
-  updateSummary() {
+  _updateSummary() {
     int count = 0;
     int price = 0;
     int discout = 0;
@@ -135,6 +139,19 @@ class CartRepository extends BaseRepository<Cart> {
     );
   }
 
+  _updateOrderParameters() {
+    final parameters =
+        response.content?.groups?.fold(List<Map<String, dynamic>>(), (oldList, cartItem) {
+      final itemParameters = cartItem.getOrderParameters();
+
+      if (itemParameters != null) oldList.add(itemParameters);
+
+      return oldList;
+    });
+
+    if (parameters != null) orderParameters = jsonEncode(parameters);
+  }
+
   // updateScheme() {
   //   scheme = response?.content?.groups?.map((cartItem) => cartItem.cartProducts.length)?.toList() ??
   //       [1, 2];
@@ -166,9 +183,11 @@ class CartRepository extends BaseRepository<Cart> {
       selectedIDs.add(id);
     } else if (!selected && wasSelected) selectedIDs.remove(id);
 
-    updateSelectionAction();
+    _updateSelectionAction();
 
-    updateSummary();
+    _updateSummary();
+
+    _updateOrderParameters();
 
     notifyListeners();
 
@@ -234,9 +253,11 @@ class CartRepository extends BaseRepository<Cart> {
           if (newSelected.isNotEmpty)
             newSelected.forEach((productId) => select(productId, value: true));
           else {
-            updateSelectionAction();
+            _updateSelectionAction();
 
-            updateSummary();
+            _updateSummary();
+
+            _updateOrderParameters();
           }
         },
       );

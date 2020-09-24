@@ -161,7 +161,13 @@ class _CartNavigatorState extends State<CartNavigator> {
         return CartPage(
           openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
           onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
-          onCheckoutPush: (order) {
+          onCheckoutPush: (String orderParameters) async {
+            await createOrderRepository.update(orderParameters);
+
+            final orderId = createOrderRepository.response?.content?.id;
+
+            await getOrderRepository.update(orderId);
+
             return Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) =>
@@ -196,16 +202,8 @@ class _CartNavigatorState extends State<CartNavigator> {
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
-              final parameters = jsonEncode([
-                OrderItem(
-                  deliveryCompany: deliveryCompanyId,
-                  deliveryObjectId: deliveryObjectId,
-                  products: [product.id],
-                ),
-              ]);
-
-              await createOrderRepository.update(parameters);
+            onCheckoutPush: (orderParameters) async {
+              await createOrderRepository.update(orderParameters);
 
               final orderId = createOrderRepository.response?.content?.id;
 

@@ -100,13 +100,12 @@ class ProfileNavigator extends StatefulWidget {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     Navigator.of(context)
         .push(
-          CupertinoPageRoute(
-            builder: (context) => _mapPageState._routeBuilder(
-                context, ProfileNavigatorRoutes.products,
-                searchResult: searchResult),
-            settings: RouteSettings(name: ProfileNavigatorRoutes.products),
-          ),
-        )
+      CupertinoPageRoute(
+        builder: (context) => _mapPageState._routeBuilder(context, ProfileNavigatorRoutes.products,
+            searchResult: searchResult),
+        settings: RouteSettings(name: ProfileNavigatorRoutes.products),
+      ),
+    )
         .then((value) {
       topPanelController.needShow = true;
       topPanelController.needShowBack = false;
@@ -125,7 +124,6 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
 
   GetOrderRepository getOrderRepository;
 
-
   @override
   void initState() {
     createOrderRepository = CreateOrderRepository();
@@ -133,7 +131,6 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
     getOrderRepository = GetOrderRepository();
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -254,16 +251,8 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 )
                 .then((value) => topPanelController.needShow = false),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
-              final parameters = jsonEncode([
-                OrderItem(
-                  deliveryCompany: deliveryCompanyId,
-                  deliveryObjectId: deliveryObjectId,
-                  products: [product.id],
-                ),
-              ]);
-
-              await createOrderRepository.update(parameters);
+            onCheckoutPush: (orderParameters) async {
+              await createOrderRepository.update(orderParameters);
 
               final orderId = createOrderRepository.response?.content?.id;
 

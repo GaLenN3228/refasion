@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
-import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/cart_item_tile.dart';
@@ -32,7 +31,7 @@ class CartPage extends StatefulWidget {
 
   final Function() onCatalogPush;
 
-  final Function(Order) onCheckoutPush;
+  final Function(String) onCheckoutPush;
 
   const CartPage(
       {Key key,
@@ -134,7 +133,8 @@ class _CartPageState extends State<CartPage> {
                               bottom: MediaQuery.of(context).padding.bottom + 65.0,
                               child: CartOrderButton(
                                 cartSummary: repository.summary,
-                                onCheckoutPush: () => widget.onCheckoutPush?.call(null),
+                                onCheckoutPush: () =>
+                                    widget.onCheckoutPush?.call(repository.orderParameters),
                               ),
                             )
                           ],

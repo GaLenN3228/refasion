@@ -320,16 +320,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                   .then((value) => topPanelController.needShow = false);
             },
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
-              final parameters = jsonEncode([
-                OrderItem(
-                  deliveryCompany: deliveryCompanyId,
-                  deliveryObjectId: deliveryObjectId,
-                  products: [product.id],
-                ),
-              ]);
-
-              await createOrderRepository.update(parameters);
+            onCheckoutPush: (orderParameters) async {
+              await createOrderRepository.update(orderParameters);
 
               final orderId = createOrderRepository.response?.content?.id;
 
