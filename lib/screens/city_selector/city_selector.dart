@@ -13,6 +13,7 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.da
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/screens/onbording/on_bording.dart';
 
 class CitySelector extends StatefulWidget {
   final bool onFirstLaunch;
@@ -43,7 +44,7 @@ class _CitySelectorState extends State<CitySelector> {
     if (skipable) {
       citiesRepository.removeListener(repositoryListener);
 
-      push(TabSwitcher());
+      push(OnbordingPage());
     }
   }
 

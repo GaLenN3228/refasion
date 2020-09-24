@@ -8,6 +8,7 @@ import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
+import 'package:refashioned_app/screens/onbording/on_bording.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 void main() => runApp(RefashionApp());
@@ -41,9 +42,7 @@ class RefashionApp extends StatelessWidget {
         child: MaterialApp(
           theme: _materialTheme(),
           debugShowCheckedModeBanner: false,
-          home: CitySelector(
-            onFirstLaunch: true,
-          ),
+          home: OnbordingPage(),
         ));
   }
 }
