@@ -85,7 +85,7 @@ class HomePage extends StatelessWidget {
   Widget _bannersList(context, HomeBlock homeBlock) {
     return Material(
       child: Container(
-        margin: EdgeInsets.only(bottom: 25),
+        padding: EdgeInsets.only(bottom: 25),
         color: Colors.white,
         height: MediaQuery.of(context).copyWith().size.width * 0.6,
         child: CustomScrollView(
@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       ...homeBlock.items,
                     ].map(
-                          (blockItem) {
+                      (blockItem) {
                         return _bannersListItem(context, blockItem);
                       },
                     ).toList(),
@@ -111,35 +111,36 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _productsBlockList(context, HomeBlock homeBlock) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...homeBlock.items,
-        ].map(
-          (blockItem) {
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: EdgeInsets.only(left: 20, bottom: 20),
-                      child: Text(
-                        blockItem.name,
-                        style: textTheme.headline2,
-                      )),
-                  _productsList(context, blockItem),
-                ]);
-          },
-        ).toList());
+    return Container(
+        color: Colors.white,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...homeBlock.items,
+            ].map(
+              (blockItem) {
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(left: 20, bottom: 20),
+                          child: Text(
+                            blockItem.name,
+                            style: textTheme.headline2,
+                          )),
+                      _productsList(context, blockItem),
+                    ]);
+              },
+            ).toList()));
   }
 
   Widget _productsList(context, HomeBlockItem homeBlockItem) {
     return Material(
       child: Container(
-        margin: EdgeInsets.only(bottom: 25),
         color: Colors.white,
-        height: 220,
+        height: 245,
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
