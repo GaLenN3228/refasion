@@ -93,6 +93,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Expanded(
                   child: CustomScrollView(
+                    shrinkWrap: true,
                     physics: AlwaysScrollableScrollPhysics(),
                     slivers: [
                       ...homeRepository.response.content.blocks,
@@ -251,7 +252,12 @@ class _HomePageState extends State<HomePage> {
                 style: textTheme.subtitle1,
               ),
             ),
-            Container(padding: EdgeInsets.only(top: 5, bottom: 8), child: Text('Москва')),
+            Container(
+                padding: EdgeInsets.only(top: 5, bottom: 8),
+                child: Text(
+                  'Москва',
+                  style: textTheme.caption,
+                )),
             ProductPrice(
               product: product,
             ),

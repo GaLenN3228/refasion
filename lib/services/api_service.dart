@@ -296,7 +296,7 @@ class ApiService {
       "size": productData.sizes.id,
       "takeaways": [
         {
-          "delivery_company": "e06f6961-3359-42f2-bae5-ef2aefde2472",
+          "delivery_company": "71a4fa75-38a9-4df7-920e-5b4c6bea716e",
           "delivery_object_id": "0326f829-0da8-40da-9191-f265d7d55ce9"
         }
       ],

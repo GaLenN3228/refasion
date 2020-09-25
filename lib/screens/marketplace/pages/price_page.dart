@@ -37,6 +37,8 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
 
   CalcProductPrice _calcProductPrice;
 
+  int newPrice;
+
   @override
   void initState() {
     priceFormatter = PriceFormatter();
@@ -63,7 +65,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
         _calcProductPrice.response = null;
       }
 
-      widget.onUpdate(price);
+      widget.onUpdate(newPrice);
 
       setState(() {
         canPush = price != 0;
@@ -89,7 +91,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
   }
 
   textControllerListener() {
-    final newPrice = int.tryParse(priceFormatter.plainText(textController.text)) ?? 0;
+    newPrice = int.tryParse(priceFormatter.plainText(textController.text)) ?? 0;
     _calcProductPrice.calcProductPrice(newPrice);
   }
 
