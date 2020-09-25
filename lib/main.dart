@@ -107,7 +107,7 @@ ThemeData _materialTheme() {
             color: darkGrayColor,
             height: 1.6),
         caption: TextStyle(
-            fontSize: 10,
+            fontSize: 12,
             fontFamily: "SF UI Text",
             fontWeight: FontWeight.normal,
             color: darkGrayColor,
