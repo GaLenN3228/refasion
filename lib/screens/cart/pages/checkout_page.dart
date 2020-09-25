@@ -1,24 +1,137 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/cart/cart.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/order/order.dart';
+import 'package:refashioned_app/repositories/orders.dart';
+import 'package:refashioned_app/screens/cart/pages/payment_page.dart';
+import 'package:refashioned_app/screens/components/button/button.dart';
+import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
+import 'package:refashioned_app/screens/components/button/components/button_title.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class CheckoutPage extends StatefulWidget {
   final Function() onClose;
 
-  final Cart cart;
   final Order order;
 
-  const CheckoutPage({Key key, this.onClose, this.cart, this.order})
-      : super(key: key);
+  const CheckoutPage({Key key, this.onClose, this.order}) : super(key: key);
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
+  ConfirmOrderRepository confirmOrderRepository;
+
+  GetOrderRepository getOrderRepository;
+
+  UpdateOrderRepository updateOrderRepository;
+
+  Order order;
+
+  String paymentUrl;
+
+  ValueNotifier<ButtonState> buttonState;
+
+  Map<ButtonState, ButtonData> buttonStatesData;
+
+  @override
+  void initState() {
+    confirmOrderRepository = ConfirmOrderRepository();
+
+    getOrderRepository = GetOrderRepository();
+
+    updateOrderRepository = UpdateOrderRepository();
+
+    buttonState = ValueNotifier(ButtonState.disabled);
+
+    buttonStatesData = {
+      ButtonState.enabled: ButtonData(
+        buttonContainerData: ButtonContainerData(
+          decorationType: ButtonDecorationType.black,
+        ),
+        titleData: ButtonTitleData(
+          text: "Оплатить - " + order?.totalPrice.toString() + " ₽",
+          color: ButtonTitleColor.white,
+        ),
+      ),
+      ButtonState.disabled: ButtonData(
+        buttonContainerData: ButtonContainerData(
+          decorationType: ButtonDecorationType.gray,
+        ),
+        titleData: ButtonTitleData(
+          text: "Оплатить",
+          color: ButtonTitleColor.white,
+        ),
+      ),
+    };
+
+    getOrder();
+
+    super.initState();
+  }
+
+  confirmOrder() async {
+    if (buttonState.value == ButtonState.enabled) {
+      if (paymentUrl == null) await confirmOrderRepository.update(widget.order.id, widget.order.number);
+
+      paymentUrl = confirmOrderRepository.response?.content;
+
+      showCupertinoModalBottomSheet(
+        context: context,
+        useRootNavigator: true,
+        isDismissible: false,
+        expand: true,
+        builder: (context, controller) => PaymentPage(
+          initialUrl: paymentUrl,
+          onUrlUpdate: (newUrl) => print(newUrl),
+        ),
+      );
+    }
+  }
+
+  getOrder() async {
+    // await setPaymentMethod();
+
+    await getOrderRepository.update(widget.order.id);
+
+    setState(() => order = getOrderRepository.response?.content);
+
+    final totalPrice = order?.totalPrice;
+
+    if (totalPrice != null) {
+      buttonStatesData[ButtonState.enabled] = ButtonData(
+        buttonContainerData: ButtonContainerData(
+          decorationType: ButtonDecorationType.black,
+        ),
+        titleData: ButtonTitleData(
+          text: "Оплатить - " + totalPrice.toString() + " ₽",
+          color: ButtonTitleColor.white,
+        ),
+      );
+
+      buttonState.value = ButtonState.enabled;
+    } else
+      buttonState.value = ButtonState.disabled;
+
+    print(order);
+  }
+
+  setPaymentMethod() async {
+    await updateOrderRepository.update(widget.order.id, jsonEncode({"id": widget.order.id, "payment_type": "online"}));
+  }
+
+  @override
+  void dispose() {
+    confirmOrderRepository.dispose();
+
+    getOrderRepository.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -33,11 +146,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
           ),
           Expanded(
-            child: Center(
-              child: Text(
-                "Данные заказа",
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
+            child: Stack(
+              children: [
+                ListView(
+                    padding: EdgeInsets.fromLTRB(15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
+                    children: [
+                      Text(
+                        "Данные заказа",
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ]),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: MediaQuery.of(context).padding.bottom + 65.0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: RefashionedButton(
+                      onTap: confirmOrder,
+                      animateContent: false,
+                      states: buttonState,
+                      statesData: buttonStatesData,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -1,13 +1,28 @@
+import 'package:refashioned_app/models/order/order_producr.dart';
+import 'package:refashioned_app/models/pick_point.dart';
+import 'package:refashioned_app/models/seller.dart';
+
 class OrderItem {
-  final String deliveryCompany;
-  final String deliveryObjectId;
-  final List<String> products;
+  final PickPoint deliveryObject;
+  final Seller seller;
+  final int deliveryPrice;
+  final List<OrderProduct> products;
 
-  OrderItem({this.deliveryCompany, this.deliveryObjectId, this.products});
+  const OrderItem({this.seller, this.deliveryPrice, this.products, this.deliveryObject});
 
-  Map<String, dynamic> toJson() => {
-        "delivery_company": deliveryCompany,
-        "delivery_object_id": deliveryObjectId,
-        "products": products,
-      };
+  factory OrderItem.fromJson(Map<String, dynamic> json) => json != null
+      ? OrderItem(
+          deliveryObject: PickPoint.fromJson(json['delivery_object']),
+          seller: Seller.fromJson(json['seller']),
+          deliveryPrice: json['delivery_price'] != null ? (json['delivery_price'] as double)?.toInt() : null,
+          products: json['products'] != null
+              ? [
+                  for (final product in json['products']) OrderProduct.fromJson(product),
+                ]
+              : null,
+        )
+      : null;
+
+  @override
+  String toString() => "seller: " + seller.name + ". products: " + products.join(",");
 }

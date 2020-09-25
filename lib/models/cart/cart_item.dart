@@ -33,7 +33,7 @@ class CartItem {
   Map<String, dynamic> getOrderParameters() {
     final items = cartProducts
         .where((cartProduct) => cartProduct.selected.value)
-        .map((cartProduct) => cartProduct.id)
+        .map((cartProduct) => cartProduct.product.id)
         .toList();
 
     if (items.isNotEmpty)

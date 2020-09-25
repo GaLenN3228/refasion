@@ -133,8 +133,8 @@ class _CartPageState extends State<CartPage> {
                               bottom: MediaQuery.of(context).padding.bottom + 65.0,
                               child: CartOrderButton(
                                 cartSummary: repository.summary,
-                                onCheckoutPush: () =>
-                                    widget.onCheckoutPush?.call(repository.orderParameters),
+                                onCheckoutPush: () async =>
+                                    await widget.onCheckoutPush?.call(repository.orderParameters),
                               ),
                             )
                           ],
