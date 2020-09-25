@@ -11,7 +11,8 @@ class AddRemoveFavouriteRepository extends BaseRepository {
       });
 
   Future<void> removeFromFavourites(String productId) => apiCall(() async {
-        response = BaseResponse.fromJson((await ApiService.removeFromFavourites(productId)).data, null);
+        response =
+            BaseResponse.fromJson((await ApiService.removeFromFavourites(productId)).data, null);
       });
 }
 
@@ -24,8 +25,8 @@ class FavouritesRepository extends BaseRepository<List<Favourite>> {
 
 class FavouritesProductsRepository extends BaseRepository<ProductsContent> {
   Future<void> getFavouritesProducts() => apiCall(() async {
-        response = BaseResponse.fromJson(
-            (await ApiService.getFavouritesProducts()).data, (contentJson) => ProductsContent.fromJson(contentJson));
+        response = BaseResponse.fromJson((await ApiService.getFavouritesProducts()).data,
+            (contentJson) => ProductsContent.fromJson(contentJson));
         response.content.products.forEach((element) {
           element.isFavourite = true;
         });

@@ -79,4 +79,7 @@ class Url {
 
   //Size table
   static String sizes(id) => '$refashionedBaseUrl/catalog/categories/' + id + '/sizes/';
+
+  //Home
+  static const home = '$refashionedBaseUrl/main-page/';
 }

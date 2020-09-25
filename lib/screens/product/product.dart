@@ -163,11 +163,15 @@ class _ProductPageState extends State<ProductPage> {
     switch (status) {
       case Status.LOADING:
         return Center(
+            child: SizedBox(
+          height: 32.0,
+          width: 32.0,
           child: CircularProgressIndicator(
+            strokeWidth: 2,
             backgroundColor: accentColor,
             valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
           ),
-        );
+        ));
       case Status.ERROR:
         return Center(
           child: Text(
