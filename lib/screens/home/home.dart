@@ -5,6 +5,7 @@ import 'package:refashioned_app/models/home.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:refashioned_app/screens/product/components/price.dart';
 
 class HomePage extends StatelessWidget {
   static const String BANNERS = "BANNERS";
@@ -25,7 +26,7 @@ class HomePage extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 50),
+        padding: const EdgeInsets.only(bottom: 70),
         child: Column(
           children: [
             Expanded(
@@ -181,16 +182,15 @@ class HomePage extends StatelessWidget {
             SizedBox(
               width: 100,
               child: Text(
-                product.name,
+                product.brand.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: textTheme.subtitle1,
               ),
             ),
             Container(padding: EdgeInsets.only(top: 5, bottom: 8), child: Text('Москва')),
-            Text(
-              product.currentPrice.toString(),
-              style: textTheme.subtitle1,
+            ProductPrice(
+              product: product,
             ),
           ],
         ),
