@@ -61,6 +61,7 @@ dependencies:
 
   # https://pub.dev/packages/solid_bottom_sheet
   solid_bottom_sheet: ^0.1.9
+  flutter_dialogs: ^1.0.4
 
 dev_dependencies:
   flutter_test:
