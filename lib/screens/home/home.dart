@@ -1,121 +1,56 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/home.dart';
 import 'package:refashioned_app/models/product.dart';
-import 'package:refashioned_app/repositories/home.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/product/components/price.dart';
-import 'package:provider/provider.dart';
-import 'package:refashioned_app/utils/colors.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   static const String BANNERS = "BANNERS";
   static const String PRODUCTS = "PRODUCTS";
   static const String STORIES = "STORIES";
 
+  final HomeContent homeContent;
+  TextTheme textTheme;
+
   final Function(Product) pushProduct;
   final Function(String url, String title) pushCollection;
 
-  HomePage({Key key, this.pushProduct, this.pushCollection}) : super(key: key);
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  TextTheme textTheme;
-  Widget loadIcon;
-
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
-
-  @override
-  void initState() {
-    loadIcon = SizedBox(
-      width: 25.0,
-      height: 25.0,
-      child: defaultTargetPlatform == TargetPlatform.iOS
-          ? const CupertinoActivityIndicator()
-          : const CircularProgressIndicator(strokeWidth: 2.0),
-    );
-    super.initState();
-  }
+  HomePage({Key key, this.homeContent, this.pushProduct, this.pushCollection}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     textTheme = Theme.of(context).textTheme;
-    var homeRepository = context.watch<HomeRepository>();
-    if (homeRepository.isLoading && homeRepository.response == null)
-      return Center(
-          child: SizedBox(
-        height: 32.0,
-        width: 32.0,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          backgroundColor: accentColor,
-          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-        ),
-      ));
-
-    if (homeRepository.loadingFailed || homeRepository.getStatusCode != 200)
-      return Center(
-        child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-      );
-
     return CupertinoPageScaffold(
-        backgroundColor: Colors.white,
-        child:
-        // SmartRefresher(
-        //   enablePullDown: true,
-        //   enablePullUp: false,
-        //   header: ClassicHeader(
-        //     completeDuration: Duration.zero,
-        //     completeIcon: null,
-        //     completeText: "",
-        //     idleIcon: loadIcon,
-        //     idleText: "Обновление",
-        //     refreshingText: "Обновление",
-        //     refreshingIcon: loadIcon,
-        //     releaseIcon: loadIcon,
-        //     releaseText: "Обновление",
-        //   ),
-        //   controller: _refreshController,
-        //   onRefresh: () async {
-        //     HapticFeedback.heavyImpact();
-        //     await homeRepository.getHomePage();
-        //     _refreshController.refreshCompleted();
-        //   },
-        //   child:
-          Padding(
-            padding: const EdgeInsets.only(bottom: 80),
-            child: Column(
-              children: [
-                Expanded(
-                  child: CustomScrollView(
-                    shrinkWrap: true,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      ...homeRepository.response.content.blocks,
-                    ].map(
+      backgroundColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 70),
+        child: Column(
+          children: [
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  ...homeContent.blocks,
+                ].map(
                       (block) {
-                        switch (block.type) {
-                          case HomePage.PRODUCTS:
-                            return SliverToBoxAdapter(child: _productsBlockList(context, block));
-                          case HomePage.BANNERS:
-                            return SliverToBoxAdapter(child: _bannersList(context, block));
-                          case HomePage.STORIES:
-                            return SliverToBoxAdapter(child: _storiesList(context, block));
-                        }
-                      },
-                    ).toList(),
-                  ),
-                ),
-              ],
+                    switch (block.type) {
+                      case PRODUCTS:
+                        return SliverToBoxAdapter(child: _productsBlockList(context, block));
+                      case BANNERS:
+                        return SliverToBoxAdapter(child: _bannersList(context, block));
+                      case STORIES:
+                        return SliverToBoxAdapter(child: _storiesList(context, block));
+                    }
+                  },
+                ).toList(),
+              ),
             ),
-          // ),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _storiesList(context, HomeBlock homeBlock) {
@@ -136,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       ...homeBlock.items,
                     ].map(
-                      (blockItem) {
+                          (blockItem) {
                         return _storiesListItem(context, blockItem);
                       },
                     ).toList(),
@@ -164,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       ...homeBlock.items,
                     ].map(
-                      (blockItem) {
+                          (blockItem) {
                         return _bannersListItem(context, blockItem);
                       },
                     ).toList(),
@@ -185,7 +120,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               ...homeBlock.items,
             ].map(
-              (blockItem) {
+                  (blockItem) {
                 return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +147,7 @@ class _HomePageState extends State<HomePage> {
           shrinkWrap: true,
           slivers: [
             SliverPadding(
-                padding: EdgeInsets.only(left: 12, right: 12),
+                padding: EdgeInsets.only(left: 14, right: 14),
                 sliver: SliverToBoxAdapter(
                   child: Row(
                     children: [...homeBlockItem.products].map((product) {
@@ -229,10 +164,10 @@ class _HomePageState extends State<HomePage> {
   Widget _productsListItem(context, Product product) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      padding: EdgeInsets.only(right: 8, left: 8),
+      padding: EdgeInsets.only(right: 6, left: 6),
       child: Tapable(
         onTap: () {
-          widget.pushProduct(product);
+          pushProduct(product);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,12 +188,7 @@ class _HomePageState extends State<HomePage> {
                 style: textTheme.subtitle1,
               ),
             ),
-            Container(
-                padding: EdgeInsets.only(top: 5, bottom: 8),
-                child: Text(
-                  'Москва',
-                  style: textTheme.caption,
-                )),
+            Container(padding: EdgeInsets.only(top: 5, bottom: 8), child: Text('Москва', style: textTheme.caption)),
             ProductPrice(
               product: product,
             ),
@@ -272,7 +202,7 @@ class _HomePageState extends State<HomePage> {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Tapable(
       onTap: () {
-        widget.pushCollection(homeBlockItem.url, homeBlockItem.name);
+        pushCollection(homeBlockItem.url, homeBlockItem.name);
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 20, right: 4, left: 4),
@@ -305,7 +235,7 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.only(right: 6, left: 6),
       child: Tapable(
         onTap: () {
-          widget.pushCollection(homeBlockItem.url, homeBlockItem.name);
+          pushCollection(homeBlockItem.url, homeBlockItem.name);
         },
         child: Container(
           child: Image.network(
