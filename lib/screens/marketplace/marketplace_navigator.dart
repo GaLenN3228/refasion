@@ -120,7 +120,7 @@ class ProductData {
 
   String description;
 
-  List<SellProperty> properties;
+  List<SellProperty> properties = List();
 
   List<String> photos;
 
@@ -130,7 +130,7 @@ class ProductData {
 
   String card;
 
-  Sizes sizes;
+  Values sizes;
 
   updateCategory(Category newCategory) => category = newCategory;
 
@@ -149,6 +149,8 @@ class ProductData {
   updateDescription(String newDescription) => description = newDescription;
 
   updateProperties(SellProperty newSellProperty) => properties.add(newSellProperty);
+
+  updateSizes(Values sizes) => this.sizes = sizes;
 }
 
 class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
@@ -260,6 +262,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           initialData: productData.category,
           onUpdate: () => productData.updateCategory(category),
           onPush: (chosenCategory) {
+            productData.updateCategory(chosenCategory);
+
             sellPropertiesRepository = SellPropertiesRepository();
             sellPropertiesRepository.getProperties(category.id);
 
@@ -325,7 +329,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         return SizeValuesPage(
           sizes: size,
           onBack: Navigator.of(context).pop,
-          onPush: () {
+          onPush: (sizeValue) {
+            productData.updateSizes(sizeValue);
             final hasSellProperties = (sellPropertiesRepository != null &&
                 sellPropertiesRepository.isLoaded &&
                 sellPropertiesRepository.response.status.code == 200 &&
@@ -359,6 +364,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           initialData: productData.properties,
           onUpdate: () => productData.updateProperties(sellProperty),
           onPush: () {
+            productData.updateProperties(sellProperty);
+
             if (sellPropertyIndex < sellProperties.length - 1)
               Navigator.of(context).push(
                 CupertinoPageRoute(
@@ -523,6 +530,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         return WillPopScope(
           onWillPop: () async => false,
           child: OnModerationPage(
+            productData: productData,
             onClose: widget.onClose,
           ),
         );

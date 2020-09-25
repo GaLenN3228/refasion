@@ -277,17 +277,23 @@ class ApiService {
     return dioClient.delete(Url.wished, data: body);
   }
 
-  static Future<Response> addProducts() async {
+  static Future<Response> addProducts(ProductData productData) async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    List<String> properties = List();
+    productData.properties.forEach((element) {
+      element.values.where((element) => element.selected).forEach((element) {
+        properties.add(element.id);
+      });
+    });
     var body = {
-      "name": "гуччиверсачи",
-      "description": "гуччиверсачидайтедва",
-      "property_values": ["80166815-0ffa-4bdf-947c-cfe381cc9c35"],
-      "brand": "ddbd6c95-1d0d-4979-8534-113be732d0be",
-      "category": "d9bdb3c7-7976-4eb8-b227-561d8cc5e9af",
-      "current_price": 900,
-      "discount_price": 1000,
-      "size": "35f27a8d-2223-44f9-8753-e17b49c997a5",
+      "name": productData.description,
+      "description": productData.description,
+      "property_values": properties,
+      "brand": productData.brand.id,
+      "category": productData.category.id,
+      "current_price": productData.price,
+      "discount_price": productData.price,
+      "size": productData.sizes.id,
       "takeaways": [
         {
           "delivery_company": "e06f6961-3359-42f2-bae5-ef2aefde2472",
