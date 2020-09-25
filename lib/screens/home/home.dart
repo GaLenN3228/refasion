@@ -67,27 +67,29 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         backgroundColor: Colors.white,
-        body: SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: false,
-          header: ClassicHeader(
-            completeDuration: Duration.zero,
-            completeIcon: null,
-            completeText: "",
-            idleIcon: loadIcon,
-            idleText: "Обновление",
-            refreshingText: "Обновление",
-            refreshingIcon: loadIcon,
-            releaseIcon: loadIcon,
-            releaseText: "Обновление",
-          ),
-          controller: _refreshController,
-          onRefresh: () async {
-            HapticFeedback.heavyImpact();
-            await homeRepository.getHomePage();
-            _refreshController.refreshCompleted();
-          },
-          child: Padding(
+        body:
+        // SmartRefresher(
+        //   enablePullDown: true,
+        //   enablePullUp: false,
+        //   header: ClassicHeader(
+        //     completeDuration: Duration.zero,
+        //     completeIcon: null,
+        //     completeText: "",
+        //     idleIcon: loadIcon,
+        //     idleText: "Обновление",
+        //     refreshingText: "Обновление",
+        //     refreshingIcon: loadIcon,
+        //     releaseIcon: loadIcon,
+        //     releaseText: "Обновление",
+        //   ),
+        //   controller: _refreshController,
+        //   onRefresh: () async {
+        //     HapticFeedback.heavyImpact();
+        //     await homeRepository.getHomePage();
+        //     _refreshController.refreshCompleted();
+        //   },
+        //   child:
+          Padding(
             padding: const EdgeInsets.only(bottom: 80),
             child: Column(
               children: [
@@ -113,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          ),
+          // ),
         ));
   }
 
