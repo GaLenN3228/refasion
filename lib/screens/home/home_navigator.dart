@@ -84,7 +84,8 @@ class HomeNavigator extends StatelessWidget {
   }
 
   Widget _routeBuilder(BuildContext context, String route,
-      {Category category,
+      {HomeContent homeContent,
+      Category category,
       Product product,
       Seller seller,
       String parameters,
@@ -96,36 +97,31 @@ class HomeNavigator extends StatelessWidget {
     switch (route) {
       case HomeNavigatorRoutes.root:
         topPanelController.needShowBack = false;
-        return ChangeNotifierProvider<HomeRepository>(create: (_) {
-          return HomeRepository()..getHomePage();
-        }, builder: (context, _) {
-          return HomePage(
-            pushProduct: (product) {
-              Navigator.of(context)
-                  .push(
-                    CupertinoPageRoute(
-                      builder: (context) =>
-                          _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
-                    ),
-                  )
-                  .then((value) => topPanelController.needShow = true);
-            },
-            pushCollection: (url, title) {
-              Navigator.of(context)
-                  .push(
-                    CupertinoPageRoute(
-                      builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
-                          collectionUrl: url, productTitle: title),
-                      settings: RouteSettings(name: HomeNavigatorRoutes.products),
-                    ),
-                  )
-                  .then((value) => {
-                        topPanelController.needShow = true,
-                        topPanelController.needShowBack = false
-                      });
-            },
-          );
-        });
+        return HomePage(
+          homeContent: homeContent,
+          pushProduct: (product) {
+            Navigator.of(context)
+                .push(
+                  CupertinoPageRoute(
+                    builder: (context) =>
+                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
+                  ),
+                )
+                .then((value) => topPanelController.needShow = true);
+          },
+          pushCollection: (url, title) {
+            Navigator.of(context)
+                .push(
+                  CupertinoPageRoute(
+                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
+                        collectionUrl: url, productTitle: title),
+                    settings: RouteSettings(name: HomeNavigatorRoutes.products),
+                  ),
+                )
+                .then((value) =>
+                    {topPanelController.needShow = true, topPanelController.needShowBack = false});
+          },
+        );
 
       case HomeNavigatorRoutes.products:
         topPanelController.needShow = true;
@@ -249,6 +245,25 @@ class HomeNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeRepository = context.watch<HomeRepository>();
+
+    if (homeRepository.isLoading)
+      return Center(
+          child: SizedBox(
+        height: 32.0,
+        width: 32.0,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          backgroundColor: accentColor,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
+      ));
+
+    if (homeRepository.loadingFailed || homeRepository.getStatusCode != 200)
+      return Center(
+        child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+      );
+
     createOrderRepository = CreateOrderRepository();
 
     getOrderRepository = GetOrderRepository();
@@ -258,10 +273,8 @@ class HomeNavigator extends StatelessWidget {
       initialRoute: HomeNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
-          builder: (context) => _routeBuilder(
-            context,
-            routeSettings.name,
-          ),
+          builder: (context) => _routeBuilder(context, routeSettings.name,
+              homeContent: homeRepository.response.content),
         );
       },
     );
