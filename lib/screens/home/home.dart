@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/home.dart';
 import 'package:refashioned_app/models/product.dart';
@@ -65,9 +64,9 @@ class _HomePageState extends State<HomePage> {
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    return Scaffold(
+    return CupertinoPageScaffold(
         backgroundColor: Colors.white,
-        body:
+        child:
         // SmartRefresher(
         //   enablePullDown: true,
         //   enablePullUp: false,
