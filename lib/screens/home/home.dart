@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
   TextTheme textTheme;
 
   final Function(Product) pushProduct;
-  final Function(String url) pushCollection;
+  final Function(String url, String title) pushCollection;
 
   HomePage({Key key, this.homeContent, this.pushProduct, this.pushCollection}) : super(key: key);
 
@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 30),
+        padding: const EdgeInsets.only(bottom: 50),
         child: Column(
           children: [
             Expanded(
@@ -55,6 +55,7 @@ class HomePage extends StatelessWidget {
   Widget _storiesList(context, HomeBlock homeBlock) {
     return Material(
       child: Container(
+        color: Colors.white,
         padding: EdgeInsets.only(
           bottom: 20,
         ),
@@ -62,17 +63,19 @@ class HomePage extends StatelessWidget {
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
           slivers: [
-            SliverToBoxAdapter(
-              child: Row(
-                children: [
-                  ...homeBlock.items,
-                ].map(
-                  (blockItem) {
-                    return _storiesListItem(context, blockItem);
-                  },
-                ).toList(),
-              ),
-            ),
+            SliverPadding(
+                padding: EdgeInsets.only(left: 14, right: 14),
+                sliver: SliverToBoxAdapter(
+                  child: Row(
+                    children: [
+                      ...homeBlock.items,
+                    ].map(
+                      (blockItem) {
+                        return _storiesListItem(context, blockItem);
+                      },
+                    ).toList(),
+                  ),
+                ))
           ],
         ),
       ),
@@ -80,19 +83,28 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _bannersList(context, HomeBlock homeBlock) {
-    CarouselController buttonCarouselController = CarouselController();
     return Material(
       child: Container(
-        child: CarouselSlider(
-          carouselController: buttonCarouselController,
-          items: [
-            ...homeBlock.items,
-          ].map(
-            (blockItem) {
-              return _bannersListItem(context, blockItem);
-            },
-          ).toList(),
-          options: CarouselOptions(autoPlay: false, enableInfiniteScroll: false),
+        margin: EdgeInsets.only(bottom: 25),
+        color: Colors.white,
+        height: MediaQuery.of(context).copyWith().size.width * 0.6,
+        child: CustomScrollView(
+          scrollDirection: Axis.horizontal,
+          slivers: [
+            SliverPadding(
+                padding: EdgeInsets.only(left: 14, right: 14),
+                sliver: SliverToBoxAdapter(
+                  child: Row(
+                    children: [
+                      ...homeBlock.items,
+                    ].map(
+                          (blockItem) {
+                        return _bannersListItem(context, blockItem);
+                      },
+                    ).toList(),
+                  ),
+                ))
+          ],
         ),
       ),
     );
@@ -111,7 +123,7 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                      padding: EdgeInsets.only(left: 20, top: 25, bottom: 25),
+                      margin: EdgeInsets.only(left: 20, bottom: 20),
                       child: Text(
                         blockItem.name,
                         style: textTheme.headline2,
@@ -125,19 +137,22 @@ class HomePage extends StatelessWidget {
   Widget _productsList(context, HomeBlockItem homeBlockItem) {
     return Material(
       child: Container(
+        margin: EdgeInsets.only(bottom: 25),
         color: Colors.white,
-        height: 200,
+        height: 220,
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           slivers: [
-            SliverToBoxAdapter(
-              child: Row(
-                children: [...homeBlockItem.products].map((product) {
-                  return _productsListItem(context, product);
-                }).toList(),
-              ),
-            )
+            SliverPadding(
+                padding: EdgeInsets.only(left: 14, right: 14),
+                sliver: SliverToBoxAdapter(
+                  child: Row(
+                    children: [...homeBlockItem.products].map((product) {
+                      return _productsListItem(context, product);
+                    }).toList(),
+                  ),
+                ))
           ],
         ),
       ),
@@ -147,7 +162,7 @@ class HomePage extends StatelessWidget {
   Widget _productsListItem(context, Product product) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      padding: EdgeInsets.only(right: 20, left: 20),
+      padding: EdgeInsets.only(right: 6, left: 6),
       child: Tapable(
         onTap: () {
           pushProduct(product);
@@ -157,9 +172,9 @@ class HomePage extends StatelessWidget {
           children: [
             Image.network(
               product.image,
-              width: 100,
+              width: 110,
               fit: BoxFit.cover,
-              height: 140,
+              height: 160,
             ),
             SizedBox(height: 4),
             SizedBox(
@@ -171,7 +186,7 @@ class HomePage extends StatelessWidget {
                 style: textTheme.subtitle1,
               ),
             ),
-            Container(padding: EdgeInsets.only(top: 5, bottom: 5), child: Text('Москва')),
+            Container(padding: EdgeInsets.only(top: 5, bottom: 8), child: Text('Москва')),
             Text(
               product.currentPrice.toString(),
               style: textTheme.subtitle1,
@@ -185,9 +200,11 @@ class HomePage extends StatelessWidget {
   Widget _storiesListItem(context, HomeBlockItem homeBlockItem) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Tapable(
-      onTap: () {},
+      onTap: () {
+        pushCollection(homeBlockItem.url, homeBlockItem.name);
+      },
       child: Padding(
-        padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
+        padding: const EdgeInsets.only(top: 20, right: 4, left: 4),
         child: Column(
           children: [
             ClipRRect(
@@ -214,11 +231,12 @@ class HomePage extends StatelessWidget {
 
   Widget _bannersListItem(context, HomeBlockItem homeBlockItem) {
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.only(right: 6, left: 6),
       child: Tapable(
-        onTap: () {},
+        onTap: () {
+          pushCollection(homeBlockItem.url, homeBlockItem.name);
+        },
         child: Container(
-          color: Color(0xFFD4EAFF),
           child: Image.network(
             homeBlockItem.image,
             fit: BoxFit.cover,

@@ -85,29 +85,43 @@ class HomeNavigator extends StatelessWidget {
 
   Widget _routeBuilder(BuildContext context, String route,
       {HomeContent homeContent,
-        Category category,
+      Category category,
       Product product,
       Seller seller,
       String parameters,
       Order order,
       String productTitle,
-      SearchResult searchResult}) {
+      SearchResult searchResult,
+      String collectionUrl}) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     switch (route) {
       case HomeNavigatorRoutes.root:
         topPanelController.needShowBack = false;
-        return HomePage(homeContent: homeContent, pushProduct: (product) {
-          Navigator.of(context)
-              .push(
-            CupertinoPageRoute(
-              builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                  product: product),
-            ),
-          )
-              .then((value) => topPanelController.needShow = true);
-        }, pushCollection: (url){
-
-        },);
+        return HomePage(
+          homeContent: homeContent,
+          pushProduct: (product) {
+            Navigator.of(context)
+                .push(
+                  CupertinoPageRoute(
+                    builder: (context) =>
+                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
+                  ),
+                )
+                .then((value) => topPanelController.needShow = true);
+          },
+          pushCollection: (url, title) {
+            Navigator.of(context)
+                .push(
+                  CupertinoPageRoute(
+                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
+                        collectionUrl: url, productTitle: title),
+                    settings: RouteSettings(name: HomeNavigatorRoutes.products),
+                  ),
+                )
+                .then((value) =>
+                    {topPanelController.needShow = true, topPanelController.needShowBack = false});
+          },
+        );
 
       case HomeNavigatorRoutes.products:
         topPanelController.needShow = true;
@@ -116,6 +130,7 @@ class HomeNavigator extends StatelessWidget {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductsPage(
+            collectionUrl: collectionUrl,
             parameters: parameters,
             searchResult: searchResult,
             topCategory: category,
@@ -258,7 +273,8 @@ class HomeNavigator extends StatelessWidget {
       initialRoute: HomeNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
-          builder: (context) => _routeBuilder(context, routeSettings.name,homeContent: homeRepository.response.content),
+          builder: (context) => _routeBuilder(context, routeSettings.name,
+              homeContent: homeRepository.response.content),
         );
       },
     );

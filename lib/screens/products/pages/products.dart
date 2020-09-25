@@ -66,6 +66,8 @@ class _ProductsPageState extends State<ProductsPage> {
 
     if (widget.searchResult != null) {
       initialParameters = "?p=" + widget.searchResult.id;
+    }else if (widget.collectionUrl != null) {
+      initialParameters = widget.collectionUrl.replaceAll("v1/", "");
     } else if (widget.parameters != null) {
       initialParameters = widget.parameters;
     } else if (categoryBrandsRepository.response != null && categoryBrandsRepository.isLoaded) {

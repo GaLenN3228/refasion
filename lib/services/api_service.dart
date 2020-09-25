@@ -179,7 +179,11 @@ class ApiService {
 
   static Future<Response> getProducts({String parameters}) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    return dioClient.get(Url.products + (parameters ?? ''));
+    return dioClient.get(parameters != null
+        ? (parameters.contains("collection")
+            ? Url.refashionedBaseUrl + parameters
+            : Url.products + parameters)
+        : Url.products);
   }
 
   static Future<Response> getSearchResults(String query) async {
@@ -278,16 +282,18 @@ class ApiService {
     var body = {
       "name": "гуччиверсачи",
       "description": "гуччиверсачидайтедва",
-      "property_values": [
-        "80166815-0ffa-4bdf-947c-cfe381cc9c35"],
+      "property_values": ["80166815-0ffa-4bdf-947c-cfe381cc9c35"],
       "brand": "ddbd6c95-1d0d-4979-8534-113be732d0be",
       "category": "d9bdb3c7-7976-4eb8-b227-561d8cc5e9af",
       "current_price": 900,
       "discount_price": 1000,
       "size": "35f27a8d-2223-44f9-8753-e17b49c997a5",
-      "takeaways": [{
-        "delivery_company":"e06f6961-3359-42f2-bae5-ef2aefde2472",
-        "delivery_object_id": "0326f829-0da8-40da-9191-f265d7d55ce9"}],
+      "takeaways": [
+        {
+          "delivery_company": "e06f6961-3359-42f2-bae5-ef2aefde2472",
+          "delivery_object_id": "0326f829-0da8-40da-9191-f265d7d55ce9"
+        }
+      ],
     };
     return dioClient.post(Url.addProduct, data: body);
   }
