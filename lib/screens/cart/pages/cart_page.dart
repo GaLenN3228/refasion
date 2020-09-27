@@ -7,7 +7,7 @@ import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/cart_item_tile.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/order_button.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/summary_tile.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/cart_summary_tile.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
@@ -103,8 +103,8 @@ class _CartPageState extends State<CartPage> {
                       ? Stack(
                           children: [
                             ListView(
-                              padding: EdgeInsets.fromLTRB(15, 0, 15,
-                                  MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
+                              padding: EdgeInsets.fromLTRB(
+                                  15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
                               children: <Widget>[
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
@@ -121,7 +121,7 @@ class _CartPageState extends State<CartPage> {
                                   ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 5),
-                                  child: SummaryTile(
+                                  child: CartSummaryTile(
                                     cartSummary: repository.summary,
                                   ),
                                 )

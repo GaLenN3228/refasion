@@ -4,10 +4,10 @@ import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/summary_line.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 
-class SummaryTile extends StatelessWidget {
+class CartSummaryTile extends StatelessWidget {
   final CartSummary cartSummary;
 
-  const SummaryTile({this.cartSummary});
+  const CartSummaryTile({this.cartSummary});
 
   @override
   Widget build(BuildContext context) {
