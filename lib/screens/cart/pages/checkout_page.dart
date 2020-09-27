@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/repositories/orders.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/order_item_tile.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/order_payment_tile.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/order_summary_tile.dart';
 import 'package:refashioned_app/screens/cart/pages/payment_page.dart';
 import 'package:refashioned_app/screens/components/button/button.dart';
 import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class CheckoutPage extends StatefulWidget {
   final Function() onClose;
@@ -53,7 +57,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           decorationType: ButtonDecorationType.black,
         ),
         titleData: ButtonTitleData(
-          text: "Оплатить - " + order?.totalPrice.toString() + " ₽",
+          text: "Оплатить - " + order?.orderSummary?.total.toString() + " ₽",
           color: ButtonTitleColor.white,
         ),
       ),
@@ -99,7 +103,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     setState(() => order = getOrderRepository.response?.content);
 
-    final totalPrice = order?.totalPrice;
+    final totalPrice = order?.orderSummary?.total;
 
     if (totalPrice != null) {
       buttonStatesData[ButtonState.enabled] = ButtonData(
@@ -148,14 +152,30 @@ class _CheckoutPageState extends State<CheckoutPage> {
           Expanded(
             child: Stack(
               children: [
-                ListView(
-                    padding: EdgeInsets.fromLTRB(15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
-                    children: [
-                      Text(
-                        "Данные заказа",
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    ]),
+                order == null
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: accentColor,
+                          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                          strokeWidth: 1,
+                        ),
+                      )
+                    : ListView(
+                        padding:
+                            EdgeInsets.fromLTRB(15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
+                        children: [
+                            for (final item in order.items)
+                              OrderItemTile(
+                                orderItem: item,
+                              ),
+                            OrderPaymentTile(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              child: OrderSummaryTile(
+                                orderSummary: order.orderSummary,
+                              ),
+                            ),
+                          ]),
                 Positioned(
                   left: 0,
                   right: 0,
