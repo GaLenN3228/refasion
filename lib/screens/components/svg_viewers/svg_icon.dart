@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:refashioned_app/utils/colors.dart';
 
 final basePath = "assets/icons/svg/";
 
@@ -54,6 +53,7 @@ enum IconAsset {
   geolocation,
   compass,
   notifications,
+  order,
 
   marketPlaceCategory1,
   marketPlaceCategory2,
@@ -98,6 +98,7 @@ final assets = {
   IconAsset.message: "message.svg",
   IconAsset.more: "more.svg",
   IconAsset.notifications: "notifications.svg",
+  IconAsset.order: "order.svg",
   IconAsset.person: "person.svg",
   IconAsset.personThin: "person_thin.svg",
   IconAsset.search: "search.svg",
@@ -118,8 +119,7 @@ class SVGIcon extends StatelessWidget {
   final double height;
   final Color color;
 
-  const SVGIcon(
-      {this.icon, this.size: 30, this.width, this.height, this.color});
+  const SVGIcon({this.icon, this.size: 30, this.width, this.height, this.color});
 
   @override
   Widget build(BuildContext context) {

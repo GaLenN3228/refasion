@@ -17,10 +17,11 @@ import 'package:refashioned_app/utils/colors.dart';
 
 class CheckoutPage extends StatefulWidget {
   final Function() onClose;
+  final Function(int) onOrderCreatedPush;
 
   final Order order;
 
-  const CheckoutPage({Key key, this.onClose, this.order}) : super(key: key);
+  const CheckoutPage({Key key, this.onClose, this.order, this.onOrderCreatedPush}) : super(key: key);
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
@@ -90,7 +91,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         expand: true,
         builder: (context, controller) => PaymentPage(
           initialUrl: paymentUrl,
-          onUrlUpdate: (newUrl) => print(newUrl),
+          onFinish: () => widget.onOrderCreatedPush?.call(order?.orderSummary?.total),
         ),
       );
     }

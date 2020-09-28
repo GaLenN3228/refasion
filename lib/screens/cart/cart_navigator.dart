@@ -13,6 +13,7 @@ import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/product/product.dart';
@@ -24,6 +25,7 @@ class CartNavigatorRoutes {
   static const String product = '/product';
   static const String seller = '/seller';
   static const String checkout = '/checkout';
+  static const String orderCreated = '/order_created';
   static const String products = '/products';
   static const String favourites = '/favourites';
 }
@@ -117,6 +119,7 @@ class _CartNavigatorState extends State<CartNavigator> {
   CreateOrderRepository createOrderRepository;
 
   Order order;
+  int totalPrice;
 
   DeliveryType selectedDeliveryType;
 
@@ -295,7 +298,19 @@ class _CartNavigatorState extends State<CartNavigator> {
             });
 
       case CartNavigatorRoutes.checkout:
-        return CheckoutPage(order: order);
+        return CheckoutPage(
+          order: order,
+          onOrderCreatedPush: (newTotalPrice) async {
+            totalPrice = newTotalPrice;
+            await Navigator.of(context).pushReplacementNamed(CartNavigatorRoutes.orderCreated);
+          },
+        );
+
+      case CartNavigatorRoutes.orderCreated:
+        return OrderCreatedPage(
+          totalPrice: totalPrice,
+          onUserOrderPush: () => widget.changeTabTo(BottomTab.profile),
+        );
 
       default:
         return CupertinoPageScaffold(

@@ -9,9 +9,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentPage extends StatefulWidget {
   final String initialUrl;
-  final Function(String) onUrlUpdate;
+  final Function() onFinish;
 
-  const PaymentPage({Key key, this.initialUrl, this.onUrlUpdate}) : super(key: key);
+  const PaymentPage({Key key, this.initialUrl, this.onFinish}) : super(key: key);
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
@@ -20,15 +20,15 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   final Completer<WebViewController> controller = Completer<WebViewController>();
 
-  JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-        name: 'Toaster',
-        onMessageReceived: (JavascriptMessage message) {
-          Scaffold.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
-        });
-  }
+  JavascriptChannel _toasterJavascriptChannel(BuildContext context) => JavascriptChannel(
+      name: 'Toaster',
+      onMessageReceived: (JavascriptMessage message) {
+        print("Message received: ${message.message}");
+
+        Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text(message.message)),
+        );
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -38,30 +38,40 @@ class _PaymentPageState extends State<PaymentPage> {
         children: [
           RefashionedTopBar(
             data: TopBarData.simple(
-              includeTopScreenPadding: false,
-              middleText: "Оплата",
-              onClose: Navigator.of(context).pop,
-            ),
+                includeTopScreenPadding: false,
+                middleText: "Оплата",
+                // onClose: Navigator.of(context).pop,
+                onClose: () {
+                  widget.onFinish?.call();
+
+                  Navigator.of(context).pop();
+                }),
           ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(top: 10, bottom: MediaQuery.of(context).padding.bottom),
               child: WebView(
-                initialUrl: widget.initialUrl, javascriptMode: JavascriptMode.unrestricted,
+                initialUrl: widget.initialUrl,
+                javascriptMode: JavascriptMode.unrestricted,
                 onWebViewCreated: (WebViewController webViewController) {
                   controller.complete(webViewController);
                 },
-                // TODO(iskakaushik): Remove this when collection literals makes it to stable.
-                // ignore: prefer_collection_literals
                 javascriptChannels: <JavascriptChannel>[
                   _toasterJavascriptChannel(context),
                 ].toSet(),
-                navigationDelegate: (NavigationRequest request) {
-                  if (request.url.startsWith('https://www.youtube.com/')) {
+                navigationDelegate: (NavigationRequest request) async {
+                  if (request.url.startsWith('https://www.refashioned.ru/')) {
                     print('blocking navigation to $request}');
+
+                    await widget.onFinish?.call();
+
+                    Navigator.of(context).pop();
+
                     return NavigationDecision.prevent;
                   }
+
                   print('allowing navigation to $request');
+
                   return NavigationDecision.navigate;
                 },
                 onPageStarted: (String url) {
