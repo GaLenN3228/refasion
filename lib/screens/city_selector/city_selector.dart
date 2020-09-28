@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/cities.dart';
@@ -54,9 +55,8 @@ class _CitySelectorState extends State<CitySelector> {
     super.dispose();
   }
 
-  push(Widget widget, {BuildContext context}) =>
-      Navigator.of(context ?? this.context).pushReplacement(
-        CupertinoPageRoute(
+  push(Widget widget, {BuildContext context}) => Navigator.of(context ?? this.context).pushReplacement(
+        MaterialWithModalsPageRoute(
           builder: (context) => widget,
         ),
       );
