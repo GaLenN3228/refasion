@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
-import 'package:refashioned_app/models/home.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/order/order_item.dart';
 import 'package:refashioned_app/models/pick_point.dart';
@@ -15,14 +14,12 @@ import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/home.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
-import 'package:refashioned_app/utils/colors.dart';
 
 import 'home.dart';
 
@@ -80,8 +77,7 @@ class HomeNavigator extends StatelessWidget {
   }
 
   Widget _routeBuilder(BuildContext context, String route,
-      {HomeContent homeContent,
-      Category category,
+      {Category category,
       Product product,
       Seller seller,
       String parameters,
@@ -94,7 +90,6 @@ class HomeNavigator extends StatelessWidget {
       case HomeNavigatorRoutes.root:
         topPanelController.needShowBack = false;
         return HomePage(
-          homeContent: homeContent,
           pushProduct: (product) {
             Navigator.of(context)
                 .push(
@@ -230,24 +225,7 @@ class HomeNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeRepository = context.watch<HomeRepository>();
 
-    if (homeRepository.isLoading)
-      return Center(
-          child: SizedBox(
-        height: 32.0,
-        width: 32.0,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          backgroundColor: accentColor,
-          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-        ),
-      ));
-
-    if (homeRepository.loadingFailed || homeRepository.getStatusCode != 200)
-      return Center(
-        child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-      );
 
     createOrderRepository = CreateOrderRepository();
 
@@ -258,8 +236,7 @@ class HomeNavigator extends StatelessWidget {
       initialRoute: HomeNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return CupertinoPageRoute(
-          builder: (context) => _routeBuilder(context, routeSettings.name,
-              homeContent: homeRepository.response.content),
+          builder: (context) => _routeBuilder(context, routeSettings.name),
         );
       },
     );
