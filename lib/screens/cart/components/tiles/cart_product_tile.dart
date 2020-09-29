@@ -26,8 +26,6 @@ class CartProductTile extends StatefulWidget {
 }
 
 class _CartProductTileState extends State<CartProductTile> {
-  final bool colored = false;
-
   AddRemoveFavouriteRepository addRemoveFavouriteRepository;
 
   CartRepository cartRepository;
@@ -106,72 +104,69 @@ class _CartProductTileState extends State<CartProductTile> {
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: product.state == ProductState.published ? widget.onSelect : dialog,
+      onTap: () {
+        if (product.state == ProductState.published)
+          widget.onSelect();
+        else
+          dialog();
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Container(
-          color: colored ? Colors.cyanAccent : null,
+        child: SizedBox(
+          height: 80,
           child: Row(
             children: [
-              Container(
-                color: colored ? Colors.pinkAccent : null,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: RefashionedCheckboxListenable(
-                    valueNotifier: widget.cartProduct.selected,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: RefashionedCheckboxListenable(
+                  valueNotifier: widget.cartProduct.selected,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    product.image != null
+                        ? product.image
+                        : "https://admin.refashioned.ru/media/product/2c8cb353-4feb-427d-9279-d2b75f46d786/2b22b56279182fe9bedb1f246d9b44b7.JPG",
+                    width: 80,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-              Container(
-                color: colored ? Colors.deepPurpleAccent : null,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      product.image != null
-                          ? product.image
-                          : "https://admin.refashioned.ru/media/product/2c8cb353-4feb-427d-9279-d2b75f46d786/2b22b56279182fe9bedb1f246d9b44b7.JPG",
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+              SizedBox(
+                width: 5,
               ),
               Expanded(
-                child: Container(
-                  color: colored ? Colors.deepOrangeAccent : null,
+                child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Container(
-                    color: colored ? Colors.lightBlueAccent : null,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        ProductStateTile(product: product),
-                        ProductPriceTile(product: product),
-                        ProductBrandTile(product: product),
-                        ProductSizeTile(product: product),
-                      ],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ProductStateTile(product: product),
+                      ProductPriceTile(product: product),
+                      ProductBrandTile(product: product),
+                      ProductSizeTile(product: product),
+                    ],
                   ),
                 ),
               ),
-              Container(
-                color: colored ? Colors.amberAccent : null,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: dialog,
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: dialog,
+                child: Container(
+                  height: double.infinity,
+                  alignment: Alignment.topCenter,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                    padding: const EdgeInsets.only(left: 10),
                     child: SVGIcon(
                       icon: IconAsset.more,
                       size: 24,
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

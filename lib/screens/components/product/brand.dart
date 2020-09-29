@@ -13,9 +13,12 @@ class ProductBrandTile extends StatelessWidget {
 
     if (brand == null) return SizedBox();
 
-    return Text(
-      brand,
-      style: Theme.of(context).textTheme.subtitle2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Text(
+        brand,
+        style: Theme.of(context).textTheme.subtitle2.copyWith(height: 1.0),
+      ),
     );
   }
 }

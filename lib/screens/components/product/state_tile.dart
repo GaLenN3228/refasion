@@ -29,7 +29,7 @@ class ProductStateTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Text(
         stateLabels[state],
-        style: Theme.of(context).textTheme.subtitle2.copyWith(color: stateColors[state]),
+        style: Theme.of(context).textTheme.subtitle2.copyWith(color: stateColors[state], height: 1.0),
       ),
     );
   }

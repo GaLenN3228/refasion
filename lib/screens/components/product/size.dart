@@ -14,16 +14,24 @@ class ProductSizeTile extends StatelessWidget {
 
     if (size == null) return SizedBox();
 
-    return RichText(
-      text: TextSpan(
-        text: "Размер: ",
-        children: [
-          TextSpan(
-            text: size,
-            style: Theme.of(context).textTheme.subtitle2.copyWith(color: primaryColor),
-          ),
-        ],
-        style: Theme.of(context).textTheme.subtitle2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: RichText(
+        text: TextSpan(
+          text: "Размер: ",
+          children: [
+            TextSpan(
+              text: size,
+              style: Theme.of(context).textTheme.subtitle2.copyWith(
+                    color: primaryColor,
+                    height: 1.0,
+                  ),
+            ),
+          ],
+          style: Theme.of(context).textTheme.subtitle2.copyWith(
+                height: 1.0,
+              ),
+        ),
       ),
     );
   }

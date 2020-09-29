@@ -20,32 +20,43 @@ class ProductPriceTile extends StatelessWidget {
     final hasDiscount = discountPrice != null && discountPrice > 0;
 
     if (!hasDiscount)
-      return Text(
-        "${numberFormat.format(regularPrice)} ₽",
-        style: Theme.of(context).textTheme.subtitle1,
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Text(
+          "${numberFormat.format(regularPrice)} ₽",
+          style: Theme.of(context).textTheme.subtitle1.copyWith(
+                height: 1.0,
+              ),
+        ),
       );
 
-    return Row(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: Text(
-            "${numberFormat.format(regularPrice)}",
-            style: Theme.of(context).textTheme.subtitle1.copyWith(
-                  decoration: TextDecoration.lineThrough,
-                  color: darkGrayColor,
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Text(
+              "${numberFormat.format(regularPrice)}",
+              style: Theme.of(context).textTheme.subtitle1.copyWith(
+                    decoration: TextDecoration.lineThrough,
+                    color: darkGrayColor,
+                    height: 1.0,
+                  ),
+            ),
           ),
-        ),
-        Container(
-          color: accentColor,
-          padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-          child: Text(
-            "${numberFormat.format(discountPrice)} ₽",
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        )
-      ],
+          Container(
+            color: accentColor,
+            padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+            child: Text(
+              "${numberFormat.format(discountPrice)} ₽",
+              style: Theme.of(context).textTheme.subtitle1.copyWith(
+                    height: 1.0,
+                  ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
