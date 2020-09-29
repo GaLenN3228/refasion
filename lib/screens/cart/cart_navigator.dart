@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
@@ -121,8 +120,6 @@ class _CartNavigatorState extends State<CartNavigator> {
   Order order;
   int totalPrice;
 
-  DeliveryType selectedDeliveryType;
-
   @override
   initState() {
     createOrderRepository = CreateOrderRepository();
@@ -160,16 +157,8 @@ class _CartNavigatorState extends State<CartNavigator> {
             order = createOrderRepository.response?.content;
 
             if (order != null)
-              return Navigator.of(context).push(
-                MaterialWithModalsPageRoute(
-                  builder: (context) => _routeBuilder(
-                    context,
-                    CartNavigatorRoutes.checkout,
-                  ),
-                  settings: RouteSettings(
-                    name: CartNavigatorRoutes.checkout,
-                  ),
-                ),
+              return Navigator.of(context).pushNamed(
+                CartNavigatorRoutes.checkout,
               );
           },
           onProductPush: (product) {
@@ -202,16 +191,8 @@ class _CartNavigatorState extends State<CartNavigator> {
               order = createOrderRepository.response?.content;
 
               if (order != null)
-                return Navigator.of(context).push(
-                  MaterialWithModalsPageRoute(
-                    builder: (context) => _routeBuilder(
-                      context,
-                      CartNavigatorRoutes.checkout,
-                    ),
-                    settings: RouteSettings(
-                      name: CartNavigatorRoutes.checkout,
-                    ),
-                  ),
+                return Navigator.of(context).pushNamed(
+                  CartNavigatorRoutes.checkout,
                 );
             },
             onProductPush: (product) {
