@@ -3,14 +3,14 @@ import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_data.dart';
 import 'package:refashioned_app/models/cart/delivery_option.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class DeliveryDataTile extends StatefulWidget {
   final DeliveryOption deliveryOption;
   final DeliveryData deliveryData;
   final Function() onTap;
 
-  const DeliveryDataTile({Key key, this.deliveryData, this.onTap, this.deliveryOption})
-      : super(key: key);
+  const DeliveryDataTile({Key key, this.deliveryData, this.onTap, this.deliveryOption}) : super(key: key);
 
   @override
   _DeliveryDataTileState createState() => _DeliveryDataTileState();
@@ -66,7 +66,7 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
                       child: Text(
                         text,
                         style: Theme.of(context).textTheme.subtitle1.copyWith(
-                              color: !selected ? Color(0xFF930012) : null,
+                              color: !selected ? red : null,
                             ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

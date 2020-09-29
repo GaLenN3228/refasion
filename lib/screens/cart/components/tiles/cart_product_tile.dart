@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_product.dart';
+import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/product/brand.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/product/price.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/product/size.dart';
+import 'package:refashioned_app/screens/components/product/brand.dart';
+import 'package:refashioned_app/screens/components/product/price_tile.dart';
+import 'package:refashioned_app/screens/components/product/size.dart';
+import 'package:refashioned_app/screens/components/product/state_tile.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox_listenable.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
@@ -47,8 +48,8 @@ class _CartProductTileState extends State<CartProductTile> {
     super.dispose();
   }
 
-  addToFavorites() async => await addRemoveFavouriteRepository
-      .addToFavourites((widget.cartProduct.product..isFavourite = true).id);
+  addToFavorites() async =>
+      await addRemoveFavouriteRepository.addToFavourites((widget.cartProduct.product..isFavourite = true).id);
 
   removeFromCart() async => await cartRepository.removeFromCart(widget.cartProduct.id);
 
@@ -105,7 +106,7 @@ class _CartProductTileState extends State<CartProductTile> {
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: widget.onSelect,
+      onTap: product.state == ProductState.published ? widget.onSelect : dialog,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Container(
@@ -148,11 +149,10 @@ class _CartProductTileState extends State<CartProductTile> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        ProductPrice(
-                          product: product,
-                        ),
-                        ProductBrand(product),
-                        ProductSize(product),
+                        ProductStateTile(product: product),
+                        ProductPriceTile(product: product),
+                        ProductBrandTile(product: product),
+                        ProductSizeTile(product: product),
                       ],
                     ),
                   ),

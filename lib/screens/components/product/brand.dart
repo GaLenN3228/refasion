@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/product.dart';
 
-class ProductBrand extends StatelessWidget {
+class ProductBrandTile extends StatelessWidget {
   final Product product;
 
-  const ProductBrand(this.product);
+  const ProductBrandTile({this.product});
 
   @override
   Widget build(BuildContext context) {
