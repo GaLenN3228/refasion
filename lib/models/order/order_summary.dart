@@ -6,9 +6,9 @@ class OrderSummary {
 
   final List<ShippingCost> _shippingCost;
 
-  int get price => _totalPrice;
+  int get price => _totalPrice ?? 0;
   int get discount => _totalDiscount ?? 0;
-  int get total => _totalPrice - discount;
+  int get total => price - discount;
 
   List<ShippingCost> get shippingCost => _shippingCost;
 

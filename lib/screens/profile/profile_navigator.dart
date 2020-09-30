@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
-import 'package:refashioned_app/models/order/order_item.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
@@ -17,7 +13,8 @@ import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
-import 'package:refashioned_app/screens/cart/cart_navigator.dart';
+import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
@@ -35,6 +32,7 @@ class ProfileNavigatorRoutes {
   static const String product = '/product';
   static const String favourites = '/favourites';
   static const String checkout = '/checkout';
+  static const String orderCreated = '/order_created';
 }
 
 class ProfileNavigatorObserver extends NavigatorObserver {
@@ -123,21 +121,20 @@ class ProfileNavigator extends StatefulWidget {
 class _ProfileNavigatorState extends State<ProfileNavigator> {
   CreateOrderRepository createOrderRepository;
 
-  GetOrderRepository getOrderRepository;
+  Order order;
+  int totalPrice;
 
   @override
-  void initState() {
+  initState() {
     createOrderRepository = CreateOrderRepository();
 
-    getOrderRepository = GetOrderRepository();
     super.initState();
   }
 
   @override
-  void dispose() {
+  dispose() {
     createOrderRepository.dispose();
 
-    getOrderRepository.dispose();
     super.dispose();
   }
 
@@ -255,16 +252,8 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
               order = createOrderRepository.response?.content;
 
               if (order != null)
-                return Navigator.of(context).push(
-                  MaterialWithModalsPageRoute(
-                    builder: (context) => _routeBuilder(
-                      context,
-                      CartNavigatorRoutes.checkout,
-                    ),
-                    settings: RouteSettings(
-                      name: CartNavigatorRoutes.checkout,
-                    ),
-                  ),
+                return Navigator.of(context).pushNamed(
+                  ProfileNavigatorRoutes.checkout,
                 );
             },
           );
@@ -291,6 +280,25 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                     .then((value) => topPanelController.needShow = false);
               });
             });
+
+      case ProfileNavigatorRoutes.checkout:
+        return CheckoutPage(
+          order: order,
+          onOrderCreatedPush: (newTotalPrice) async {
+            totalPrice = newTotalPrice;
+            await Navigator.of(context).pushReplacementNamed(
+              ProfileNavigatorRoutes.orderCreated,
+            );
+          },
+        );
+
+      case ProfileNavigatorRoutes.orderCreated:
+        return OrderCreatedPage(
+          totalPrice: totalPrice,
+          onUserOrderPush: () => widget.changeTabTo(
+            BottomTab.profile,
+          ),
+        );
 
       default:
         return CupertinoPageScaffold(

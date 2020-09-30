@@ -120,8 +120,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
       buttonState.value = ButtonState.enabled;
     } else
       buttonState.value = ButtonState.disabled;
-
-    print(order);
   }
 
   setPaymentMethod() async {

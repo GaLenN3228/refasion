@@ -48,7 +48,7 @@ class Order {
       "\nORDER " +
       number +
       "\nTOTAL " +
-      orderSummary.total.toString() +
+      orderSummary?.total.toString() +
       " ₽\nTYPE " +
       paymentType.toString() +
       "\nITEMS\n" +

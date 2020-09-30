@@ -283,14 +283,18 @@ class _CartNavigatorState extends State<CartNavigator> {
           order: order,
           onOrderCreatedPush: (newTotalPrice) async {
             totalPrice = newTotalPrice;
-            await Navigator.of(context).pushReplacementNamed(CartNavigatorRoutes.orderCreated);
+            await Navigator.of(context).pushReplacementNamed(
+              CartNavigatorRoutes.orderCreated,
+            );
           },
         );
 
       case CartNavigatorRoutes.orderCreated:
         return OrderCreatedPage(
           totalPrice: totalPrice,
-          onUserOrderPush: () => widget.changeTabTo(BottomTab.profile),
+          onUserOrderPush: () => widget.changeTabTo(
+            BottomTab.profile,
+          ),
         );
 
       default:
