@@ -44,7 +44,7 @@ class _CitySelectorState extends State<CitySelector> {
     if (skipable) {
       citiesRepository.removeListener(repositoryListener);
 
-      push(OnbordingPage());
+      push(OnboardingPage());
     }
   }
 
