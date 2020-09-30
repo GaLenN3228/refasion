@@ -20,6 +20,8 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   final Completer<WebViewController> controller = Completer<WebViewController>();
 
+  num stackIndex = 0;
+
   JavascriptChannel _toasterJavascriptChannel(BuildContext context) => JavascriptChannel(
       name: 'Toaster',
       onMessageReceived: (JavascriptMessage message) {
@@ -29,6 +31,18 @@ class _PaymentPageState extends State<PaymentPage> {
           SnackBar(content: Text(message.message)),
         );
       });
+
+  void handleLoadStart() {
+    setState(() {
+      stackIndex = 0;
+    });
+  }
+
+  void handleLoadFinish() {
+    setState(() {
+      stackIndex = 1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,34 +61,46 @@ class _PaymentPageState extends State<PaymentPage> {
                 }),
           ),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(top: 10, bottom: MediaQuery.of(context).padding.bottom),
-              child: WebView(
-                initialUrl: widget.initialUrl,
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (WebViewController webViewController) {
-                  controller.complete(webViewController);
-                },
-                javascriptChannels: <JavascriptChannel>[
-                  _toasterJavascriptChannel(context),
-                ].toSet(),
-                navigationDelegate: (NavigationRequest request) async {
-                  if (request.url.startsWith('https://refashioned.ru/')) {
-                    print('blocking navigation to $request}');
+            child: IndexedStack(
+              index: stackIndex,
+              children: [
+                Center(
+                  child: CupertinoActivityIndicator(
+                    animating: true,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10, bottom: MediaQuery.of(context).padding.bottom),
+                  child: WebView(
+                    initialUrl: widget.initialUrl,
+                    javascriptMode: JavascriptMode.unrestricted,
+                    onWebViewCreated: (WebViewController webViewController) {
+                      controller.complete(webViewController);
+                    },
+                    javascriptChannels: <JavascriptChannel>[
+                      _toasterJavascriptChannel(context),
+                    ].toSet(),
+                    navigationDelegate: (NavigationRequest request) async {
+                      if (request.url.startsWith('https://refashioned.ru/')) {
+                        print('blocking navigation to $request}');
 
-                    Navigator.of(context).pop();
+                        Navigator.of(context).pop();
 
-                    await widget.onFinish?.call();
+                        await widget.onFinish?.call();
 
-                    return NavigationDecision.prevent;
-                  }
+                        return NavigationDecision.prevent;
+                      }
 
-                  print('allowing navigation to $request');
+                      print('allowing navigation to $request');
 
-                  return NavigationDecision.navigate;
-                },
-                gestureNavigationEnabled: true,
-              ),
+                      return NavigationDecision.navigate;
+                    },
+                    onPageStarted: (url) => handleLoadStart(),
+                    onPageFinished: (url) => handleLoadFinish(),
+                    gestureNavigationEnabled: true,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
