@@ -40,7 +40,6 @@ class _PaymentPageState extends State<PaymentPage> {
             data: TopBarData.simple(
                 includeTopScreenPadding: false,
                 middleText: "Оплата",
-                // onClose: Navigator.of(context).pop,
                 onClose: () {
                   widget.onFinish?.call();
 
@@ -60,12 +59,12 @@ class _PaymentPageState extends State<PaymentPage> {
                   _toasterJavascriptChannel(context),
                 ].toSet(),
                 navigationDelegate: (NavigationRequest request) async {
-                  if (request.url.startsWith('https://www.refashioned.ru/')) {
+                  if (request.url.startsWith('https://refashioned.ru/')) {
                     print('blocking navigation to $request}');
 
-                    await widget.onFinish?.call();
-
                     Navigator.of(context).pop();
+
+                    await widget.onFinish?.call();
 
                     return NavigationDecision.prevent;
                   }
@@ -73,12 +72,6 @@ class _PaymentPageState extends State<PaymentPage> {
                   print('allowing navigation to $request');
 
                   return NavigationDecision.navigate;
-                },
-                onPageStarted: (String url) {
-                  print('Page started loading: $url');
-                },
-                onPageFinished: (String url) {
-                  print('Page finished loading: $url');
                 },
                 gestureNavigationEnabled: true,
               ),
