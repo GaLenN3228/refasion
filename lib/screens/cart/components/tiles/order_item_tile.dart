@@ -13,6 +13,7 @@ class OrderItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           OrderItemDeliveryDataTile(
             deliveryObject: orderItem.deliveryObject,
