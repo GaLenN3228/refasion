@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
@@ -47,35 +49,53 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  Widget loadingIcon;
+
+  RefreshController refreshController;
+
+  @override
+  void initState() {
+    loadingIcon = SizedBox(
+      width: 25.0,
+      height: 25.0,
+      child: defaultTargetPlatform == TargetPlatform.iOS
+          ? const CupertinoActivityIndicator()
+          : CircularProgressIndicator(
+              strokeWidth: 1,
+              backgroundColor: accentColor,
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+            ),
+    );
+    refreshController = RefreshController(initialRefresh: false);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) => Consumer<CartRepository>(
         builder: (context, repository, _) {
-          if (repository.isLoading)
-            return CupertinoPageScaffold(
-              child: Column(
-                children: [
-                  RefashionedTopBar(
-                    data: TopBarData(
-                      type: TBType.MATERIAL,
-                      theme: TBTheme.DARK,
-                      middleData: TBMiddleData.title("Корзина"),
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1,
-                        backgroundColor: accentColor,
-                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0,
-                  ),
-                ],
-              ),
-            );
+          // if (repository.isLoading)
+          //   return CupertinoPageScaffold(
+          //     child: Column(
+          //       children: [
+          //         RefashionedTopBar(
+          //           data: TopBarData(
+          //             type: TBType.MATERIAL,
+          //             theme: TBTheme.DARK,
+          //             middleData: TBMiddleData.title("Корзина"),
+          //           ),
+          //         ),
+          //         Expanded(
+          //           child: Center(
+          //             child: loadingIcon,
+          //           ),
+          //         ),
+          //         SizedBox(
+          //           height: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0,
+          //         ),
+          //       ],
+          //     ),
+          //   );
 
           final cart = repository?.response?.content;
 
@@ -99,33 +119,56 @@ class _CartPageState extends State<CartPage> {
                   ),
                 ),
                 Expanded(
-                  child: repository.isLoaded && cart != null && cart.groups.isNotEmpty
+                  child: cart != null && cart.groups.isNotEmpty
                       ? Stack(
                           children: [
-                            ListView(
-                              padding: EdgeInsets.fromLTRB(
-                                  15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-                                  child: Text(
-                                    cart.text,
-                                    style: Theme.of(context).textTheme.headline2,
+                            SmartRefresher(
+                              controller: refreshController,
+                              enablePullDown: true,
+                              enablePullUp: false,
+                              header: ClassicHeader(
+                                completeDuration: Duration.zero,
+                                completeIcon: null,
+                                completeText: "",
+                                idleIcon: loadingIcon,
+                                idleText: "Обновление",
+                                refreshingText: "Обновление",
+                                refreshingIcon: loadingIcon,
+                                releaseIcon: loadingIcon,
+                                releaseText: "Обновление",
+                              ),
+                              onRefresh: () async {
+                                HapticFeedback.lightImpact();
+
+                                await repository.update();
+
+                                refreshController.refreshCompleted();
+                              },
+                              child: ListView(
+                                padding: EdgeInsets.fromLTRB(
+                                    15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                                    child: Text(
+                                      cart.text,
+                                      style: Theme.of(context).textTheme.headline2,
+                                    ),
                                   ),
-                                ),
-                                for (final group in cart.groups)
-                                  CartItemTile(
-                                    cartItem: group,
-                                    openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-                                    onProductPush: widget.onProductPush,
-                                  ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                                  child: CartSummaryTile(
-                                    cartSummary: repository.summary,
-                                  ),
-                                )
-                              ],
+                                  for (final group in cart.groups)
+                                    CartItemTile(
+                                      cartItem: group,
+                                      openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
+                                      onProductPush: widget.onProductPush,
+                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                                    child: CartSummaryTile(
+                                      cartSummary: repository.summary,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                             Positioned(
                               left: 0,

@@ -52,7 +52,7 @@ class CartRepository extends BaseRepository<Cart> {
     // scheme = [1, 2];
     // rootListKey = GlobalKey<AnimatedListState>();
 
-    _update();
+    update();
   }
 
   @override
@@ -75,15 +75,15 @@ class CartRepository extends BaseRepository<Cart> {
       if (selectedIDs.isNotEmpty) {
         selectionActionLabel = "Снять всё";
         selectionAction = () {
-          itemsWithSelectedDelivery.forEach((cartItem) => cartItem.cartProducts
-              .forEach((cartProduct) => select(cartProduct.product.id, value: false)));
+          itemsWithSelectedDelivery.forEach((cartItem) =>
+              cartItem.cartProducts.forEach((cartProduct) => select(cartProduct.product.id, value: false)));
         };
         canMakeOrder = true;
       } else {
         selectionActionLabel = "Выбрать всё";
         selectionAction = () {
-          itemsWithSelectedDelivery.forEach((cartItem) => cartItem.cartProducts
-              .forEach((cartProduct) => select(cartProduct.product.id, value: true)));
+          itemsWithSelectedDelivery.forEach((cartItem) =>
+              cartItem.cartProducts.forEach((cartProduct) => select(cartProduct.product.id, value: true)));
         };
         canMakeOrder = false;
       }
@@ -140,8 +140,7 @@ class CartRepository extends BaseRepository<Cart> {
   }
 
   _updateOrderParameters() {
-    final parameters =
-        response.content?.groups?.fold(List<Map<String, dynamic>>(), (oldList, cartItem) {
+    final parameters = response.content?.groups?.fold(List<Map<String, dynamic>>(), (oldList, cartItem) {
       final itemParameters = cartItem.getOrderParameters();
 
       if (itemParameters != null) oldList.add(itemParameters);
@@ -202,7 +201,7 @@ class CartRepository extends BaseRepository<Cart> {
 
   Future<void> addToCart(String productId) async {
     await addProduct.update(productId);
-    if (addProduct.response.status.code == 201) await _update();
+    if (addProduct.response.status.code == 201) await update();
   }
 
   Future<void> setDelivery(String itemId, String deliveryCompanyId, String deliveryObjectId) async {
@@ -218,7 +217,7 @@ class CartRepository extends BaseRepository<Cart> {
 
         if (list != null && list?.length == groupProducts?.length) pendingIDs.addAll(list);
       }
-      await _update();
+      await update();
     }
   }
 
@@ -227,7 +226,7 @@ class CartRepository extends BaseRepository<Cart> {
 
     if (productItemId != null) {
       await removeItem.update(productItemId);
-      if (removeItem.response.status.code == 204) await _update();
+      if (removeItem.response.status.code == 204) await update();
     }
   }
 
@@ -235,15 +234,15 @@ class CartRepository extends BaseRepository<Cart> {
     await getDeliveryTypes.update(itemId);
   }
 
-  Future<void> _update() => apiCall(
+  Future<void> update() => apiCall(
         () async {
           // final seconds = 0;
           // updateScheme();
 
           // await Future.delayed(Duration(seconds: seconds));
 
-          response = BaseResponse.fromJson(
-              (await ApiService.getCart()).data, (contentJson) => Cart.fromJson(contentJson));
+          response =
+              BaseResponse.fromJson((await ApiService.getCart()).data, (contentJson) => Cart.fromJson(contentJson));
 
           // updateScheme();
 
