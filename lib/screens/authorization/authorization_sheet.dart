@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
-import 'package:refashioned_app/screens/marketplace/pages/new_address_page.dart';
 
 class AuthorizationSheet extends StatelessWidget {
   final Function(List<String>) onPush;
@@ -22,7 +20,12 @@ class AuthorizationSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return CupertinoPageScaffold(
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(10),
+        topRight: Radius.circular(10),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
@@ -32,7 +35,7 @@ class AuthorizationSheet extends StatelessWidget {
                 BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
             child: Container(
               color: Colors.white,
-              height: 240,
+              height: 410,
               child: Column(children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -50,23 +53,22 @@ class AuthorizationSheet extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 14.0, left: 20),
+                  alignment: Alignment.topCenter,
+                  margin: const EdgeInsets.only(top: 14.0, left: 60, right: 60),
                   child: Text(
-                    "Давайте знакомиться!",
-                    style: textTheme.subtitle1,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    "Авторизируйтесь и получите доступ ко всем возможностям",
+                    textAlign: TextAlign.center,
+                    style: textTheme.headline2,
                   ),
                 ),
                 Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 10.0, left: 20),
-                  child: Text(
-                    "Получайте персональные предложения, дарим подарок на день рождения, сохраним адрес доставки и расскажем об акциях",
-                    style: textTheme.caption,
-                  ),
-                ),
+                    margin: EdgeInsets.only(top: 16),
+                    child: Image.asset(
+                      'assets/images/png/authorization_sheet.png',
+                      height: 160,
+                      width: MediaQuery.of(context).size.width,
+                      fit: BoxFit.contain,
+                    )),
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
                   child: Button(
@@ -85,20 +87,38 @@ class AuthorizationSheet extends StatelessWidget {
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 40),
-                  child: Button(
-                    "ВОЙТИ ЧЕРЕЗ СБЕРБАНК ID",
-                    buttonStyle: ButtonStyle.outline,
-                    height: 45,
-                    width: double.infinity,
-                    borderRadius: 5,
-                    onClick: () {
-                      Navigator.of(context).push(
-                          MaterialWithModalsPageRoute(builder: (context) => NewAddressPage()));
-                    },
+                Container(
+                  alignment: Alignment.topLeft,
+                  margin: const EdgeInsets.only(top: 16, left: 60, right: 60),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: "При входе вы подтверждаете согласие с ",
+                      style: textTheme.caption,
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: "условиями использования REFASHIONED",
+                          style: TextStyle(
+                            color: Colors.black,
+                            decoration: TextDecoration.underline,
+                            decorationStyle: TextDecorationStyle.wavy,
+                          ),
+                        ),
+                        TextSpan(
+                          text: " и ",
+                        ),
+                        TextSpan(
+                          text: "политикой о данных пользователей",
+                          style: TextStyle(
+                            color: Colors.black,
+                            decoration: TextDecoration.underline,
+                            decorationStyle: TextDecorationStyle.wavy,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )
+                ),
               ]),
             ),
           ),

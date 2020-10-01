@@ -118,8 +118,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
     SystemUiOverlayStyle originalOverlayStyle,
   }) async {
     if (!await BaseRepository.isAuthorized()) {
-      showCupertinoModalBottomSheet(
-        backgroundColor: Colors.white,
+      showMaterialModalBottomSheet(
         expand: false,
         context: context,
         useRootNavigator: true,
@@ -298,8 +297,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                             ),
                           );
                         } else
-                          showCupertinoModalBottomSheet(
-                              backgroundColor: Colors.white,
+                          showMaterialModalBottomSheet(
                               expand: false,
                               context: context,
                               useRootNavigator: true,

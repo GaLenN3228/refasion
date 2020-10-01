@@ -68,8 +68,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                               .removeFromFavourites((widget.product..isFavourite = false).id)
                                           : addRemoveFavouriteRepository
                                               .addToFavourites((widget.product..isFavourite = true).id)
-                                      : showCupertinoModalBottomSheet(
-                                          backgroundColor: Colors.white,
+                                      : showMaterialModalBottomSheet(
                                           expand: false,
                                           context: context,
                                           useRootNavigator: true,
@@ -136,31 +135,28 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                       ),
                     ],
                   ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Consumer<CartRepository>(
-                      builder: (context, repository, child) {
-                        final isInCart = repository.checkPresence(widget.product.id);
+                  Consumer<CartRepository>(
+                    builder: (context, repository, child) {
+                      final isInCart = repository.checkPresence(widget.product.id);
 
-                        return GestureDetector(
-                          onTap: () {
-                            HapticFeedback.heavyImpact();
-                            if (isInCart)
-                              repository.removeFromCart(widget.product.id);
-                            else
-                              repository.addToCart(widget.product.id);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: SVGIcon(
-                              icon: IconAsset.cart,
-                              size: 26,
-                              color: isInCart ? accentColor : null,
-                            ),
+                      return GestureDetector(
+                        onTap: () {
+                          HapticFeedback.heavyImpact();
+                          if (isInCart)
+                            repository.removeFromCart(widget.product.id);
+                          else
+                            repository.addToCart(widget.product.id);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: SVGIcon(
+                            icon: IconAsset.cart,
+                            size: 26,
+                            color: isInCart ? accentColor : null,
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   )
                 ],
               )

@@ -24,7 +24,7 @@ class Product {
   final Brand brand;
   final Seller seller;
   final String description;
-  final List<Property> properties;
+  List<Property> properties;
   final List<String> images;
   final ProductState state;
   bool isFavourite = false;
