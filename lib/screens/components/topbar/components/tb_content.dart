@@ -9,8 +9,7 @@ class TBContent extends StatefulWidget {
   final TopBarData data;
   final ScaffoldScrollActionsProvider scrollActionsProvider;
 
-  const TBContent({Key key, this.data, this.scrollActionsProvider})
-      : super(key: key);
+  const TBContent({Key key, this.data, this.scrollActionsProvider}) : super(key: key);
 
   @override
   _TBContentState createState() => _TBContentState();
@@ -41,67 +40,26 @@ class _TBContentState extends State<TBContent> {
   Widget build(BuildContext context) {
     if (widget.data == null) return SizedBox();
 
-    double buttonsWidth;
-
-    if (widget.data.middleData != null) {
-      bool hasFirstIcon = false;
-      bool hasSecondIcon = false;
-      bool hasText = false;
-
-      switch (widget.data.type) {
-        case TBType.CUPERTINO:
-          hasFirstIcon = widget.data.leftButtonData?.iconType != null ||
-              widget.data.rightButtonData?.iconType != null;
-
-          hasSecondIcon = widget.data.secondLeftButtonData?.iconType != null ||
-              widget.data.secondRightButtonData?.iconType != null;
-
-          hasText = widget.data.leftButtonData?.label != null ||
-              widget.data.rightButtonData?.label != null;
-
-          if (hasFirstIcon && hasSecondIcon)
-            buttonsWidth = MediaQuery.of(context).size.width * 0.25;
-          else if (hasText)
-            buttonsWidth = MediaQuery.of(context).size.width * 0.225;
-          else if (hasFirstIcon || hasSecondIcon)
-            buttonsWidth = MediaQuery.of(context).size.width * 0.15;
-          break;
-        case TBType.MATERIAL:
-          // hasFirstIcon = widget.data.rightButtonData?.iconType != null;
-
-          // hasSecondIcon = widget.data.secondRightButtonData?.iconType != null;
-
-          // hasText = widget.data.rightButtonData?.label != null;
-
-          // if (hasFirstIcon && hasSecondIcon)
-          //   buttonsWidth = MediaQuery.of(context).size.width * 0.30;
-          // else if (hasText)
-          //   buttonsWidth = MediaQuery.of(context).size.width * 0.35;
-          // else if (hasFirstIcon || hasSecondIcon)
-          //   buttonsWidth = MediaQuery.of(context).size.width * 0.2;
-          break;
-      }
-    }
-
     return Column(
       children: [
         SizedBox(
-          height: widget.data.includeTopScreenPadding
-              ? MediaQuery.of(context).padding.top
-              : null,
+          height: widget.data.includeTopScreenPadding ? MediaQuery.of(context).padding.top : null,
         ),
         SizedBox(
           height: mainHeight,
           child: Row(
             children: [
               if (widget.data.type == TBType.CUPERTINO)
-                TBButtons(
-                  align: TBButtonsAlign.left,
-                  leftButton: widget.data.leftButtonData,
-                  rightButton: widget.data.secondLeftButtonData,
-                  buttonsWidth: buttonsWidth,
+                Expanded(
+                  flex: 1,
+                  child: TBButtons(
+                    align: TBButtonsAlign.left,
+                    leftButton: widget.data.leftButtonData,
+                    rightButton: widget.data.secondLeftButtonData,
+                  ),
                 ),
               Expanded(
+                flex: 2,
                 child: TBMiddle(
                   theme: widget.data.theme,
                   type: widget.data.type,
@@ -109,15 +67,16 @@ class _TBContentState extends State<TBContent> {
                   searchData: widget.data.searchData,
                   scrollActionsProvider: widget.scrollActionsProvider,
                   showCancelSearchButton:
-                      widget.data.secondRightButtonData == null &&
-                          widget.data.rightButtonData == null,
+                      widget.data.secondRightButtonData == null && widget.data.rightButtonData == null,
                 ),
               ),
-              TBButtons(
-                align: TBButtonsAlign.right,
-                leftButton: widget.data.secondRightButtonData,
-                rightButton: widget.data.rightButtonData,
-                buttonsWidth: buttonsWidth,
+              Expanded(
+                flex: 1,
+                child: TBButtons(
+                  align: TBButtonsAlign.right,
+                  leftButton: widget.data.secondRightButtonData,
+                  rightButton: widget.data.rightButtonData,
+                ),
               ),
             ],
           ),

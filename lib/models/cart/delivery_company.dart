@@ -23,6 +23,13 @@ final deliveryLabels = {
   Delivery.EXPRESS_DEVILERY: "Экспресс"
 };
 
+final shippingText = {
+  Delivery.PICKUP_ADDRESS: "Самовывоз от продавца",
+  Delivery.PICKUP_POINT: "Доставка в пункт выдачи",
+  Delivery.COURIER_DELIVERY: "Курьерская доставка",
+  Delivery.EXPRESS_DEVILERY: "Экспресс-доставка",
+};
+
 class DeliveryCompany {
   final String name;
   final String id;

@@ -1,13 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/models/cart/cart.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
-import 'package:refashioned_app/models/order/order_item.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
@@ -15,6 +12,7 @@ import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/product/product.dart';
@@ -26,6 +24,7 @@ class CartNavigatorRoutes {
   static const String product = '/product';
   static const String seller = '/seller';
   static const String checkout = '/checkout';
+  static const String orderCreated = '/order_created';
   static const String products = '/products';
   static const String favourites = '/favourites';
 }
@@ -82,11 +81,7 @@ class CartNavigator extends StatefulWidget {
   final Function(PickPoint) openPickUpAddressMap;
 
   CartNavigator(
-      {Key key,
-      this.navigatorKey,
-      this.changeTabTo,
-      this.openDeliveryTypesSelector,
-      this.openPickUpAddressMap})
+      {Key key, this.navigatorKey, this.changeTabTo, this.openDeliveryTypesSelector, this.openPickUpAddressMap})
       : super(key: key);
 
   void pushFavourites(BuildContext context) {
@@ -94,8 +89,7 @@ class CartNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) =>
-                _cartNavigatorState._routeBuilder(context, CartNavigatorRoutes.favourites),
+            builder: (context) => _cartNavigatorState._routeBuilder(context, CartNavigatorRoutes.favourites),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -106,8 +100,8 @@ class CartNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) => _cartNavigatorState
-                ._routeBuilder(context, CartNavigatorRoutes.products, searchResult: searchResult),
+            builder: (context) =>
+                _cartNavigatorState._routeBuilder(context, CartNavigatorRoutes.products, searchResult: searchResult),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -123,15 +117,12 @@ class CartNavigator extends StatefulWidget {
 class _CartNavigatorState extends State<CartNavigator> {
   CreateOrderRepository createOrderRepository;
 
-  GetOrderRepository getOrderRepository;
-
-  DeliveryType selectedDeliveryType;
+  Order order;
+  int totalPrice;
 
   @override
   initState() {
     createOrderRepository = CreateOrderRepository();
-
-    getOrderRepository = GetOrderRepository();
 
     super.initState();
   }
@@ -140,19 +131,18 @@ class _CartNavigatorState extends State<CartNavigator> {
   dispose() {
     createOrderRepository.dispose();
 
-    getOrderRepository.dispose();
-
     super.dispose();
   }
 
-  Widget _routeBuilder(BuildContext context, String route,
-      {Cart cart,
-      Order order,
-      Product product,
-      Category category,
-      String parameters,
-      String productTitle,
-      SearchResult searchResult}) {
+  Widget _routeBuilder(
+    BuildContext context,
+    String route, {
+    Product product,
+    Category category,
+    String parameters,
+    String productTitle,
+    SearchResult searchResult,
+  }) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     switch (route) {
       case CartNavigatorRoutes.cart:
@@ -161,16 +151,15 @@ class _CartNavigatorState extends State<CartNavigator> {
         return CartPage(
           openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
           onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
-          onCheckoutPush: (order) {
-            return Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, CartNavigatorRoutes.checkout, cart: cart, order: order),
-                settings: RouteSettings(
-                  name: CartNavigatorRoutes.checkout,
-                ),
-              ),
-            );
+          onCheckoutPush: (String orderParameters) async {
+            await createOrderRepository.update(orderParameters);
+
+            order = createOrderRepository.response?.content;
+
+            if (order != null)
+              return Navigator.of(context).pushNamed(
+                CartNavigatorRoutes.checkout,
+              );
           },
           onProductPush: (product) {
             return Navigator.of(context).push(
@@ -196,29 +185,15 @@ class _CartNavigatorState extends State<CartNavigator> {
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
-              final parameters = jsonEncode([
-                OrderItem(
-                  deliveryCompany: deliveryCompanyId,
-                  deliveryObjectId: deliveryObjectId,
-                  products: [product.id],
-                ),
-              ]);
+            onCheckoutPush: (orderParameters) async {
+              await createOrderRepository.update(orderParameters);
 
-              await createOrderRepository.update(parameters);
+              order = createOrderRepository.response?.content;
 
-              final orderId = createOrderRepository.response?.content?.id;
-
-              await getOrderRepository.update(orderId);
-
-              return Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(
-                    context,
-                    CartNavigatorRoutes.checkout,
-                  ),
-                ),
-              );
+              if (order != null)
+                return Navigator.of(context).pushNamed(
+                  CartNavigatorRoutes.checkout,
+                );
             },
             onProductPush: (product) {
               return Navigator.of(context)
@@ -241,10 +216,7 @@ class _CartNavigatorState extends State<CartNavigator> {
                   .push(
                     CupertinoPageRoute(
                       builder: (context) => _routeBuilder(context, CartNavigatorRoutes.products,
-                          product: product,
-                          category: category,
-                          parameters: parameters,
-                          productTitle: title),
+                          product: product, category: category, parameters: parameters, productTitle: title),
                       settings: RouteSettings(name: CartNavigatorRoutes.products),
                     ),
                   )
@@ -269,8 +241,8 @@ class _CartNavigatorState extends State<CartNavigator> {
               return Navigator.of(context)
                   .push(
                 CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(context, CartNavigatorRoutes.product,
-                      product: product, category: category),
+                  builder: (context) =>
+                      _routeBuilder(context, CartNavigatorRoutes.product, product: product, category: category),
                 ),
               )
                   .then(
@@ -289,8 +261,7 @@ class _CartNavigatorState extends State<CartNavigator> {
             providers: [
               ChangeNotifierProvider<FavouritesProductsRepository>(
                   create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(
-                  create: (_) => AddRemoveFavouriteRepository())
+              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
             ],
             builder: (context, _) {
               return FavouritesPage(
@@ -298,8 +269,8 @@ class _CartNavigatorState extends State<CartNavigator> {
                   Navigator.of(context)
                       .push(
                         CupertinoPageRoute(
-                          builder: (context) => _routeBuilder(context, CartNavigatorRoutes.product,
-                              product: product, category: category),
+                          builder: (context) =>
+                              _routeBuilder(context, CartNavigatorRoutes.product, product: product, category: category),
                         ),
                       )
                       .then((value) => topPanelController.needShow = false);
@@ -310,7 +281,20 @@ class _CartNavigatorState extends State<CartNavigator> {
       case CartNavigatorRoutes.checkout:
         return CheckoutPage(
           order: order,
-          cart: cart,
+          onOrderCreatedPush: (newTotalPrice) async {
+            totalPrice = newTotalPrice;
+            await Navigator.of(context).pushReplacementNamed(
+              CartNavigatorRoutes.orderCreated,
+            );
+          },
+        );
+
+      case CartNavigatorRoutes.orderCreated:
+        return OrderCreatedPage(
+          totalPrice: totalPrice,
+          onUserOrderPush: () => widget.changeTabTo(
+            BottomTab.profile,
+          ),
         );
 
       default:
@@ -331,6 +315,12 @@ class _CartNavigatorState extends State<CartNavigator> {
         initialRoute: CartNavigatorRoutes.cart,
         observers: [CartNavigatorObserver()],
         key: widget.navigatorKey,
+        onGenerateInitialRoutes: (navigatorState, initialRoute) => [
+          CupertinoPageRoute(
+            builder: (context) => _routeBuilder(context, initialRoute),
+            settings: RouteSettings(name: initialRoute),
+          ),
+        ],
         onGenerateRoute: (routeSettings) => CupertinoPageRoute(
           builder: (context) => _routeBuilder(context, routeSettings.name),
           settings: routeSettings,

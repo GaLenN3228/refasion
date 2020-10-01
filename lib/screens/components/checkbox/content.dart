@@ -16,7 +16,10 @@ class CheckboxContent extends StatelessWidget {
       return Container(
         height: boxSize,
         width: boxSize,
-        decoration: ShapeDecoration(color: primaryColor, shape: CircleBorder()),
+        decoration: ShapeDecoration(
+          color: primaryColor,
+          shape: CircleBorder(),
+        ),
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(boxSize / 4),
@@ -33,8 +36,13 @@ class CheckboxContent extends StatelessWidget {
       height: boxSize,
       width: boxSize,
       decoration: ShapeDecoration(
-          shape: CircleBorder(
-              side: BorderSide(width: 1, color: const Color(0xFFE6E6E6)))),
+        shape: CircleBorder(
+          side: BorderSide(
+            width: 1,
+            color: const Color(0xFFBEBEBE),
+          ),
+        ),
+      ),
     );
   }
 }

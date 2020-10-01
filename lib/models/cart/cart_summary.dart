@@ -18,8 +18,9 @@ class CartSummary {
   int get discount => canOrder ? _selectedDiscount : _totalDiscount;
   int get total => canOrder
       ? _selectedPrice +
-          _shippingCost.fold(0, (previousValue, shipping) => previousValue + shipping.cost)
-      : _totalPrice;
+          _shippingCost.fold(0, (previousValue, shipping) => previousValue + shipping.cost) -
+          _selectedDiscount
+      : _totalPrice - _totalDiscount;
 
   List<ShippingCost> get shippingCost => _shippingCost;
 

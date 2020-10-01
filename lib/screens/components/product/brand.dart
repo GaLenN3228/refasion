@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/product.dart';
 
-class ProductBrand extends StatelessWidget {
+class ProductBrandTile extends StatelessWidget {
   final Product product;
 
-  const ProductBrand(this.product);
+  const ProductBrandTile({this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +13,12 @@ class ProductBrand extends StatelessWidget {
 
     if (brand == null) return SizedBox();
 
-    return Text(
-      brand,
-      style: Theme.of(context).textTheme.subtitle2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Text(
+        brand,
+        style: Theme.of(context).textTheme.subtitle2.copyWith(height: 1.0),
+      ),
     );
   }
 }

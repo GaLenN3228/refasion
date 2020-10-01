@@ -4,17 +4,10 @@ import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/summary_line.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 
-final _shippingText = {
-  Delivery.PICKUP_ADDRESS: "Самовывоз от продавца",
-  Delivery.PICKUP_POINT: "Доставка в пункт выдачи",
-  Delivery.COURIER_DELIVERY: "Курьерская доставка",
-  Delivery.EXPRESS_DEVILERY: "Экспресс-доставка",
-};
-
-class SummaryTile extends StatelessWidget {
+class CartSummaryTile extends StatelessWidget {
   final CartSummary cartSummary;
 
-  const SummaryTile({this.cartSummary});
+  const CartSummaryTile({this.cartSummary});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +26,7 @@ class SummaryTile extends StatelessWidget {
             .map(
               (shipping) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
-                child: SummaryLine(label: _shippingText[shipping.shipping], value: shipping.cost),
+                child: SummaryLine(label: shippingText[shipping.shipping], value: shipping.cost),
               ),
             )
             .toList(),

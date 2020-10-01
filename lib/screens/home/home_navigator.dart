@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
-import 'package:refashioned_app/models/order/order_item.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
@@ -14,6 +12,8 @@ import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
+import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
@@ -28,16 +28,13 @@ class HomeNavigatorRoutes {
   static const String product = '/product';
   static const String favourites = '/favourites';
   static const String checkout = '/checkout';
+  static const String orderCreated = '/order_created';
 }
 
-class HomeNavigator extends StatelessWidget {
+class HomeNavigator extends StatefulWidget {
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
   final Function(PickPoint) openPickUpAddressMap;
-
-  CreateOrderRepository createOrderRepository;
-
-  GetOrderRepository getOrderRepository;
 
   final Function(
     BuildContext,
@@ -48,18 +45,16 @@ class HomeNavigator extends StatelessWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  HomeNavigator(
-      {this.navigatorKey,
-      this.changeTabTo,
-      this.openPickUpAddressMap,
-      this.openDeliveryTypesSelector});
+  _HomeNavigatorState _homeNavigatorState;
+
+  HomeNavigator({this.navigatorKey, this.changeTabTo, this.openPickUpAddressMap, this.openDeliveryTypesSelector});
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.favourites),
+            builder: (context) => _homeNavigatorState._routeBuilder(context, HomeNavigatorRoutes.favourites),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -71,13 +66,40 @@ class HomeNavigator extends StatelessWidget {
         .push(
       CupertinoPageRoute(
         builder: (context) =>
-            _routeBuilder(context, HomeNavigatorRoutes.products, searchResult: searchResult),
+            _homeNavigatorState._routeBuilder(context, HomeNavigatorRoutes.products, searchResult: searchResult),
       ),
     )
         .then((value) {
       topPanelController.needShow = true;
       topPanelController.needShowBack = false;
     });
+  }
+
+  @override
+  _HomeNavigatorState createState() {
+    _homeNavigatorState = _HomeNavigatorState();
+    return _homeNavigatorState;
+  }
+}
+
+class _HomeNavigatorState extends State<HomeNavigator> {
+  CreateOrderRepository createOrderRepository;
+
+  Order order;
+  int totalPrice;
+
+  @override
+  initState() {
+    createOrderRepository = CreateOrderRepository();
+
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    createOrderRepository.dispose();
+
+    super.dispose();
   }
 
   Widget _routeBuilder(BuildContext context, String route,
@@ -98,8 +120,7 @@ class HomeNavigator extends StatelessWidget {
             Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) =>
-                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
+                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
                   ),
                 )
                 .then((value) => topPanelController.needShow = true);
@@ -108,13 +129,12 @@ class HomeNavigator extends StatelessWidget {
             Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
-                        collectionUrl: url, productTitle: title),
+                    builder: (context) =>
+                        _routeBuilder(context, HomeNavigatorRoutes.products, collectionUrl: url, productTitle: title),
                     settings: RouteSettings(name: HomeNavigatorRoutes.products),
                   ),
                 )
-                .then((value) =>
-                    {topPanelController.needShow = true, topPanelController.needShowBack = false});
+                .then((value) => {topPanelController.needShow = true, topPanelController.needShowBack = false});
           },
         );
 
@@ -133,8 +153,8 @@ class HomeNavigator extends StatelessWidget {
             onPush: (product, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                    product: product, category: category),
+                builder: (context) =>
+                    _routeBuilder(context, HomeNavigatorRoutes.product, product: product, category: category),
               ),
             )
                 .then(
@@ -153,13 +173,13 @@ class HomeNavigator extends StatelessWidget {
         }, builder: (context, _) {
           return ProductPage(
             product: product,
-            onCartPush: () => changeTabTo(BottomTab.cart),
-            onPickupAddressPush: openPickUpAddressMap?.call,
+            onCartPush: () => widget.changeTabTo(BottomTab.cart),
+            onPickupAddressPush: widget.openPickUpAddressMap?.call,
             onProductPush: (product) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                        product: product, category: category),
+                    builder: (context) =>
+                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product, category: category),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
@@ -167,39 +187,29 @@ class HomeNavigator extends StatelessWidget {
                 .push(
                   CupertinoPageRoute(
                     builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
-                        product: product,
-                        category: category,
-                        parameters: parameters,
-                        productTitle: title),
+                        product: product, category: category, parameters: parameters, productTitle: title),
                     settings: RouteSettings(name: HomeNavigatorRoutes.products),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
-            openDeliveryTypesSelector: openDeliveryTypesSelector,
-            onCheckoutPush: (deliveryCompanyId, deliveryObjectId) async {
-              final parameters = jsonEncode([
-                OrderItem(
-                  deliveryCompany: deliveryCompanyId,
-                  deliveryObjectId: deliveryObjectId,
-                  products: [product.id],
-                ),
-              ]);
+            openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
+            onCheckoutPush: (orderParameters) async {
+              await createOrderRepository.update(orderParameters);
 
-              await createOrderRepository.update(parameters);
+              order = createOrderRepository.response?.content;
 
-              final orderId = createOrderRepository.response?.content?.id;
-
-              await getOrderRepository.update(orderId);
-
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(
-                    context,
-                    HomeNavigatorRoutes.checkout,
-                    order: createOrderRepository.response?.content,
+              if (order != null)
+                return Navigator.of(context).push(
+                  MaterialWithModalsPageRoute(
+                    builder: (context) => _routeBuilder(
+                      context,
+                      HomeNavigatorRoutes.checkout,
+                    ),
+                    settings: RouteSettings(
+                      name: HomeNavigatorRoutes.checkout,
+                    ),
                   ),
-                ),
-              );
+                );
             },
           );
         });
@@ -210,21 +220,39 @@ class HomeNavigator extends StatelessWidget {
             providers: [
               ChangeNotifierProvider<FavouritesProductsRepository>(
                   create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(
-                  create: (_) => AddRemoveFavouriteRepository())
+              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
             ],
             builder: (context, _) {
               return FavouritesPage(onPush: (product) {
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(
-                        builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                            product: product, category: category),
+                        builder: (context) =>
+                            _routeBuilder(context, HomeNavigatorRoutes.product, product: product, category: category),
                       ),
                     )
                     .then((value) => topPanelController.needShow = false);
               });
             });
+
+      case HomeNavigatorRoutes.checkout:
+        return CheckoutPage(
+          order: order,
+          onOrderCreatedPush: (newTotalPrice) async {
+            totalPrice = newTotalPrice;
+            await Navigator.of(context).pushReplacementNamed(
+              HomeNavigatorRoutes.orderCreated,
+            );
+          },
+        );
+
+      case HomeNavigatorRoutes.orderCreated:
+        return OrderCreatedPage(
+          totalPrice: totalPrice,
+          onUserOrderPush: () => widget.changeTabTo(
+            BottomTab.profile,
+          ),
+        );
 
       default:
         return CupertinoPageScaffold(
@@ -239,21 +267,11 @@ class HomeNavigator extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-
-
-    createOrderRepository = CreateOrderRepository();
-
-    getOrderRepository = GetOrderRepository();
-
-    return Navigator(
-      key: navigatorKey,
-      initialRoute: HomeNavigatorRoutes.root,
-      onGenerateRoute: (routeSettings) {
-        return CupertinoPageRoute(
+  Widget build(BuildContext context) => Navigator(
+        key: widget.navigatorKey,
+        initialRoute: HomeNavigatorRoutes.root,
+        onGenerateRoute: (routeSettings) => CupertinoPageRoute(
           builder: (context) => _routeBuilder(context, routeSettings.name),
-        );
-      },
-    );
-  }
+        ),
+      );
 }

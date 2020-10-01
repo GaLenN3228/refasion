@@ -63,14 +63,16 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
     switch (widget.deliveryType.type) {
       case Delivery.PICKUP_POINT:
         userAddresses = widget.userAddresses
-            ?.where((userAddress) => userAddress != null && userAddress.pickpoint != null)
+            ?.where((userAddress) =>
+                userAddress != null && userAddress.type == UserAddressType.boxberry_pickpoint ||
+                userAddress.type == UserAddressType.pickpoint)
             ?.toList();
         break;
 
       case Delivery.COURIER_DELIVERY:
       case Delivery.EXPRESS_DEVILERY:
         userAddresses = widget.userAddresses
-            ?.where((userAddress) => userAddress != null && userAddress.pickpoint == null)
+            ?.where((userAddress) => userAddress != null && userAddress.type == UserAddressType.address)
             ?.toList();
         break;
 

@@ -6,6 +6,13 @@ import 'package:refashioned_app/models/seller.dart';
 import 'brand.dart';
 import 'category.dart';
 
+enum ProductState { published, reserved }
+
+final _stateLabels = {
+  "Опубликован": ProductState.published,
+  "В резерве": ProductState.reserved,
+};
+
 class Product {
   final String id;
   final String article;
@@ -19,28 +26,35 @@ class Product {
   final String description;
   List<Property> properties;
   final List<String> images;
+  final ProductState state;
   bool isFavourite = false;
 
   final PickPoint pickUpAddress;
   final List<DeliveryType> deliveryTypes;
 
-  Product(
-      {this.pickUpAddress,
-      this.deliveryTypes,
-      this.id,
-      this.article,
-      this.name,
-      this.currentPrice,
-      this.discountPrice,
-      this.image,
-      this.category,
-      this.brand,
-      this.seller,
-      this.description,
-      this.properties,
-      this.images});
+  Product({
+    this.pickUpAddress,
+    this.deliveryTypes,
+    this.id,
+    this.article,
+    this.name,
+    this.currentPrice,
+    this.discountPrice,
+    this.image,
+    this.category,
+    this.brand,
+    this.seller,
+    this.description,
+    this.properties,
+    this.images,
+    this.state,
+  });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    final stateObject = json['state'];
+    final stateText = stateObject != null ? stateObject['text'] : null;
+    final state = stateText != null ? _stateLabels[stateText] : null;
+
     return Product(
       id: json['id'],
       article: json['article'],
@@ -65,6 +79,7 @@ class Product {
         if (json['takeaways'] != null)
           for (final deliveryType in json['takeaways']) DeliveryType.fromJson(deliveryType)
       ],
+      state: state,
     );
   }
 }

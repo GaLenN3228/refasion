@@ -9,12 +9,7 @@ class RefashionedCheckbox extends StatefulWidget {
   final EdgeInsets padding;
   final Function(bool) onUpdate;
 
-  const RefashionedCheckbox(
-      {Key key,
-      this.value: false,
-      this.size,
-      this.padding: EdgeInsets.zero,
-      this.onUpdate})
+  const RefashionedCheckbox({Key key, this.value: false, this.size, this.padding: EdgeInsets.zero, this.onUpdate})
       : super(key: key);
 
   @override
@@ -51,7 +46,9 @@ class _RefashionedCheckboxState extends State<RefashionedCheckbox> {
                   height: boxSize,
                   width: boxSize,
                   decoration: ShapeDecoration(
-                      color: primaryColor, shape: CircleBorder()),
+                    color: primaryColor,
+                    shape: CircleBorder(),
+                  ),
                   child: Center(
                     child: Padding(
                       padding: EdgeInsets.all(boxSize / 4),
@@ -67,9 +64,13 @@ class _RefashionedCheckboxState extends State<RefashionedCheckbox> {
                   height: boxSize,
                   width: boxSize,
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(
-                          side: BorderSide(
-                              width: 1, color: const Color(0xFFE6E6E6)))),
+                    shape: CircleBorder(
+                      side: BorderSide(
+                        width: 1,
+                        color: const Color(0xFFBEBEBE),
+                      ),
+                    ),
+                  ),
                 ),
         ),
       ),

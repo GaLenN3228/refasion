@@ -52,11 +52,7 @@ class _UserAddressesListState extends State<UserAddressesList> {
     });
   }
 
-  onPush() {
-    if (widget.onSelectAddress != null &&
-        selectedUserAddressId != null &&
-        selectedUserAddressId.isNotEmpty) widget.onSelectAddress(selectedUserAddressId);
-  }
+  onPush() => widget.onSelectAddress?.call(selectedUserAddressId);
 
   @override
   Widget build(BuildContext context) {
@@ -95,14 +91,11 @@ class _UserAddressesListState extends State<UserAddressesList> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: SizedBox(
-                  width: 250,
-                  child: Text(
-                    widget.bottomText,
-                    style: Theme.of(context).textTheme.bodyText2,
-                    textAlign: TextAlign.center,
-                  ),
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 50),
+                child: Text(
+                  widget.bottomText,
+                  style: Theme.of(context).textTheme.bodyText2,
+                  textAlign: TextAlign.center,
                 ),
               )
             ]

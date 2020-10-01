@@ -17,16 +17,15 @@ final _assets = {
 class TBButton extends StatefulWidget {
   final TBButtonData data;
   final EdgeInsets padding;
+  final Alignment alignment;
 
-  const TBButton({Key key, this.data, this.padding: EdgeInsets.zero})
-      : super(key: key);
+  const TBButton({Key key, this.data, this.padding: EdgeInsets.zero, this.alignment}) : super(key: key);
 
   @override
   _TBButtonState createState() => _TBButtonState();
 }
 
-class _TBButtonState extends State<TBButton>
-    with SingleTickerProviderStateMixin {
+class _TBButtonState extends State<TBButton> with SingleTickerProviderStateMixin {
   AnimationController animationController;
 
   @override
@@ -54,14 +53,15 @@ class _TBButtonState extends State<TBButton>
       return GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: widget.data.onTap?.call,
-        child: Padding(
+        child: Container(
           padding: widget.padding,
+          alignment: widget.alignment,
+          height: double.infinity,
           child: Text(
             widget.data.label,
-            style: Theme.of(context)
-                .textTheme
-                .bodyText1
-                .copyWith(color: widget.data.textColor ?? darkGrayColor),
+            style: Theme.of(context).textTheme.bodyText1.copyWith(
+                  color: widget.data.textColor ?? darkGrayColor,
+                ),
           ),
         ),
       );
@@ -78,7 +78,9 @@ class _TBButtonState extends State<TBButton>
             await animationController?.reverse();
           }
         },
-        child: Padding(
+        child: Container(
+          height: double.infinity,
+          alignment: widget.alignment,
           padding: widget.data.animated
               ? EdgeInsets.fromLTRB(
                   widget.padding.left / 1.2,

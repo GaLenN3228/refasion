@@ -10,11 +10,7 @@ class RefashionedCheckboxStateless extends StatelessWidget {
   final Function() onUpdate;
 
   const RefashionedCheckboxStateless(
-      {Key key,
-      this.value: false,
-      this.size: 20,
-      this.padding: EdgeInsets.zero,
-      this.onUpdate})
+      {Key key, this.value: false, this.size: 20, this.padding: EdgeInsets.zero, this.onUpdate})
       : super(key: key);
 
   @override
@@ -30,7 +26,9 @@ class RefashionedCheckboxStateless extends StatelessWidget {
                   height: size,
                   width: size,
                   decoration: ShapeDecoration(
-                      color: primaryColor, shape: CircleBorder()),
+                    color: primaryColor,
+                    shape: CircleBorder(),
+                  ),
                   child: Center(
                     child: Padding(
                       padding: EdgeInsets.all(size / 4),
@@ -46,9 +44,13 @@ class RefashionedCheckboxStateless extends StatelessWidget {
                   height: size,
                   width: size,
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(
-                          side: BorderSide(
-                              width: 1, color: const Color(0xFFE6E6E6)))),
+                    shape: CircleBorder(
+                      side: BorderSide(
+                        width: 1,
+                        color: const Color(0xFFBEBEBE),
+                      ),
+                    ),
+                  ),
                 ),
         ),
       ),
