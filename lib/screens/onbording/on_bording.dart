@@ -197,7 +197,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ),
                     Tapable(
-                      padding: EdgeInsets.only(bottom: 10 ),
+                      padding: EdgeInsets.only(bottom: 30 ),
                       onTap: (){
                         Navigator.of(context).pushReplacement(
                           PageRouteBuilder(
