@@ -10,7 +10,8 @@ enum MapCameraListenerStatus { STARTED, COMPLETED }
 
 class MapPage extends StatefulWidget {
   static const String MARKER_ICON_SMALL = 'assets/icons/png/marker_red_small.png';
-  static const String MARKER_ICON_SELECTED = 'assets/icons/png/marker_red_selected.png';
+  static const String MARKER_ICON_RED_SELECTED = 'assets/icons/png/marker_red_selected.png';
+  static const String MARKER_ICON_BLACK_SELECTED = 'assets/icons/png/marker_black_selected.png';
   static const String MARKER_ICON_MEDIUM = 'assets/icons/png/marker_red_medium.png';
   static const String MARKER_ICON_USER_LOCATION = 'assets/icons/png/marker_user_location.png';
 
@@ -165,7 +166,7 @@ class _MapPageState extends State<MapPage> {
     final Placemark _placeMark = Placemark(
       point: Point(latitude: pickPoint.latitude, longitude: pickPoint.longitude),
       opacity: 0.8,
-      iconName: MapPage.MARKER_ICON_SELECTED,
+      iconName: MapPage.MARKER_ICON_BLACK_SELECTED,
       onTap: (Placemark placeMark, double latitude, double longitude) {
         selectedPlaceMark = placeMark;
         _changeSelectedPlaceMarkIcon();
@@ -209,7 +210,7 @@ class _MapPageState extends State<MapPage> {
 
   void _changeSelectedPlaceMarkIcon() {
     if (selectedPlaceMark != null)
-      controller.changePlacemarkIcon(selectedPlaceMark, MapPage.MARKER_ICON_SELECTED);
+      controller.changePlacemarkIcon(selectedPlaceMark, MapPage.MARKER_ICON_RED_SELECTED);
   }
 
   void _resetSelectedPlaceMarkIcon() {

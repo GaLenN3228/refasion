@@ -69,8 +69,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                               (widget.product..isFavourite = false).id)
                                           : addRemoveFavouriteRepository.addToFavourites(
                                               (widget.product..isFavourite = true).id)
-                                      : showCupertinoModalBottomSheet(
-                                          backgroundColor: Colors.white,
+                                      : showMaterialModalBottomSheet(
                                           expand: false,
                                           context: context,
                                           useRootNavigator: true,

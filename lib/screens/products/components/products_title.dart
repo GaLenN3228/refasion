@@ -32,7 +32,7 @@ class ProductsTitle extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           Text(
-            "${productsContent.products.length} вещи",
+            productsContent.countText,
             style: textTheme.caption,
           ),
         ],

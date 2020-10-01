@@ -132,11 +132,9 @@ class _ProductPageState extends State<ProductPage> {
                                     .removeFromFavourites((widget.product..isFavourite = false).id)
                                 : addRemoveFavouriteRepository
                                     .addToFavourites((widget.product..isFavourite = true).id)
-                            : showCupertinoModalBottomSheet(
-                                backgroundColor: Colors.white,
+                            : showMaterialModalBottomSheet(
                                 expand: false,
                                 context: context,
-                                settings: RouteSettings(name: "/authorization"),
                                 useRootNavigator: true,
                                 builder: (context, controller) => AuthorizationSheet());
                       });

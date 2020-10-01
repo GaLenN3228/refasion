@@ -58,41 +58,46 @@ class _CartProductTileState extends State<CartProductTile> {
       builder: (dialogContext) => CustomDialog.Dialog(
         dialogContent: [
           DialogItemContent(
-            "Подробнее",
-            () {
+            DialogItemType.infoHeader,
+            title: "Товар в резерве",
+            subTitle: "Товар в резерве в резерве в резерве в резерве в резерве в резерве в резерве в резерве",
+          ),
+          DialogItemContent(
+            DialogItemType.item,
+            title: "Подробнее",
+            onClick: () {
               Navigator.of(dialogContext).pop();
               widget.onProductPush?.call();
             },
-            DialogItemType.item,
             icon: IconAsset.info,
           ),
           if (!widget.cartProduct.product.isFavourite)
             DialogItemContent(
-              "Перенести в избранное",
-              () async {
+              DialogItemType.item,
+              title: "Перенести в избранное",
+              onClick: () async {
                 await addToFavorites();
                 await removeFromCart();
 
                 Navigator.of(dialogContext).pop();
               },
-              DialogItemType.item,
               icon: IconAsset.favoriteBorder,
             ),
           DialogItemContent(
-            "Удалить из корзины",
-            () async {
+            DialogItemType.item,
+            title: "Удалить из корзины",
+            onClick: () async {
               await removeFromCart();
 
               Navigator.of(dialogContext).pop();
             },
-            DialogItemType.item,
             icon: IconAsset.delete,
             color: Colors.red,
           ),
           DialogItemContent(
-            "Отменить",
-            () => Navigator.of(dialogContext).pop(),
             DialogItemType.system,
+            title: "Отменить",
+            onClick: () => Navigator.of(dialogContext).pop(),
           )
         ],
       ),

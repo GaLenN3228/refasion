@@ -40,15 +40,19 @@ class _PhotosPageState extends State<PhotosPage> {
           this.dialogContext = dialogContext;
           return CustomDialog.Dialog(
             dialogContent: [
-              DialogItemContent("Сделать фото", () {
+              DialogItemContent(DialogItemType.item, title: "Сделать фото", onClick: () {
                 return openCamera(index);
-              }, DialogItemType.item, icon: IconAsset.camera),
-              DialogItemContent("Выбрать из галереи", () {
+              }, icon: IconAsset.camera),
+              DialogItemContent(DialogItemType.item, title: "Выбрать из галереи", onClick: () {
                 return openGallery(index);
-              }, DialogItemType.item, icon: IconAsset.image),
-              DialogItemContent("Закрыть", () {
-                Navigator.pop(dialogContext);
-              }, DialogItemType.system)
+              }, icon: IconAsset.image),
+              DialogItemContent(
+                DialogItemType.system,
+                title: "Закрыть",
+                onClick: () {
+                  Navigator.pop(dialogContext);
+                },
+              )
             ],
           );
         });

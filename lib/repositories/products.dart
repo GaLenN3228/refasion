@@ -2,6 +2,7 @@ import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/product_price.dart';
 import 'package:refashioned_app/models/products.dart';
+import 'package:refashioned_app/models/property.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 
@@ -35,6 +36,8 @@ class ProductRepository extends BaseRepository<Product> {
         response = BaseResponse.fromJson(
             (await ApiService.getProduct(id)).data, (contentJson) => Product.fromJson(contentJson));
 
+        combineProductProperties();
+
         await BaseRepository.isAuthorized().then((isAuthorized) async {
           if (isAuthorized) {
             FavouritesRepository favouritesRepository = FavouritesRepository();
@@ -48,6 +51,19 @@ class ProductRepository extends BaseRepository<Product> {
           }
         });
       });
+
+  void combineProductProperties() {
+    if (response != null && response.content != null && response.content.properties != null) {
+      var finalProperties = Map<String, Property>();
+
+      response.content.properties.forEach((property) {
+        finalProperties.update(property.property, (value) => value..value += ", " + property.value,
+            ifAbsent: () => finalProperties.putIfAbsent(property.property, () => property));
+      });
+
+      response.content.properties = finalProperties.values.toList();
+    }
+  }
 }
 
 class ProductRecommendedRepository extends BaseRepository<List<Product>> {
