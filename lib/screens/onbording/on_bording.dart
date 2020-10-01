@@ -62,22 +62,112 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       SlideTile(
                         imagePath: 'assets/images/png/onbording.png',
                         title: "Гарантия подлинности",
-                        subtitle: 'Продавайте и покупайте почти новые брендовые вещи  ',
+                        subtitle: Text(
+                          'Продавайте и покупайте почти новые брендовые вещи',textAlign: TextAlign.center, style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 20,
+                            color: Color(0xFFFFFFFF)
+                        ),
+                        ),
                       ),
                       SlideTile(
                         imagePath: 'assets/images/png/onbording.png',
                         title: "Умное ценообразование",
-                        subtitle: 'Одежда, обувь и аксессуары со скидкой до 90% каждый день',
+                        subtitle: RichText(
+                          textAlign: TextAlign.center ,
+                          text: TextSpan(
+                              text: 'Одежда, обувь и аксессуары со скидкой до ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 20,
+                                  color: Color(0xFFFFFFFF)
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '90%',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20,
+                                      color: Color(0xFFFAD24E)
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' каждый день',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 20,
+                                      color: Color(0xFFFFFFFF)
+                                  ),
+                                )
+                              ]
+                          ),
+                        ),
                       ),
                       SlideTile(
                         imagePath: 'assets/images/png/onbording.png',
                         title: "Умное ценообразование",
-                        subtitle: 'Одежда, обувь и аксессуары со скидкой до 90% каждый день',
+                        subtitle: RichText(
+                          textAlign: TextAlign.center ,
+                          text: TextSpan(
+                              text: 'Одежда, обувь и аксессуары со скидкой до ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 20,
+                                  color: Color(0xFFFFFFFF)
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '90%',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20,
+                                      color: Color(0xFFFAD24E)
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' каждый день',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 20,
+                                      color: Color(0xFFFFFFFF)
+                                  ),
+                                )
+                              ]
+                          ),
+                        ),
                       ),
                       SlideTile(
                         imagePath: 'assets/images/png/onbording.png',
                         title: "Умное ценообразование",
-                        subtitle: 'Одежда, обувь и аксессуары со скидкой до 90% каждый день',
+                        subtitle: RichText(
+                          textAlign: TextAlign.center ,
+                          text: TextSpan(
+                            text: 'Одежда, обувь и аксессуары со скидкой до ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20,
+                              color: Color(0xFFFFFFFF)
+                          ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: '90%',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                  color: Color(0xFFFAD24E)
+                              ),
+                              ),
+                              TextSpan(
+                                text: ' каждый день',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 20,
+                                  color: Color(0xFFFFFFFF)
+                              ),
+                              )
+                            ]
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -145,7 +235,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 }
 class SlideTile extends StatelessWidget {
-  String imagePath, title, subtitle;
+  String imagePath,  title;
+  Widget subtitle;
   SlideTile({this.imagePath, this.title, this.subtitle});
   @override
   Widget build(BuildContext context) {
@@ -197,11 +288,7 @@ class SlideTile extends StatelessWidget {
                   ),),
                   Container(
                     padding: EdgeInsets.only(top: 20),
-                    child: Text(subtitle, textAlign: TextAlign.center,style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 20,
-                        color: Color(0xFFFFFFFF)
-                    ),),
+                    child: subtitle,
                   ),
                 ],
               ),
