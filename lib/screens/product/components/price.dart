@@ -25,7 +25,7 @@ class ProductPrice extends StatelessWidget {
             ? Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: Text(
-                  "${numberFormat.format(discountPrice)}",
+                  "${numberFormat.format(currentPrice)}",
                   style: Theme.of(context).textTheme.bodyText2.copyWith(
                         decoration: TextDecoration.lineThrough,
                       ),
@@ -36,7 +36,7 @@ class ProductPrice extends StatelessWidget {
           color: hasDiscount ? accentColor : null,
           padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
           child: Text(
-            "${numberFormat.format(currentPrice)} ₽",
+            "${numberFormat.format(hasDiscount ? discountPrice: currentPrice)} ₽",
             style: Theme.of(context).textTheme.subtitle1,
           ),
         )
