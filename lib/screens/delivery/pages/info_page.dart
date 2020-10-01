@@ -29,8 +29,7 @@ class InfoPage extends StatefulWidget {
 
   static final formKey = GlobalKey<FormState>();
 
-  const InfoPage(
-      {Key key, this.onClose, this.pickpoint, this.deliveryType, this.onFinish, this.cartItemId})
+  const InfoPage({Key key, this.onClose, this.pickpoint, this.deliveryType, this.onFinish, this.cartItemId})
       : super(key: key);
   @override
   _InfoPageState createState() => _InfoPageState();
@@ -70,15 +69,15 @@ class _InfoPageState extends State<InfoPage> {
       ),
     };
 
-    courierDelivery = widget.deliveryType.type == Delivery.COURIER_DELIVERY ||
-        widget.deliveryType.type == Delivery.EXPRESS_DEVILERY;
+    courierDelivery =
+        widget.deliveryType.type == Delivery.COURIER_DELIVERY || widget.deliveryType.type == Delivery.EXPRESS_DEVILERY;
 
     if (courierDelivery) {
       info = Map.fromIterable(InfoField.values, key: (value) => value, value: (_) => "");
       addressText = "Адрес доставки";
     } else {
-      info = Map.fromIterable([InfoField.fio, InfoField.phone, InfoField.email],
-          key: (value) => value, value: (_) => "");
+      info =
+          Map.fromIterable([InfoField.fio, InfoField.phone, InfoField.email], key: (value) => value, value: (_) => "");
       addressText = "Адрес пункта выдачи";
     }
 
@@ -95,8 +94,8 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   check() {
-    final check = info.entries.fold(
-        true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
+    final check =
+        info.entries.fold(true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
 
     buttonState.value = check ? ButtonState.enabled : ButtonState.disabled;
   }
@@ -106,8 +105,7 @@ class _InfoPageState extends State<InfoPage> {
       case InfoField.phone:
         return text.length == 11;
       case InfoField.email:
-        return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-            .hasMatch(text);
+        return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(text);
       case InfoField.appartment:
         return text.isNotEmpty || privateHouse;
       case InfoField.fio:
@@ -135,7 +133,9 @@ class _InfoPageState extends State<InfoPage> {
         );
 
         await addUserPickPointRepository.update(jsonEncode(userAddress.toJson()));
-        id = addUserPickPointRepository?.response?.content?.pickpoint;
+        id = addUserPickPointRepository?.response?.content?.id;
+
+        addUserPickPointRepository.dispose();
 
         break;
       case Delivery.COURIER_DELIVERY:
@@ -156,6 +156,8 @@ class _InfoPageState extends State<InfoPage> {
 
         await addAddressRepository.update(jsonEncode(userAddress.toJson()));
         id = addAddressRepository?.response?.content?.id;
+
+        addAddressRepository.dispose();
 
         break;
     }
@@ -184,16 +186,13 @@ class _InfoPageState extends State<InfoPage> {
             children: [
               RefashionedTopBar(
                 data: TopBarData.simple(
-                    middleText: "Данные получателя",
-                    onBack: Navigator.of(context).pop,
-                    onClose: widget.onClose),
+                    middleText: "Данные получателя", onBack: Navigator.of(context).pop, onClose: widget.onClose),
               ),
               Expanded(
                 child: Form(
                   key: InfoPage.formKey,
                   child: ListView(
-                    padding: EdgeInsets.fromLTRB(
-                        20, 0, 20, max(MediaQuery.of(context).padding.bottom, 20.0) + 65.0),
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, max(MediaQuery.of(context).padding.bottom, 20.0) + 65.0),
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
@@ -205,15 +204,12 @@ class _InfoPageState extends State<InfoPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: RichText(
-                          text: TextSpan(
-                              text: "Адрес: ",
-                              style: Theme.of(context).textTheme.bodyText2,
-                              children: [
-                                TextSpan(
-                                  text: widget.pickpoint.originalAddress,
-                                  style: Theme.of(context).textTheme.bodyText1,
-                                )
-                              ]),
+                          text: TextSpan(text: "Адрес: ", style: Theme.of(context).textTheme.bodyText2, children: [
+                            TextSpan(
+                              text: widget.pickpoint.originalAddress,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            )
+                          ]),
                         ),
                       ),
                       if (courierDelivery)
@@ -232,8 +228,7 @@ class _InfoPageState extends State<InfoPage> {
                                       autofocus: true,
                                       hintText: "Квартира / Офис",
                                       keyboardType: TextInputType.number,
-                                      onSearchUpdate: (text) =>
-                                          onUpdate(InfoField.appartment, text),
+                                      onSearchUpdate: (text) => onUpdate(InfoField.appartment, text),
                                     ),
                                   ),
                                   SizedBox(
@@ -372,8 +367,7 @@ class _InfoPageState extends State<InfoPage> {
             right: 0,
             bottom: 0,
             child: Padding(
-              padding:
-                  EdgeInsets.fromLTRB(20, 10, 20, max(MediaQuery.of(context).padding.bottom, 20)),
+              padding: EdgeInsets.fromLTRB(20, 10, 20, max(MediaQuery.of(context).padding.bottom, 20)),
               child: RefashionedButton(
                 states: buttonState,
                 statesData: buttonStatesData,

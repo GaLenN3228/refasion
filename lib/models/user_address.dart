@@ -1,10 +1,11 @@
 import 'package:refashioned_app/models/pick_point.dart';
 
-enum UserAddressType { address, pickpoint }
+enum UserAddressType { address, pickpoint, boxberry_pickpoint }
 
 final _userAddressTypesLabels = {
   "address": UserAddressType.address,
   "pickpoint": UserAddressType.pickpoint,
+  "boxberry-pickpoint": UserAddressType.boxberry_pickpoint,
 };
 
 class UserAddress {
@@ -26,7 +27,12 @@ class UserAddress {
   final String comment;
   final bool isPrivateHouse;
 
+  final String nameForSeller;
+  final String nameForBuyer;
+
   const UserAddress({
+    this.nameForSeller,
+    this.nameForBuyer,
     this.type,
     this.isPrivateHouse,
     this.pickpoint,
@@ -45,10 +51,30 @@ class UserAddress {
   factory UserAddress.fromJson(Map<String, dynamic> json) {
     final extraData = json['extra_data'];
 
+    final type = json['type'] != null ? _userAddressTypesLabels[json['type']] : null;
+
+    String nameForSeller;
+    String nameForBuyer;
+
+    switch (type) {
+      case UserAddressType.address:
+        nameForBuyer = "Адрес самовывоза";
+        nameForSeller = "Адрес доставки";
+        break;
+      case UserAddressType.pickpoint:
+        nameForBuyer = nameForSeller = "Пункт выдачи";
+        break;
+      case UserAddressType.boxberry_pickpoint:
+        nameForBuyer = nameForSeller = "Пункт выдачи Boxberry";
+        break;
+    }
+
     return UserAddress(
       id: json['id'],
       pickpoint: json['pickpoint'],
-      type: json['type'] != null ? _userAddressTypesLabels[json['type']] : null,
+      type: type,
+      nameForBuyer: nameForBuyer,
+      nameForSeller: nameForSeller,
       address: PickPoint.fromJson(json),
       fio: json['contact_fio'],
       phone: json['contact_phone'],
@@ -66,10 +92,10 @@ class UserAddress {
         "id": id,
         "pickpoint": pickpoint,
         "type": _userAddressTypesLabels.entries.firstWhere((element) => element.value == type, orElse: () => null)?.key,
-        'address': address.address ?? "",
-        'unrestricted_value': address.originalAddress ?? "",
-        'lat': address.latitude ?? "",
-        'lon': address.longitude ?? "",
+        'address': address?.address ?? "",
+        'unrestricted_value': address?.originalAddress ?? "",
+        'lat': address?.latitude ?? "",
+        'lon': address?.longitude ?? "",
         'contact_fio': fio ?? "",
         'contact_phone': phone ?? "",
         'contact_email': email ?? "",
