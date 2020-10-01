@@ -179,7 +179,11 @@ class ApiService {
 
   static Future<Response> getProducts({String parameters}) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
-    return dioClient.get(Url.products + (parameters ?? ''));
+    return dioClient.get(parameters != null
+        ? (parameters.contains("collection")
+            ? Url.refashionedBaseUrl + parameters
+            : Url.products + parameters)
+        : Url.products);
   }
 
   static Future<Response> getSearchResults(String query) async {
@@ -275,19 +279,27 @@ class ApiService {
 
   static Future<Response> addProducts(ProductData productData) async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    List<String> properties = List();
+    productData.properties.forEach((element) {
+      element.values.where((element) => element.selected).forEach((element) {
+        properties.add(element.id);
+      });
+    });
     var body = {
       "name": productData.description,
       "description": productData.description,
-      // "property_values": [
-      //   "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-      // ],
+      "property_values": properties,
       "brand": productData.brand.id,
       "category": productData.category.id,
       "current_price": productData.price,
       "discount_price": productData.price,
-      // "size": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "seller": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "is_published": true
+      "size": productData.sizes.id,
+      "takeaways": [
+        {
+          "delivery_company": "71a4fa75-38a9-4df7-920e-5b4c6bea716e",
+          "delivery_object_id": "0326f829-0da8-40da-9191-f265d7d55ce9"
+        }
+      ],
     };
     return dioClient.post(Url.addProduct, data: body);
   }
@@ -306,5 +318,10 @@ class ApiService {
   static Future<Response> getSizesTable(String categoryId) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.sizes(categoryId));
+  }
+
+  static Future<Response> getHome() async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    return dioClient.get(Url.home);
   }
 }

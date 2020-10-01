@@ -3,13 +3,15 @@ import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/product_price.dart';
 import 'package:refashioned_app/models/products.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
+import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 
 import '../services/api_service.dart';
 import 'base.dart';
 
 class ProductsRepository extends BaseRepository<ProductsContent> {
   Future<void> getProducts(String parameters) => apiCall(() async {
-        response = BaseResponse.fromJson((await ApiService.getProducts(parameters: parameters)).data,
+        response = BaseResponse.fromJson(
+            (await ApiService.getProducts(parameters: parameters)).data,
             (contentJson) => ProductsContent.fromJson(contentJson));
         await BaseRepository.isAuthorized().then((isAuthorized) async {
           if (isAuthorized) {
@@ -17,7 +19,8 @@ class ProductsRepository extends BaseRepository<ProductsContent> {
             await favouritesRepository.getFavourites();
 
             response.content.products.forEach((product) {
-              if (favouritesRepository.response.content.any((favourite) => favourite.productId == product.id))
+              if (favouritesRepository.response.content
+                  .any((favourite) => favourite.productId == product.id))
                 product.isFavourite = true;
               else
                 product.isFavourite = false;
@@ -37,7 +40,8 @@ class ProductRepository extends BaseRepository<Product> {
             FavouritesRepository favouritesRepository = FavouritesRepository();
             await favouritesRepository.getFavourites();
 
-            if (favouritesRepository.response.content.any((favourite) => favourite.productId == response.content.id))
+            if (favouritesRepository.response.content
+                .any((favourite) => favourite.productId == response.content.id))
               response.content.isFavourite = true;
             else
               response.content.isFavourite = false;
@@ -57,7 +61,8 @@ class ProductRecommendedRepository extends BaseRepository<List<Product>> {
             await favouritesRepository.getFavourites();
 
             response.content.forEach((product) {
-              if (favouritesRepository.response.content.any((favourite) => favourite.productId == product.id))
+              if (favouritesRepository.response.content
+                  .any((favourite) => favourite.productId == product.id))
                 product.isFavourite = true;
               else
                 product.isFavourite = false;
@@ -69,7 +74,13 @@ class ProductRecommendedRepository extends BaseRepository<List<Product>> {
 
 class CalcProductPrice extends BaseRepository<ProductPrice> {
   Future<void> calcProductPrice(int price) => apiCall(() async {
-        response = BaseResponse.fromJson(
-            (await ApiService.calcProductPrice(price)).data, (contentJson) => ProductPrice.fromJson(contentJson));
+        response = BaseResponse.fromJson((await ApiService.calcProductPrice(price)).data,
+            (contentJson) => ProductPrice.fromJson(contentJson));
+      });
+}
+
+class AddProductRepository extends BaseRepository {
+  Future<void> addProduct(ProductData productData) => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.addProducts(productData)).data, null);
       });
 }

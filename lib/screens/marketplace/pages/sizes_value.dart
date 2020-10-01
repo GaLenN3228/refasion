@@ -1,14 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/size.dart';
-import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class SizeValuesPage extends StatefulWidget {
-  final Function() onPush;
+  final Function(Values) onPush;
   final Function() onBack;
   final Sizes sizes;
 
@@ -41,7 +40,8 @@ class _SizeValuesPageState extends State<SizeValuesPage> {
                 separatorBuilder: (BuildContext context, int index) => ItemsDivider(),
                 itemCount: widget.sizes.values.length,
                 itemBuilder: (context, index) {
-                  return sizeValueItem(context, widget.sizes.values[index].value, () => widget.onPush());
+                  return sizeValueItem(
+                      context, widget.sizes.values[index], (value) => widget.onPush(value));
                 },
               )),
             ],
@@ -50,18 +50,19 @@ class _SizeValuesPageState extends State<SizeValuesPage> {
       ),
     );
   }
-  Widget sizeValueItem(context, String value, Function() onPush){
+
+  Widget sizeValueItem(context, Values value, Function(Values) onPush) {
     return Material(
       color: Colors.white,
-      child:Tapable(
-        padding:  EdgeInsets.only(left: 20, top: 15, bottom: 15),
-        onTap: (){
-          onPush();
+      child: Tapable(
+        padding: EdgeInsets.only(left: 20, top: 15, bottom: 15),
+        onTap: () {
+          onPush(value);
         },
-        child: Text('$value',  style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            .copyWith(fontWeight: FontWeight.w500),),
+        child: Text(
+          '${value.value}',
+          style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }

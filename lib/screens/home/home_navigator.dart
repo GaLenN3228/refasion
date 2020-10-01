@@ -87,12 +87,36 @@ class HomeNavigator extends StatelessWidget {
       String parameters,
       Order order,
       String productTitle,
-      SearchResult searchResult}) {
+      SearchResult searchResult,
+      String collectionUrl}) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     switch (route) {
       case HomeNavigatorRoutes.root:
         topPanelController.needShowBack = false;
-        return HomePage();
+        return HomePage(
+          pushProduct: (product) {
+            Navigator.of(context)
+                .push(
+                  CupertinoPageRoute(
+                    builder: (context) =>
+                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
+                  ),
+                )
+                .then((value) => topPanelController.needShow = true);
+          },
+          pushCollection: (url, title) {
+            Navigator.of(context)
+                .push(
+                  CupertinoPageRoute(
+                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
+                        collectionUrl: url, productTitle: title),
+                    settings: RouteSettings(name: HomeNavigatorRoutes.products),
+                  ),
+                )
+                .then((value) =>
+                    {topPanelController.needShow = true, topPanelController.needShowBack = false});
+          },
+        );
 
       case HomeNavigatorRoutes.products:
         topPanelController.needShow = true;
@@ -101,6 +125,7 @@ class HomeNavigator extends StatelessWidget {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductsPage(
+            collectionUrl: collectionUrl,
             parameters: parameters,
             searchResult: searchResult,
             topCategory: category,
@@ -215,6 +240,8 @@ class HomeNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     createOrderRepository = CreateOrderRepository();
 
     getOrderRepository = GetOrderRepository();
