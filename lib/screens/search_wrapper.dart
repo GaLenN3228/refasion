@@ -2,14 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/repositories/search.dart';
-import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/catalog/search/components/result_tile.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
-import 'package:refashioned_app/utils/prefs.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 enum SearchResultState { SHOW, HIDE, VISIBLE, NOT_FOUND }
 

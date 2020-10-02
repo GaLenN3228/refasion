@@ -8,7 +8,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class ApiService {
   //FIXME set LOG_ENABLE = false in release build
-  static const LOG_ENABLE = false;
+  static const LOG_ENABLE = true;
 
   //ADDRESSES
 
@@ -167,8 +167,6 @@ class ApiService {
     return dioClient.post(Url.userPickPoints, data: json);
   }
 
-  //
-
   static Future<Response> getCategories() async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.categories);
@@ -319,5 +317,10 @@ class ApiService {
   static Future<Response> getHome() async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.home);
+  }
+
+  static Future<Response> getProfileProducts() async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    return dioClient.get(Url.profileProducts);
   }
 }

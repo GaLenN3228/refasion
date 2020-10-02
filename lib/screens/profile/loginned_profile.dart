@@ -1,31 +1,55 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/category.dart';
+import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/models/products.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/components/tab_view.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
+import 'package:refashioned_app/screens/profile/components/profile_product_tile.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
-import 'package:refashioned_app/services/api_service.dart';
+import 'package:refashioned_app/utils/colors.dart';
 import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class AuthorizedProfilePage extends StatelessWidget {
   final Function() onFavClick;
+  final Function(Product) onProductPush;
   final Function() onSettingsClick;
 
-  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick}) : super(key: key);
+  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var profileProductsRepository = context.watch<ProfileProductsRepository>();
+
+    if (profileProductsRepository.productsContent == null) {
+      return Center(
+          child: SizedBox(
+        height: 32.0,
+        width: 32.0,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          backgroundColor: accentColor,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
+      ));
+    }
+
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Column(
         children: [
           _appBar(context),
           _menuButtons(context),
-          _profileBody(context),
+          if (profileProductsRepository.productsContent.products.isNotEmpty)
+            _profileProducts(context, profileProductsRepository.productsContent)
+          else
+            _profilePlaceHolder(context)
         ],
       ),
     );
@@ -58,12 +82,14 @@ class AuthorizedProfilePage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       FutureBuilder(
-                        future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
+                        future: SharedPreferences.getInstance()
+                            .then((prefs) => prefs.getString(Prefs.user_name)),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
                               snapshot.data.toString(),
-                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                             );
                           }
                           return SizedBox();
@@ -97,7 +123,7 @@ class AuthorizedProfilePage extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 15, bottom: 15),
+            padding: const EdgeInsets.only(top: 6, bottom: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -112,7 +138,8 @@ class AuthorizedProfilePage extends StatelessWidget {
                         color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7), child: Text('Мои заказы', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Мои заказы', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -128,7 +155,9 @@ class AuthorizedProfilePage extends StatelessWidget {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
+                      Container(
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -142,7 +171,9 @@ class AuthorizedProfilePage extends StatelessWidget {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(padding: EdgeInsets.only(top: 7), child: Text('Подписки', style: textTheme.bodyText1)),
+                      Container(
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Подписки', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -170,16 +201,13 @@ class AuthorizedProfilePage extends StatelessWidget {
               ],
             ),
           ),
-          Divider(),
+          ItemsDivider(padding: 0),
         ],
       ),
     );
   }
 
-  Widget _profileBody(context) {
-    ApiService.getCategories();
-    List<Category> categories;
-    print('123123#!#! $categories');
+  Widget _profilePlaceHolder(context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Material(
       color: Colors.white,
@@ -189,7 +217,7 @@ class AuthorizedProfilePage extends StatelessWidget {
           children: [
             SVGIcon(
               icon: IconAsset.hanger,
-              height: 70,
+              height: 60,
               color: Colors.black,
             ),
             Text(
@@ -227,5 +255,40 @@ class AuthorizedProfilePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _profileProducts(context, ProductsContent productsContent) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    var products = List<Widget>();
+    productsContent.products.asMap().forEach((key, value) {
+      products.add(Column(children: <Widget>[
+        ProfileProductTile(
+          product: value,
+          onProductPush: onProductPush,
+        ),
+        if (key != productsContent.products.length - 1)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: ItemsDivider(
+              padding: 5,
+            ),
+          )
+      ]));
+    });
+    return Expanded(
+        child: ListView(
+      padding: EdgeInsets.only(right: 16, left: 16, bottom: 60, top: 14),
+      shrinkWrap: true,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+          child: Text(
+            "Мои вещи",
+            style: Theme.of(context).textTheme.headline2,
+          ),
+        ),
+        ...products
+      ],
+    ));
   }
 }
