@@ -55,6 +55,11 @@ class Product {
     final stateText = stateObject != null ? stateObject['text'] : null;
     final state = stateText != null ? _stateLabels[stateText] : null;
 
+    final deliveryTypes = [
+      if (json['takeaways'] != null)
+        for (final deliveryType in json['takeaways']) DeliveryType.fromJson(deliveryType)
+    ].where((element) => element != null).toList();
+
     return Product(
       id: json['id'],
       article: json['article'],
@@ -75,10 +80,7 @@ class Product {
           for (final image in json['images']) image
       ],
       pickUpAddress: json['pickup'] != null ? PickPoint.fromJson(json['pickup']) : null,
-      deliveryTypes: [
-        if (json['takeaways'] != null)
-          for (final deliveryType in json['takeaways']) DeliveryType.fromJson(deliveryType)
-      ],
+      deliveryTypes: deliveryTypes,
       state: state,
     );
   }
