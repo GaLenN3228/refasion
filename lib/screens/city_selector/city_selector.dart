@@ -101,16 +101,20 @@ class _CitySelectorState extends State<CitySelector> {
                             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                             child: Text(
                               repository.loadingFailed
-                                  ? "Ошибка: ${repository.response.errors}"
+                                  ? repository.response?.errors != null
+                                      ? "Ошибка: ${repository.response?.errors}"
+                                      : "🤬"
                                   : "Маркетплейс брендовой одежды и обуви",
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.headline1.copyWith(
-                                    color: white,
-                                    fontWeight: FontWeight.w300,
-                                    height: 1.5,
-                                  ),
+                              style: repository.loadingFailed && repository.response?.errors == null
+                                  ? TextStyle(fontSize: 32)
+                                  : Theme.of(context).textTheme.headline1.copyWith(
+                                        color: white,
+                                        fontWeight: FontWeight.w300,
+                                        height: 1.5,
+                                      ),
                             ),
                           ),
                         ),

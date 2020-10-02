@@ -51,6 +51,8 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
     final stateObject = json['state'];
     final stateText = stateObject != null ? stateObject['text'] : null;
     final state = stateText != null ? _stateLabels[stateText] : null;
