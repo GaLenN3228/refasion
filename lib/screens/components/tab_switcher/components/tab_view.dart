@@ -193,7 +193,7 @@ class TabView extends StatelessWidget {
           child: child,
         );
       },
-      child: CupertinoPageScaffold(
+      child: Material(
         child: content,
       ),
     );

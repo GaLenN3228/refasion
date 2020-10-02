@@ -82,4 +82,7 @@ class Url {
 
   //Home
   static const home = '$refashionedBaseUrl/main-page/';
+
+  //Profile
+  static const profileProducts = '$refashionedBaseUrl/users/profile/products/';
 }

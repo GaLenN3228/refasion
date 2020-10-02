@@ -100,3 +100,25 @@ class AddProductRepository extends BaseRepository {
         response = BaseResponse.fromJson((await ApiService.addProducts(productData)).data, null);
       });
 }
+
+class ProfileProductsRepository extends BaseRepository<ProductsContent> {
+  ProductsContent productsContent;
+
+  Future<void> getProducts() => apiCall(() async {
+    productsContent = ProductsContent.fromJson((await ApiService.getProfileProducts()).data);
+        await BaseRepository.isAuthorized().then((isAuthorized) async {
+          if (isAuthorized) {
+            FavouritesRepository favouritesRepository = FavouritesRepository();
+            await favouritesRepository.getFavourites();
+
+            response.content.products.forEach((product) {
+              if (favouritesRepository.response.content
+                  .any((favourite) => favourite.productId == product.id))
+                product.isFavourite = true;
+              else
+                product.isFavourite = false;
+            });
+          }
+        });
+      });
+}

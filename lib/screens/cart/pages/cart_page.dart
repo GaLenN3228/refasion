@@ -58,13 +58,7 @@ class _CartPageState extends State<CartPage> {
     loadingIcon = SizedBox(
       width: 25.0,
       height: 25.0,
-      child: defaultTargetPlatform == TargetPlatform.iOS
-          ? const CupertinoActivityIndicator()
-          : CircularProgressIndicator(
-              strokeWidth: 1,
-              backgroundColor: accentColor,
-              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-            ),
+      child: const CupertinoActivityIndicator()
     );
     refreshController = RefreshController(initialRefresh: false);
 

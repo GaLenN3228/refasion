@@ -5,11 +5,13 @@ import 'package:refashioned_app/utils/colors.dart';
 final stateLabels = {
   ProductState.published: "Опубликован",
   ProductState.reserved: "В резерве",
+  ProductState.onModeration: "На модерации",
 };
 
 final stateColors = {
   ProductState.published: primaryColor,
   ProductState.reserved: red,
+  ProductState.onModeration: red,
 };
 
 class ProductStateTile extends StatelessWidget {

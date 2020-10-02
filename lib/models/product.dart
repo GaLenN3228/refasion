@@ -6,11 +6,12 @@ import 'package:refashioned_app/models/seller.dart';
 import 'brand.dart';
 import 'category.dart';
 
-enum ProductState { published, reserved }
+enum ProductState { published, reserved, onModeration }
 
 final _stateLabels = {
   "Опубликован": ProductState.published,
   "В резерве": ProductState.reserved,
+  "На модерации": ProductState.onModeration,
 };
 
 class Product {
