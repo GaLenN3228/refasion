@@ -31,7 +31,7 @@ class OrderPaymentTile extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 10,
+          height: 5,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 1),
