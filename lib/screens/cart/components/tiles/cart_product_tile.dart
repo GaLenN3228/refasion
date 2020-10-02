@@ -125,6 +125,7 @@ class _CartProductTileState extends State<CartProductTile> {
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: RefashionedCheckboxListenable(
                   valueNotifier: widget.cartProduct.selected,
+                  enabled: product.state == ProductState.published,
                 ),
               ),
               Padding(
