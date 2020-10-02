@@ -52,13 +52,10 @@ class _PaymentPageState extends State<PaymentPage> {
         children: [
           RefashionedTopBar(
             data: TopBarData.simple(
-                includeTopScreenPadding: false,
-                middleText: "Оплата",
-                onClose: () {
-                  widget.onFinish?.call();
-
-                  Navigator.of(context).pop();
-                }),
+              includeTopScreenPadding: false,
+              middleText: "Оплата",
+              onClose: () => Navigator.of(context).pop(),
+            ),
           ),
           Expanded(
             child: IndexedStack(
