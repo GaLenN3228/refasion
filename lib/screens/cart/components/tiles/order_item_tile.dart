@@ -17,10 +17,11 @@ class OrderItemTile extends StatelessWidget {
         children: [
           OrderItemDeliveryObjectTile(
             deliveryObject: orderItem.deliveryObject,
+            delivery: orderItem.shippingCost.shipping,
           ),
           OrderItemSellerDataTile(
             seller: orderItem.seller,
-            deliveryData: orderItem.deliveryData,
+            text: orderItem.deliveryText,
           ),
           Padding(
             padding: const EdgeInsets.only(top: 7.5, bottom: 25),

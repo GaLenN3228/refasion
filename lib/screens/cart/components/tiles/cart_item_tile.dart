@@ -23,8 +23,7 @@ class CartItemTile extends StatefulWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  const CartItemTile({Key key, this.cartItem, this.onProductPush, this.openDeliveryTypesSelector})
-      : super(key: key);
+  const CartItemTile({Key key, this.cartItem, this.onProductPush, this.openDeliveryTypesSelector}) : super(key: key);
 
   @override
   _CartItemTileState createState() => _CartItemTileState();
@@ -35,9 +34,8 @@ class _CartItemTileState extends State<CartItemTile> {
         context,
         widget.cartItem.id,
         onClose: Provider.of<CartRepository>(context, listen: false).clearPendingIDs,
-        onFinish: (companyId, objectId) async =>
-            await Provider.of<CartRepository>(context, listen: false)
-                .setDelivery(widget.cartItem.id, companyId, objectId),
+        onFinish: (companyId, objectId) async => await Provider.of<CartRepository>(context, listen: false)
+            .setDelivery(widget.cartItem.id, companyId, objectId),
         originalOverlayStyle: SystemUiOverlayStyle.light,
       );
 
@@ -49,8 +47,8 @@ class _CartItemTileState extends State<CartItemTile> {
           CartProductTile(
             cartProduct: cartProduct,
             onSelect: () {
-              final wasAbleToSelect = Provider.of<CartRepository>(context, listen: false)
-                  .select(cartProduct.product.id);
+              final wasAbleToSelect =
+                  Provider.of<CartRepository>(context, listen: false).select(cartProduct.product.id);
 
               if (!wasAbleToSelect)
                 openDeliveryTypesSelector();
@@ -63,6 +61,7 @@ class _CartItemTileState extends State<CartItemTile> {
           deliveryData: widget.cartItem.deliveryData,
           deliveryOption: widget.cartItem.deliveryOption,
           onTap: openDeliveryTypesSelector,
+          available: widget.cartItem.available,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),

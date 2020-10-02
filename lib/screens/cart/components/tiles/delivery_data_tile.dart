@@ -8,9 +8,17 @@ import 'package:refashioned_app/utils/colors.dart';
 class DeliveryDataTile extends StatefulWidget {
   final DeliveryOption deliveryOption;
   final DeliveryData deliveryData;
+  final bool available;
+
   final Function() onTap;
 
-  const DeliveryDataTile({Key key, this.deliveryData, this.onTap, this.deliveryOption}) : super(key: key);
+  const DeliveryDataTile({
+    Key key,
+    this.deliveryData,
+    this.onTap,
+    this.deliveryOption,
+    this.available,
+  }) : super(key: key);
 
   @override
   _DeliveryDataTileState createState() => _DeliveryDataTileState();
@@ -24,7 +32,10 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
   bool selected;
 
   update() {
-    if (widget.deliveryOption == null || widget.deliveryData == null) {
+    if (!widget.available) {
+      text = "Товары зарезервированы";
+      selected = false;
+    } else if (widget.deliveryOption == null || widget.deliveryData == null) {
       text = "Выберите способ доставки";
       action = "Выбрать";
       selected = false;
@@ -32,7 +43,7 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
       final type = widget.deliveryOption.deliveryCompany.type;
 
       icon = deliveryIcons[type];
-      text = deliveryLabels[type] + " - " + widget.deliveryData.text;
+      text = deliveryLabels[type] + " - " + widget.deliveryData.text.toLowerCase();
       action = "Изменить";
       selected = true;
     }
@@ -43,7 +54,9 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
     update();
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: widget.onTap,
+      onTap: () {
+        if (widget.available) widget.onTap?.call();
+      },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
         child: Row(
@@ -76,21 +89,22 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
                 ],
               ),
             ),
-            Row(
-              children: [
-                Text(
-                  action,
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                RotatedBox(
-                  quarterTurns: 2,
-                  child: SVGIcon(
-                    icon: IconAsset.back,
-                    size: 14,
+            if (action != null)
+              Row(
+                children: [
+                  Text(
+                    action,
+                    style: Theme.of(context).textTheme.subtitle1,
                   ),
-                ),
-              ],
-            )
+                  RotatedBox(
+                    quarterTurns: 2,
+                    child: SVGIcon(
+                      icon: IconAsset.back,
+                      size: 14,
+                    ),
+                  ),
+                ],
+              )
           ],
         ),
       ),

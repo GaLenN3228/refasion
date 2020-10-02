@@ -3,26 +3,26 @@ import 'package:refashioned_app/screens/components/checkbox/stateless.dart';
 
 class RefashionedCheckboxStateful extends StatefulWidget {
   final bool value;
+  final bool enabled;
 
   final double size;
   final EdgeInsets padding;
   final Function(bool) onUpdate;
 
-  const RefashionedCheckboxStateful(
-      {Key key,
-      this.value: false,
-      this.size: 20,
-      this.padding: EdgeInsets.zero,
-      this.onUpdate})
-      : super(key: key);
+  const RefashionedCheckboxStateful({
+    Key key,
+    this.value: false,
+    this.size: 20,
+    this.padding: EdgeInsets.zero,
+    this.onUpdate,
+    this.enabled: true,
+  }) : super(key: key);
 
   @override
-  _RefashionedCheckboxStatefulState createState() =>
-      _RefashionedCheckboxStatefulState();
+  _RefashionedCheckboxStatefulState createState() => _RefashionedCheckboxStatefulState();
 }
 
-class _RefashionedCheckboxStatefulState
-    extends State<RefashionedCheckboxStateful> {
+class _RefashionedCheckboxStatefulState extends State<RefashionedCheckboxStateful> {
   bool value;
 
   @override
@@ -43,5 +43,6 @@ class _RefashionedCheckboxStatefulState
         padding: widget.padding,
         size: widget.size,
         value: value,
+        enabled: widget.enabled,
       );
 }
