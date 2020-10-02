@@ -51,25 +51,27 @@ class _CartProductTileState extends State<CartProductTile> {
 
   removeFromCart() async => await cartRepository.removeFromCart(widget.cartProduct.id);
 
-  dialog() {
+  dialog({bool isReserved: false}) {
     return showDialog(
       context: context,
       builder: (dialogContext) => CustomDialog.Dialog(
         dialogContent: [
-          // DialogItemContent(
-          //   DialogItemType.infoHeader,
-          //   title: "Товар в резерве",
-          //   subTitle: "Товар в резерве в резерве в резерве в резерве в резерве в резерве в резерве в резерве",
-          // ),
-          DialogItemContent(
-            DialogItemType.item,
-            title: "Подробнее",
-            onClick: () {
-              Navigator.of(dialogContext).pop();
-              widget.onProductPush?.call();
-            },
-            icon: IconAsset.info,
-          ),
+          if (isReserved)
+            DialogItemContent(
+              DialogItemType.infoHeader,
+              title: "Товар в резерве",
+              subTitle: "Извините, но этот товар уже оплатил другой покупатель",
+            ),
+          if (!isReserved)
+            DialogItemContent(
+              DialogItemType.item,
+              title: "Подробнее",
+              onClick: () {
+                Navigator.of(dialogContext).pop();
+                widget.onProductPush?.call();
+              },
+              icon: IconAsset.info,
+            ),
           if (!widget.cartProduct.product.isFavourite)
             DialogItemContent(
               DialogItemType.item,
@@ -113,7 +115,7 @@ class _CartProductTileState extends State<CartProductTile> {
         if (product.state == ProductState.published)
           widget.onSelect();
         else
-          dialog();
+          dialog(isReserved: product.state != ProductState.published);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -160,7 +162,7 @@ class _CartProductTileState extends State<CartProductTile> {
               ),
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: dialog,
+                onTap: () => dialog(isReserved: product.state != ProductState.published),
                 child: Container(
                   height: double.infinity,
                   alignment: Alignment.topCenter,
