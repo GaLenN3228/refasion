@@ -7,14 +7,14 @@ import 'package:refashioned_app/models/user_address.dart';
 
 class OrderItem {
   final UserAddress deliveryObject;
-  final DeliveryData deliveryData;
+  final String deliveryText;
   final Seller seller;
   final List<OrderProduct> products;
   final ShippingCost shippingCost;
 
   const OrderItem({
     this.shippingCost,
-    this.deliveryData,
+    this.deliveryText,
     this.seller,
     this.products,
     this.deliveryObject,
@@ -42,7 +42,7 @@ class OrderItem {
 
     return OrderItem(
       deliveryObject: deliveryObject,
-      deliveryData: deliveryData,
+      deliveryText: deliveryData.text,
       seller: seller,
       products: products,
       shippingCost: shippingCost,

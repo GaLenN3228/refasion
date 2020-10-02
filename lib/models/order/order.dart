@@ -27,6 +27,7 @@ class Order {
     if (json == null) return null;
 
     final totalPrice = json['products_price'];
+    final fullPrice = json['full_price'];
     final discount = json['discount'];
 
     final items = json['items'] != null
@@ -47,7 +48,7 @@ class Order {
       });
     }
 
-    final orderSummary = OrderSummary(totalPrice, discount, shippingCost);
+    final orderSummary = OrderSummary(totalPrice, discount, shippingCost, fullPrice);
 
     return Order(
       id: json['id'],

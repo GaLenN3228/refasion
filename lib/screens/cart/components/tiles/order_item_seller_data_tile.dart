@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/models/cart/delivery_data.dart';
 import 'package:refashioned_app/models/seller.dart';
 
-class OrderItemSellerDataTile extends StatefulWidget {
-  final DeliveryData deliveryData;
+class OrderItemSellerDataTile extends StatelessWidget {
+  final String text;
   final Seller seller;
 
-  const OrderItemSellerDataTile({Key key, this.deliveryData, this.seller}) : super(key: key);
+  const OrderItemSellerDataTile({Key key, this.text, this.seller}) : super(key: key);
 
-  @override
-  _OrderItemSellerDataTileState createState() => _OrderItemSellerDataTileState();
-}
-
-class _OrderItemSellerDataTileState extends State<OrderItemSellerDataTile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,9 +15,9 @@ class _OrderItemSellerDataTileState extends State<OrderItemSellerDataTile> {
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: widget.seller.image != null
+            child: seller.image != null
                 ? Image.network(
-                    widget.seller.image,
+                    seller.image,
                     height: 20,
                   )
                 : ClipRRect(
@@ -35,7 +29,7 @@ class _OrderItemSellerDataTileState extends State<OrderItemSellerDataTile> {
                   ),
           ),
           Text(
-            widget.deliveryData.text,
+            text,
             style: Theme.of(context).textTheme.subtitle1,
           ),
         ],

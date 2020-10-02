@@ -32,7 +32,7 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
       final type = widget.deliveryOption.deliveryCompany.type;
 
       icon = deliveryIcons[type];
-      text = deliveryLabels[type] + " - " + widget.deliveryData.text;
+      text = deliveryLabels[type] + " - " + widget.deliveryData.text.toLowerCase();
       action = "Изменить";
       selected = true;
     }
