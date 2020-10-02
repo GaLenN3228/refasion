@@ -30,33 +30,28 @@ class AuthorizedProfilePage extends StatelessWidget {
     if (profileProductsRepository.productsContent == null) {
       return Center(
           child: SizedBox(
-        height: 32.0,
-        width: 32.0,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          backgroundColor: accentColor,
-          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-        ),
-      ));
+            height: 32.0,
+            width: 32.0,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              backgroundColor: accentColor,
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+            ),
+          ));
     }
 
     return CupertinoPageScaffold(
-        backgroundColor: Colors.white,
-        child: Container(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.only(bottom: 80),
-            children: [
-              _appBar(context),
-              _menuButtons(context),
-              if (profileProductsRepository.productsContent.products.isNotEmpty)
-                _profileProducts(context, profileProductsRepository.productsContent)
-              else
-                _profilePlaceHolder(context)
-            ],
-          ),
-        ));
+      backgroundColor: Colors.white,
+      child: Column(
+        children: [
+          _appBar(context),
+          if (profileProductsRepository.productsContent.products.isNotEmpty)
+            _profileProducts(context, profileProductsRepository.productsContent)
+          else
+            _profilePlaceHolder(context)
+        ],
+      ),
+    );
   }
 
   Widget _appBar(context) {
@@ -65,10 +60,10 @@ class AuthorizedProfilePage extends StatelessWidget {
       color: Colors.transparent,
       child: Container(
         color: Color(0xFF373A3F),
-        height: MediaQuery.of(context).size.height * 0.2,
+        height: MediaQuery.of(context).padding.top + 80,
         width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
           child: Tapable(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             onTap: () {},
@@ -262,6 +257,7 @@ class AuthorizedProfilePage extends StatelessWidget {
   }
 
   Widget _profileProducts(context, ProductsContent productsContent) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     var products = List<Widget>();
     productsContent.products.asMap().forEach((key, value) {
       products.add(Column(children: <Widget>[
@@ -273,18 +269,19 @@ class AuthorizedProfilePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 12),
             child: ItemsDivider(
-              padding: 5,
+              padding: 16,
             ),
           )
       ]));
     });
-    return Container(
-        padding: EdgeInsets.only(right: 16, left: 16, top: 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Expanded(
+        child: ListView(
+          padding: EdgeInsets.only(bottom: 80),
+          shrinkWrap: true,
           children: <Widget>[
+            _menuButtons(context),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
               child: Text(
                 "Мои вещи",
                 style: Theme.of(context).textTheme.headline2,
