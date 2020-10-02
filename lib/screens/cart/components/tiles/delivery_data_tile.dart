@@ -32,20 +32,27 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
   bool selected;
 
   update() {
+    text = null;
+    action = null;
+    icon = null;
+    selected = false;
+
     if (!widget.available) {
       text = "Товары зарезервированы";
       selected = false;
-    } else if (widget.deliveryOption == null || widget.deliveryData == null) {
-      text = "Выберите способ доставки";
-      action = "Выбрать";
-      selected = false;
     } else {
-      final type = widget.deliveryOption.deliveryCompany.type;
+      if (widget.deliveryOption == null || widget.deliveryData == null) {
+        text = "Выберите способ доставки";
+        action = "Выбрать";
+        selected = false;
+      } else {
+        final type = widget.deliveryOption.deliveryCompany.type;
 
-      icon = deliveryIcons[type];
-      text = deliveryLabels[type] + " - " + widget.deliveryData.text.toLowerCase();
-      action = "Изменить";
-      selected = true;
+        icon = deliveryIcons[type];
+        text = deliveryLabels[type] + " - " + widget.deliveryData.text.toLowerCase();
+        action = "Изменить";
+        selected = true;
+      }
     }
   }
 
