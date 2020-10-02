@@ -20,8 +20,7 @@ class AuthorizedProfilePage extends StatelessWidget {
   final Function(Product) onProductPush;
   final Function() onSettingsClick;
 
-  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush})
-      : super(key: key);
+  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +29,14 @@ class AuthorizedProfilePage extends StatelessWidget {
     if (profileProductsRepository.productsContent == null) {
       return Center(
           child: SizedBox(
-            height: 32.0,
-            width: 32.0,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              backgroundColor: accentColor,
-              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-            ),
-          ));
+        height: 32.0,
+        width: 32.0,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          backgroundColor: accentColor,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
+      ));
     }
 
     return CupertinoPageScaffold(
@@ -81,14 +80,12 @@ class AuthorizedProfilePage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       FutureBuilder(
-                        future: SharedPreferences.getInstance()
-                            .then((prefs) => prefs.getString(Prefs.user_name)),
+                        future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
                               snapshot.data.toString(),
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                             );
                           }
                           return SizedBox();
@@ -137,8 +134,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                         color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Мои заказы', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7), child: Text('Мои заказы', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -154,9 +150,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Избранное', style: textTheme.bodyText1)),
+                      Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -170,9 +164,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Подписки', style: textTheme.bodyText1)),
+                      Container(padding: EdgeInsets.only(top: 7), child: Text('Подписки', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -235,7 +227,7 @@ class AuthorizedProfilePage extends StatelessWidget {
               ),
               child: Button(
                 "РАЗМЕСТИТЬ ВЕЩЬ",
-                buttonStyle: ButtonStyle.dark,
+                buttonStyle: CustomButtonStyle.dark,
                 height: 45,
                 width: 180,
                 borderRadius: 5,
@@ -276,19 +268,19 @@ class AuthorizedProfilePage extends StatelessWidget {
     });
     return Expanded(
         child: ListView(
-          padding: EdgeInsets.only(bottom: 80),
-          shrinkWrap: true,
-          children: <Widget>[
-            _menuButtons(context),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
-              child: Text(
-                "Мои вещи",
-                style: Theme.of(context).textTheme.headline2,
-              ),
-            ),
-            ...products
-          ],
-        ));
+      padding: EdgeInsets.only(bottom: 80),
+      shrinkWrap: true,
+      children: <Widget>[
+        _menuButtons(context),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
+          child: Text(
+            "Мои вещи",
+            style: Theme.of(context).textTheme.headline2,
+          ),
+        ),
+        ...products
+      ],
+    ));
   }
 }

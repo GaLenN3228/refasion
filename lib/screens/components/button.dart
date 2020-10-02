@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-enum ButtonStyle { dark, amber, outline, gray, dark_gray }
+enum CustomButtonStyle { dark, amber, outline, gray, dark_gray }
 
 class Button extends StatelessWidget {
   final String textButton;
   final String subTitle;
-  final ButtonStyle buttonStyle;
+  final CustomButtonStyle buttonStyle;
   final double width;
   final double height;
   final bool toUpperCase;
@@ -15,25 +15,25 @@ class Button extends StatelessWidget {
   final double borderRadius;
 
   const Button(this.textButton,
-      {this.buttonStyle = ButtonStyle.amber,
-        this.width = 100,
-        this.height = 30,
-        this.borderRadius = 3.0,
-        this.subTitle,
-        this.toUpperCase = true,
-        this.onClick});
+      {this.buttonStyle = CustomButtonStyle.amber,
+      this.width = 100,
+      this.height = 30,
+      this.borderRadius = 3.0,
+      this.subTitle,
+      this.toUpperCase = true,
+      this.onClick});
 
   Color _getBackgroundColor() {
     switch (buttonStyle) {
-      case ButtonStyle.amber:
+      case CustomButtonStyle.amber:
         return accentColor;
-      case ButtonStyle.outline:
+      case CustomButtonStyle.outline:
         return Colors.white;
-      case ButtonStyle.gray:
+      case CustomButtonStyle.gray:
         return Color(0xFFF5F5F5);
-      case ButtonStyle.dark_gray:
+      case CustomButtonStyle.dark_gray:
         return Colors.grey;
-      case ButtonStyle.dark:
+      case CustomButtonStyle.dark:
       default:
         return primaryColor;
     }
@@ -41,14 +41,14 @@ class Button extends StatelessWidget {
 
   BoxDecoration _getShape() {
     switch (buttonStyle) {
-      case ButtonStyle.outline:
+      case CustomButtonStyle.outline:
         return BoxDecoration(
           color: _getBackgroundColor(),
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(borderRadius),
         );
-      case ButtonStyle.amber:
-      case ButtonStyle.dark:
+      case CustomButtonStyle.amber:
+      case CustomButtonStyle.dark:
       default:
         return BoxDecoration(
           color: _getBackgroundColor(),
@@ -59,11 +59,11 @@ class Button extends StatelessWidget {
 
   TextStyle _getTextStyle(TextStyle textStyle) {
     switch (buttonStyle) {
-      case ButtonStyle.amber:
-      case ButtonStyle.outline:
-      case ButtonStyle.gray:
+      case CustomButtonStyle.amber:
+      case CustomButtonStyle.outline:
+      case CustomButtonStyle.gray:
         return textStyle.copyWith(color: primaryColor);
-      case ButtonStyle.dark:
+      case CustomButtonStyle.dark:
       default:
         return textStyle.copyWith(color: Colors.white);
     }
@@ -71,14 +71,8 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle buttonTextStyle = Theme
-        .of(context)
-        .textTheme
-        .button;
-    TextStyle captionTextStyle = Theme
-        .of(context)
-        .textTheme
-        .caption;
+    TextStyle buttonTextStyle = Theme.of(context).textTheme.button;
+    TextStyle captionTextStyle = Theme.of(context).textTheme.caption;
     return SizedBox(
       height: height,
       width: width,
@@ -92,11 +86,8 @@ class Button extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(toUpperCase ? textButton.toUpperCase() : textButton,
-                  style: _getTextStyle(buttonTextStyle)),
-              subTitle != null
-                  ? Text(subTitle, style: _getTextStyle(captionTextStyle))
-                  : Container(),
+              Text(toUpperCase ? textButton.toUpperCase() : textButton, style: _getTextStyle(buttonTextStyle)),
+              subTitle != null ? Text(subTitle, style: _getTextStyle(captionTextStyle)) : Container(),
             ],
           ),
         ),
