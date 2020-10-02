@@ -152,6 +152,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                                     padding: EdgeInsets.fromLTRB(
                                         15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
                                     child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
