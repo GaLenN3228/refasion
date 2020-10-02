@@ -9,7 +9,7 @@ class OrderPaymentTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+          padding: const EdgeInsets.fromLTRB(5, 20, 5, 15),
           child: Text(
             "Способ оплаты",
             style: Theme.of(context).textTheme.headline2,

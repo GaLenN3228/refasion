@@ -3,25 +3,44 @@ import 'package:refashioned_app/models/cart/delivery_data.dart';
 import 'package:refashioned_app/models/cart/delivery_option.dart';
 import 'package:refashioned_app/models/cart/item_summary.dart';
 import 'package:refashioned_app/models/cart/shipping_cost.dart';
+import 'package:refashioned_app/models/product.dart';
 
 class CartItem {
   final DeliveryOption deliveryOption;
   final DeliveryData deliveryData;
   final List<CartProduct> cartProducts;
   final String id;
+  final bool available;
 
-  const CartItem({this.id, this.cartProducts, this.deliveryOption, this.deliveryData});
+  const CartItem({
+    this.available,
+    this.id,
+    this.cartProducts,
+    this.deliveryOption,
+    this.deliveryData,
+  });
 
-  factory CartItem.fromJson(Map<String, dynamic> json) => json != null
-      ? CartItem(
-          id: json['id'],
-          deliveryData: DeliveryData.fromJson(json['delivery_data']),
-          deliveryOption: DeliveryOption.fromJson(json['delivery_object']),
-          cartProducts: [
-            for (final itemProduct in json['item_products']) CartProduct.fromJson(itemProduct)
-          ],
-        )
-      : null;
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    final products = [
+      if (json['item_products'] != null)
+        for (final itemProduct in json['item_products']) CartProduct.fromJson(itemProduct)
+    ].where((element) => element != null).toList();
+
+    if (products.isEmpty) return null;
+
+    final available = products.fold(
+        false, (previousValue, element) => previousValue || element.product.state == ProductState.published);
+
+    return CartItem(
+      id: json['id'],
+      deliveryData: DeliveryData.fromJson(json['delivery_data']),
+      deliveryOption: DeliveryOption.fromJson(json['delivery_object']),
+      cartProducts: products,
+      available: available,
+    );
+  }
 
   CartProduct findProduct(String productId) => cartProducts.firstWhere(
         (cartProduct) => cartProduct.product.id == productId || cartProduct.id == productId,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
@@ -30,6 +31,33 @@ class UserAddressTile extends StatefulWidget {
 }
 
 class _UserAddressTileState extends State<UserAddressTile> {
+  String addressesName() {
+    switch (widget.deliveryType.type) {
+      case Delivery.PICKUP_ADDRESS:
+        return "Адрес самовывоза";
+
+      case Delivery.PICKUP_POINT:
+        switch (widget.userAddress.type) {
+          case UserAddressType.pickpoint:
+            return "Пункт выдачи";
+
+          case UserAddressType.boxberry_pickpoint:
+            return "Пункт выдачи Boxrberry";
+
+          default:
+            return "Что-то не так";
+        }
+        break;
+
+      case Delivery.COURIER_DELIVERY:
+      case Delivery.EXPRESS_DEVILERY:
+        return "Адрес доставки";
+
+      default:
+        return "Что-то не так";
+    }
+  }
+
   dialog() => showDialog(
         context: context,
         builder: (dialogContext) => CustomDialog.Dialog(
@@ -93,8 +121,7 @@ class _UserAddressTileState extends State<UserAddressTile> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
-                            (widget.isForSeller ? widget.userAddress.nameForSeller : widget.userAddress.nameForBuyer)
-                                .toUpperCase(),
+                            addressesName().toUpperCase(),
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ),

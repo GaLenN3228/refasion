@@ -27,12 +27,7 @@ class UserAddress {
   final String comment;
   final bool isPrivateHouse;
 
-  final String nameForSeller;
-  final String nameForBuyer;
-
   const UserAddress({
-    this.nameForSeller,
-    this.nameForBuyer,
     this.type,
     this.isPrivateHouse,
     this.pickpoint,
@@ -53,28 +48,10 @@ class UserAddress {
 
     final type = json['type'] != null ? _userAddressTypesLabels[json['type']] : null;
 
-    String nameForSeller;
-    String nameForBuyer;
-
-    switch (type) {
-      case UserAddressType.address:
-        nameForBuyer = "Адрес самовывоза";
-        nameForSeller = "Адрес доставки";
-        break;
-      case UserAddressType.pickpoint:
-        nameForBuyer = nameForSeller = "Пункт выдачи";
-        break;
-      case UserAddressType.boxberry_pickpoint:
-        nameForBuyer = nameForSeller = "Пункт выдачи Boxberry";
-        break;
-    }
-
     return UserAddress(
       id: json['id'],
       pickpoint: json['pickpoint'],
       type: type,
-      nameForBuyer: nameForBuyer,
-      nameForSeller: nameForSeller,
       address: PickPoint.fromJson(json),
       fio: json['contact_fio'],
       phone: json['contact_phone'],
@@ -104,5 +81,6 @@ class UserAddress {
         'appartment': appartment ?? "",
         'intercom': intercom ?? "",
         'comment': comment ?? "",
+        'is_private_house': isPrivateHouse ?? false,
       };
 }
