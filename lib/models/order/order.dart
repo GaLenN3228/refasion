@@ -1,3 +1,5 @@
+import 'package:refashioned_app/models/cart/delivery_company.dart';
+import 'package:refashioned_app/models/cart/shipping_cost.dart';
 import 'package:refashioned_app/models/order/order_item.dart';
 import 'package:refashioned_app/models/order/order_summary.dart';
 
@@ -27,18 +29,32 @@ class Order {
     final totalPrice = json['products_price'];
     final discount = json['discount'];
 
-    final orderSummary = OrderSummary(totalPrice, discount, null);
+    final items = json['items'] != null
+        ? [
+            for (final item in json['items']) OrderItem.fromJson(item),
+          ]
+        : null;
+
+    List<ShippingCost> shippingCost = [];
+    if (items != null) {
+      bool hasPickUpAddress = false;
+      items.forEach((cartItem) {
+        final itemShippingCost = cartItem.shippingCost;
+        if (itemShippingCost != null && (!hasPickUpAddress || itemShippingCost.shipping != Delivery.PICKUP_ADDRESS)) {
+          shippingCost.add(itemShippingCost);
+          hasPickUpAddress = itemShippingCost.shipping == Delivery.PICKUP_ADDRESS;
+        }
+      });
+    }
+
+    final orderSummary = OrderSummary(totalPrice, discount, shippingCost);
 
     return Order(
       id: json['id'],
       number: json['number'],
       state: json['state'],
       paymentType: json['payment_type'],
-      items: json['items'] != null
-          ? [
-              for (final item in json['items']) OrderItem.fromJson(item),
-            ]
-          : null,
+      items: items,
       orderSummary: orderSummary,
     );
   }
