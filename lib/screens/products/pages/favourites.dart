@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -32,9 +31,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
     loadIcon = SizedBox(
       width: 25.0,
       height: 25.0,
-      child: defaultTargetPlatform == TargetPlatform.iOS
-          ? const CupertinoActivityIndicator()
-          : const CircularProgressIndicator(strokeWidth: 2.0),
+      child: const CupertinoActivityIndicator()
     );
     return Scaffold(
       backgroundColor: Colors.white,
@@ -51,12 +48,15 @@ class _FavouritesPageState extends State<FavouritesPage> {
             if (favouritesProductsRepository.isLoading &&
                 favouritesProductsRepository.response == null)
               return Center(
+                  child: SizedBox(
+                height: 32.0,
+                width: 32.0,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   backgroundColor: accentColor,
                   valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
                 ),
-              );
+              ));
 
             if (favouritesProductsRepository.loadingFailed)
               return Center(
