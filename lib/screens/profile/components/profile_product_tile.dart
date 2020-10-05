@@ -79,7 +79,7 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
           if (widget.product.state == ProductState.onModeration)
             DialogItemContent(
               DialogItemType.item,
-              title: "Удалить из корзины",
+              title: "Удалить",
               onClick: () async {
                 await removeFromCart();
 

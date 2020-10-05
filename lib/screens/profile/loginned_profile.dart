@@ -46,7 +46,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       child: Column(
         children: [
           _appBar(context),
-          Consumer<ProfileProductsRepository>(
+          Expanded(child: Consumer<ProfileProductsRepository>(
               builder: (context, profileProductsRepository, child) {
             if (profileProductsRepository.isLoading && profileProductsRepository.response == null) {
               return Center(
@@ -64,7 +64,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     profileProductsRepository.response.content.products.isNotEmpty)
                 ? _profileProducts(context, profileProductsRepository.response.content)
                 : _profilePlaceHolder(context);
-          })
+          }))
         ],
       ),
     );
@@ -228,79 +228,81 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
         child: Expanded(
             child: Column(children: [
       _menuButtons(context),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: SVGIcon(
-                  icon: IconAsset.hanger,
-                  size: 48,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: SizedBox(
-                  width: 250,
-                  child: Text(
-                    "Ваш гардероб пуст",
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    style: Theme.of(context).textTheme.headline1,
+      Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SVGIcon(
+                    icon: IconAsset.hanger,
+                    size: 48,
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: SizedBox(
-                  width: 230,
-                  child: Text(
-                    "Вы еще не разместили ни одной вещи в вашем гардеробе",
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(28),
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  CupertinoPageRoute(
-                    builder: (context) => MarketplaceNavigator(
-                      onClose: Navigator.of(context).pop,
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: SizedBox(
+                    width: 250,
+                    child: Text(
+                      "Ваш гардероб пуст",
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.headline1,
                     ),
                   ),
-                );
-              },
-              child: Container(
-                width: 180,
-                height: 35,
-                decoration: ShapeDecoration(
-                  color: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(3),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: SizedBox(
+                    width: 230,
+                    child: Text(
+                      "Вы еще не разместили ни одной вещи в вашем гардеробе",
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
                   ),
                 ),
-                alignment: Alignment.center,
-                child: Text(
-                  "РАЗМЕСТИТЬ ВЕЩЬ".toUpperCase(),
-                  style: Theme.of(context).textTheme.subtitle1.copyWith(
-                        color: Colors.white,
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(28),
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    CupertinoPageRoute(
+                      builder: (context) => MarketplaceNavigator(
+                        onClose: Navigator.of(context).pop,
                       ),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 180,
+                  height: 35,
+                  decoration: ShapeDecoration(
+                    color: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    "РАЗМЕСТИТЬ ВЕЩЬ".toUpperCase(),
+                    style: Theme.of(context).textTheme.subtitle1.copyWith(
+                          color: Colors.white,
+                        ),
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
-      ),
+            )
+          ],
+        ),
+      )
     ])));
   }
 
@@ -344,6 +346,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
           _refreshController.refreshCompleted();
         },
         child: ListView(
+          reverse: true,
           padding: EdgeInsets.only(bottom: 80),
           shrinkWrap: true,
           children: <Widget>[
