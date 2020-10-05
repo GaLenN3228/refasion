@@ -517,13 +517,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       case MarketplaceNavigatorRoutes.onModeration:
         widget.onProductCreated();
         return SizedBox();
-        // return WillPopScope(
-        //   onWillPop: () async => false,
-        //   child: OnModerationPage(
-        //     productData: productData,
-        //     onClose: widget.onClose,
-        //   ),
-        // );
 
       default:
         return Center(
