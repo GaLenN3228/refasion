@@ -25,7 +25,7 @@ class ProductStateTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = product?.state;
 
-    if (state == null || (!showAllStates && state == ProductState.published)) return SizedBox();
+    if (state == null || (!showAllStates && product.available)) return SizedBox();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

@@ -31,15 +31,24 @@ class CartNavigatorRoutes {
 }
 
 class CartNavigatorObserver extends NavigatorObserver {
-  final Function() onPopToCart;
+  final Function() onCartFullReload;
+  final Function() onCartRefresh;
 
-  CartNavigatorObserver({this.onPopToCart});
+  CartNavigatorObserver({this.onCartRefresh, this.onCartFullReload});
 
   @override
   void didPop(Route route, Route previousRoute) {
     switch (previousRoute?.settings?.name) {
       case CartNavigatorRoutes.cart:
-        onPopToCart?.call();
+        switch (route?.settings?.name) {
+          case CartNavigatorRoutes.orderCreated:
+            // onCartFullReload?.call();
+            onCartRefresh?.call();
+            break;
+
+          default:
+            onCartRefresh?.call();
+        }
 
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
@@ -323,7 +332,8 @@ class _CartNavigatorState extends State<CartNavigator> {
         initialRoute: CartNavigatorRoutes.cart,
         observers: [
           CartNavigatorObserver(
-            onPopToCart: () => Provider.of<CartRepository>(context, listen: false).refresh(fullReload: true),
+            // onCartFullReload: () => Provider.of<CartRepository>(context, listen: false).refresh(fullReload: true),
+            onCartRefresh: () => Provider.of<CartRepository>(context, listen: false).refresh(),
           )
         ],
         key: widget.navigatorKey,

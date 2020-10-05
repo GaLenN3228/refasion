@@ -209,7 +209,7 @@ class CartRepository extends BaseRepository<Cart> {
 
   Future<void> addToCart(String productId) async {
     await addProduct.update(productId);
-    if (addProduct.response.status.code == 201) await _update();
+    if (addProduct.response.status.code == 201) await refresh();
   }
 
   Future<void> setDelivery(String itemId, String deliveryCompanyId, String deliveryObjectId) async {
@@ -225,7 +225,7 @@ class CartRepository extends BaseRepository<Cart> {
 
         if (list != null && list?.length == groupProducts?.length) pendingIDs.addAll(list);
       }
-      await _update();
+      await refresh();
     }
   }
 
@@ -234,7 +234,7 @@ class CartRepository extends BaseRepository<Cart> {
 
     if (productItemId != null) {
       await removeItem.update(productItemId);
-      if (removeItem.response.status.code == 204) await _update();
+      if (removeItem.response.status.code == 204) await refresh();
     }
   }
 

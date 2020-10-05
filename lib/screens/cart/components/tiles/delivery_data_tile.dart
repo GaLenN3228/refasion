@@ -57,7 +57,7 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
 
     update();
 
-    if (text == null || action == null || icon == null) return SizedBox();
+    if (text == null || action == null) return SizedBox();
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -72,13 +72,14 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
             Expanded(
               child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 3),
-                    child: SVGIcon(
-                      icon: icon,
-                      size: 24,
+                  if (icon != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 3),
+                      child: SVGIcon(
+                        icon: icon,
+                        size: 24,
+                      ),
                     ),
-                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 5, right: 10),

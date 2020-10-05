@@ -65,7 +65,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
       case BottomTab.cart:
-        Provider.of<CartRepository>(context, listen: false).refresh(fullReload: true);
+        Provider.of<CartRepository>(context, listen: false).refresh();
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
       case BottomTab.profile:
@@ -79,8 +79,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
     if (canPop) navigatorKeys[widget.currentTab.value].currentState.pushNamedAndRemoveUntil('/', (route) => false);
 
-    if (widget.currentTab.value == BottomTab.cart)
-      Provider.of<CartRepository>(context, listen: false).refresh(fullReload: true);
+    if (widget.currentTab.value == BottomTab.cart) Provider.of<CartRepository>(context, listen: false).refresh();
 
     if (widget.currentTab.value == BottomTab.catalog || widget.currentTab.value == BottomTab.home) {
       var topPanelController =
