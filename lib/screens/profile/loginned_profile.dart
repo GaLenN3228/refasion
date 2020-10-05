@@ -21,7 +21,8 @@ class AuthorizedProfilePage extends StatefulWidget {
   final Function(Product) onProductPush;
   final Function() onSettingsClick;
 
-  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush}) : super(key: key);
+  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush})
+      : super(key: key);
 
   @override
   _AuthorizedProfilePageState createState() => _AuthorizedProfilePageState();
@@ -30,6 +31,12 @@ class AuthorizedProfilePage extends StatefulWidget {
 class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
   Widget loadIcon;
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  @override
+  void initState() {
+    Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +52,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       child: Column(
         children: [
           _appBar(context),
-          Expanded(child: Consumer<ProfileProductsRepository>(builder: (context, profileProductsRepository, child) {
+          Expanded(child: Consumer<ProfileProductsRepository>(
+              builder: (context, profileProductsRepository, child) {
             if (profileProductsRepository.isLoading && profileProductsRepository.response == null) {
               return Center(
                   child: SizedBox(
@@ -58,8 +66,13 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                 ),
               ));
             }
-            return (!profileProductsRepository.loadingFailed &&
-                    profileProductsRepository.response.content.products.isNotEmpty)
+
+            if (profileProductsRepository.loadingFailed)
+              return Center(
+                child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+              );
+
+            return (profileProductsRepository.response.content.products.isNotEmpty)
                 ? _profileProducts(context, profileProductsRepository.response.content)
                 : _profilePlaceHolder(context);
           }))
@@ -95,12 +108,14 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       FutureBuilder(
-                        future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
+                        future: SharedPreferences.getInstance()
+                            .then((prefs) => prefs.getString(Prefs.user_name)),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
                               snapshot.data.toString(),
-                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                             );
                           }
                           return SizedBox();
@@ -149,7 +164,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7), child: Text('Мои заказы', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Мои заказы', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -165,7 +181,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
+                      Container(
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -179,7 +197,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(padding: EdgeInsets.only(top: 7), child: Text('Подписки', style: textTheme.bodyText1)),
+                      Container(
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Подписки', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -221,7 +241,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       _menuButtons(context),
       Expanded(
           child: Container(
-            margin: EdgeInsets.only(bottom: 90),
+        margin: EdgeInsets.only(bottom: 90),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -302,7 +322,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
   Widget _profileProducts(context, ProductsContent productsContent) {
     TextTheme textTheme = Theme.of(context).textTheme;
     var products = List<Widget>();
-    productsContent.products.asMap().forEach((key, value) {
+    productsContent.products.reversed.toList().asMap().forEach((key, value) {
       products.add(Column(children: <Widget>[
         ProfileProductTile(
           product: value,
@@ -317,43 +337,40 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
           )
       ]));
     });
-    return Expanded(
-      child: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: false,
-        header: ClassicHeader(
-          completeDuration: Duration.zero,
-          completeIcon: null,
-          completeText: "",
-          idleIcon: loadIcon,
-          idleText: "Обновление",
-          refreshingText: "Обновление",
-          refreshingIcon: loadIcon,
-          releaseIcon: loadIcon,
-          releaseText: "Обновление",
-        ),
-        controller: _refreshController,
-        onRefresh: () async {
-          HapticFeedback.heavyImpact();
-          await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
-          _refreshController.refreshCompleted();
-        },
-        child: ListView(
-          reverse: true,
-          padding: EdgeInsets.only(bottom: 80),
-          shrinkWrap: true,
-          children: <Widget>[
-            _menuButtons(context),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
-              child: Text(
-                "Мои вещи",
-                style: Theme.of(context).textTheme.headline2,
-              ),
+    return SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: false,
+      header: ClassicHeader(
+        completeDuration: Duration.zero,
+        completeIcon: null,
+        completeText: "",
+        idleIcon: loadIcon,
+        idleText: "Обновление",
+        refreshingText: "Обновление",
+        refreshingIcon: loadIcon,
+        releaseIcon: loadIcon,
+        releaseText: "Обновление",
+      ),
+      controller: _refreshController,
+      onRefresh: () async {
+        HapticFeedback.heavyImpact();
+        await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+        _refreshController.refreshCompleted();
+      },
+      child: ListView(
+        padding: EdgeInsets.only(bottom: 80),
+        shrinkWrap: true,
+        children: <Widget>[
+          _menuButtons(context),
+          Padding(
+            padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
+            child: Text(
+              "Мои вещи",
+              style: Theme.of(context).textTheme.headline2,
             ),
-            ...products
-          ],
-        ),
+          ),
+          ...products
+        ],
       ),
     );
   }

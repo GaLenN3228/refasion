@@ -155,10 +155,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
         topPanelController.needShowBack = true;
         topPanelController.needShow = false;
         return isAuthorized
-            ? ChangeNotifierProvider<ProfileProductsRepository>(create: (_) {
-                return ProfileProductsRepository()..getProducts();
-              }, builder: (context, _) {
-                return AuthorizedProfilePage(
+            ? AuthorizedProfilePage(
                   onProductPush: (product, {callback}) => Navigator.of(context).push(
                     CupertinoPageRoute(
                       builder: (context) =>
@@ -179,8 +176,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                       ),
                     );
                   },
-                );
-              })
+                )
             : ProfilePage(
                 onSettingsClick: () {
                   Navigator.of(context).push(

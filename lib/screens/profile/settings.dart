@@ -230,28 +230,6 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Divider(),
             ),
-            Tapable(
-              padding: EdgeInsets.all(10),
-              onTap: () {
-                BaseRepository.setAuthorized(false);
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                child: Row(
-                  children: [
-                    Text(
-                      'Выйти',
-                      style: textTheme.subtitle1,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(left: 20, right: 20),
-              child: Divider(),
-            ),
           ],
         ),
       ),
