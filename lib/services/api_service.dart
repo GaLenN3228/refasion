@@ -286,7 +286,7 @@ class ApiService {
       "brand": productData.brand.id,
       "category": productData.category.id,
       "current_price": productData.price,
-      "discount_price": productData.price,
+      // "discount_price": productData.price,
       "size": productData.sizes.id,
       "takeaways": [
         {

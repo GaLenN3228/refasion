@@ -16,7 +16,6 @@ class HomePage extends StatefulWidget {
   static const String PRODUCTS = "PRODUCTS";
   static const String STORIES = "STORIES";
 
-
   final Function(Product) pushProduct;
   final Function(String url, String title) pushCollection;
 
@@ -55,11 +54,7 @@ class _HomePageState extends State<HomePage> {
       );
 
     textTheme = Theme.of(context).textTheme;
-    loadIcon = SizedBox(
-      width: 25.0,
-      height: 25.0,
-      child: const CupertinoActivityIndicator()
-    );
+    loadIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
 
     return CupertinoPageScaffold(
         backgroundColor: Colors.white,
@@ -168,29 +163,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _productsBlockList(context, HomeBlock homeBlock) {
-    return Container(
-        color: Colors.white,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ...homeBlock.items,
-            ].map(
-              (blockItem) {
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(left: 20, bottom: 20),
-                          child: Text(
-                            blockItem.name,
-                            style: textTheme.headline2,
-                          )),
-                      _productsList(context, blockItem),
-                    ]);
-              },
-            ).toList()));
+    return Material(
+        child: Container(
+            color: Colors.white,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...homeBlock.items,
+                ].map(
+                  (blockItem) {
+                    return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              margin: EdgeInsets.only(left: 20, bottom: 20),
+                              child: Text(
+                                blockItem.name,
+                                style: textTheme.headline2,
+                              )),
+                          _productsList(context, blockItem),
+                        ]);
+                  },
+                ).toList())));
   }
 
   Widget _productsList(context, HomeBlockItem homeBlockItem) {

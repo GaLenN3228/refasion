@@ -13,30 +13,29 @@ class OnModerationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AddProductRepository().addProduct(productData);
-    Future.delayed(Duration(milliseconds: 1500), () {
-      onProductCreated();
-    });
-    return CupertinoPageScaffold(
-      backgroundColor: Colors.white,
-      child: Column(
-        children: <Widget>[
-          RefashionedTopBar(
-            data: TopBarData.simple(
-              middleText: "Добавление продукта",
-            ),
-          ),
-          Expanded(
-            child: Center(
-              child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: Text(
-                    "Создание...",
-                    style: Theme.of(context).textTheme.bodyText1,
-                  )),
-            ),
-          ),
-        ],
-      ),
-    );
+    onProductCreated();
+    return SizedBox();
+    // return CupertinoPageScaffold(
+    //   backgroundColor: Colors.white,
+    //   child: Column(
+    //     children: <Widget>[
+    //       RefashionedTopBar(
+    //         data: TopBarData.simple(
+    //           middleText: "Добавление продукта",
+    //         ),
+    //       ),
+    //       Expanded(
+    //         child: Center(
+    //           child: GestureDetector(
+    //               behavior: HitTestBehavior.translucent,
+    //               child: Text(
+    //                 "Создание...",
+    //                 style: Theme.of(context).textTheme.bodyText1,
+    //               )),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }

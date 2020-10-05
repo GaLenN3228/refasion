@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
 import 'package:refashioned_app/repositories/products.dart';
-import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
@@ -15,7 +16,7 @@ import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
-class AuthorizedProfilePage extends StatelessWidget {
+class AuthorizedProfilePage extends StatefulWidget {
   final Function() onFavClick;
   final Function(Product) onProductPush;
   final Function() onSettingsClick;
@@ -24,36 +25,46 @@ class AuthorizedProfilePage extends StatelessWidget {
       : super(key: key);
 
   @override
+  _AuthorizedProfilePageState createState() => _AuthorizedProfilePageState();
+}
+
+class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
+  Widget loadIcon;
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  @override
   Widget build(BuildContext context) {
-    var profileProductsRepository = context.watch<ProfileProductsRepository>();
+    loadIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
 
-    if (profileProductsRepository.isLoading) {
-      return Center(
-          child: SizedBox(
-        height: 32.0,
-        width: 32.0,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          backgroundColor: accentColor,
-          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-        ),
-      ));
-    }
-
-    if (profileProductsRepository.loadingFailed)
-      return Center(
-        child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-      );
+    // if (profileProductsRepository.loadingFailed)
+    //   return Center(
+    //     child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+    //   );
 
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Column(
         children: [
           _appBar(context),
-          if (profileProductsRepository.response.content.products.isNotEmpty)
-            _profileProducts(context, profileProductsRepository.response.content)
-          else
-            _profilePlaceHolder(context)
+          Expanded(child: Consumer<ProfileProductsRepository>(
+              builder: (context, profileProductsRepository, child) {
+            if (profileProductsRepository.isLoading && profileProductsRepository.response == null) {
+              return Center(
+                  child: SizedBox(
+                height: 32.0,
+                width: 32.0,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  backgroundColor: accentColor,
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                ),
+              ));
+            }
+            return (!profileProductsRepository.loadingFailed &&
+                    profileProductsRepository.response.content.products.isNotEmpty)
+                ? _profileProducts(context, profileProductsRepository.response.content)
+                : _profilePlaceHolder(context);
+          }))
         ],
       ),
     );
@@ -149,7 +160,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                 ),
                 Tapable(
                   onTap: () {
-                    onFavClick();
+                    widget.onFavClick();
                   },
                   padding: EdgeInsets.all(10),
                   child: Column(
@@ -184,7 +195,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                 Tapable(
                   padding: EdgeInsets.all(10),
                   onTap: () {
-                    onSettingsClick();
+                    widget.onSettingsClick();
                   },
                   child: Column(
                     children: [
@@ -288,46 +299,6 @@ class AuthorizedProfilePage extends StatelessWidget {
           )
         ],
       ),
-      // child: Column(
-      //   children: [
-      //     SVGIcon(
-      //       icon: IconAsset.hanger,
-      //       height: 60,
-      //       color: Colors.black,
-      //     ),
-      //     Text(
-      //       'Ваш гардероб пуст',
-      //       style: textTheme.headline1,
-      //     ),
-      //     Container(
-      //         padding: EdgeInsets.only(top: 10, bottom: 5),
-      //         child: Text(
-      //           'Вы еще не разместили ни одной вещи \n в вашем гардеробе',
-      //           textAlign: TextAlign.center,
-      //         )),
-      //     Padding(
-      //       padding: const EdgeInsets.only(
-      //         top: 30,
-      //       ),
-      //       child: Button(
-      //         "РАЗМЕСТИТЬ ВЕЩЬ",
-      //         buttonStyle: ButtonStyle.dark,
-      //         height: 45,
-      //         width: 180,
-      //         borderRadius: 5,
-      //         onClick: () {
-      //           Navigator.of(context, rootNavigator: true).push(
-      //             CupertinoPageRoute(
-      //               builder: (context) => MarketplaceNavigator(
-      //                 onClose: Navigator.of(context).pop,
-      //               ),
-      //             ),
-      //           );
-      //         },
-      //       ),
-      //     ),
-      //   ],
-      // ),
     ));
   }
 
@@ -338,7 +309,7 @@ class AuthorizedProfilePage extends StatelessWidget {
       products.add(Column(children: <Widget>[
         ProfileProductTile(
           product: value,
-          onProductPush: onProductPush,
+          onProductPush: widget.onProductPush,
         ),
         if (key != productsContent.products.length - 1)
           Padding(
@@ -350,20 +321,42 @@ class AuthorizedProfilePage extends StatelessWidget {
       ]));
     });
     return Expanded(
-        child: ListView(
-      padding: EdgeInsets.only(bottom: 80),
-      shrinkWrap: true,
-      children: <Widget>[
-        _menuButtons(context),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
-          child: Text(
-            "Мои вещи",
-            style: Theme.of(context).textTheme.headline2,
-          ),
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: false,
+        header: ClassicHeader(
+          completeDuration: Duration.zero,
+          completeIcon: null,
+          completeText: "",
+          idleIcon: loadIcon,
+          idleText: "Обновление",
+          refreshingText: "Обновление",
+          refreshingIcon: loadIcon,
+          releaseIcon: loadIcon,
+          releaseText: "Обновление",
         ),
-        ...products
-      ],
-    ));
+        controller: _refreshController,
+        onRefresh: () async {
+          HapticFeedback.heavyImpact();
+          await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+          _refreshController.refreshCompleted();
+        },
+        child: ListView(
+          padding: EdgeInsets.only(bottom: 80),
+          shrinkWrap: true,
+          children: <Widget>[
+            _menuButtons(context),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
+              child: Text(
+                "Мои вещи",
+                style: Theme.of(context).textTheme.headline2,
+              ),
+            ),
+            ...products
+          ],
+        ),
+      ),
+    );
   }
 }
