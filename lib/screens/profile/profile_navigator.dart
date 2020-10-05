@@ -14,6 +14,8 @@ import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/repositories/products.dart';
+import 'package:refashioned_app/repositories/products.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';

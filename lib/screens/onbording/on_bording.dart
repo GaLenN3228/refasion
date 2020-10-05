@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 
 
@@ -40,8 +43,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
+  push(Widget widget, {BuildContext context}) => Navigator.of(context ?? this.context).pushReplacement(
+    MaterialWithModalsPageRoute(
+      builder: (context) => widget,
+    ),
+  );
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -189,6 +198,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         enabled: true,
                         titleColor: Colors.black,
                         action: () {
+                          if(_currentPage == 3){
+                            Future.delayed(Duration(milliseconds: 200), () {
+                              push(PhonePage(
+                                needDismiss: false,
+                                onAuthorizationDone: (context) {
+                                  push(TabSwitcher(), context: context);
+                                },
+                                onAuthorizationCancel: (context) {
+                                  push(TabSwitcher(), context: context);
+                                },
+                              ));
+                            });
+                          }
                           _pageController.nextPage(
                             duration: Duration(milliseconds: 500),
                             curve: Curves.ease,
@@ -199,17 +221,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     Tapable(
                       padding: EdgeInsets.only(bottom: 30 ),
                       onTap: (){
-                        Navigator.of(context).pushReplacement(
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) =>
-                                FadeTransition(
-                                  opacity: animation,
-                                  child: CitySelector(
-                                    onFirstLaunch: true,
-                                  ),
-                                ),
-                          ),
-                        );
+                        Future.delayed(Duration(milliseconds: 200), () {
+                          push(PhonePage(
+                            needDismiss: false,
+                            onAuthorizationDone: (context) {
+                              push(TabSwitcher(), context: context);
+                            },
+                            onAuthorizationCancel: (context) {
+                              push(TabSwitcher(), context: context);
+                            },
+                          ));
+                        });
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -249,7 +271,7 @@ class SlideTile extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.transparent,
               image: DecorationImage(
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 image: AssetImage(
                   imagePath,
                 ),

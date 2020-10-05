@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
@@ -14,6 +15,8 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.da
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/screens/onbording/on_bording.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class CitySelector extends StatefulWidget {
   final bool onFirstLaunch;
@@ -44,8 +47,9 @@ class _CitySelectorState extends State<CitySelector> {
     if (skipable) {
       citiesRepository.removeListener(repositoryListener);
 
-      push(OnboardingPage());
+      push(TabSwitcher());
     }
+
   }
 
   @override
@@ -183,17 +187,7 @@ class _CitySelectorState extends State<CitySelector> {
 
                               if (result) {
                                 if (widget.onFirstLaunch)
-                                  Future.delayed(Duration(milliseconds: 200), () {
-                                    push(PhonePage(
-                                      needDismiss: false,
-                                      onAuthorizationDone: (context) {
-                                        push(TabSwitcher(), context: context);
-                                      },
-                                      onAuthorizationCancel: (context) {
-                                        push(TabSwitcher(), context: context);
-                                      },
-                                    ));
-                                  });
+                                  push(OnboardingPage());
                                 else
                                   Navigator.of(context).pop();
                               }

@@ -197,7 +197,6 @@ class _HomeNavigatorState extends State<HomeNavigator> {
               await createOrderRepository.update(orderParameters);
 
               order = createOrderRepository.response?.content;
-
               if (order != null)
                 return Navigator.of(context).push(
                   MaterialWithModalsPageRoute(

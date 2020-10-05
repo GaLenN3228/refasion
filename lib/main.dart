@@ -52,7 +52,9 @@ class RefashionApp extends StatelessWidget {
         child: MaterialApp(
           theme: _materialTheme(),
           debugShowCheckedModeBanner: false,
-          home: OnboardingPage(),
+          home: CitySelector(
+            onFirstLaunch: true,
+          ),
         ));
   }
 }
