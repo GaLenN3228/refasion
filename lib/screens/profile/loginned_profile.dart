@@ -46,7 +46,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       child: Column(
         children: [
           _appBar(context),
-          Expanded(child: Consumer<ProfileProductsRepository>(
+          Consumer<ProfileProductsRepository>(
               builder: (context, profileProductsRepository, child) {
             if (profileProductsRepository.isLoading && profileProductsRepository.response == null) {
               return Center(
@@ -64,7 +64,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     profileProductsRepository.response.content.products.isNotEmpty)
                 ? _profileProducts(context, profileProductsRepository.response.content)
                 : _profilePlaceHolder(context);
-          }))
+          })
         ],
       ),
     );
@@ -226,7 +226,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
         child: Expanded(
-      child: Column(
+            child: Column(children: [
+      _menuButtons(context),
+      Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -299,7 +301,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
           )
         ],
       ),
-    ));
+    ])));
   }
 
   Widget _profileProducts(context, ProductsContent productsContent) {
