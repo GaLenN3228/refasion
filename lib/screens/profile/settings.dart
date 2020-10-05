@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
@@ -118,14 +119,13 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             ),
             Tapable(
               padding: EdgeInsets.all(10),
-              onTap: (){
+              onTap: () {
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) => CitySelector(),
                 ));
               },
               child: Container(
-                padding:
-                    EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
+                padding: EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
                 child: Row(
                   children: [
                     SVGIcon(
@@ -220,6 +220,28 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                   children: [
                     Text(
                       'Лицензионное соглашение',
+                      style: textTheme.subtitle1,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Divider(),
+            ),
+            Tapable(
+              padding: EdgeInsets.all(10),
+              onTap: () {
+                BaseRepository.setAuthorized(false);
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
+                child: Row(
+                  children: [
+                    Text(
+                      'Выйти',
                       style: textTheme.subtitle1,
                     ),
                   ],
