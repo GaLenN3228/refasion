@@ -30,14 +30,14 @@ class AuthorizedProfilePage extends StatelessWidget {
     if (profileProductsRepository.productsContent == null) {
       return Center(
           child: SizedBox(
-            height: 32.0,
-            width: 32.0,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              backgroundColor: accentColor,
-              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-            ),
-          ));
+        height: 32.0,
+        width: 32.0,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          backgroundColor: accentColor,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
+      ));
     }
 
     return CupertinoPageScaffold(
@@ -208,52 +208,49 @@ class AuthorizedProfilePage extends StatelessWidget {
 
   Widget _profilePlaceHolder(context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Material(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 80),
-        child: Column(
-          children: [
-            SVGIcon(
-              icon: IconAsset.hanger,
-              height: 60,
-              color: Colors.black,
+    return Container(
+        child: Expanded(
+      child: Column(
+        children: [
+          SVGIcon(
+            icon: IconAsset.hanger,
+            height: 60,
+            color: Colors.black,
+          ),
+          Text(
+            'Ваш гардероб пуст',
+            style: textTheme.headline1,
+          ),
+          Container(
+              padding: EdgeInsets.only(top: 10, bottom: 5),
+              child: Text(
+                'Вы еще не разместили ни одной вещи \n в вашем гардеробе',
+                textAlign: TextAlign.center,
+              )),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 30,
             ),
-            Text(
-              'Ваш гардероб пуст',
-              style: textTheme.headline1,
-            ),
-            Container(
-                padding: EdgeInsets.only(top: 10, bottom: 5),
-                child: Text(
-                  'Вы еще не разместили ни одной вещи \n в вашем гардеробе',
-                  textAlign: TextAlign.center,
-                )),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 30,
-              ),
-              child: Button(
-                "РАЗМЕСТИТЬ ВЕЩЬ",
-                buttonStyle: ButtonStyle.dark,
-                height: 45,
-                width: 180,
-                borderRadius: 5,
-                onClick: () {
-                  Navigator.of(context, rootNavigator: true).push(
-                    CupertinoPageRoute(
-                      builder: (context) => MarketplaceNavigator(
-                        onClose: Navigator.of(context).pop,
-                      ),
+            child: Button(
+              "РАЗМЕСТИТЬ ВЕЩЬ",
+              buttonStyle: ButtonStyle.dark,
+              height: 45,
+              width: 180,
+              borderRadius: 5,
+              onClick: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  CupertinoPageRoute(
+                    builder: (context) => MarketplaceNavigator(
+                      onClose: Navigator.of(context).pop,
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
+    ));
   }
 
   Widget _profileProducts(context, ProductsContent productsContent) {
@@ -276,19 +273,19 @@ class AuthorizedProfilePage extends StatelessWidget {
     });
     return Expanded(
         child: ListView(
-          padding: EdgeInsets.only(bottom: 80),
-          shrinkWrap: true,
-          children: <Widget>[
-            _menuButtons(context),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
-              child: Text(
-                "Мои вещи",
-                style: Theme.of(context).textTheme.headline2,
-              ),
-            ),
-            ...products
-          ],
-        ));
+      padding: EdgeInsets.only(bottom: 80),
+      shrinkWrap: true,
+      children: <Widget>[
+        _menuButtons(context),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
+          child: Text(
+            "Мои вещи",
+            style: Theme.of(context).textTheme.headline2,
+          ),
+        ),
+        ...products
+      ],
+    ));
   }
 }

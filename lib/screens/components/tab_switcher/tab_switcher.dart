@@ -291,6 +291,10 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                     onClose: () {
                                       Navigator.of(context).pop();
                                     },
+                                    onProductCreated: () {
+                                      Navigator.of(context).pop();
+                                      widget.currentTab.value = BottomTab.profile;
+                                    },
                                   ),
                                 ),
                               ),
