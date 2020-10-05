@@ -220,6 +220,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
             child: Column(children: [
       _menuButtons(context),
       Expanded(
+          child: Container(
+            margin: EdgeInsets.only(bottom: 90),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -293,7 +295,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
             )
           ],
         ),
-      )
+      ))
     ])));
   }
 
