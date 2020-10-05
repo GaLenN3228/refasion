@@ -19,7 +19,6 @@ import 'package:refashioned_app/screens/marketplace/pages/cards_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/category_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/description_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/new_address_page.dart';
-import 'package:refashioned_app/screens/marketplace/pages/on_moderation_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/photos_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/pickpoints_map_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/price_page.dart';
@@ -463,12 +462,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
             );
           },
           onSkip: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.onModeration),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.onModeration),
-              ),
-            );
+            AddProductRepository().addProduct(productData);
+            widget.onProductCreated();
           },
         );
 
@@ -491,13 +486,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           address: productData.address,
           onPush: (options) {
             productData.updateTakeOptions(options);
-
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.onModeration),
-                settings: RouteSettings(name: MarketplaceNavigatorRoutes.onModeration),
-              ),
-            );
+            AddProductRepository().addProduct(productData);
+            widget.onProductCreated();
           },
           showPickUpPoints: () {
             Navigator.of(context).push(
@@ -513,10 +503,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         return PickpointsMapPage(
           address: productData.address,
         );
-
-      case MarketplaceNavigatorRoutes.onModeration:
-        widget.onProductCreated();
-        return SizedBox();
 
       default:
         return Center(
