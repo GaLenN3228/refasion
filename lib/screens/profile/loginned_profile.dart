@@ -216,33 +216,49 @@ class AuthorizedProfilePage extends StatelessWidget {
     return Container(
         child: Expanded(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SVGIcon(
-            icon: IconAsset.hanger,
-            height: 60,
-            color: Colors.black,
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: SVGIcon(
+                  icon: IconAsset.cartThin,
+                  size: 48,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4),
+                child: SizedBox(
+                  width: 250,
+                  child: Text(
+                    "Ваш гардероб пуст",
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4),
+                child: SizedBox(
+                  width: 230,
+                  child: Text(
+                    "Вы еще не разместили ни одной вещи в вашем гардеробе",
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Text(
-            'Ваш гардероб пуст',
-            style: textTheme.headline1,
-          ),
-          Container(
-              padding: EdgeInsets.only(top: 10, bottom: 5),
-              child: Text(
-                'Вы еще не разместили ни одной вещи \n в вашем гардеробе',
-                textAlign: TextAlign.center,
-              )),
           Padding(
-            padding: const EdgeInsets.only(
-              top: 30,
-            ),
-            child: Button(
-              "РАЗМЕСТИТЬ ВЕЩЬ",
-              buttonStyle: ButtonStyle.dark,
-              height: 45,
-              width: 180,
-              borderRadius: 5,
-              onClick: () {
+            padding: const EdgeInsets.all(28),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
                 Navigator.of(context, rootNavigator: true).push(
                   CupertinoPageRoute(
                     builder: (context) => MarketplaceNavigator(
@@ -251,10 +267,67 @@ class AuthorizedProfilePage extends StatelessWidget {
                   ),
                 );
               },
+              child: Container(
+                width: 180,
+                height: 35,
+                decoration: ShapeDecoration(
+                  color: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "РАЗМЕСТИТЬ ВЕЩЬ".toUpperCase(),
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        color: Colors.white,
+                      ),
+                ),
+              ),
             ),
-          ),
+          )
         ],
       ),
+      // child: Column(
+      //   children: [
+      //     SVGIcon(
+      //       icon: IconAsset.hanger,
+      //       height: 60,
+      //       color: Colors.black,
+      //     ),
+      //     Text(
+      //       'Ваш гардероб пуст',
+      //       style: textTheme.headline1,
+      //     ),
+      //     Container(
+      //         padding: EdgeInsets.only(top: 10, bottom: 5),
+      //         child: Text(
+      //           'Вы еще не разместили ни одной вещи \n в вашем гардеробе',
+      //           textAlign: TextAlign.center,
+      //         )),
+      //     Padding(
+      //       padding: const EdgeInsets.only(
+      //         top: 30,
+      //       ),
+      //       child: Button(
+      //         "РАЗМЕСТИТЬ ВЕЩЬ",
+      //         buttonStyle: ButtonStyle.dark,
+      //         height: 45,
+      //         width: 180,
+      //         borderRadius: 5,
+      //         onClick: () {
+      //           Navigator.of(context, rootNavigator: true).push(
+      //             CupertinoPageRoute(
+      //               builder: (context) => MarketplaceNavigator(
+      //                 onClose: Navigator.of(context).pop,
+      //               ),
+      //             ),
+      //           );
+      //         },
+      //       ),
+      //     ),
+      //   ],
+      // ),
     ));
   }
 
