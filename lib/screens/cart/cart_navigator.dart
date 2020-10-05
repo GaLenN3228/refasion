@@ -8,6 +8,7 @@ import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
@@ -30,11 +31,18 @@ class CartNavigatorRoutes {
 }
 
 class CartNavigatorObserver extends NavigatorObserver {
+  final Function() onPopToCart;
+
+  CartNavigatorObserver({this.onPopToCart});
+
   @override
   void didPop(Route route, Route previousRoute) {
     switch (previousRoute?.settings?.name) {
       case CartNavigatorRoutes.cart:
+        onPopToCart?.call();
+
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
         break;
 
       default:
@@ -313,7 +321,11 @@ class _CartNavigatorState extends State<CartNavigator> {
   @override
   Widget build(BuildContext context) => Navigator(
         initialRoute: CartNavigatorRoutes.cart,
-        observers: [CartNavigatorObserver()],
+        observers: [
+          CartNavigatorObserver(
+            onPopToCart: () => Provider.of<CartRepository>(context, listen: false).refresh(fullReload: true),
+          )
+        ],
         key: widget.navigatorKey,
         onGenerateInitialRoutes: (navigatorState, initialRoute) => [
           CupertinoPageRoute(
