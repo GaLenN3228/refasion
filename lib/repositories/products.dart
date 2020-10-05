@@ -102,10 +102,9 @@ class AddProductRepository extends BaseRepository {
 }
 
 class ProfileProductsRepository extends BaseRepository<ProductsContent> {
-  ProductsContent productsContent;
-
   Future<void> getProducts() => apiCall(() async {
-    productsContent = ProductsContent.fromJson((await ApiService.getProfileProducts()).data);
+        response = BaseResponse.fromJson((await ApiService.getProfileProducts()).data,
+            (contentJson) => ProductsContent.fromJson(contentJson));
         await BaseRepository.isAuthorized().then((isAuthorized) async {
           if (isAuthorized) {
             FavouritesRepository favouritesRepository = FavouritesRepository();

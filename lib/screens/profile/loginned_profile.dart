@@ -27,7 +27,7 @@ class AuthorizedProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var profileProductsRepository = context.watch<ProfileProductsRepository>();
 
-    if (profileProductsRepository.productsContent == null) {
+    if (profileProductsRepository.isLoading) {
       return Center(
           child: SizedBox(
         height: 32.0,
@@ -40,13 +40,18 @@ class AuthorizedProfilePage extends StatelessWidget {
       ));
     }
 
+    if (profileProductsRepository.loadingFailed)
+      return Center(
+        child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+      );
+
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Column(
         children: [
           _appBar(context),
-          if (profileProductsRepository.productsContent.products.isNotEmpty)
-            _profileProducts(context, profileProductsRepository.productsContent)
+          if (profileProductsRepository.response.content.products.isNotEmpty)
+            _profileProducts(context, profileProductsRepository.response.content)
           else
             _profilePlaceHolder(context)
         ],

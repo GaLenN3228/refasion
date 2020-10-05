@@ -6,30 +6,31 @@ import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 
 class OnModerationPage extends StatelessWidget {
-  final Function() onClose;
+  final Function() onProductCreated;
   final ProductData productData;
 
-  const OnModerationPage({Key key, this.onClose, this.productData}) : super(key: key);
+  const OnModerationPage({Key key, this.onProductCreated, this.productData}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     AddProductRepository().addProduct(productData);
+    Future.delayed(Duration(milliseconds: 1500), () {
+      onProductCreated();
+    });
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Column(
         children: <Widget>[
           RefashionedTopBar(
             data: TopBarData.simple(
-              middleText: "На модерации",
-              onClose: onClose,
+              middleText: "Добавление продукта",
             ),
           ),
           Expanded(
             child: Center(
               child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
-                  onTap: onClose,
                   child: Text(
-                    "Спасибо!",
+                    "Создание...",
                     style: Theme.of(context).textTheme.bodyText1,
                   )),
             ),

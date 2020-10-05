@@ -59,27 +59,38 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
             subTitle:
                 "Товар скоро будет админы уже смотрят инфа сотка",
           ),
+          // DialogItemContent(
+          //   DialogItemType.item,
+          //   title: "Подробнее",
+          //   onClick: () {
+          //     Navigator.of(dialogContext).pop();
+          //     widget.onProductPush?.call(widget.product);
+          //   },
+          //   icon: IconAsset.info,
+          // ),
+          // if (!widget.product.isFavourite)
+          //   DialogItemContent(
+          //     DialogItemType.item,
+          //     title: "Перенести в избранное",
+          //     onClick: () async {
+          //       await addToFavorites();
+          //       await removeFromCart();
+          //
+          //       Navigator.of(dialogContext).pop();
+          //     },
+          //     icon: IconAsset.favoriteBorder,
+          //   ),
           DialogItemContent(
             DialogItemType.item,
-            title: "Подробнее",
-            onClick: () {
-              Navigator.of(dialogContext).pop();
-              widget.onProductPush?.call(widget.product);
-            },
-            icon: IconAsset.info,
-          ),
-          if (!widget.product.isFavourite)
-            DialogItemContent(
-              DialogItemType.item,
-              title: "Перенести в избранное",
-              onClick: () async {
-                await addToFavorites();
-                await removeFromCart();
+            title: "Удалить из корзины",
+            onClick: () async {
+              await removeFromCart();
 
-                Navigator.of(dialogContext).pop();
-              },
-              icon: IconAsset.favoriteBorder,
-            ),
+              Navigator.of(dialogContext).pop();
+            },
+            icon: IconAsset.delete,
+            color: Colors.red,
+          ),
           DialogItemContent(
             DialogItemType.system,
             title: "Отменить",
