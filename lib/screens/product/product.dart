@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,7 +37,7 @@ class ProductPage extends StatefulWidget {
   final Function() onCartPush;
   final Function(PickPoint) onPickupAddressPush;
 
-  final Function(String deliveryCompanyId, String deliveryObjectId) onCheckoutPush;
+  final Function(String orderParameters) onCheckoutPush;
 
   final Function(
     BuildContext,
@@ -132,11 +134,9 @@ class _ProductPageState extends State<ProductPage> {
                                     .removeFromFavourites((widget.product..isFavourite = false).id)
                                 : addRemoveFavouriteRepository
                                     .addToFavourites((widget.product..isFavourite = true).id)
-                            : showCupertinoModalBottomSheet(
-                                backgroundColor: Colors.white,
+                            : showMaterialModalBottomSheet(
                                 expand: false,
                                 context: context,
-                                settings: RouteSettings(name: "/authorization"),
                                 useRootNavigator: true,
                                 builder: (context, controller) => AuthorizationSheet());
                       });
@@ -245,8 +245,17 @@ class _ProductPageState extends State<ProductPage> {
                     context,
                     widget.product.id,
                     deliveryTypes: product.deliveryTypes,
-                    onFinish: (companyId, objectId) =>
-                        widget.onCheckoutPush?.call(companyId, objectId),
+                    onFinish: (companyId, objectId) => widget.onCheckoutPush?.call(
+                      jsonEncode(
+                        [
+                          {
+                            "delivery_company": companyId,
+                            "delivery_object_id": objectId,
+                            "products": [product.id],
+                          },
+                        ],
+                      ),
+                    ),
                     originalOverlayStyle: SystemUiOverlayStyle.dark,
                   ),
                 ),

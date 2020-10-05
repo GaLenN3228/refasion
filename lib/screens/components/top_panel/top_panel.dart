@@ -152,10 +152,8 @@ class _TopPanelState extends State<TopPanel> with SingleTickerProviderStateMixin
                   BaseRepository.isAuthorized().then((isAuthorized) {
                     isAuthorized
                         ? widget.onFavouritesClick()
-                        : showCupertinoModalBottomSheet(
-                            backgroundColor: Colors.white,
+                        : showMaterialModalBottomSheet(
                             expand: false,
-                            settings: RouteSettings(name: "/authorization"),
                             context: context,
                             useRootNavigator: true,
                             builder: (context, controller) => AuthorizationSheet());

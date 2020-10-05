@@ -1,80 +1,78 @@
 import 'package:refashioned_app/models/pick_point.dart';
 
+enum UserAddressType { address, pickpoint, boxberry_pickpoint }
+
+final _userAddressTypesLabels = {
+  "address": UserAddressType.address,
+  "pickpoint": UserAddressType.pickpoint,
+  "boxberry-pickpoint": UserAddressType.boxberry_pickpoint,
+};
+
 class UserAddress {
   final String id;
+  final String pickpoint;
+
+  final UserAddressType type;
 
   final PickPoint address;
 
-  final String pickpoint;
   final String fio;
   final String phone;
   final String email;
+
   final String porch;
   final String floor;
   final String appartment;
   final String intercom;
   final String comment;
+  final bool isPrivateHouse;
 
-  const UserAddress(
-      {this.pickpoint,
-      this.address,
-      this.id,
-      this.fio,
-      this.phone,
-      this.email,
-      this.porch,
-      this.floor,
-      this.appartment,
-      this.intercom,
-      this.comment});
+  const UserAddress({
+    this.type,
+    this.isPrivateHouse,
+    this.pickpoint,
+    this.address,
+    this.id,
+    this.fio,
+    this.phone,
+    this.email,
+    this.porch,
+    this.floor,
+    this.appartment,
+    this.intercom,
+    this.comment,
+  });
 
   factory UserAddress.fromJson(Map<String, dynamic> json) {
-    // final pickpoint = json['pickpoint'];
+    final extraData = json['extra_data'];
 
-    // if (pickpoint != null)
-    //   return UserAddress(
-    //     id: json['id'],
-    //     pickpoint: pickpoint,
-    //     fio: json['contact_fio'],
-    //     phone: json['contact_phone'],
-    //     email: json['contact_email'],
-    //     comment: json['comment'],
-    //   );
-    // else
-    if (json['pickpoint'] == null)
-      return UserAddress(
-        id: json['id'],
-        address: PickPoint.fromJson(json),
-        fio: json['contact_fio'],
-        phone: json['contact_phone'],
-        email: json['contact_email'],
-        porch: json['porch'],
-        floor: json['floor'],
-        appartment: json['appartment'],
-        intercom: json['intercom'],
-        comment: json['comment'],
-      );
-    else
-      return null;
+    final type = json['type'] != null ? _userAddressTypesLabels[json['type']] : null;
+
+    return UserAddress(
+      id: json['id'],
+      pickpoint: json['pickpoint'],
+      type: type,
+      address: PickPoint.fromJson(json),
+      fio: json['contact_fio'],
+      phone: json['contact_phone'],
+      email: json['contact_email'],
+      porch: extraData != null ? extraData['porch'] : null,
+      isPrivateHouse: extraData != null ? extraData['is_private_house'] : null,
+      floor: extraData != null ? extraData['floor'] : null,
+      appartment: extraData != null ? extraData['appartment'] : null,
+      intercom: extraData != null ? extraData['intercom'] : null,
+      comment: extraData != null ? extraData['comment'] : null,
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    if (pickpoint != null)
-      return {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "pickpoint": pickpoint,
-        'contact_fio': fio ?? "",
-        'contact_phone': phone ?? "",
-        'contact_email': email ?? "",
-        'comment': comment ?? "",
-      };
-    else
-      return {
-        "id": id,
-        'address': address.address ?? "",
-        'unrestricted_value': address.originalAddress ?? "",
-        'lat': address.latitude ?? "",
-        'lon': address.longitude ?? "",
+        "type": _userAddressTypesLabels.entries.firstWhere((element) => element.value == type, orElse: () => null)?.key,
+        'address': address?.address ?? "",
+        'unrestricted_value': address?.originalAddress ?? "",
+        'lat': address?.latitude ?? "",
+        'lon': address?.longitude ?? "",
         'contact_fio': fio ?? "",
         'contact_phone': phone ?? "",
         'contact_email': email ?? "",
@@ -83,6 +81,6 @@ class UserAddress {
         'appartment': appartment ?? "",
         'intercom': intercom ?? "",
         'comment': comment ?? "",
+        'is_private_house': isPrivateHouse ?? false,
       };
-  }
 }

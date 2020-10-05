@@ -10,3 +10,4 @@ const dialogColor = Color(0xFFFDFDFE);
 
 const darkBackground = Color(0xFF373A3F);
 const white = Color(0xFFFFFFFF);
+const red = Color(0xFF930012);

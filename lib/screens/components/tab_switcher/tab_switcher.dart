@@ -118,8 +118,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
     SystemUiOverlayStyle originalOverlayStyle,
   }) async {
     if (!await BaseRepository.isAuthorized()) {
-      showCupertinoModalBottomSheet(
-        backgroundColor: Colors.white,
+      showMaterialModalBottomSheet(
         expand: false,
         context: context,
         useRootNavigator: true,
@@ -292,14 +291,17 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                     onClose: () {
                                       Navigator.of(context).pop();
                                     },
+                                    onProductCreated: () {
+                                      Navigator.of(context).pop();
+                                      widget.currentTab.value = BottomTab.profile;
+                                    },
                                   ),
                                 ),
                               ),
                             ),
                           );
                         } else
-                          showCupertinoModalBottomSheet(
-                              backgroundColor: Colors.white,
+                          showMaterialModalBottomSheet(
                               expand: false,
                               context: context,
                               useRootNavigator: true,

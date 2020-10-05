@@ -21,10 +21,8 @@ class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    offset = Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero)
-        .animate(controller);
+    controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    offset = Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero).animate(controller);
 
     controller.addListener(() {
       setState(() {});
@@ -49,30 +47,30 @@ class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Container(
-                      decoration: ShapeDecoration(
-                          color: dialogColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14.0))),
-                      child: ListView.separated(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: widget.dialogContent
-                            .where((element) =>
-                                element.dialogItemType == DialogItemType.item)
-                            .length,
-                        itemBuilder: (context, index) => DialogItem(
-                          dialogItemContent: widget.dialogContent
-                              .where((element) =>
-                                  element.dialogItemType == DialogItemType.item)
-                              .elementAt(index),
-                        ),
-                        separatorBuilder: (context, index) => ItemsDivider(
-                          padding: 0,
-                        ),
-                      ),
-                    ),
-                    if (widget.dialogContent.any((element) =>
-                        element.dialogItemType == DialogItemType.system))
+                        decoration: ShapeDecoration(
+                            color: dialogColor,
+                            shape:
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0))),
+                        child: ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: widget.dialogContent
+                                .where((element) =>
+                                    element.dialogItemType == DialogItemType.item ||
+                                    element.dialogItemType == DialogItemType.infoHeader)
+                                .length,
+                            itemBuilder: (context, index) => DialogItem(
+                                  dialogItemContent: widget.dialogContent
+                                      .where((element) =>
+                                          element.dialogItemType == DialogItemType.item ||
+                                          element.dialogItemType == DialogItemType.infoHeader)
+                                      .elementAt(index),
+                                ),
+                            separatorBuilder: (context, index) => ItemsDivider(
+                                  padding: 0,
+                                ))),
+                    if (widget.dialogContent
+                        .any((element) => element.dialogItemType == DialogItemType.system))
                       Container(
                           margin: EdgeInsets.only(top: 10.0),
                           decoration: ShapeDecoration(
@@ -83,15 +81,12 @@ class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: widget.dialogContent
-                                .where((element) =>
-                                    element.dialogItemType ==
-                                    DialogItemType.system)
+                                .where((element) => element.dialogItemType == DialogItemType.system)
                                 .length,
                             itemBuilder: (context, index) => DialogItem(
                               dialogItemContent: widget.dialogContent
-                                  .where((element) =>
-                                      element.dialogItemType ==
-                                      DialogItemType.system)
+                                  .where(
+                                      (element) => element.dialogItemType == DialogItemType.system)
                                   .elementAt(index),
                             ),
                             separatorBuilder: (context, index) => ItemsDivider(

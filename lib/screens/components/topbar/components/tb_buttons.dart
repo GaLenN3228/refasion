@@ -12,61 +12,65 @@ class TBButtons extends StatelessWidget {
   final double buttonsWidth;
   final int maxButtonsCount;
 
-  const TBButtons(
-      {Key key,
-      this.align,
-      this.leftButton,
-      this.rightButton,
-      this.buttonsWidth,
-      this.maxButtonsCount: 0})
+  const TBButtons({Key key, this.align, this.leftButton, this.rightButton, this.buttonsWidth, this.maxButtonsCount: 0})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final isText = leftButton?.label != null || rightButton?.label != null;
-    final isIcon =
-        leftButton?.iconType != null || rightButton?.iconType != null;
+    final isIcon = leftButton?.iconType != null || rightButton?.iconType != null;
 
-    if (leftButton == null && rightButton == null)
-      return SizedBox(
-        width: buttonsWidth,
-      );
+    if (leftButton == null && rightButton == null) return SizedBox();
 
-    EdgeInsets rowPadding = EdgeInsets.zero;
-    EdgeInsets buttonPadding = EdgeInsets.zero;
+    EdgeInsets leftIconPadding = EdgeInsets.zero;
+    EdgeInsets rightIconPadding = EdgeInsets.zero;
+
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start;
+    Alignment alignment = Alignment.centerLeft;
 
     switch (align) {
       case TBButtonsAlign.left:
-        rowPadding = EdgeInsets.only(left: isText ? 20 : isIcon ? 10 : 0);
-        buttonPadding = EdgeInsets.only(right: isText ? 10 : isIcon ? 10 : 0);
+        leftIconPadding = EdgeInsets.only(
+          left: isText ? 20 : isIcon ? 10 : 0,
+          right: isText ? 20 : isIcon ? 10 : 0,
+        );
+        rightIconPadding = EdgeInsets.only(
+          left: isText ? 10 : isIcon ? 10 : 0,
+          right: isText ? 10 : isIcon ? 10 : 0,
+        );
+
         break;
       case TBButtonsAlign.right:
-        rowPadding = EdgeInsets.only(right: isText ? 20 : isIcon ? 10 : 0);
-        buttonPadding = EdgeInsets.only(left: isText ? 10 : isIcon ? 10 : 0);
+        leftIconPadding = EdgeInsets.only(
+          left: isText ? 10 : isIcon ? 10 : 0,
+          right: isText ? 10 : isIcon ? 10 : 0,
+        );
+        rightIconPadding = EdgeInsets.only(
+          left: isText ? 20 : isIcon ? 10 : 0,
+          right: isText ? 20 : isIcon ? 10 : 0,
+        );
+
+        alignment = Alignment.centerRight;
         mainAxisAlignment = MainAxisAlignment.end;
         break;
     }
 
-    return SizedBox(
-      width: buttonsWidth,
-      child: Padding(
-        padding: rowPadding,
-        child: Row(
-          mainAxisAlignment: mainAxisAlignment,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TBButton(
-              padding: buttonPadding,
-              data: leftButton,
-            ),
-            TBButton(
-              padding: buttonPadding,
-              data: rightButton,
-            ),
-          ],
+    return Row(
+      mainAxisAlignment: mainAxisAlignment,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        TBButton(
+          padding: leftIconPadding,
+          alignment: alignment,
+          data: leftButton,
         ),
-      ),
+        TBButton(
+          padding: rightIconPadding,
+          alignment: alignment,
+          data: rightButton,
+        ),
+      ],
     );
   }
 }

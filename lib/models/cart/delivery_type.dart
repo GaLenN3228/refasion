@@ -10,15 +10,26 @@ class DeliveryType {
 
   const DeliveryType({this.id, this.deliveryOptions, this.type, this.name, this.title});
 
-  factory DeliveryType.fromJson(Map<String, dynamic> json) => json != null
-      ? DeliveryType(
-          id: json['id'],
-          type: deliveryTypes[json['type']] ?? Delivery.PICKUP_POINT,
-          name: json['name'],
-          title: json['title'],
-          deliveryOptions: [for (final option in json['items']) DeliveryOption.fromJson(option)],
-        )
-      : null;
+  factory DeliveryType.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    final deliveryType = json['type'] != null ? deliveryTypes[json['type']] : null;
+
+    final deliveryOptions = [
+      if (json['items'] != null)
+        for (final option in json['items']) DeliveryOption.fromJson(option)
+    ].where((element) => element != null).toList();
+
+    if (deliveryOptions.isEmpty || deliveryType == null) return null;
+
+    return DeliveryType(
+      id: json['id'],
+      type: deliveryType,
+      name: json['name'],
+      title: json['title'],
+      deliveryOptions: deliveryOptions,
+    );
+  }
 
   @override
   String toString() => type.toString() + ": " + name + ", " + title;

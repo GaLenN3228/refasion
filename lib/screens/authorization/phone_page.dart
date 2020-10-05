@@ -6,14 +6,15 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/screens/authorization/code_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
+import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class PhonePage extends StatefulWidget {
   final Function(BuildContext) onAuthorizationCancel;
   final Function(BuildContext) onAuthorizationDone;
   final bool needDismiss;
 
-  const PhonePage(
-      {Key key, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss = true})
+  const PhonePage({Key key, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss = true})
       : super(key: key);
 
   @override
@@ -30,8 +31,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
   void initState() {
     phoneIsEmpty = false;
     textEditingController = TextEditingController();
-    maskFormatter =
-        new MaskTextInputFormatter(mask: '### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
+    maskFormatter = new MaskTextInputFormatter(mask: '### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
     textEditingController.addListener(textControllerListener);
 
     super.initState();
@@ -41,6 +41,8 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
   @override
   void dispose() {
     textEditingController.removeListener(textControllerListener);
+
+    textEditingController.dispose();
 
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -59,130 +61,138 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
 
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(children: [
-          GestureDetector(
-            onTap: () {
-              widget.onAuthorizationCancel?.call(context);
-              if (widget.needDismiss) if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              } else {
-                SystemNavigator.pop();
-              }
-            },
-            child: Container(
-                padding: const EdgeInsets.only(right: 16.0, top: 60),
-                alignment: Alignment.topRight,
-                child: Text(
-                  "Закрыть",
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(color: Color(0xFF959595)),
-                )),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                alignment: Alignment.center,
-                child: Text(
-                  "Введите номер телефона",
-                  style: textTheme.headline1,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(top: 16.0),
-                child: Text(
-                  "Чтобы войти и зарегистрироваться\nв приложении",
-                  textAlign: TextAlign.center,
-                  style: textTheme.caption,
-                ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("+7 ", style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20)),
-                  IntrinsicWidth(
-                    child: TextField(
-                      inputFormatters: [maskFormatter],
-                      textAlign: TextAlign.start,
-                      controller: textEditingController,
-                      keyboardType: TextInputType.phone,
-                      autofocus: true,
-                      style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
-                      cursorWidth: 2.0,
-                      cursorRadius: Radius.circular(2.0),
-                      cursorColor: Color(0xFFE6E6E6),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          hintText: "Введите номер",
-                          hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
-                    ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: RefashionedTopBar(
+                  data: TopBarData.simple(
+                    onClose: () {
+                      widget.onAuthorizationCancel?.call(context);
+                      if (widget.needDismiss) if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      } else {
+                        SystemNavigator.pop();
+                      }
+                    },
                   ),
-                ],
+                ),
               ),
-              Container(
-                color: Color(0xFFFAD24E),
-                width: double.infinity,
-                height: 2,
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(left: 20, right: 20),
-              ),
-              Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(top: 28.0),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: "Нажмите кнопку «Получить код», вы соглашаететсь\nс условиями ",
-                      style: textTheme.caption,
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: "Пользовательского соглашения",
-                          style: TextStyle(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline,
-                            decorationStyle: TextDecorationStyle.wavy,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
-            alignment: Alignment.bottomCenter,
-            child: Button(
-              "ПОЛУЧИТЬ КОД",
-              buttonStyle: phoneIsEmpty || (phone != null && phone.length < 16)
-                  ? ButtonStyle.dark_gray
-                  : ButtonStyle.dark,
-              height: 45,
-              width: double.infinity,
-              borderRadius: 5,
-              onClick: !phoneIsEmpty && phone != null && phone.length == 16
-                  ? () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
-                                create: (_) => AuthorizationRepository()
-                                  ..sendPhoneAndGetCode(
-                                      phone.replaceAll("+", "").replaceAll(" ", "")),
-                                child: CodePage(
-                                  needDismiss: widget.needDismiss,
-                                  phone: phone,
-                                  onAuthorizationCancel: widget.onAuthorizationCancel,
-                                  onAuthorizationDone: widget.onAuthorizationDone,
-                                ),
-                              )));
-                    }
-                  : () {},
             ),
-          )
-        ]));
+            Column(
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Введите номер телефона",
+                    style: textTheme.headline1,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    "Чтобы войти и зарегистрироваться\nв приложении",
+                    textAlign: TextAlign.center,
+                    style: textTheme.caption,
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("+7 ", style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20)),
+                    IntrinsicWidth(
+                      child: TextField(
+                        inputFormatters: [maskFormatter],
+                        textAlign: TextAlign.start,
+                        controller: textEditingController,
+                        keyboardType: TextInputType.phone,
+                        autofocus: true,
+                        style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
+                        cursorWidth: 2.0,
+                        cursorRadius: Radius.circular(2.0),
+                        cursorColor: Color(0xFFE6E6E6),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            hintText: "Введите номер",
+                            hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  color: Color(0xFFFAD24E),
+                  width: double.infinity,
+                  height: 2,
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.only(left: 20, right: 20),
+                ),
+                Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.only(top: 28.0),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text: "Нажмите кнопку «Получить код», вы соглашаететсь\nс условиями ",
+                        style: textTheme.caption,
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: "Пользовательского соглашения",
+                            style: TextStyle(
+                              color: Colors.black,
+                              decoration: TextDecoration.underline,
+                              decorationStyle: TextDecorationStyle.wavy,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+            ),
+            Expanded(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                  alignment: Alignment.bottomCenter,
+                  child: Button(
+                    "ПОЛУЧИТЬ КОД",
+                    buttonStyle:
+                        phoneIsEmpty || (phone != null && phone.length < 16) ? ButtonStyle.dark_gray : ButtonStyle.dark,
+                    height: 45,
+                    width: double.infinity,
+                    borderRadius: 5,
+                    onClick: !phoneIsEmpty && phone != null && phone.length == 16
+                        ? () {
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
+                                      create: (_) => AuthorizationRepository()
+                                        ..sendPhoneAndGetCode(phone.replaceAll("+", "").replaceAll(" ", "")),
+                                      child: CodePage(
+                                        needDismiss: widget.needDismiss,
+                                        phone: phone,
+                                        onAuthorizationCancel: widget.onAuthorizationCancel,
+                                        onAuthorizationDone: widget.onAuthorizationDone,
+                                      ),
+                                    )));
+                          }
+                        : () {},
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

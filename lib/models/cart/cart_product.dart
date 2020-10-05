@@ -8,11 +8,15 @@ class CartProduct {
 
   const CartProduct({this.selected, this.id, this.product});
 
-  factory CartProduct.fromJson(Map<String, dynamic> json) => CartProduct(
-        id: json['id'],
-        product: Product.fromJson(json['product']),
-        selected: ValueNotifier(false),
-      );
+  factory CartProduct.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    return CartProduct(
+      id: json['id'],
+      product: Product.fromJson(json['product']),
+      selected: ValueNotifier(false),
+    );
+  }
 
   update({bool value}) => selected.value = value ?? !selected.value;
 }

@@ -14,7 +14,6 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.da
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
-import 'package:refashioned_app/screens/onbording/on_bording.dart';
 
 class CitySelector extends StatefulWidget {
   final bool onFirstLaunch;
@@ -64,24 +63,84 @@ class _CitySelectorState extends State<CitySelector> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
-      child: Consumer<CitiesRepository>(
-        builder: (context, repository, emptyState) {
-          if (repository.loadingFailed)
-            return Center(
-              child: Text(
-                "Ошибка: " + repository.response?.errors.toString(),
-                style: Theme.of(context).textTheme.bodyText1,
+    return Consumer<CitiesRepository>(
+      builder: (context, repository, _) {
+        final provider = repository.response?.content;
+
+        if (repository.isLoading || repository.loadingFailed || provider == null || skipable) {
+          if (widget.onFirstLaunch) {
+            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
+            return CupertinoPageScaffold(
+              backgroundColor: primaryColor,
+              resizeToAvoidBottomInset: false,
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(),
+                    ),
+                    SVGImage(
+                      image: ImageAsset.refashionedLogo,
+                      height: 50,
+                      color: white,
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 50),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                            child: Text(
+                              repository.loadingFailed
+                                  ? repository.response?.errors != null
+                                      ? "Ошибка: ${repository.response?.errors}"
+                                      : "🤬"
+                                  : "Маркетплейс брендовой одежды и обуви",
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: repository.loadingFailed && repository.response?.errors == null
+                                  ? TextStyle(fontSize: 32)
+                                  : Theme.of(context).textTheme.headline1.copyWith(
+                                        color: white,
+                                        fontWeight: FontWeight.w300,
+                                        height: 1.5,
+                                      ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
+          }
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
-          final provider = repository.response?.content;
+          return CupertinoPageScaffold(
+            child: SafeArea(
+              child: Center(
+                child: CupertinoActivityIndicator(
+                  animating: true,
+                ),
+              ),
+            ),
+          );
+        }
 
-          if (repository.isLoading || provider == null || skipable) return emptyState;
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
-          return Column(
+        return CupertinoPageScaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: white,
+          child: Column(
             children: [
               RefashionedTopBar(
                 data: TopBarData(
@@ -152,16 +211,9 @@ class _CitySelectorState extends State<CitySelector> {
                     }),
               ),
             ],
-          );
-        },
-        child: Center(
-          child: widget.onFirstLaunch
-              ? SVGImage(
-                  image: ImageAsset.refashionedLogo,
-                )
-              : SizedBox(),
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

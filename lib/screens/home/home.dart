@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -50,7 +49,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ));
 
-    if (homeRepository.loadingFailed || homeRepository.getStatusCode != 200)
+    if (homeRepository.loadingFailed)
       return Center(
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
       );
@@ -59,9 +58,7 @@ class _HomePageState extends State<HomePage> {
     loadIcon = SizedBox(
       width: 25.0,
       height: 25.0,
-      child: defaultTargetPlatform == TargetPlatform.iOS
-          ? const CupertinoActivityIndicator()
-          : const CircularProgressIndicator(strokeWidth: 2.0),
+      child: const CupertinoActivityIndicator()
     );
 
     return CupertinoPageScaffold(

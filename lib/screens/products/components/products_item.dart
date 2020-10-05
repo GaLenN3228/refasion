@@ -56,8 +56,7 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                         fit: BoxFit.cover,
                       ),
                     ),
-                    Consumer<AddRemoveFavouriteRepository>(
-                        builder: (context, addRemoveFavouriteRepository, child) {
+                    Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
                       return GestureDetector(
                           onTap: () => {
                                 HapticFeedback.heavyImpact(),
@@ -65,12 +64,11 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                                 BaseRepository.isAuthorized().then((isAuthorized) {
                                   isAuthorized
                                       ? widget.product.isFavourite
-                                          ? addRemoveFavouriteRepository.removeFromFavourites(
-                                              (widget.product..isFavourite = false).id)
-                                          : addRemoveFavouriteRepository.addToFavourites(
-                                              (widget.product..isFavourite = true).id)
-                                      : showCupertinoModalBottomSheet(
-                                          backgroundColor: Colors.white,
+                                          ? addRemoveFavouriteRepository
+                                              .removeFromFavourites((widget.product..isFavourite = false).id)
+                                          : addRemoveFavouriteRepository
+                                              .addToFavourites((widget.product..isFavourite = true).id)
+                                      : showMaterialModalBottomSheet(
                                           expand: false,
                                           context: context,
                                           useRootNavigator: true,
@@ -82,80 +80,85 @@ class _ProductsItemState extends State<ProductsItem> with TickerProviderStateMix
                             child: Padding(
                               padding: EdgeInsets.all(10),
                               child: ScaleTransition(
-                                scale: Tween(begin: 1.0, end: 1.3).animate(
-                                    CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
-                                  ..addStatusListener((status) {
-                                    if (status == AnimationStatus.completed) {
-                                      setState(() {
-                                        _controller.reverse();
-                                      });
-                                    }
-                                  }),
+                                scale: Tween(begin: 1.0, end: 1.3)
+                                    .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInQuad))
+                                      ..addStatusListener((status) {
+                                        if (status == AnimationStatus.completed) {
+                                          setState(() {
+                                            _controller.reverse();
+                                          });
+                                        }
+                                      }),
                                 child: SVGIcon(
-                                  color: widget.product.isFavourite
-                                      ? Color(0xFFD12C2A)
-                                      : Color(0xFF000000),
-                                  icon: widget.product.isFavourite
-                                      ? IconAsset.favoriteFilled
-                                      : IconAsset.favoriteBorder,
+                                  color: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
+                                  icon:
+                                      widget.product.isFavourite ? IconAsset.favoriteFilled : IconAsset.favoriteBorder,
                                   size: 26,
                                 ),
                               ),
                             ),
                           ));
                     }),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Consumer<CartRepository>(
-                        builder: (context, repository, child) {
-                          final isInCart = repository.checkPresence(widget.product.id);
-
-                          return GestureDetector(
-                            onTap: () {
-                              HapticFeedback.heavyImpact();
-                              if (isInCart)
-                                repository.removeFromCart(widget.product.id);
-                              else
-                                repository.addToCart(widget.product.id);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-                              child: SVGIcon(
-                                icon: IconAsset.cart,
-                                size: 26,
-                                color: isInCart ? accentColor : null,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    )
                   ],
                 ),
               ),
-              Container(
-                alignment: Alignment.topLeft,
-                margin: const EdgeInsets.only(top: 6.0),
-                child: Text(
-                  widget.product.brand.name,
-                  style: textTheme.subtitle1,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Container(
-                alignment: Alignment.topLeft,
-                margin: const EdgeInsets.only(top: 2.0),
-                child: Text(
-                  "Москва",
-                  style: textTheme.caption,
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 6.0),
-                child: ProductPrice(
-                  product: widget.product,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        alignment: Alignment.topLeft,
+                        margin: const EdgeInsets.only(top: 6.0),
+                        child: Text(
+                          widget.product.brand.name,
+                          style: textTheme.subtitle1,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        margin: const EdgeInsets.only(top: 2.0),
+                        child: Text(
+                          "Москва",
+                          style: textTheme.caption,
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 6.0),
+                        child: ProductPrice(
+                          product: widget.product,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Consumer<CartRepository>(
+                    builder: (context, repository, child) {
+                      final isInCart = repository.checkPresence(widget.product.id);
+
+                      return GestureDetector(
+                        onTap: () {
+                          HapticFeedback.heavyImpact();
+                          if (isInCart)
+                            repository.removeFromCart(widget.product.id);
+                          else
+                            repository.addToCart(widget.product.id);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: SVGIcon(
+                            icon: IconAsset.cart,
+                            size: 26,
+                            color: isInCart ? accentColor : null,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                ],
               )
             ],
           ),

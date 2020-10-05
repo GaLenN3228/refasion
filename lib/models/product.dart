@@ -6,6 +6,14 @@ import 'package:refashioned_app/models/seller.dart';
 import 'brand.dart';
 import 'category.dart';
 
+enum ProductState { published, reserved, onModeration }
+
+final _stateLabels = {
+  "Опубликован": ProductState.published,
+  "В резерве": ProductState.reserved,
+  "На модерации": ProductState.onModeration,
+};
+
 class Product {
   final String id;
   final String article;
@@ -17,30 +25,44 @@ class Product {
   final Brand brand;
   final Seller seller;
   final String description;
-  final List<Property> properties;
+  List<Property> properties;
   final List<String> images;
+  final ProductState state;
   bool isFavourite = false;
 
   final PickPoint pickUpAddress;
   final List<DeliveryType> deliveryTypes;
 
-  Product(
-      {this.pickUpAddress,
-      this.deliveryTypes,
-      this.id,
-      this.article,
-      this.name,
-      this.currentPrice,
-      this.discountPrice,
-      this.image,
-      this.category,
-      this.brand,
-      this.seller,
-      this.description,
-      this.properties,
-      this.images});
+  Product({
+    this.pickUpAddress,
+    this.deliveryTypes,
+    this.id,
+    this.article,
+    this.name,
+    this.currentPrice,
+    this.discountPrice,
+    this.image,
+    this.category,
+    this.brand,
+    this.seller,
+    this.description,
+    this.properties,
+    this.images,
+    this.state,
+  });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    final stateObject = json['state'];
+    final stateText = stateObject != null ? stateObject['text'] : null;
+    final state = stateText != null ? _stateLabels[stateText] : null;
+
+    final deliveryTypes = [
+      if (json['takeaways'] != null)
+        for (final deliveryType in json['takeaways']) DeliveryType.fromJson(deliveryType)
+    ].where((element) => element != null).toList();
+
     return Product(
       id: json['id'],
       article: json['article'],
@@ -61,10 +83,8 @@ class Product {
           for (final image in json['images']) image
       ],
       pickUpAddress: json['pickup'] != null ? PickPoint.fromJson(json['pickup']) : null,
-      deliveryTypes: [
-        if (json['takeaways'] != null)
-          for (final deliveryType in json['takeaways']) DeliveryType.fromJson(deliveryType)
-      ],
+      deliveryTypes: deliveryTypes,
+      state: state,
     );
   }
 }

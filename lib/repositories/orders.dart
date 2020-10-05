@@ -35,3 +35,14 @@ class CreateOrderRepository extends BaseRepository<Order> {
         },
       );
 }
+
+class ConfirmOrderRepository extends BaseRepository<String> {
+  Future<void> update(String id, String number) => apiCall(
+        () async {
+          response = BaseResponse.fromJson(
+            (await ApiService.confirmOrder(id, number)).data,
+            (contentJson) => contentJson['payment_url'],
+          );
+        },
+      );
+}

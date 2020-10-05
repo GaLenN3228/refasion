@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_product.dart';
+import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/product/brand.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/product/price.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/product/size.dart';
+import 'package:refashioned_app/screens/components/product/brand.dart';
+import 'package:refashioned_app/screens/components/product/price_tile.dart';
+import 'package:refashioned_app/screens/components/product/size.dart';
+import 'package:refashioned_app/screens/components/product/state_tile.dart';
 import 'package:refashioned_app/screens/components/checkbox/checkbox_listenable.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
@@ -25,8 +26,6 @@ class CartProductTile extends StatefulWidget {
 }
 
 class _CartProductTileState extends State<CartProductTile> {
-  final bool colored = false;
-
   AddRemoveFavouriteRepository addRemoveFavouriteRepository;
 
   CartRepository cartRepository;
@@ -47,52 +46,59 @@ class _CartProductTileState extends State<CartProductTile> {
     super.dispose();
   }
 
-  addToFavorites() async => await addRemoveFavouriteRepository
-      .addToFavourites((widget.cartProduct.product..isFavourite = true).id);
+  addToFavorites() async =>
+      await addRemoveFavouriteRepository.addToFavourites((widget.cartProduct.product..isFavourite = true).id);
 
   removeFromCart() async => await cartRepository.removeFromCart(widget.cartProduct.id);
 
-  dialog() {
+  dialog({bool isReserved: false}) {
     return showDialog(
       context: context,
       builder: (dialogContext) => CustomDialog.Dialog(
         dialogContent: [
-          DialogItemContent(
-            "Подробнее",
-            () {
-              Navigator.of(dialogContext).pop();
-              widget.onProductPush?.call();
-            },
-            DialogItemType.item,
-            icon: IconAsset.info,
-          ),
+          if (isReserved)
+            DialogItemContent(
+              DialogItemType.infoHeader,
+              title: "Товар в резерве",
+              subTitle: "Извините, но этот товар уже оплатил другой покупатель",
+            ),
+          if (!isReserved)
+            DialogItemContent(
+              DialogItemType.item,
+              title: "Подробнее",
+              onClick: () {
+                Navigator.of(dialogContext).pop();
+                widget.onProductPush?.call();
+              },
+              icon: IconAsset.info,
+            ),
           if (!widget.cartProduct.product.isFavourite)
             DialogItemContent(
-              "Перенести в избранное",
-              () async {
+              DialogItemType.item,
+              title: "Перенести в избранное",
+              onClick: () async {
                 await addToFavorites();
                 await removeFromCart();
 
                 Navigator.of(dialogContext).pop();
               },
-              DialogItemType.item,
               icon: IconAsset.favoriteBorder,
             ),
           DialogItemContent(
-            "Удалить из корзины",
-            () async {
+            DialogItemType.item,
+            title: "Удалить из корзины",
+            onClick: () async {
               await removeFromCart();
 
               Navigator.of(dialogContext).pop();
             },
-            DialogItemType.item,
             icon: IconAsset.delete,
             color: Colors.red,
           ),
           DialogItemContent(
-            "Отменить",
-            () => Navigator.of(dialogContext).pop(),
             DialogItemType.system,
+            title: "Отменить",
+            onClick: () => Navigator.of(dialogContext).pop(),
           )
         ],
       ),
@@ -105,73 +111,70 @@ class _CartProductTileState extends State<CartProductTile> {
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: widget.onSelect,
+      onTap: () {
+        if (product.state == ProductState.published)
+          widget.onSelect();
+        else
+          dialog(isReserved: product.state != ProductState.published);
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Container(
-          color: colored ? Colors.cyanAccent : null,
+        child: SizedBox(
+          height: 80,
           child: Row(
             children: [
-              Container(
-                color: colored ? Colors.pinkAccent : null,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: RefashionedCheckboxListenable(
-                    valueNotifier: widget.cartProduct.selected,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: RefashionedCheckboxListenable(
+                  valueNotifier: widget.cartProduct.selected,
+                  enabled: product.state == ProductState.published,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    product.image != null
+                        ? product.image
+                        : "https://admin.refashioned.ru/media/product/2c8cb353-4feb-427d-9279-d2b75f46d786/2b22b56279182fe9bedb1f246d9b44b7.JPG",
+                    width: 80,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-              Container(
-                color: colored ? Colors.deepPurpleAccent : null,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      product.image != null
-                          ? product.image
-                          : "https://admin.refashioned.ru/media/product/2c8cb353-4feb-427d-9279-d2b75f46d786/2b22b56279182fe9bedb1f246d9b44b7.JPG",
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+              SizedBox(
+                width: 5,
               ),
               Expanded(
-                child: Container(
-                  color: colored ? Colors.deepOrangeAccent : null,
+                child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Container(
-                    color: colored ? Colors.lightBlueAccent : null,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        ProductPrice(
-                          product: product,
-                        ),
-                        ProductBrand(product),
-                        ProductSize(product),
-                      ],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ProductStateTile(product: product),
+                      ProductPriceTile(product: product),
+                      ProductBrandTile(product: product),
+                      ProductSizeTile(product: product),
+                    ],
                   ),
                 ),
               ),
-              Container(
-                color: colored ? Colors.amberAccent : null,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: dialog,
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () => dialog(isReserved: product.state != ProductState.published),
+                child: Container(
+                  height: double.infinity,
+                  alignment: Alignment.topCenter,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                    padding: const EdgeInsets.only(left: 10),
                     child: SVGIcon(
                       icon: IconAsset.more,
                       size: 24,
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
