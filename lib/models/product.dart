@@ -33,7 +33,10 @@ class Product {
   final PickPoint pickUpAddress;
   final List<DeliveryType> deliveryTypes;
 
+  final bool available;
+
   Product({
+    this.available,
     this.pickUpAddress,
     this.deliveryTypes,
     this.id,
@@ -57,6 +60,15 @@ class Product {
     final stateObject = json['state'];
     final stateText = stateObject != null ? stateObject['text'] : null;
     final state = stateText != null ? _stateLabels[stateText] : null;
+
+    final reserveState = json['reserve_state'];
+
+    final reserveStatus = reserveState != null ? reserveState['status'] : null;
+    final reserveText = reserveState != null ? reserveState['text'] : null;
+
+    final available = reserveStatus != null && reserveText != null
+        ? !reserveStatus || reserveText.toString() == "Этот товар уже зарезервирован Вами"
+        : false;
 
     final deliveryTypes = [
       if (json['takeaways'] != null)
@@ -85,6 +97,7 @@ class Product {
       pickUpAddress: json['pickup'] != null ? PickPoint.fromJson(json['pickup']) : null,
       deliveryTypes: deliveryTypes,
       state: state,
+      available: available,
     );
   }
 }

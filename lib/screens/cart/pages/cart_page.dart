@@ -57,7 +57,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
   void initState() {
     loadingIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
 
-    refreshController = RefreshController(initialRefresh: true);
+    refreshController = RefreshController(initialRefresh: false);
 
     super.initState();
   }

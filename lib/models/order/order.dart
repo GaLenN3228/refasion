@@ -28,7 +28,7 @@ class Order {
 
     final totalPrice = json['products_price'];
     final fullPrice = json['full_price'];
-    final discount = json['discount'];
+    final discount = json['total_discount'];
 
     final items = json['items'] != null
         ? [
