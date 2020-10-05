@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/cart/cart.dart';
 import 'package:refashioned_app/models/cart/cart_summary.dart';
@@ -33,10 +31,12 @@ class CartRepository extends BaseRepository<Cart> {
 
   String orderParameters;
 
-  RefreshController refreshController;
+  // RefreshController refreshController;
 
   // List<int> scheme;
   // GlobalKey<AnimatedListState> rootListKey;
+
+  bool fullReload = true;
 
   CartRepository() {
     addProduct = AddProductToCartRepository();
@@ -53,10 +53,12 @@ class CartRepository extends BaseRepository<Cart> {
 
     canMakeOrder = false;
 
-    refreshController = RefreshController(initialRefresh: true);
+    // refreshController = RefreshController(initialRefresh: true);
 
     // scheme = [1, 2];
     // rootListKey = GlobalKey<AnimatedListState>();
+
+    _update();
   }
 
   @override
@@ -67,7 +69,7 @@ class CartRepository extends BaseRepository<Cart> {
     getDeliveryTypes.dispose();
     setDeliveryType.dispose();
 
-    refreshController.dispose();
+    // refreshController.dispose();
 
     super.dispose();
   }
@@ -207,7 +209,7 @@ class CartRepository extends BaseRepository<Cart> {
 
   Future<void> addToCart(String productId) async {
     await addProduct.update(productId);
-    if (addProduct.response.status.code == 201) await refresh();
+    if (addProduct.response.status.code == 201) await _update();
   }
 
   Future<void> setDelivery(String itemId, String deliveryCompanyId, String deliveryObjectId) async {
@@ -223,7 +225,7 @@ class CartRepository extends BaseRepository<Cart> {
 
         if (list != null && list?.length == groupProducts?.length) pendingIDs.addAll(list);
       }
-      await refresh();
+      await _update();
     }
   }
 
@@ -232,7 +234,7 @@ class CartRepository extends BaseRepository<Cart> {
 
     if (productItemId != null) {
       await removeItem.update(productItemId);
-      if (removeItem.response.status.code == 204) await refresh();
+      if (removeItem.response.status.code == 204) await _update();
     }
   }
 
@@ -240,16 +242,16 @@ class CartRepository extends BaseRepository<Cart> {
     await getDeliveryTypes.update(itemId);
   }
 
-  refresh() async {
-    if (refreshController.position != null) await refreshController.requestRefresh();
-  }
+  refresh() async => await _update(makeFullReload: false);
 
-  Future<void> update() => apiCall(
+  Future<void> _update({bool makeFullReload: true}) => apiCall(
         () async {
           // final seconds = 0;
           // updateScheme();
 
           // await Future.delayed(Duration(seconds: seconds));
+
+          fullReload = makeFullReload;
 
           response =
               BaseResponse.fromJson((await ApiService.getCart()).data, (contentJson) => Cart.fromJson(contentJson));
