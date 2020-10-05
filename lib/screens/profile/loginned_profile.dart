@@ -200,52 +200,49 @@ class AuthorizedProfilePage extends StatelessWidget {
 
   Widget _profilePlaceHolder(context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Material(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 80),
-        child: Column(
-          children: [
-            SVGIcon(
-              icon: IconAsset.hanger,
-              height: 60,
-              color: Colors.black,
+    return Container(
+        child: Expanded(
+      child: Column(
+        children: [
+          SVGIcon(
+            icon: IconAsset.hanger,
+            height: 60,
+            color: Colors.black,
+          ),
+          Text(
+            'Ваш гардероб пуст',
+            style: textTheme.headline1,
+          ),
+          Container(
+              padding: EdgeInsets.only(top: 10, bottom: 5),
+              child: Text(
+                'Вы еще не разместили ни одной вещи \n в вашем гардеробе',
+                textAlign: TextAlign.center,
+              )),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 30,
             ),
-            Text(
-              'Ваш гардероб пуст',
-              style: textTheme.headline1,
-            ),
-            Container(
-                padding: EdgeInsets.only(top: 10, bottom: 5),
-                child: Text(
-                  'Вы еще не разместили ни одной вещи \n в вашем гардеробе',
-                  textAlign: TextAlign.center,
-                )),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 30,
-              ),
-              child: Button(
-                "РАЗМЕСТИТЬ ВЕЩЬ",
-                buttonStyle: CustomButtonStyle.dark,
-                height: 45,
-                width: 180,
-                borderRadius: 5,
-                onClick: () {
-                  Navigator.of(context, rootNavigator: true).push(
-                    CupertinoPageRoute(
-                      builder: (context) => MarketplaceNavigator(
-                        onClose: Navigator.of(context).pop,
-                      ),
+            child: Button(
+              "РАЗМЕСТИТЬ ВЕЩЬ",
+              buttonStyle: CustomButtonStyle.dark,
+              height: 45,
+              width: 180,
+              borderRadius: 5,
+              onClick: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  CupertinoPageRoute(
+                    builder: (context) => MarketplaceNavigator(
+                      onClose: Navigator.of(context).pop,
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
+    ));
   }
 
   Widget _profileProducts(context, ProductsContent productsContent) {

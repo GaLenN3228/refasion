@@ -97,9 +97,10 @@ class MarketplaceNavigatorObserver extends NavigatorObserver {
 }
 
 class MarketplaceNavigator extends StatefulWidget {
-  MarketplaceNavigator({this.onClose});
+  MarketplaceNavigator({this.onClose, this.onProductCreated});
 
   final Function() onClose;
+  final Function() onProductCreated;
 
   final List<String> pagesWithFocusNodes = [
     MarketplaceNavigatorRoutes.description,
@@ -514,13 +515,15 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         );
 
       case MarketplaceNavigatorRoutes.onModeration:
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: OnModerationPage(
-            productData: productData,
-            onClose: widget.onClose,
-          ),
-        );
+        widget.onProductCreated();
+        return SizedBox();
+        // return WillPopScope(
+        //   onWillPop: () async => false,
+        //   child: OnModerationPage(
+        //     productData: productData,
+        //     onClose: widget.onClose,
+        //   ),
+        // );
 
       default:
         return Center(
