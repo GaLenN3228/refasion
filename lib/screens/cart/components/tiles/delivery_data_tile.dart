@@ -37,28 +37,28 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
     icon = null;
     selected = false;
 
-    if (!widget.available) {
-      text = "Товары зарезервированы";
+    if (widget.deliveryOption == null || widget.deliveryData == null) {
+      text = "Выберите способ доставки";
+      action = "Выбрать";
       selected = false;
     } else {
-      if (widget.deliveryOption == null || widget.deliveryData == null) {
-        text = "Выберите способ доставки";
-        action = "Выбрать";
-        selected = false;
-      } else {
-        final type = widget.deliveryOption.deliveryCompany.type;
+      final type = widget.deliveryOption.deliveryCompany.type;
 
-        icon = deliveryIcons[type];
-        text = deliveryLabels[type] + " - " + widget.deliveryData.text.toLowerCase();
-        action = "Изменить";
-        selected = true;
-      }
+      icon = deliveryIcons[type];
+      text = deliveryLabels[type] + " - " + widget.deliveryData.text.toLowerCase();
+      action = "Изменить";
+      selected = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.available) return SizedBox();
+
     update();
+
+    if (text == null || action == null || icon == null) return SizedBox();
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -72,14 +72,13 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
             Expanded(
               child: Row(
                 children: [
-                  if (selected && icon != null)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 3),
-                      child: SVGIcon(
-                        icon: icon,
-                        size: 24,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 3),
+                    child: SVGIcon(
+                      icon: icon,
+                      size: 24,
                     ),
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 5, right: 10),
@@ -96,22 +95,21 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
                 ],
               ),
             ),
-            if (action != null)
-              Row(
-                children: [
-                  Text(
-                    action,
-                    style: Theme.of(context).textTheme.subtitle1,
+            Row(
+              children: [
+                Text(
+                  action,
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+                RotatedBox(
+                  quarterTurns: 2,
+                  child: SVGIcon(
+                    icon: IconAsset.back,
+                    size: 14,
                   ),
-                  RotatedBox(
-                    quarterTurns: 2,
-                    child: SVGIcon(
-                      icon: IconAsset.back,
-                      size: 14,
-                    ),
-                  ),
-                ],
-              )
+                ),
+              ],
+            )
           ],
         ),
       ),
