@@ -32,10 +32,12 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
   bool selected;
 
   update() {
-    if (!widget.available) {
-      text = "Товары зарезервированы";
-      selected = false;
-    } else if (widget.deliveryOption == null || widget.deliveryData == null) {
+    text = null;
+    action = null;
+    icon = null;
+    selected = false;
+
+    if (widget.deliveryOption == null || widget.deliveryData == null) {
       text = "Выберите способ доставки";
       action = "Выбрать";
       selected = false;
@@ -51,7 +53,12 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.available) return SizedBox();
+
     update();
+
+    if (text == null || action == null) return SizedBox();
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -65,7 +72,7 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
             Expanded(
               child: Row(
                 children: [
-                  if (selected && icon != null)
+                  if (icon != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 3),
                       child: SVGIcon(
@@ -89,22 +96,21 @@ class _DeliveryDataTileState extends State<DeliveryDataTile> {
                 ],
               ),
             ),
-            if (action != null)
-              Row(
-                children: [
-                  Text(
-                    action,
-                    style: Theme.of(context).textTheme.subtitle1,
+            Row(
+              children: [
+                Text(
+                  action,
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+                RotatedBox(
+                  quarterTurns: 2,
+                  child: SVGIcon(
+                    icon: IconAsset.back,
+                    size: 14,
                   ),
-                  RotatedBox(
-                    quarterTurns: 2,
-                    child: SVGIcon(
-                      icon: IconAsset.back,
-                      size: 14,
-                    ),
-                  ),
-                ],
-              )
+                ),
+              ],
+            )
           ],
         ),
       ),

@@ -110,8 +110,8 @@ class _CategoriesListState extends State<CategoriesList> {
                               child: Button(
                                 "ВЫБРАТЬ",
                                 buttonStyle: selectedSubcategories.isNotEmpty
-                                    ? ButtonStyle.dark
-                                    : ButtonStyle.dark_gray,
+                                    ? CustomButtonStyle.dark
+                                    : CustomButtonStyle.dark_gray,
                                 height: 45,
                                 width: double.infinity,
                                 borderRadius: 5,

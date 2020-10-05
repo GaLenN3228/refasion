@@ -31,13 +31,29 @@ class OrderPaymentTile extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 10,
+          height: 5,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Image.asset(
-            "assets/images/png/payments.png",
-            height: 18,
+          padding: const EdgeInsets.symmetric(horizontal: 1),
+          child: Row(
+            children: [
+              Image.asset(
+                "assets/images/png/mir.png",
+                height: 30,
+              ),
+              Image.asset(
+                "assets/images/png/visa.png",
+                height: 30,
+              ),
+              Image.asset(
+                "assets/images/png/mastercard.png",
+                height: 30,
+              ),
+              Image.asset(
+                "assets/images/png/maestro.png",
+                height: 30,
+              ),
+            ],
           ),
         ),
         Padding(

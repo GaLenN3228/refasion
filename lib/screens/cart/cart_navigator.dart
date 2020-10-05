@@ -8,6 +8,7 @@ import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
@@ -30,11 +31,27 @@ class CartNavigatorRoutes {
 }
 
 class CartNavigatorObserver extends NavigatorObserver {
+  final Function() onCartFullReload;
+  final Function() onCartRefresh;
+
+  CartNavigatorObserver({this.onCartRefresh, this.onCartFullReload});
+
   @override
   void didPop(Route route, Route previousRoute) {
     switch (previousRoute?.settings?.name) {
       case CartNavigatorRoutes.cart:
+        switch (route?.settings?.name) {
+          case CartNavigatorRoutes.orderCreated:
+            // onCartFullReload?.call();
+            onCartRefresh?.call();
+            break;
+
+          default:
+            onCartRefresh?.call();
+        }
+
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
         break;
 
       default:
@@ -313,7 +330,12 @@ class _CartNavigatorState extends State<CartNavigator> {
   @override
   Widget build(BuildContext context) => Navigator(
         initialRoute: CartNavigatorRoutes.cart,
-        observers: [CartNavigatorObserver()],
+        observers: [
+          CartNavigatorObserver(
+            // onCartFullReload: () => Provider.of<CartRepository>(context, listen: false).refresh(fullReload: true),
+            onCartRefresh: () => Provider.of<CartRepository>(context, listen: false).refresh(),
+          )
+        ],
         key: widget.navigatorKey,
         onGenerateInitialRoutes: (navigatorState, initialRoute) => [
           CupertinoPageRoute(

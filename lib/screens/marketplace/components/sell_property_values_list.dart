@@ -83,13 +83,12 @@ class _SellPropertyValuesListState extends State<SellPropertyValuesList> {
                       bottom: defaultTargetPlatform == TargetPlatform.iOS ? 31 : 20,
                       child: widget.multiselection
                           ? Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 20),
+                              padding: const EdgeInsets.only(left: 20, right: 20),
                               child: Button(
                                 "ВЫБРАТЬ",
                                 buttonStyle: !isPropertiesListEmpty && widget.required
-                                    ? ButtonStyle.dark
-                                    : ButtonStyle.dark_gray,
+                                    ? CustomButtonStyle.dark
+                                    : CustomButtonStyle.dark_gray,
                                 height: 45,
                                 width: double.infinity,
                                 borderRadius: 5,

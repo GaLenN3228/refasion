@@ -119,7 +119,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                 alignment: Alignment.bottomCenter,
                 child: Button(
                   "ЗАВЕРШИТЬ",
-                  buttonStyle: name != null && name.length == 0 ? ButtonStyle.dark_gray : ButtonStyle.dark,
+                  buttonStyle: name != null && name.length == 0 ? CustomButtonStyle.dark_gray : CustomButtonStyle.dark,
                   height: 45,
                   width: double.infinity,
                   borderRadius: 5,

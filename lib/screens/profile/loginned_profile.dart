@@ -21,8 +21,7 @@ class AuthorizedProfilePage extends StatefulWidget {
   final Function(Product) onProductPush;
   final Function() onSettingsClick;
 
-  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush})
-      : super(key: key);
+  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush}) : super(key: key);
 
   @override
   _AuthorizedProfilePageState createState() => _AuthorizedProfilePageState();
@@ -46,8 +45,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       child: Column(
         children: [
           _appBar(context),
-          Expanded(child: Consumer<ProfileProductsRepository>(
-              builder: (context, profileProductsRepository, child) {
+          Expanded(child: Consumer<ProfileProductsRepository>(builder: (context, profileProductsRepository, child) {
             if (profileProductsRepository.isLoading && profileProductsRepository.response == null) {
               return Center(
                   child: SizedBox(
@@ -97,14 +95,12 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       FutureBuilder(
-                        future: SharedPreferences.getInstance()
-                            .then((prefs) => prefs.getString(Prefs.user_name)),
+                        future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
                               snapshot.data.toString(),
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                             );
                           }
                           return SizedBox();
@@ -153,8 +149,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Мои заказы', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7), child: Text('Мои заказы', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -170,9 +165,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Избранное', style: textTheme.bodyText1)),
+                      Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -186,9 +179,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Подписки', style: textTheme.bodyText1)),
+                      Container(padding: EdgeInsets.only(top: 7), child: Text('Подписки', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),

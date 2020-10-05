@@ -97,8 +97,9 @@ class _CitySelectorState extends State<CitySelector> {
                         padding: const EdgeInsets.only(bottom: 50),
                         child: Align(
                           alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            padding: const EdgeInsets.symmetric(vertical: 20),
                             child: Text(
                               repository.loadingFailed
                                   ? repository.response?.errors != null

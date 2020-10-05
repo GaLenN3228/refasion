@@ -10,11 +10,7 @@ class AuthorizationSheet extends StatelessWidget {
   final bool needDismiss;
 
   const AuthorizationSheet(
-      {Key key,
-      this.onPush,
-      this.onAuthorizationCancel,
-      this.onAuthorizationDone,
-      this.needDismiss = true})
+      {Key key, this.onPush, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss = true})
       : super(key: key);
 
   @override
@@ -31,8 +27,7 @@ class AuthorizationSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
-            borderRadius:
-                BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
             child: Container(
               color: Colors.white,
               height: 410,
@@ -73,7 +68,7 @@ class AuthorizationSheet extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
                   child: Button(
                     "ВОЙТИ ПО НОМЕРУ ТЕЛЕФОНА",
-                    buttonStyle: ButtonStyle.dark,
+                    buttonStyle: CustomButtonStyle.dark,
                     height: 45,
                     width: double.infinity,
                     borderRadius: 5,

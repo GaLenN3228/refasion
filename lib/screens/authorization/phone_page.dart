@@ -166,8 +166,9 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                   alignment: Alignment.bottomCenter,
                   child: Button(
                     "ПОЛУЧИТЬ КОД",
-                    buttonStyle:
-                        phoneIsEmpty || (phone != null && phone.length < 16) ? ButtonStyle.dark_gray : ButtonStyle.dark,
+                    buttonStyle: phoneIsEmpty || (phone != null && phone.length < 16)
+                        ? CustomButtonStyle.dark_gray
+                        : CustomButtonStyle.dark,
                     height: 45,
                     width: double.infinity,
                     borderRadius: 5,

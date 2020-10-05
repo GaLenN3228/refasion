@@ -112,10 +112,10 @@ class _CartProductTileState extends State<CartProductTile> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        if (product.state == ProductState.published)
+        if (product.available)
           widget.onSelect();
         else
-          dialog(isReserved: product.state != ProductState.published);
+          dialog(isReserved: !product.available);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -127,7 +127,7 @@ class _CartProductTileState extends State<CartProductTile> {
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: RefashionedCheckboxListenable(
                   valueNotifier: widget.cartProduct.selected,
-                  enabled: product.state == ProductState.published,
+                  enabled: product.available,
                 ),
               ),
               Padding(
@@ -162,7 +162,7 @@ class _CartProductTileState extends State<CartProductTile> {
               ),
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () => dialog(isReserved: product.state != ProductState.published),
+                onTap: () => dialog(isReserved: !product.available),
                 child: Container(
                   height: double.infinity,
                   alignment: Alignment.topCenter,

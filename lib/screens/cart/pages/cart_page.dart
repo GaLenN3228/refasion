@@ -48,18 +48,15 @@ class CartPage extends StatefulWidget {
   _CartPageState createState() => _CartPageState();
 }
 
-class _CartPageState extends State<CartPage> {
+class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin {
   Widget loadingIcon;
 
   RefreshController refreshController;
 
   @override
   void initState() {
-    loadingIcon = SizedBox(
-      width: 25.0,
-      height: 25.0,
-      child: const CupertinoActivityIndicator()
-    );
+    loadingIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
+
     refreshController = RefreshController(initialRefresh: false);
 
     super.initState();
@@ -68,28 +65,28 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) => Consumer<CartRepository>(
         builder: (context, repository, _) {
-          // if (repository.isLoading)
-          //   return CupertinoPageScaffold(
-          //     child: Column(
-          //       children: [
-          //         RefashionedTopBar(
-          //           data: TopBarData(
-          //             type: TBType.MATERIAL,
-          //             theme: TBTheme.DARK,
-          //             middleData: TBMiddleData.title("Корзина"),
-          //           ),
-          //         ),
-          //         Expanded(
-          //           child: Center(
-          //             child: loadingIcon,
-          //           ),
-          //         ),
-          //         SizedBox(
-          //           height: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0,
-          //         ),
-          //       ],
-          //     ),
-          //   );
+          if (repository.fullReload && repository.isLoading)
+            return CupertinoPageScaffold(
+              child: Column(
+                children: [
+                  RefashionedTopBar(
+                    data: TopBarData(
+                      type: TBType.MATERIAL,
+                      theme: TBTheme.DARK,
+                      middleData: TBMiddleData.title("Корзина"),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: loadingIcon,
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0,
+                  ),
+                ],
+              ),
+            );
 
           final cart = repository?.response?.content;
 
@@ -113,32 +110,32 @@ class _CartPageState extends State<CartPage> {
                   ),
                 ),
                 Expanded(
-                  child: cart != null && cart.groups.isNotEmpty
-                      ? Stack(
-                          children: [
-                            SmartRefresher(
-                              controller: refreshController,
-                              enablePullDown: true,
-                              enablePullUp: false,
-                              header: ClassicHeader(
-                                completeDuration: Duration.zero,
-                                completeIcon: null,
-                                completeText: "",
-                                idleIcon: loadingIcon,
-                                idleText: "Обновление",
-                                refreshingText: "Обновление",
-                                refreshingIcon: loadingIcon,
-                                releaseIcon: loadingIcon,
-                                releaseText: "Обновление",
-                              ),
-                              onRefresh: () async {
-                                HapticFeedback.lightImpact();
+                  child: Stack(
+                    children: [
+                      SmartRefresher(
+                        controller: refreshController,
+                        enablePullDown: true,
+                        enablePullUp: false,
+                        header: ClassicHeader(
+                          completeDuration: Duration.zero,
+                          completeIcon: null,
+                          completeText: "",
+                          idleIcon: loadingIcon,
+                          idleText: "Обновление",
+                          refreshingText: "Обновление",
+                          refreshingIcon: loadingIcon,
+                          releaseIcon: loadingIcon,
+                          releaseText: "Обновление",
+                        ),
+                        onRefresh: () async {
+                          HapticFeedback.lightImpact();
 
-                                await repository.update();
+                          await repository.refresh();
 
-                                refreshController.refreshCompleted();
-                              },
-                              child: ListView(
+                          refreshController.refreshCompleted();
+                        },
+                        child: cart != null && cart.groups.isNotEmpty
+                            ? ListView(
                                 padding: EdgeInsets.fromLTRB(
                                     15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
                                 children: <Widget>[
@@ -162,85 +159,85 @@ class _CartPageState extends State<CartPage> {
                                     ),
                                   )
                                 ],
-                              ),
-                            ),
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: MediaQuery.of(context).padding.bottom + 65.0,
-                              child: CartOrderButton(
-                                cartSummary: repository.summary,
-                                onCheckoutPush: () async =>
-                                    await widget.onCheckoutPush?.call(repository.orderParameters),
-                              ),
-                            )
-                          ],
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: SVGIcon(
-                                    icon: IconAsset.cartThin,
-                                    size: 48,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: SizedBox(
-                                    width: 250,
-                                    child: Text(
-                                      "В корзине пока пусто",
-                                      textAlign: TextAlign.center,
-                                      maxLines: 1,
-                                      style: Theme.of(context).textTheme.headline1,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: SizedBox(
-                                    width: 230,
-                                    child: Text(
-                                      "Вы ещё не положили в корзину ни одной вещи",
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2,
-                                      style: Theme.of(context).textTheme.bodyText2,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(28),
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: widget.onCatalogPush,
-                                child: Container(
-                                  width: 180,
-                                  height: 35,
-                                  decoration: ShapeDecoration(
-                                    color: primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Перейти в каталог".toUpperCase(),
-                                    style: Theme.of(context).textTheme.subtitle1.copyWith(
-                                          color: Colors.white,
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: SVGIcon(
+                                          icon: IconAsset.cartThin,
+                                          size: 48,
                                         ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: SizedBox(
+                                          width: 250,
+                                          child: Text(
+                                            "В корзине пока пусто",
+                                            textAlign: TextAlign.center,
+                                            maxLines: 1,
+                                            style: Theme.of(context).textTheme.headline1,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: SizedBox(
+                                          width: 230,
+                                          child: Text(
+                                            "Вы ещё не положили в корзину ни одной вещи",
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            style: Theme.of(context).textTheme.bodyText2,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(28),
+                                    child: GestureDetector(
+                                      behavior: HitTestBehavior.translucent,
+                                      onTap: widget.onCatalogPush,
+                                      child: Container(
+                                        width: 180,
+                                        height: 35,
+                                        decoration: ShapeDecoration(
+                                          color: primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(3),
+                                          ),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "Перейти в каталог".toUpperCase(),
+                                          style: Theme.of(context).textTheme.subtitle1.copyWith(
+                                                color: Colors.white,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
-                        ),
+                      ),
+                      if (cart != null && cart.groups.isNotEmpty)
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: MediaQuery.of(context).padding.bottom + 65.0,
+                          child: CartOrderButton(
+                            cartSummary: repository.summary,
+                            onCheckoutPush: () async => await widget.onCheckoutPush?.call(repository.orderParameters),
+                          ),
+                        )
+                    ],
+                  ),
                 )
               ],
             ),

@@ -105,6 +105,7 @@ class _UserAddressTileState extends State<UserAddressTile> {
           child: SizedBox(
             height: 80,
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),

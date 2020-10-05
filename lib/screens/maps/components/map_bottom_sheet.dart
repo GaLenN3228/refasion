@@ -194,8 +194,8 @@ class _MapBottomSheetState extends State<MapBottomSheet> {
                     child: Button(
                       mapBottomSheetDataController.currentBottomSheetData.finishButtonText,
                       buttonStyle: mapBottomSheetDataController.currentBottomSheetData.isFinishButtonEnable
-                          ? ButtonStyle.dark
-                          : ButtonStyle.dark_gray,
+                          ? CustomButtonStyle.dark
+                          : CustomButtonStyle.dark_gray,
                       height: 45,
                       width: double.infinity,
                       borderRadius: 5,

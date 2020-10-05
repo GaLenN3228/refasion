@@ -26,95 +26,96 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return CupertinoPageScaffold(
-      backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
         child: FutureBuilder<SharedPreferences>(
-      future: SharedPreferences.getInstance(),
-      builder: (context, snapshot) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 35.0, left: 20, right: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 14.0, bottom: 14),
-                child: Text(
-                  "ПРОФИЛЬ",
-                  style: textTheme.headline1,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+          future: SharedPreferences.getInstance(),
+          builder: (context, snapshot) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 35.0, left: 20, right: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 14.0, bottom: 14),
+                    child: Text(
+                      "ПРОФИЛЬ",
+                      style: textTheme.headline1,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
+                    width: 80,
+                    height: 80,
+                    child: Image.asset('assets/user_placeholder.png'),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 14.0),
+                    child: Text(
+                      "Войдите в профиль",
+                      style: textTheme.headline1,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 14.0),
+                    child: Text(
+                      "Чтобы делать покупки, пользоваться скидками и отслеживать заказы.",
+                      style: textTheme.bodyText2,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 20,
+                    ),
+                    child: Button(
+                      "ВОЙТИ ПО НОМЕРУ ТЕЛЕФОНА",
+                      buttonStyle: CustomButtonStyle.dark,
+                      height: 45,
+                      width: double.infinity,
+                      borderRadius: 5,
+                      onClick: () {
+                        Navigator.of(context, rootNavigator: true)
+                            .push(MaterialPageRoute(builder: (context) => PhonePage()));
+                      },
+                    ),
+                  ),
+                  Consumer<CitiesRepository>(
+                      builder: (context, value, _) => ProfileItem(
+                            icon: IconAsset.location,
+                            title: 'Мой город',
+                            city: value.city?.name ?? "Город не выбран",
+                            onTap: () {
+                              Navigator.of(context).push(CupertinoPageRoute(
+                                builder: (context) => CitySelector(),
+                              ));
+                            },
+                          )),
+                  ProfileItem(
+                    icon: null,
+                    title: 'Пункты выдачи',
+                    city: '',
+                    onTap: () {
+                      widget.onMapPageClick();
+                    },
+                  ),
+                  ProfileItem(
+                    icon: null,
+                    title: 'Настройки',
+                    city: '',
+                    onTap: () {
+                      widget.onSettingsClick();
+                    },
+                  ),
+                ],
               ),
-              Container(
-                width: 80,
-                height: 80,
-                child: Image.asset('assets/user_placeholder.png'),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 14.0),
-                child: Text(
-                  "Войдите в профиль",
-                  style: textTheme.headline1,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 14.0),
-                child: Text(
-                  "Чтобы делать покупки, пользоваться скидками и отслеживать заказы.",
-                  style: textTheme.bodyText2,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 20,
-                ),
-                child: Button(
-                  "ВОЙТИ ПО НОМЕРУ ТЕЛЕФОНА",
-                  buttonStyle: ButtonStyle.dark,
-                  height: 45,
-                  width: double.infinity,
-                  borderRadius: 5,
-                  onClick: () {
-                    Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => PhonePage()));
-                  },
-                ),
-              ),
-              Consumer<CitiesRepository>(
-                  builder: (context, value, _) => ProfileItem(
-                        icon: IconAsset.location,
-                        title: 'Мой город',
-                        city: value.city?.name ?? "Город не выбран",
-                        onTap: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                            builder: (context) => CitySelector(),
-                          ));
-                        },
-                      )),
-              ProfileItem(
-                icon: null,
-                title: 'Пункты выдачи',
-                city: '',
-                onTap: () {
-                  widget.onMapPageClick();
-                },
-              ),
-              ProfileItem(
-                icon: null,
-                title: 'Настройки',
-                city: '',
-                onTap: () {
-                  widget.onSettingsClick();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    ));
+            );
+          },
+        ));
   }
 }
 
