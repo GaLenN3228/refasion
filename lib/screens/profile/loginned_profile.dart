@@ -224,7 +224,7 @@ class AuthorizedProfilePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: SVGIcon(
-                  icon: IconAsset.cartThin,
+                  icon: IconAsset.hanger,
                   size: 48,
                 ),
               ),
