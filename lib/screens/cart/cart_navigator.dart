@@ -282,6 +282,7 @@ class _CartNavigatorState extends State<CartNavigator> {
             ],
             builder: (context, _) {
               return FavouritesPage(
+                onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
                 onPush: (product) {
                   Navigator.of(context)
                       .push(

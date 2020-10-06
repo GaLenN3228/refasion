@@ -217,13 +217,15 @@ class _HomeNavigatorState extends State<HomeNavigator> {
       case HomeNavigatorRoutes.favourites:
         topPanelController.needShow = false;
         return MultiProvider(
-            providers: [
-              ChangeNotifierProvider<FavouritesProductsRepository>(
-                  create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
-            ],
-            builder: (context, _) {
-              return FavouritesPage(onPush: (product) {
+          providers: [
+            ChangeNotifierProvider<FavouritesProductsRepository>(
+                create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+          ],
+          builder: (context, _) {
+            return FavouritesPage(
+              onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
+              onPush: (product) {
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(
@@ -232,8 +234,10 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                       ),
                     )
                     .then((value) => topPanelController.needShow = false);
-              });
-            });
+              },
+            );
+          },
+        );
 
       case HomeNavigatorRoutes.checkout:
         return CheckoutPage(

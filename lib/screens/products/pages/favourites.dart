@@ -14,8 +14,9 @@ import 'package:refashioned_app/utils/colors.dart';
 
 class FavouritesPage extends StatefulWidget {
   final Function(Product) onPush;
+  final Function() onCatalogPush;
 
-  const FavouritesPage({Key key, this.onPush}) : super(key: key);
+  const FavouritesPage({Key key, this.onPush, this.onCatalogPush}) : super(key: key);
 
   @override
   _FavouritesPageState createState() => _FavouritesPageState();
@@ -28,11 +29,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
 
   @override
   Widget build(BuildContext context) {
-    loadIcon = SizedBox(
-      width: 25.0,
-      height: 25.0,
-      child: const CupertinoActivityIndicator()
-    );
+    loadIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -43,10 +40,8 @@ class _FavouritesPageState extends State<FavouritesPage> {
               middleText: "ИЗБРАННОЕ",
             ),
           ),
-          Consumer<FavouritesProductsRepository>(
-              builder: (context, favouritesProductsRepository, child) {
-            if (favouritesProductsRepository.isLoading &&
-                favouritesProductsRepository.response == null)
+          Consumer<FavouritesProductsRepository>(builder: (context, favouritesProductsRepository, child) {
+            if (favouritesProductsRepository.isLoading && favouritesProductsRepository.response == null)
               return Center(
                   child: SizedBox(
                 height: 32.0,
@@ -102,6 +97,30 @@ class _FavouritesPageState extends State<FavouritesPage> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(28),
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: widget.onCatalogPush?.call,
+                        child: Container(
+                          width: 180,
+                          height: 35,
+                          decoration: ShapeDecoration(
+                            color: primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Перейти в каталог".toUpperCase(),
+                            style: Theme.of(context).textTheme.subtitle1.copyWith(
+                                  color: Colors.white,
+                                ),
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               );
