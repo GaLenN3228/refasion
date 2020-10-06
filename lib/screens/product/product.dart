@@ -13,6 +13,7 @@ import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
+import 'package:refashioned_app/screens/components/message.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
@@ -107,8 +108,8 @@ class _ProductPageState extends State<ProductPage> {
           );
 
         return Builder(
-          builder: (context) => Consumer<AddRemoveFavouriteRepository>(
-              builder: (context, addRemoveFavouriteRepository, child) {
+          builder: (context) =>
+              Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
             return RefashionedTopBar(
               data: TopBarData(
                   leftButtonData: TBButtonData.icon(
@@ -120,9 +121,7 @@ class _ProductPageState extends State<ProductPage> {
                     product.currentPrice.toString() + " ₽",
                   ),
                   rightButtonData: TBButtonData(
-                    iconType: widget.product.isFavourite
-                        ? TBIconType.favoriteFilled
-                        : TBIconType.favorite,
+                    iconType: widget.product.isFavourite ? TBIconType.favoriteFilled : TBIconType.favorite,
                     iconColor: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
                     animated: true,
                     onTap: () async {
@@ -132,8 +131,7 @@ class _ProductPageState extends State<ProductPage> {
                             ? widget.product.isFavourite
                                 ? addRemoveFavouriteRepository
                                     .removeFromFavourites((widget.product..isFavourite = false).id)
-                                : addRemoveFavouriteRepository
-                                    .addToFavourites((widget.product..isFavourite = true).id)
+                                : addRemoveFavouriteRepository.addToFavourites((widget.product..isFavourite = true).id)
                             : showMaterialModalBottomSheet(
                                 expand: false,
                                 context: context,
@@ -193,8 +191,7 @@ class _ProductPageState extends State<ProductPage> {
           child: Stack(
             children: [
               ListView(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 22.0),
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 22.0),
                 children: <Widget>[
                   ProductSlider(
                     images: product.images,
@@ -204,6 +201,14 @@ class _ProductPageState extends State<ProductPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        if (!product.available)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: RefashionedMessage(
+                              title: "Товар в резерве",
+                              message: "Этот товар уже оплатил другой покупатель, и он находится в резерве.",
+                            ),
+                          ),
                         ProductPrice(
                           product: product,
                         ),
@@ -234,32 +239,33 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ],
               ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 99,
-                child: ProductBottomButtons(
-                  productId: widget.product.id,
-                  onCartPush: widget.onCartPush,
-                  openDeliveryTypesSelector: () => widget.openDeliveryTypesSelector?.call(
-                    context,
-                    widget.product.id,
-                    deliveryTypes: product.deliveryTypes,
-                    onFinish: (companyId, objectId) => widget.onCheckoutPush?.call(
-                      jsonEncode(
-                        [
-                          {
-                            "delivery_company": companyId,
-                            "delivery_object_id": objectId,
-                            "products": [product.id],
-                          },
-                        ],
+              if (product.available)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 99,
+                  child: ProductBottomButtons(
+                    productId: widget.product.id,
+                    onCartPush: widget.onCartPush,
+                    openDeliveryTypesSelector: () => widget.openDeliveryTypesSelector?.call(
+                      context,
+                      widget.product.id,
+                      deliveryTypes: product.deliveryTypes,
+                      onFinish: (companyId, objectId) => widget.onCheckoutPush?.call(
+                        jsonEncode(
+                          [
+                            {
+                              "delivery_company": companyId,
+                              "delivery_object_id": objectId,
+                              "products": [product.id],
+                            },
+                          ],
+                        ),
                       ),
+                      originalOverlayStyle: SystemUiOverlayStyle.dark,
                     ),
-                    originalOverlayStyle: SystemUiOverlayStyle.dark,
                   ),
                 ),
-              ),
             ],
           ),
         );

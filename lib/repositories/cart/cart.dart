@@ -132,7 +132,7 @@ class CartRepository extends BaseRepository<Cart> {
           summary.selectedCount > 0 &&
           (!hasPickUpAddress || itemShippingCost.shipping != Delivery.PICKUP_ADDRESS)) {
         shippingCost.add(itemShippingCost);
-        hasPickUpAddress = itemShippingCost.shipping == Delivery.PICKUP_ADDRESS;
+        if (itemShippingCost.shipping == Delivery.PICKUP_ADDRESS) hasPickUpAddress = true;
       }
     });
 

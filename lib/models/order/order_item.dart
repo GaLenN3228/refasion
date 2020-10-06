@@ -27,7 +27,7 @@ class OrderItem {
     final deliveryData = json['delivery_data'] != null ? DeliveryData.fromJson(json['delivery_data']) : null;
     final seller = json['seller'] != null ? Seller.fromJson(json['seller']) : null;
 
-    final deliveryPrice = json['delivery_price'] != null ? (json['delivery_price'] as double)?.toInt() : null;
+    final deliveryPrice = json['delivery_price'] != null ? json['delivery_price'] : null;
     final deliveryType = json['delivery_type'] != null ? deliveryTypes[json['delivery_type']] : null;
 
     final shippingCost = deliveryPrice != null && deliveryType != null
