@@ -322,7 +322,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
   Widget _profileProducts(context, ProductsContent productsContent) {
     TextTheme textTheme = Theme.of(context).textTheme;
     var products = List<Widget>();
-    productsContent.products.reversed.toList().asMap().forEach((key, value) {
+    productsContent.products.asMap().forEach((key, value) {
       products.add(Column(children: <Widget>[
         ProfileProductTile(
           product: value,
