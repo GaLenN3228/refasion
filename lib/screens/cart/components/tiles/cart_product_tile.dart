@@ -139,6 +139,7 @@ class _CartProductTileState extends State<CartProductTile> {
                         ? product.image
                         : "https://admin.refashioned.ru/media/product/2c8cb353-4feb-427d-9279-d2b75f46d786/2b22b56279182fe9bedb1f246d9b44b7.JPG",
                     width: 80,
+                    height: 80,
                     fit: BoxFit.cover,
                   ),
                 ),
