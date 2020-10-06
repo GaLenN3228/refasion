@@ -151,7 +151,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                     onCompleted: (v) {
                       if (authorizationRepository.isLoaded) {
                         codeAuthorizationRepository.addListener(() {
-                          if (codeAuthorizationRepository.isLoaded) {
+                          if (codeAuthorizationRepository.isLoaded ||
+                              codeAuthorizationRepository.loadingFailed) {
                             if (codeAuthorizationRepository.getStatusCode == 400) {
                               errorController.add(ErrorAnimationType.shake);
                               setState(() {
