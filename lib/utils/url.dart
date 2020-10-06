@@ -37,6 +37,7 @@ class Url {
   static const productsCount = '$refashionedBaseUrl/catalog/products/count/';
   static const addProduct = '$refashionedBaseUrl/catalog/products/create/';
   static const calcProductPrice = '$refashionedBaseUrl/catalog/price-calc/';
+  static String addProductPhoto(String id) => '$products' + id + '/images/';
 
   static String productsRecommended(id) =>
       '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';

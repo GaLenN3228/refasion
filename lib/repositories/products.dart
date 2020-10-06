@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/product_price.dart';
@@ -95,9 +97,17 @@ class CalcProductPrice extends BaseRepository<ProductPrice> {
       });
 }
 
-class AddProductRepository extends BaseRepository {
+class AddProductRepository extends BaseRepository<Product> {
   Future<void> addProduct(ProductData productData) => apiCall(() async {
-        response = BaseResponse.fromJson((await ApiService.addProducts(productData)).data, null);
+        response = BaseResponse.fromJson((await ApiService.addProducts(productData)).data,
+            (contentJson) => Product.fromJson(contentJson));
+        AddProductPhotoRepository().addPhoto(response.content.id, productData.photo);
+      });
+}
+
+class AddProductPhotoRepository extends BaseRepository {
+  Future<void> addPhoto(String id, File file) => apiCall(() async {
+        response = BaseResponse.fromJson((await ApiService.addProductPhoto(id, file)).data, null);
       });
 }
 

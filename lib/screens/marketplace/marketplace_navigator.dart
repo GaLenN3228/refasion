@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -122,7 +124,7 @@ class ProductData {
 
   List<SellProperty> properties = List();
 
-  List<String> photos;
+  File photo;
 
   PickPoint address;
 
@@ -134,7 +136,7 @@ class ProductData {
 
   updateCategory(Category newCategory) => category = newCategory;
 
-  updatePhotos(List<String> newPhotos) => photos = newPhotos;
+  updatePhotos(File photo) => this.photo = photo;
 
   updateAddress(PickPoint newAddress) => address = newAddress;
 
@@ -279,9 +281,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       case MarketplaceNavigatorRoutes.photos:
         return PhotosPage(
           onClose: widget.onClose,
-          initialData: productData.photos,
-          onUpdate: (photos) => productData.updatePhotos(photos),
-          onPush: () {
+          onPush: (photo) {
+            productData.updatePhotos(photo);
             final hasSellProperties = (sellPropertiesRepository != null &&
                 sellPropertiesRepository.isLoaded &&
                 sellPropertiesRepository.response.status.code == 200 &&
