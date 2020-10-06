@@ -14,11 +14,10 @@ import 'package:refashioned_app/screens/marketplace/components/take_option_tile.
 class TakeOptionsPage extends StatefulWidget {
   final Function(List<TakeOption>) onPush;
   final Function() showPickUpPoints;
+  final Function() onClose;
   final PickPoint address;
 
-  const TakeOptionsPage(
-      {Key key, this.onPush, this.address, this.showPickUpPoints})
-      : assert(address != null);
+  const TakeOptionsPage({Key key, this.onPush, this.showPickUpPoints, this.onClose, this.address}) : super(key: key);
 
   @override
   _TakeOptionsPageState createState() => _TakeOptionsPageState();
@@ -68,15 +67,12 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
 
   onPush() => widget.onPush(getSelectedOptions());
 
-  List<TakeOption> getSelectedOptions() =>
-      options.entries.fold(List<TakeOption>(), (list, entry) {
+  List<TakeOption> getSelectedOptions() => options.entries.fold(List<TakeOption>(), (list, entry) {
         if (entry.value.value) list.add(entry.key);
         return list;
       });
 
-  onUpdate() => buttonState.value = getSelectedOptions().length != 0
-      ? ButtonState.enabled
-      : ButtonState.disabled;
+  onUpdate() => buttonState.value = getSelectedOptions().length != 0 ? ButtonState.enabled : ButtonState.disabled;
 
   @override
   void dispose() {
@@ -95,6 +91,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
           RefashionedTopBar(
             data: TopBarData.simple(
               onBack: Navigator.of(context).pop,
+              onClose: widget.onClose,
               middleText: "Новый адрес",
             ),
           ),
@@ -103,8 +100,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -116,7 +112,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
                         height: 10,
                       ),
                       Text(
-                        widget.address.originalAddress,
+                        widget.address?.originalAddress ?? "Адрес не задан",
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     ],
@@ -132,8 +128,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
                   child: ItemsDivider(),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -154,10 +149,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
                           ),
                           Text(
                             "Как это работает?",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                .copyWith(decoration: TextDecoration.underline),
+                            style: Theme.of(context).textTheme.bodyText1.copyWith(decoration: TextDecoration.underline),
                           ),
                         ],
                       ),
@@ -186,8 +178,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(
-                20, 20, 20, defaultTargetPlatform == TargetPlatform.iOS ? 31 : 20),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, defaultTargetPlatform == TargetPlatform.iOS ? 31 : 20),
             child: RefashionedButton(
               states: buttonState,
               statesData: buttonStatesData,
