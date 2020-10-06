@@ -78,9 +78,7 @@ class _AddressesPageState extends State<AddressesPage> {
               list: widget.userAddresses ?? [],
               deliveryType: widget.deliveryType,
               onAddAddress: widget.onAddAddress,
-              onSelectAddress: (id) {
-                widget.onFinish?.call(id);
-              },
+              onSelectAddress: (userAddress) => widget.onFinish?.call(userAddress.id),
               emptyStateTitle: emptyStateTitle,
               callToAction: callToAction,
               bottomText: bottomText,

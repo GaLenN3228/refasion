@@ -11,7 +11,7 @@ class UserAddressTile extends StatefulWidget {
   final UserAddress userAddress;
   final DeliveryType deliveryType;
 
-  final Function(String) onSelect;
+  final Function(UserAddress) onSelect;
 
   final bool value;
 
@@ -32,7 +32,7 @@ class UserAddressTile extends StatefulWidget {
 
 class _UserAddressTileState extends State<UserAddressTile> {
   String addressesName() {
-    switch (widget.deliveryType.type) {
+    switch (widget.deliveryType?.type) {
       case Delivery.PICKUP_ADDRESS:
         return "Адрес самовывоза";
 
@@ -54,7 +54,7 @@ class _UserAddressTileState extends State<UserAddressTile> {
         return "Адрес доставки";
 
       default:
-        return "Что-то не так";
+        return "Адрес самовывоза";
     }
   }
 
@@ -99,68 +99,61 @@ class _UserAddressTileState extends State<UserAddressTile> {
   @override
   Widget build(BuildContext context) => GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () => widget.onSelect?.call(widget.userAddress.id),
+        onTap: () => widget.onSelect?.call(widget.userAddress),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
-          child: SizedBox(
-            height: 80,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: RefashionedRadioButtonStateless(
-                    value: widget.value,
-                  ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: RefashionedRadioButtonStateless(
+                  value: widget.value,
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 30, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Text(
-                            addressesName().toUpperCase(),
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 30, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          addressesName().toUpperCase(),
+                          style: Theme.of(context).textTheme.subtitle1,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Text(
-                            widget.userAddress.address?.originalAddress ?? "Нет адреса",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            widget.userAddress.fio + ", " + widget.userAddress.phone,
-                            style: Theme.of(context).textTheme.bodyText2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: dialog,
-                  child: Container(
-                    height: double.infinity,
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: SVGIcon(
-                        icon: IconAsset.more,
-                        size: 24,
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          widget.userAddress.address?.originalAddress ?? "Нет адреса",
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          widget.userAddress.fio + ", " + widget.userAddress.phone,
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: dialog,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: SVGIcon(
+                    icon: IconAsset.more,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       );
