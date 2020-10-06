@@ -300,13 +300,10 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                     },
                                     onProductCreated: () {
                                       Navigator.of(context).pop();
-                                      Future.delayed(Duration.zero, () {
-                                        widget.currentTab.value = BottomTab.profile;
-                                        Provider.of<ProfileProductsRepository>(context,
-                                            listen: false)
-                                          ..response = null
-                                          ..getProducts();
-                                      });
+                                      widget.currentTab.value = BottomTab.profile;
+                                      Provider.of<ProfileProductsRepository>(context, listen: false)
+                                        ..response = null
+                                        ..getProducts();
                                     },
                                   ),
                                 ),

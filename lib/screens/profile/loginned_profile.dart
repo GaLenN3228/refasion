@@ -52,11 +52,11 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       child: Column(
         children: [
           _appBar(context),
-          Expanded(child: Consumer<ProfileProductsRepository>(
-              builder: (context, profileProductsRepository, child) {
+          Consumer<ProfileProductsRepository>(builder: (context, profileProductsRepository, child) {
             if (profileProductsRepository.isLoading && profileProductsRepository.response == null) {
-              return Center(
-                  child: SizedBox(
+              return Expanded(
+                  child: Center(
+                      child: SizedBox(
                 height: 32.0,
                 width: 32.0,
                 child: CircularProgressIndicator(
@@ -64,18 +64,21 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                   backgroundColor: accentColor,
                   valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
                 ),
-              ));
+              )));
             }
 
             if (profileProductsRepository.loadingFailed)
-              return Center(
+              return Expanded(
+                  child: Center(
                 child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-              );
+              ));
 
             return (profileProductsRepository.response.content.products.isNotEmpty)
                 ? _profileProducts(context, profileProductsRepository.response.content)
                 : _profilePlaceHolder(context);
-          }))
+
+            return SizedBox();
+          }),
         ],
       ),
     );
@@ -337,7 +340,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
           )
       ]));
     });
-    return SmartRefresher(
+    return Expanded(
+        child: SmartRefresher(
       enablePullDown: true,
       enablePullUp: false,
       header: ClassicHeader(
@@ -372,6 +376,6 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
           ...products
         ],
       ),
-    );
+    ));
   }
 }

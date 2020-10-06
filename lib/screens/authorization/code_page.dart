@@ -9,6 +9,7 @@ import 'package:refashioned_app/screens/components/button.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class CodePage extends StatefulWidget {
   final String phone;
@@ -16,7 +17,8 @@ class CodePage extends StatefulWidget {
   final Function(BuildContext) onAuthorizationDone;
   final bool needDismiss;
 
-  const CodePage({Key key, this.phone, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss})
+  const CodePage(
+      {Key key, this.phone, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss})
       : super(key: key);
 
   @override
@@ -29,6 +31,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
   StreamController<ErrorAnimationType> errorController;
   bool hasError = false;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  CodeAuthorizationRepository codeAuthorizationRepository;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -51,6 +54,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
     super.initState();
     startTimer();
     errorController = StreamController<ErrorAnimationType>();
+    codeAuthorizationRepository = Provider.of<CodeAuthorizationRepository>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -64,7 +68,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final AuthorizationRepository authorizationRepository = context.watch<AuthorizationRepository>();
+    final AuthorizationRepository authorizationRepository =
+        context.watch<AuthorizationRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       key: scaffoldKey,
@@ -130,7 +135,9 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                     animationType: AnimationType.fade,
                     textInputType: TextInputType.number,
                     textStyle: TextStyle(
-                        color: hasError ? Colors.redAccent : Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                        color: hasError ? Colors.redAccent : Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                     pinTheme: PinTheme(
                         shape: PinCodeFieldShape.underline,
                         fieldHeight: 50,
@@ -143,26 +150,26 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                     errorAnimationController: errorController,
                     onCompleted: (v) {
                       if (authorizationRepository.isLoaded) {
-                        var codeAuthorizationRepository =
-                            Provider.of<CodeAuthorizationRepository>(context, listen: false);
                         codeAuthorizationRepository.addListener(() {
-                          if (codeAuthorizationRepository.getStatusCode == 400) {
-                            errorController.add(ErrorAnimationType.shake);
-                            setState(() {
-                              hasError = true;
-                            });
-                          } else if (codeAuthorizationRepository.getStatusCode == 200 ||
-                              codeAuthorizationRepository.getStatusCode == 201) {
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                builder: (context) => NamePage(
-                                      needDismiss: widget.needDismiss,
-                                      onAuthorizationDone: widget.onAuthorizationDone,
-                                      phone: widget.phone,
-                                    )));
+                          if (codeAuthorizationRepository.isLoaded) {
+                            if (codeAuthorizationRepository.getStatusCode == 400) {
+                              errorController.add(ErrorAnimationType.shake);
+                              setState(() {
+                                hasError = true;
+                              });
+                            } else if (codeAuthorizationRepository.getStatusCode == 200 ||
+                                codeAuthorizationRepository.getStatusCode == 201) {
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                  builder: (context) => NamePage(
+                                        needDismiss: widget.needDismiss,
+                                        onAuthorizationDone: widget.onAuthorizationDone,
+                                        phone: widget.phone,
+                                      )));
+                            }
                           }
                         });
-                        codeAuthorizationRepository.sendCode(
-                            authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
+                        codeAuthorizationRepository.sendCode(authorizationRepository.getPhone,
+                            authorizationRepository.response.content.hash, v);
                       }
                     },
                     onChanged: (value) {
@@ -193,6 +200,17 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                       ),
               ],
             ),
+            if (codeAuthorizationRepository.isLoading)
+              Container(
+                margin: EdgeInsets.only(top: 40),
+                height: 32.0,
+                width: 32.0,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  backgroundColor: accentColor,
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                ),
+              ),
             Expanded(
               flex: 1,
               child: Container(
