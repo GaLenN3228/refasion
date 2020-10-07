@@ -101,13 +101,16 @@ class AddProductRepository extends BaseRepository<Product> {
   Future<void> addProduct(ProductData productData) => apiCall(() async {
         response = BaseResponse.fromJson((await ApiService.addProducts(productData)).data,
             (contentJson) => Product.fromJson(contentJson));
-        AddProductPhotoRepository().addPhoto(response.content.id, productData.photo);
+        productData.photos.asMap().forEach((key, value) {
+          AddProductPhotoRepository().addPhoto(response.content.id, value, key == 0);
+        });
       });
 }
 
 class AddProductPhotoRepository extends BaseRepository {
-  Future<void> addPhoto(String id, File file) => apiCall(() async {
-        response = BaseResponse.fromJson((await ApiService.addProductPhoto(id, file)).data, null);
+  Future<void> addPhoto(String id, File file, bool isPrimary) => apiCall(() async {
+        response = BaseResponse.fromJson(
+            (await ApiService.addProductPhoto(id, file, isPrimary)).data, null);
       });
 }
 

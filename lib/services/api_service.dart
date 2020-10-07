@@ -306,11 +306,13 @@ class ApiService {
     return dioClient.post(Url.addProduct, data: body);
   }
 
-  static Future<Response> addProductPhoto(String id, File file) async {
+  static Future<Response> addProductPhoto(String id, File file, bool isPrimary) async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     String fileName = file.path.split('/').last;
     FormData formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(file.path, filename: fileName),
+      "product": id,
+      "is_primary": isPrimary
     });
     return dioClient.post(Url.addProductPhoto(id), data: formData);
   }

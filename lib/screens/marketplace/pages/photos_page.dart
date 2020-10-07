@@ -15,9 +15,10 @@ import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class PhotosPage extends StatefulWidget {
   final Function() onClose;
-  final Function(File) onPush;
+  final Function() onPush;
+  final Function(File) onUpdate;
 
-  const PhotosPage({Key key, this.onPush, this.onClose}) : super(key: key);
+  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate}) : super(key: key);
 
   @override
   _PhotosPageState createState() => _PhotosPageState();
@@ -61,6 +62,7 @@ class _PhotosPageState extends State<PhotosPage> {
       setState(() {
         File _image = File(pickedFile.path);
         images[index] = _image;
+        widget.onUpdate(_image);
       });
       Navigator.pop(dialogContext);
     }
@@ -73,6 +75,7 @@ class _PhotosPageState extends State<PhotosPage> {
       setState(() {
         File _image = File(pickedFile.path);
         images[index] = _image;
+        widget.onUpdate(_image);
       });
       Navigator.pop(dialogContext);
     }
@@ -135,7 +138,7 @@ class _PhotosPageState extends State<PhotosPage> {
               child: BottomButton(
                 title: "ПРОДОЛЖИТЬ",
                 action: () {
-                  widget.onPush(images[0]);
+                  widget.onPush();
                 },
               )),
         ],
