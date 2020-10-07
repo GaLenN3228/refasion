@@ -13,7 +13,7 @@ class ApiService {
 
   //ADDRESSES
 
-  static const LOG_ADDRESSES = true;
+  static const LOG_ADDRESSES = false;
 
   static Future<Response> findAddressesByQuery(String query, {String city}) async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ADDRESSES || LOG_ENABLE);
@@ -29,7 +29,7 @@ class ApiService {
 
   //CART
 
-  static const LOG_CART = true;
+  static const LOG_CART = false;
 
   static Future<Response> getCart() async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_CART || LOG_ENABLE);
@@ -83,9 +83,18 @@ class ApiService {
     return dioClient.post(Url.selectCity, data: city);
   }
 
+  //CONFIG
+
+  static const LOG_CONFIG = false;
+
+  static Future<Response> getConfig() async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_CONFIG || LOG_ENABLE);
+    return dioClient.get(Url.config);
+  }
+
   //ORDERS
 
-  static const LOG_ORDERS = true;
+  static const LOG_ORDERS = false;
 
   static createOrder(String orderParameters) async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ORDERS || LOG_ENABLE);
@@ -130,7 +139,7 @@ class ApiService {
 
   //USER ADDRESSES
 
-  static const LOG_USER_ADDRESSES = true;
+  static const LOG_USER_ADDRESSES = false;
 
   static getUserAddresses() async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_USER_ADDRESSES || LOG_ENABLE);
@@ -156,7 +165,7 @@ class ApiService {
 
   //USER PICKPOINTS
 
-  static const LOG_USER_PICKPOINTS = true;
+  static const LOG_USER_PICKPOINTS = false;
 
   static getUserPickPoints() async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_USER_PICKPOINTS || LOG_ENABLE);
