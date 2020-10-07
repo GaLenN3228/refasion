@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/textfield/textfield.dart';
 
@@ -16,6 +17,8 @@ class TBSearchDecoration extends StatefulWidget {
 
   final double height;
 
+  final MaskTextInputFormatter maskFormatter;
+
   const TBSearchDecoration({
     Key key,
     this.autofocus,
@@ -26,6 +29,7 @@ class TBSearchDecoration extends StatefulWidget {
     this.icon,
     this.keyboardType,
     this.height,
+    this.maskFormatter,
   }) : super(key: key);
 
   @override
@@ -62,6 +66,7 @@ class _TBSearchDecorationState extends State<TBSearchDecoration> {
                 focusNode: widget.focusNode,
                 textController: widget.textController,
                 hasText: widget.hasText,
+                maskFormatter: widget.maskFormatter,
               ),
             ),
             Padding(

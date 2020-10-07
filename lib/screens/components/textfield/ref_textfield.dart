@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/textfield/decoration.dart';
 import 'package:refashioned_app/screens/components/topbar/components/tb_button.dart';
@@ -18,6 +19,8 @@ class RefashionedTextField extends StatefulWidget {
 
   final double height;
 
+  final MaskTextInputFormatter maskFormatter;
+
   const RefashionedTextField(
       {Key key,
       this.onCancel,
@@ -27,7 +30,8 @@ class RefashionedTextField extends StatefulWidget {
       this.icon,
       this.formKey,
       this.keyboardType,
-      this.height: 45})
+      this.height: 45,
+      this.maskFormatter})
       : super(key: key);
 
   factory RefashionedTextField.fromTbSearchData(TBSearchData data) => RefashionedTextField(
@@ -104,15 +108,15 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
   Widget build(BuildContext context) {
     if (widget.onCancel == null)
       return TBSearchDecoration(
-        keyboardType: widget.keyboardType,
-        icon: widget.icon,
-        autofocus: widget.autofocus,
-        hintText: widget.hintText,
-        focusNode: focusNode,
-        textController: textController,
-        hasText: hasText,
-        height: widget.height,
-      );
+          keyboardType: widget.keyboardType,
+          icon: widget.icon,
+          autofocus: widget.autofocus,
+          hintText: widget.hintText,
+          focusNode: focusNode,
+          textController: textController,
+          hasText: hasText,
+          height: widget.height,
+          maskFormatter: widget.maskFormatter);
 
     return Stack(
       children: [
@@ -135,6 +139,7 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
             textController: textController,
             hasText: hasText,
             height: widget.height,
+            maskFormatter: widget.maskFormatter,
           ),
         ),
         Positioned(

@@ -13,6 +13,7 @@ import 'package:refashioned_app/screens/components/button/button.dart';
 import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
 import 'package:refashioned_app/screens/components/checkbox/stateful.dart';
+import 'package:refashioned_app/screens/components/textfield/phone_ref_textfield.dart';
 import 'package:refashioned_app/screens/components/textfield/ref_textfield.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
@@ -95,7 +96,7 @@ class _InfoPageState extends State<InfoPage> {
 
   check() {
     final check =
-        info.entries.fold(true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
+    info.entries.fold(true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
 
     buttonState.value = check ? ButtonState.enabled : ButtonState.disabled;
   }
@@ -332,10 +333,8 @@ class _InfoPageState extends State<InfoPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: RefashionedTextField(
-                          hintText: "Телефон",
-                          keyboardType: TextInputType.phone,
-                          onSearchUpdate: (text) => onUpdate(InfoField.phone, text),
+                        child: RefashionedPhoneTextField(
+                          onQUpdate: (text) => onUpdate(InfoField.phone, text),
                         ),
                       ),
                       SizedBox(
