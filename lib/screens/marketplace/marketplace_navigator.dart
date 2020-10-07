@@ -34,6 +34,8 @@ import 'package:refashioned_app/screens/marketplace/pages/sizes_value.dart';
 import 'package:refashioned_app/screens/marketplace/pages/subcategory_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/take_options_page.dart';
 import 'package:refashioned_app/screens/marketplace/pages/top_category_page.dart';
+import 'package:refashioned_app/utils/prefs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MarketplaceNavigatorRoutes {
   static const String section = '/section';
@@ -236,6 +238,12 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
     final userAddress = UserAddress(
       address: pickPoint,
     );
+
+    //FIXME kostyl
+    var sp = await SharedPreferences.getInstance();
+    userAddress.fio = sp.getString(Prefs.user_name);
+    userAddress.phone = sp.getString(Prefs.user_phone);
+    userAddress.email = "test@test.test";
 
     await addUserAddressRepository.update(jsonEncode(userAddress.toJson()));
 

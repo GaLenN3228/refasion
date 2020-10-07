@@ -64,6 +64,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                     onClose: () {
                       SharedPreferences.getInstance().then(
                         (prefs) {
+                          prefs.setString(Prefs.user_phone, widget.phone);
                           prefs.setString(Prefs.user_name, widget.phone);
                           widget.onAuthorizationDone?.call(context);
                           if (widget.needDismiss) if (Navigator.canPop(context)) {
@@ -126,6 +127,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                   onClick: name != null && name.length > 0
                       ? () {
                           SharedPreferences.getInstance().then((prefs) {
+                            prefs.setString(Prefs.user_phone, widget.phone);
                             prefs.setString(Prefs.user_name, name);
                             widget.onAuthorizationDone?.call(context);
                             if (widget.needDismiss) Navigator.pop(context);
