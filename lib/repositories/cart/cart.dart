@@ -212,8 +212,9 @@ class CartRepository extends BaseRepository<Cart> {
     if (addProduct.response.status.code == 201) await refresh();
   }
 
-  Future<void> setDelivery(String itemId, String deliveryCompanyId, String deliveryObjectId) async {
+  Future<bool> setDelivery(String itemId, String deliveryCompanyId, String deliveryObjectId) async {
     await setDeliveryType.update(itemId, deliveryCompanyId, deliveryObjectId);
+
     if (setDeliveryType.response.status.code == 204) {
       if (pendingIDs.isEmpty) {
         final groupProducts = response.content?.getGroup(itemId)?.cartProducts;
@@ -225,8 +226,12 @@ class CartRepository extends BaseRepository<Cart> {
 
         if (list != null && list?.length == groupProducts?.length) pendingIDs.addAll(list);
       }
+
       await refresh();
+
+      return true;
     }
+    return false;
   }
 
   Future<void> removeFromCart(String productId) async {

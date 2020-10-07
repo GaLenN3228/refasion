@@ -35,15 +35,13 @@ class TabView extends StatelessWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
   TabView(this.tab, this.currentTab,
-      {this.pushPageOnTop,
-      this.onTabRefresh,
-      this.openDeliveryTypesSelector,
-      this.openPickUpAddressMap});
+      {this.pushPageOnTop, this.onTabRefresh, this.openDeliveryTypesSelector, this.openPickUpAddressMap});
 
   changeTabTo(BottomTab newBottomTab) {
     if (newBottomTab == tab && onTabRefresh != null)
@@ -69,8 +67,7 @@ class TabView extends StatelessWidget {
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
-              ChangeNotifierProvider<CategoryBrandsRepository>(
-                  create: (_) => CategoryBrandsRepository()),
+              ChangeNotifierProvider<CategoryBrandsRepository>(create: (_) => CategoryBrandsRepository()),
             ],
             child: SearchWrapper(
               content: catalogNavigator,
@@ -98,8 +95,7 @@ class TabView extends StatelessWidget {
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
-              ChangeNotifierProvider<CategoryBrandsRepository>(
-                  create: (_) => CategoryBrandsRepository())
+              ChangeNotifierProvider<CategoryBrandsRepository>(create: (_) => CategoryBrandsRepository())
             ],
             child: SearchWrapper(
               content: cartNavigator,
@@ -127,8 +123,7 @@ class TabView extends StatelessWidget {
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
               ChangeNotifierProvider<HomeRepository>(create: (_) => HomeRepository()..getHomePage()),
-              ChangeNotifierProvider<CategoryBrandsRepository>(
-                  create: (_) => CategoryBrandsRepository())
+              ChangeNotifierProvider<CategoryBrandsRepository>(create: (_) => CategoryBrandsRepository())
             ],
             child: SearchWrapper(
               content: homeNavigator,
@@ -156,8 +151,7 @@ class TabView extends StatelessWidget {
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
-              ChangeNotifierProvider<CategoryBrandsRepository>(
-                  create: (_) => CategoryBrandsRepository())
+              ChangeNotifierProvider<CategoryBrandsRepository>(create: (_) => CategoryBrandsRepository())
             ],
             child: SearchWrapper(
               content: profileNavigator,

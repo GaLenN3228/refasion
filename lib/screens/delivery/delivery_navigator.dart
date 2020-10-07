@@ -35,7 +35,7 @@ class DeliveryNavigatorObserver extends NavigatorObserver {
 
 class DeliveryNavigator extends StatefulWidget {
   final Function() onClose;
-  final Function(String) onFinish;
+  final Function(String) onSelect;
 
   final List<UserAddress> userAddresses;
   final DeliveryType deliveryType;
@@ -44,7 +44,7 @@ class DeliveryNavigator extends StatefulWidget {
     Key key,
     this.onClose,
     this.deliveryType,
-    this.onFinish,
+    this.onSelect,
     this.userAddresses,
   }) : super(key: key);
 
@@ -96,7 +96,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
         return AddressesPage(
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
-          onFinish: widget.onFinish,
+          onFinish: widget.onSelect,
           userAddresses: userAddresses,
           onAddAddress: () {
             Navigator.of(context).pushNamed(DeliveryNavigatorRoutes.map);
@@ -107,7 +107,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
         return MapPage(
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
-          onFinish: widget.onFinish,
+          onFinish: widget.onSelect,
           onAddressPush: (newAddress) {
             selectedAddress = newAddress;
 
@@ -120,7 +120,7 @@ class _DeliveryNavigatorState extends State<DeliveryNavigator> {
           pickpoint: selectedAddress,
           deliveryType: widget.deliveryType,
           onClose: widget.onClose,
-          onFinish: widget.onFinish,
+          onFinish: widget.onSelect,
         );
 
       default:

@@ -88,7 +88,8 @@ class CartNavigator extends StatefulWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -202,15 +203,12 @@ class _CartNavigatorState extends State<CartNavigator> {
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (orderParameters) async {
-              await createOrderRepository.update(orderParameters);
+            onCheckoutPush: (Order newOrder) {
+              if (newOrder != null) {
+                order = newOrder;
 
-              order = createOrderRepository.response?.content;
-
-              if (order != null)
-                return Navigator.of(context).pushNamed(
-                  CartNavigatorRoutes.checkout,
-                );
+                Navigator.of(context).pushNamed(CartNavigatorRoutes.checkout);
+              }
             },
             onProductPush: (product) {
               return Navigator.of(context)
