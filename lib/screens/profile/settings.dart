@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/components/webview_page.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -48,6 +49,7 @@ class _SettingPageState extends State<SettingPage> {
                           onTap: () {
                             if (config?.userAgreementUrl != null)
                               showCupertinoModalBottomSheet(
+                                enableDrag: false,
                                 context: context,
                                 useRootNavigator: true,
                                 expand: true,
@@ -61,7 +63,7 @@ class _SettingPageState extends State<SettingPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Условия использования',
+                                  'Пользовательское соглашение',
                                   style: textTheme.subtitle1,
                                 ),
                               ],
@@ -77,6 +79,7 @@ class _SettingPageState extends State<SettingPage> {
                           onTap: () {
                             if (config?.sellerOfertaIrl != null)
                               showCupertinoModalBottomSheet(
+                                enableDrag: false,
                                 context: context,
                                 useRootNavigator: true,
                                 expand: true,
@@ -90,26 +93,7 @@ class _SettingPageState extends State<SettingPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Оферта на оказание услуг',
-                                  style: textTheme.subtitle1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: Divider(),
-                        ),
-                        Tapable(
-                          padding: EdgeInsets.all(10),
-                          onTap: () {},
-                          child: Container(
-                            padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Лицензионное соглашение',
+                                  'Оферта для продавцов',
                                   style: textTheme.subtitle1,
                                 ),
                               ],
@@ -125,68 +109,6 @@ class _SettingPageState extends State<SettingPage> {
                   } else
                     return loadingState;
                 },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Tapable(
-                      padding: EdgeInsets.all(10),
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.only(top: 20, left: 10, bottom: 10),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Условия использования',
-                              style: textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(),
-                    ),
-                    Tapable(
-                      padding: EdgeInsets.all(10),
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Оферта на оказание услуг',
-                              style: textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(),
-                    ),
-                    Tapable(
-                      padding: EdgeInsets.all(10),
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Лицензионное соглашение',
-                              style: textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(),
-                    ),
-                  ],
-                ),
               ),
             )
           ],
@@ -225,6 +147,19 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
             Expanded(
               child: Consumer<ConfigRepository>(
                 builder: (context, repository, loadingState) {
+                  if (repository.isLoading) {
+                    return Center(
+                        child: SizedBox(
+                          height: 32.0,
+                          width: 32.0,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            backgroundColor: accentColor,
+                            valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                          ),
+                        ));
+                  }
+
                   if (repository.isLoaded) {
                     final config = repository.response?.content;
 
@@ -291,6 +226,7 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                           onTap: () {
                             if (config?.userAgreementUrl != null)
                               showCupertinoModalBottomSheet(
+                                enableDrag: false,
                                 context: context,
                                 useRootNavigator: true,
                                 expand: true,
@@ -304,7 +240,7 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Условия использования',
+                                  'Пользовательское соглашение',
                                   style: textTheme.subtitle1,
                                 ),
                               ],
@@ -320,6 +256,7 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                           onTap: () {
                             if (config?.sellerOfertaIrl != null)
                               showCupertinoModalBottomSheet(
+                                enableDrag: false,
                                 context: context,
                                 useRootNavigator: true,
                                 expand: true,
@@ -333,26 +270,7 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Оферта на оказание услуг',
-                                  style: textTheme.subtitle1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: Divider(),
-                        ),
-                        Tapable(
-                          padding: EdgeInsets.all(10),
-                          onTap: () {},
-                          child: Container(
-                            padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Лицензионное соглашение',
+                                  'Оферта для продавцов',
                                   style: textTheme.subtitle1,
                                 ),
                               ],
@@ -367,124 +285,7 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                     );
                   } else
                     return loadingState;
-                },
-                child: Column(
-                  children: [
-                    Tapable(
-                      padding: EdgeInsets.all(10),
-                      onTap: () {
-                        Navigator.of(context).push(CupertinoPageRoute(
-                          builder: (context) => CitySelector(),
-                        ));
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
-                        child: Row(
-                          children: [
-                            SVGIcon(
-                              icon: IconAsset.location,
-                              height: 30,
-                              color: Colors.black,
-                            ),
-                            Text(
-                              'Мой город',
-                              style: textTheme.subtitle1,
-                            ),
-                            Spacer(),
-                            Consumer<CitiesRepository>(
-                              builder: (context, value, _) => Text(
-                                value.city?.name ?? "Город не выбран",
-                                style: textTheme.subtitle2,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(),
-                    ),
-                    Tapable(
-                      padding: EdgeInsets.all(10),
-                      onTap: () {
-                        widget.onMapPageClick();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(top: 15, left: 10, bottom: 10),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Пункты выдачи',
-                              style: textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(),
-                    ),
-                    Tapable(
-                      padding: EdgeInsets.all(10),
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.only(top: 20, left: 10, bottom: 10),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Условия использования',
-                              style: textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(),
-                    ),
-                    Tapable(
-                      padding: EdgeInsets.all(10),
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Оферта на оказание услуг',
-                              style: textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(),
-                    ),
-                    Tapable(
-                      padding: EdgeInsets.all(10),
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Лицензионное соглашение',
-                              style: textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Divider(),
-                    ),
-                  ],
-                ),
+                }
               ),
             )
           ],
