@@ -295,6 +295,12 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                       create: (_) => SizeRepository(),
                       builder: (context, _) => MarketplaceNavigator(
                         onClose: Navigator.of(context).pop,
+                        onProductCreated: () {
+                          Navigator.of(context).pop();
+                          Provider.of<ProfileProductsRepository>(context, listen: false)
+                            ..response = null
+                            ..getProducts();
+                        },
                       ),
                     ),
                   ));
