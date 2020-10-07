@@ -1,16 +1,17 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
+import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/components/message.dart';
@@ -37,15 +38,15 @@ class ProductPage extends StatefulWidget {
   final Function(String parameters, String title) onSubCategoryClick;
   final Function() onCartPush;
   final Function(PickPoint) onPickupAddressPush;
-
-  final Function(String orderParameters) onCheckoutPush;
+  final Function(Order) onCheckoutPush;
 
   final Function(
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -56,8 +57,8 @@ class ProductPage extends StatefulWidget {
     this.onSubCategoryClick,
     this.onCartPush,
     this.openDeliveryTypesSelector,
-    this.onCheckoutPush,
     this.onPickupAddressPush,
+    this.onCheckoutPush,
   }) : assert(product != null);
 
   @override
@@ -66,6 +67,10 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   ProductRepository productRepository;
+
+  CreateOrderRepository createOrderRepository;
+
+  Order order;
 
   Status status;
 
@@ -78,6 +83,8 @@ class _ProductPageState extends State<ProductPage> {
 
     productRepository.statusNotifier.addListener(repositoryStatusListener);
 
+    createOrderRepository = CreateOrderRepository();
+
     super.initState();
   }
 
@@ -88,6 +95,8 @@ class _ProductPageState extends State<ProductPage> {
     productRepository.statusNotifier.removeListener(repositoryStatusListener);
 
     productRepository.dispose();
+
+    createOrderRepository.dispose();
 
     super.dispose();
   }
@@ -249,19 +258,54 @@ class _ProductPageState extends State<ProductPage> {
                     onCartPush: widget.onCartPush,
                     openDeliveryTypesSelector: () => widget.openDeliveryTypesSelector?.call(
                       context,
-                      widget.product.id,
+                      product.id,
                       deliveryTypes: product.deliveryTypes,
-                      onFinish: (companyId, objectId) => widget.onCheckoutPush?.call(
-                        jsonEncode(
-                          [
-                            {
-                              "delivery_company": companyId,
-                              "delivery_object_id": objectId,
-                              "products": [product.id],
-                            },
-                          ],
-                        ),
-                      ),
+                      onFinish: () => widget.onCheckoutPush?.call(order),
+                      onSelect: (companyId, objectId) async {
+                        await createOrderRepository.update(
+                          jsonEncode(
+                            [
+                              {
+                                "delivery_company": companyId,
+                                "delivery_object_id": objectId,
+                                "products": [product.id],
+                              },
+                            ],
+                          ),
+                        );
+
+                        order = createOrderRepository.response?.content;
+
+                        final result = order != null;
+
+                        if (!result) {
+                          showCupertinoDialog(
+                            context: context,
+                            useRootNavigator: true,
+                            builder: (context) => CupertinoAlertDialog(
+                              title: Text(
+                                "Ошибка",
+                                style: Theme.of(context).textTheme.headline1,
+                              ),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  createOrderRepository.response?.errors?.messages ?? "Неизвестная ошибка",
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              ),
+                              actions: [
+                                CupertinoDialogAction(
+                                  onPressed: Navigator.of(context).pop,
+                                  child: Text("ОК"),
+                                )
+                              ],
+                            ),
+                          );
+                        }
+
+                        return result;
+                      },
                       originalOverlayStyle: SystemUiOverlayStyle.dark,
                     ),
                   ),
