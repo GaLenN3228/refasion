@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
@@ -41,7 +40,8 @@ class HomeNavigator extends StatefulWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -193,23 +193,12 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 )
                 .then((value) => topPanelController.needShow = false),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (orderParameters) async {
-              await createOrderRepository.update(orderParameters);
+            onCheckoutPush: (Order newOrder) {
+              if (newOrder != null) {
+                order = newOrder;
 
-              order = createOrderRepository.response?.content;
-
-              if (order != null)
-                return Navigator.of(context).push(
-                  MaterialWithModalsPageRoute(
-                    builder: (context) => _routeBuilder(
-                      context,
-                      HomeNavigatorRoutes.checkout,
-                    ),
-                    settings: RouteSettings(
-                      name: HomeNavigatorRoutes.checkout,
-                    ),
-                  ),
-                );
+                Navigator.of(context).pushNamed(HomeNavigatorRoutes.checkout);
+              }
             },
           );
         });

@@ -13,7 +13,6 @@ import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
-import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
@@ -71,7 +70,8 @@ class ProfileNavigator extends StatefulWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -253,15 +253,12 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 )
                 .then((value) => topPanelController.needShow = false),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (orderParameters) async {
-              await createOrderRepository.update(orderParameters);
+            onCheckoutPush: (Order newOrder) {
+              if (newOrder != null) {
+                order = newOrder;
 
-              order = createOrderRepository.response?.content;
-
-              if (order != null)
-                return Navigator.of(context).pushNamed(
-                  ProfileNavigatorRoutes.checkout,
-                );
+                Navigator.of(context).pushNamed(ProfileNavigatorRoutes.checkout);
+              }
             },
           );
         });

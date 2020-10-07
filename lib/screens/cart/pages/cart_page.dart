@@ -27,7 +27,8 @@ class CartPage extends StatefulWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
