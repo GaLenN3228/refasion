@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 
 
@@ -19,7 +22,7 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final int _numPages = 4;
+  final int _numPages = 1;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
   List<Widget> _buildPageIndicator() {
@@ -50,11 +53,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
   );
   @override
   Widget build(BuildContext context) {
+    return Consumer<OnboardingRepository>(builder: (context, onboardingRepository, _){
+      if (onboardingRepository.isLoading && onboardingRepository.response == null)
+        return Center(
+          child: CircularProgressIndicator(
+            backgroundColor: accentColor,
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+          ),
+        );
 
-    return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: Container(
+      if (onboardingRepository.loadingFailed)
+        return Center(
+          child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+        );
+      var onboarding = onboardingRepository.response.content;
+      print('1!@#!@# ${onboarding.title}');
+      return Scaffold(
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light,
+          child: Container(
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
@@ -69,17 +86,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     },
                     children: <Widget>[
                       SlideTile(
-                        imagePath: 'assets/images/png/onbording.png',
-                        title: "Гарантия подлинности",
+                        imagePath: '${onboarding.image}',
+                        title: "${onboarding.title}",
                         subtitle: Text(
-                          'Продавайте и покупайте почти новые брендовые вещи',textAlign: TextAlign.center, style: TextStyle(
+                          '${onboarding.desc}',textAlign: TextAlign.center, style: TextStyle(
                             fontWeight: FontWeight.w300,
                             fontSize: 20,
                             color: Color(0xFFFFFFFF)
                         ),
                         ),
                       ),
-                      SlideTile(
+                /*      SlideTile(
                         imagePath: 'assets/images/png/onbording.png',
                         title: "Умное ценообразование",
                         subtitle: RichText(
@@ -144,40 +161,40 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               ]
                           ),
                         ),
-                      ),
-                      SlideTile(
+                      ),*/
+                   /*   SlideTile(
                         imagePath: 'assets/images/png/onbording.png',
                         title: "Умное ценообразование",
                         subtitle: RichText(
                           textAlign: TextAlign.center ,
                           text: TextSpan(
-                            text: 'Одежда, обувь и аксессуары со скидкой до ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              fontSize: 20,
-                              color: Color(0xFFFFFFFF)
-                          ),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: '90%',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                  color: Color(0xFFFAD24E)
-                              ),
-                              ),
-                              TextSpan(
-                                text: ' каждый день',
-                                style: TextStyle(
+                              text: 'Одежда, обувь и аксессуары со скидкой до ',
+                              style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                   fontSize: 20,
                                   color: Color(0xFFFFFFFF)
                               ),
-                              )
-                            ]
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '90%',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20,
+                                      color: Color(0xFFFAD24E)
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' каждый день',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 20,
+                                      color: Color(0xFFFFFFFF)
+                                  ),
+                                )
+                              ]
                           ),
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 ),
@@ -251,9 +268,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
               ],
             ),
+          ),
         ),
-      ),
-    );
+      );
+
+    },);
   }
 }
 class SlideTile extends StatelessWidget {
@@ -272,7 +291,7 @@ class SlideTile extends StatelessWidget {
               color: Colors.transparent,
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage(
+                image: NetworkImage(
                   imagePath,
                 ),
               ),

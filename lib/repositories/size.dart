@@ -7,6 +7,7 @@ class SizeRepository extends BaseRepository<SizesContent> {
   Future<void> getSizes(String categoryId) => apiCall(() async {
         response =
             BaseResponse.fromJson((await ApiService.getSizesTable(categoryId)).data, (contentJson) {
+
           return SizesContent.fromJson(contentJson);
         });
       });

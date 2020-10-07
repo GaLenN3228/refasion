@@ -7,6 +7,7 @@ import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/repositories/filters.dart';
+import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/screens/onbording/on_bording.dart';
@@ -47,6 +48,9 @@ class RefashionApp extends StatelessWidget {
           ),
           Provider<SizesProvider>(
             create: (_) => SizesProvider(),
+          ),
+          ChangeNotifierProvider<OnboardingRepository>(
+            create: (_) => OnboardingRepository()..getOnboardingData(),
           ),
         ],
         child: MaterialApp(
