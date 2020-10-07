@@ -5,6 +5,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
 import 'package:refashioned_app/repositories/products.dart';
+import 'package:refashioned_app/repositories/size.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
@@ -289,13 +290,14 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  Navigator.of(context, rootNavigator: true).push(
-                    CupertinoPageRoute(
-                      builder: (context) => MarketplaceNavigator(
+                  Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
+                    builder: (context) => ChangeNotifierProvider<SizeRepository>(
+                      create: (_) => SizeRepository(),
+                      builder: (context, _) => MarketplaceNavigator(
                         onClose: Navigator.of(context).pop,
                       ),
                     ),
-                  );
+                  ));
                 },
                 child: Container(
                   width: 180,

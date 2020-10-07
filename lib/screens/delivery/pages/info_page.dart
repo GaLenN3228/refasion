@@ -334,7 +334,7 @@ class _InfoPageState extends State<InfoPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: RefashionedPhoneTextField(
-                          onQUpdate: (text) => onUpdate(InfoField.phone, text),
+                          onUpdate: (text) => onUpdate(InfoField.phone, text),
                         ),
                       ),
                       SizedBox(

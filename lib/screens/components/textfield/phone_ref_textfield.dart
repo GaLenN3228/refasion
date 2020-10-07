@@ -3,14 +3,14 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:refashioned_app/screens/components/textfield/ref_textfield.dart';
 
 class RefashionedPhoneTextField extends RefashionedTextField {
-  final Function(String) onQUpdate;
+  final Function(String) onUpdate;
 
-  RefashionedPhoneTextField({Key key, this.onQUpdate})
+  RefashionedPhoneTextField({Key key, this.onUpdate})
       : super(
             key: key,
             hintText: "Телефон",
             onSearchUpdate: (text) {
-              onQUpdate(text.replaceAll("+", "").replaceAll(" ", ""));
+              onUpdate(text.replaceAll("+", "").replaceAll(" ", ""));
             },
             keyboardType: TextInputType.phone,
             maskFormatter:
