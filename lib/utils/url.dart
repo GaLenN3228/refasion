@@ -4,10 +4,8 @@ class Url {
 
   //ADDRESSES
 
-  static const findAddressByCoordinates =
-      '$refashionedBaseUrl/geo/geocode/latlon/';
-  static const findAddressesByQuery =
-      '$refashionedBaseUrl/geo/geocode/suggestions/';
+  static const findAddressByCoordinates = '$refashionedBaseUrl/geo/geocode/latlon/';
+  static const findAddressesByQuery = '$refashionedBaseUrl/geo/geocode/suggestions/';
 
   //CART
 
@@ -15,6 +13,10 @@ class Url {
   static const cart = '$refashionedBaseUrl/cart/';
   static const cartItemProduct = '$refashionedBaseUrl/cart/item_product/';
   static const cartItem = '$refashionedBaseUrl/cart/item/';
+
+  //CONFIG
+
+  static const config = '$refashionedBaseUrl/config/';
 
   //ORDERS
 
@@ -39,8 +41,7 @@ class Url {
   static const calcProductPrice = '$refashionedBaseUrl/catalog/price-calc/';
   static String addProductPhoto(String id) => '$products' + id + '/images/';
 
-  static String productsRecommended(id) =>
-      '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';
+  static String productsRecommended(id) => '$refashionedBaseUrl/catalog/products/' + id + '/recommended/';
 
   //SellProperties
   static const properties = '$refashionedBaseUrl/catalog/properties/all/';
@@ -71,8 +72,7 @@ class Url {
 
   //Authorization
   static const authorization = '$refashionedBaseUrl/users/authorization/';
-  static String codeAuthorization(String phone, String hash) =>
-      '$authorization' + phone + '_' + hash + '/';
+  static String codeAuthorization(String phone, String hash) => '$authorization' + phone + '_' + hash + '/';
 
   //Favourites
   static const wished = '$refashionedBaseUrl/catalog/wished/';
