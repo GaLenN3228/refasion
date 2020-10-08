@@ -178,6 +178,30 @@ class _CartNavigatorState extends State<CartNavigator> {
               return Navigator.of(context).pushNamed(
                 CartNavigatorRoutes.checkout,
               );
+            else
+              showCupertinoDialog(
+                context: context,
+                useRootNavigator: true,
+                builder: (context) => CupertinoAlertDialog(
+                  title: Text(
+                    "Ошибка",
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                  content: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      createOrderRepository.response?.errors?.messages ?? "Неизвестная ошибка",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                  actions: [
+                    CupertinoDialogAction(
+                      onPressed: Navigator.of(context).pop,
+                      child: Text("ОК"),
+                    )
+                  ],
+                ),
+              );
           },
           onProductPush: (product) {
             return Navigator.of(context).push(

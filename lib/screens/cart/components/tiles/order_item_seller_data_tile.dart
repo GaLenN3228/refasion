@@ -28,9 +28,13 @@ class OrderItemSellerDataTile extends StatelessWidget {
                     ),
                   ),
           ),
-          Text(
-            text,
-            style: Theme.of(context).textTheme.subtitle1,
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.subtitle1,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
