@@ -18,8 +18,9 @@ class HomePage extends StatefulWidget {
 
   final Function(Product) pushProduct;
   final Function(String url, String title) pushCollection;
+  final Function(String) onDocPush;
 
-  HomePage({Key key, this.pushProduct, this.pushCollection}) : super(key: key);
+  HomePage({Key key, this.pushProduct, this.pushCollection, this.onDocPush}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -289,7 +290,10 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.only(right: 6, left: 6),
       child: Tapable(
         onTap: () {
-          widget.pushCollection(homeBlockItem.url, homeBlockItem.name);
+          if (homeBlockItem.url.contains("http") || homeBlockItem.url.contains("www"))
+            widget.onDocPush(homeBlockItem.url);
+          else
+            widget.pushCollection(homeBlockItem.url, homeBlockItem.name);
         },
         child: Container(
           child: Image.network(
