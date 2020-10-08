@@ -114,7 +114,6 @@ class _HomeNavigatorState extends State<HomeNavigator> {
       Product product,
       Seller seller,
       String parameters,
-      Order order,
       String productTitle,
       SearchResult searchResult,
       String collectionUrl,
