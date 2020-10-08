@@ -292,11 +292,18 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                           onClose: () {
                             Navigator.of(context).pop();
                           },
-                          onProductCreated: () {
+                          onProductCreated: (productData) {
+                            var addProductRepository = AddProductRepository();
+                            addProductRepository.addListener(() {
+                              if (addProductRepository.isLoaded) {
+                                Provider.of<ProfileProductsRepository>(this.context,
+                                    listen: false)
+                                  ..response = null
+                                  ..getProducts();
+                              }
+                            });
+                            addProductRepository.addProduct(productData);
                             Navigator.of(context).pop();
-                            Provider.of<ProfileProductsRepository>(context, listen: false)
-                              ..response = null
-                              ..getProducts();
                           },
                         ),
                       ),

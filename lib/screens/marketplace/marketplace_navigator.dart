@@ -106,7 +106,7 @@ class MarketplaceNavigator extends StatefulWidget {
   MarketplaceNavigator({this.onClose, this.onProductCreated});
 
   final Function() onClose;
-  final Function() onProductCreated;
+  final Function(ProductData) onProductCreated;
 
   final List<String> pagesWithFocusNodes = [
     MarketplaceNavigatorRoutes.description,
@@ -185,8 +185,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
   AddUserAddressRepository addUserAddressRepository;
 
-  AddProductRepository addProductRepository;
-
   PickPoint pickPoint;
 
   @override
@@ -202,8 +200,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
     addUserAddressRepository = AddUserAddressRepository();
 
-    addProductRepository = AddProductRepository();
-
     super.initState();
   }
 
@@ -214,8 +210,6 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
     getUserAddressesRepository.dispose();
 
     addUserAddressRepository.dispose();
-
-    addProductRepository.dispose();
 
     super.dispose();
   }
@@ -548,9 +542,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           onPush: (options) async {
             productData.updateTakeOptions(options);
 
-            await addProductRepository.addProduct(productData);
-
-            widget.onProductCreated?.call();
+            widget.onProductCreated?.call(productData);
           },
           showPickUpPoints: () =>
               Navigator.of(context).pushNamed(MarketplaceNavigatorRoutes.pickpoints),

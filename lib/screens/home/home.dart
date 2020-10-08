@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
   final Function(Product) pushProduct;
   final Function(String url, String title) pushCollection;
-  final Function(String) onDocPush;
+  final Function(String, String) onDocPush;
 
   HomePage({Key key, this.pushProduct, this.pushCollection, this.onDocPush}) : super(key: key);
 
@@ -291,7 +291,7 @@ class _HomePageState extends State<HomePage> {
       child: Tapable(
         onTap: () {
           if (homeBlockItem.url.contains("http") || homeBlockItem.url.contains("www"))
-            widget.onDocPush(homeBlockItem.url);
+            widget.onDocPush(homeBlockItem.url, homeBlockItem.name);
           else
             widget.pushCollection(homeBlockItem.url, homeBlockItem.name);
         },

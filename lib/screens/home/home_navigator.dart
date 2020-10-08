@@ -118,7 +118,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
       String productTitle,
       SearchResult searchResult,
       String collectionUrl,
-      String url}) {
+      String url,
+      String urlName}) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     switch (route) {
       case HomeNavigatorRoutes.root:
@@ -146,10 +147,10 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 .then((value) =>
                     {topPanelController.needShow = true, topPanelController.needShowBack = false});
           },
-          onDocPush: (String url) {
+          onDocPush: (String url, String urlName) {
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.doc, url: url),
+                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.doc, url: url, urlName: urlName),
               ),
             ).then(
                   (flag) {
@@ -276,7 +277,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
         topPanelController.needShow = false;
         return WebViewPage(
           initialUrl: url,
-          title: "ХЗ ЧТО",
+          title: urlName,
         );
 
       default:
