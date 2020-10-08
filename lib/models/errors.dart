@@ -3,7 +3,7 @@ class Errors {
 
   const Errors({this.messages});
 
-  factory Errors.fromJson(Map<String, dynamic> json) => Errors(messages: json.toString());
+  factory Errors.fromJson(dynamic json) => Errors(messages: json.toString());
 
   String get getErrors => messages;
 }
