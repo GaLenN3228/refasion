@@ -103,9 +103,7 @@ class _MapsPickerPageState extends State<MapsPickerPage> with TickerProviderStat
       pickPointRepository = new PickPointRepository();
       pickPointRepository.getPickPoints();
       pickPointRepository.addListener(() {
-        _mapPage.addMarkers(pickPointRepository.response.content
-            .where((element) => element.address.contains("Москва"))
-            .toList());
+        _mapPage.addMarkers(pickPointRepository.response.content.toList());
       });
     }
 

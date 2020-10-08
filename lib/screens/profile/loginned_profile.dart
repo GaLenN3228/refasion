@@ -74,9 +74,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                 child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
               ));
 
-            return (profileProductsRepository.response.content.products.isNotEmpty)
-                ? _profileProducts(context, profileProductsRepository.response.content)
-                : _profilePlaceHolder(context);
+            return _profileProducts(context, profileProductsRepository.response.content);
 
             return SizedBox();
           }),
@@ -238,96 +236,96 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
   }
 
   Widget _profilePlaceHolder(context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-        child: Expanded(
-            child: Column(children: [
-      _menuButtons(context),
-      Expanded(
-          child: Container(
-        margin: EdgeInsets.only(bottom: 90),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: SVGIcon(
-                    icon: IconAsset.hanger,
-                    size: 48,
-                  ),
+      height: MediaQuery.of(context).size.height - (268 + MediaQuery.of(context).padding.top),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: SVGIcon(
+                  icon: IconAsset.hanger,
+                  size: 48,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: SizedBox(
-                    width: 250,
-                    child: Text(
-                      "Ваш гардероб пуст",
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      style: Theme.of(context).textTheme.headline1,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: SizedBox(
-                    width: 230,
-                    child: Text(
-                      "Вы еще не разместили ни одной вещи в вашем гардеробе",
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(28),
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
-                    builder: (context) => ChangeNotifierProvider<SizeRepository>(
-                      create: (_) => SizeRepository(),
-                      builder: (context, _) => MarketplaceNavigator(
-                        onClose: Navigator.of(context).pop,
-                        onProductCreated: () {
-                          Navigator.of(context).pop();
-                          Provider.of<ProfileProductsRepository>(context, listen: false)
-                            ..response = null
-                            ..getProducts();
-                        },
-                      ),
-                    ),
-                  ));
-                },
-                child: Container(
-                  width: 180,
-                  height: 35,
-                  decoration: ShapeDecoration(
-                    color: primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                  alignment: Alignment.center,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4),
+                child: SizedBox(
+                  width: 250,
                   child: Text(
-                    "РАЗМЕСТИТЬ ВЕЩЬ".toUpperCase(),
-                    style: Theme.of(context).textTheme.subtitle1.copyWith(
-                          color: Colors.white,
-                        ),
+                    "Ваш гардероб пуст",
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.headline1,
                   ),
                 ),
               ),
-            )
-          ],
-        ),
-      ))
-    ])));
+              Padding(
+                padding: const EdgeInsets.all(4),
+                child: SizedBox(
+                  width: 230,
+                  child: Text(
+                    "Вы еще не разместили ни одной вещи в вашем гардеробе",
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(28),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                      position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                      child: ChangeNotifierProvider<SizeRepository>(
+                        create: (_) => SizeRepository(),
+                        builder: (context, _) => MarketplaceNavigator(
+                          onClose: () {
+                            Navigator.of(context).pop();
+                          },
+                          onProductCreated: () {
+                            Navigator.of(context).pop();
+                            Provider.of<ProfileProductsRepository>(context, listen: false)
+                              ..response = null
+                              ..getProducts();
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                width: 180,
+                height: 35,
+                decoration: ShapeDecoration(
+                  color: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "РАЗМЕСТИТЬ ВЕЩЬ".toUpperCase(),
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        color: Colors.white,
+                      ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget _profileProducts(context, ProductsContent productsContent) {
@@ -374,14 +372,18 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
         shrinkWrap: true,
         children: <Widget>[
           _menuButtons(context),
-          Padding(
-            padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
-            child: Text(
-              "Мои вещи",
-              style: Theme.of(context).textTheme.headline2,
-            ),
-          ),
-          ...products
+          productsContent.products.isNotEmpty
+              ? Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
+                    child: Text(
+                      "Мои вещи",
+                      style: Theme.of(context).textTheme.headline2,
+                    ),
+                  ),
+                  ...products
+                ])
+              : _profilePlaceHolder(context)
         ],
       ),
     ));
