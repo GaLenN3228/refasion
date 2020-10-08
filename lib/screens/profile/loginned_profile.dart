@@ -296,8 +296,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                             var addProductRepository = AddProductRepository();
                             addProductRepository.addListener(() {
                               if (addProductRepository.isLoaded) {
-                                Provider.of<ProfileProductsRepository>(this.context,
-                                    listen: false)
+                                Provider.of<ProfileProductsRepository>(this.context, listen: false)
                                   ..response = null
                                   ..getProducts();
                               }
@@ -380,7 +379,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
         children: <Widget>[
           _menuButtons(context),
           productsContent.products.isNotEmpty
-              ? Column(children: [
+              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
                     child: Text(

@@ -309,13 +309,20 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                     },
                                     onProductCreated: (productData) {
                                       widget.currentTab.value = BottomTab.profile;
+                                      var profileProductsRepository =
+                                          Provider.of<ProfileProductsRepository>(this.context,
+                                              listen: false);
+                                      profileProductsRepository.response = null;
+                                      profileProductsRepository.startLoading();
                                       var addProductRepository = AddProductRepository();
                                       addProductRepository.addListener(() {
                                         if (addProductRepository.isLoaded) {
-                                          Provider.of<ProfileProductsRepository>(this.context,
-                                              listen: false)
+                                          profileProductsRepository
                                             ..response = null
                                             ..getProducts();
+                                          if (productData.photos.length > 1) {
+                                            addProductRepository.addOtherPhotos(productData);
+                                          }
                                         }
                                       });
                                       addProductRepository.addProduct(productData);
