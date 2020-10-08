@@ -10,18 +10,18 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
   final String initialUrl;
-  final String finishUrl;
-  final Function() onFinish;
+  final Map<String, Function()> onNewUrl;
   final String title;
   final bool includeBottomPadding;
+  final bool includeTopPadding;
 
   const WebViewPage({
     Key key,
     this.initialUrl,
-    this.onFinish,
-    this.finishUrl,
     this.title,
     this.includeBottomPadding: false,
+    this.onNewUrl,
+    this.includeTopPadding,
   }) : super(key: key);
 
   @override
@@ -63,9 +63,9 @@ class _WebViewPageState extends State<WebViewPage> {
         children: [
           RefashionedTopBar(
             data: TopBarData.simple(
-              includeTopScreenPadding: false,
+              onBack: Navigator.of(context).pop,
               middleText: widget.title,
-              onClose: Navigator.of(context).pop,
+              includeTopScreenPadding: widget.includeTopPadding ?? true,
             ),
           ),
           Expanded(
@@ -88,17 +88,22 @@ class _WebViewPageState extends State<WebViewPage> {
                       _toasterJavascriptChannel(context),
                     ].toSet(),
                     navigationDelegate: (NavigationRequest request) async {
-                      if (widget.finishUrl != null && request.url.startsWith(widget.finishUrl)) {
-                        print('blocking navigation to $request}');
+                      if (widget.onNewUrl != null) {
+                        final entry = widget.onNewUrl.entries
+                            .firstWhere((element) => request.url.contains(element.key), orElse: () => null);
 
-                        Navigator.of(context).pop();
+                        if (entry != null) {
+                          print('blocking navigation to ${request.url} because of ${entry.key}');
 
-                        await widget.onFinish?.call();
+                          Navigator.of(context).pop();
 
-                        return NavigationDecision.prevent;
+                          await entry.value?.call();
+
+                          return NavigationDecision.prevent;
+                        }
                       }
 
-                      print('allowing navigation to $request');
+                      print('allowing navigation to ${request.url}');
 
                       return NavigationDecision.navigate;
                     },

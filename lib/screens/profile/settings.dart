@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/repositories/config.dart';
@@ -10,10 +9,13 @@ import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
-import 'package:refashioned_app/screens/components/webview_page.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class SettingPage extends StatefulWidget {
+  final Function(String, String) onDocPush;
+
+  const SettingPage({Key key, this.onDocPush}) : super(key: key);
+
   @override
   _SettingPageState createState() => _SettingPageState();
 }
@@ -48,14 +50,9 @@ class _SettingPageState extends State<SettingPage> {
                           padding: EdgeInsets.all(10),
                           onTap: () {
                             if (config?.userAgreementUrl != null)
-                              showCupertinoModalBottomSheet(
-                                context: context,
-                                useRootNavigator: true,
-                                expand: true,
-                                isDismissible: true,
-                                builder: (context, controller) => WebViewPage(
-                                  initialUrl: config?.userAgreementUrl,
-                                ),
+                              widget.onDocPush(
+                                config.userAgreementUrl,
+                                "Соглашение",
                               );
                           },
                           child: Container(
@@ -78,14 +75,9 @@ class _SettingPageState extends State<SettingPage> {
                           padding: EdgeInsets.all(10),
                           onTap: () {
                             if (config?.sellerOfertaIrl != null)
-                              showCupertinoModalBottomSheet(
-                                context: context,
-                                useRootNavigator: true,
-                                expand: true,
-                                isDismissible: true,
-                                builder: (context, controller) => WebViewPage(
-                                  initialUrl: config?.sellerOfertaIrl,
-                                ),
+                              widget.onDocPush(
+                                config.sellerOfertaIrl,
+                                "Оферта",
                               );
                           },
                           child: Container(
@@ -119,9 +111,11 @@ class _SettingPageState extends State<SettingPage> {
 }
 
 class SettingForAuthUser extends StatefulWidget {
+  final Function(String, String) onDocPush;
+
   final Function() onMapPageClick;
 
-  const SettingForAuthUser({Key key, this.onMapPageClick}) : super(key: key);
+  const SettingForAuthUser({Key key, this.onMapPageClick, this.onDocPush}) : super(key: key);
 
   @override
   _SettingForAuthUserState createState() => _SettingForAuthUserState();
@@ -224,14 +218,9 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                         padding: EdgeInsets.all(10),
                         onTap: () {
                           if (config?.userAgreementUrl != null)
-                            showCupertinoModalBottomSheet(
-                              context: context,
-                              useRootNavigator: true,
-                              expand: true,
-                              isDismissible: true,
-                              builder: (context, controller) => WebViewPage(
-                                initialUrl: config?.userAgreementUrl,
-                              ),
+                            widget.onDocPush(
+                              config.userAgreementUrl,
+                              "Соглашение",
                             );
                         },
                         child: Container(
@@ -254,14 +243,9 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
                         padding: EdgeInsets.all(10),
                         onTap: () {
                           if (config?.sellerOfertaIrl != null)
-                            showCupertinoModalBottomSheet(
-                              context: context,
-                              useRootNavigator: true,
-                              expand: true,
-                              isDismissible: true,
-                              builder: (context, controller) => WebViewPage(
-                                initialUrl: config?.sellerOfertaIrl,
-                              ),
+                            widget.onDocPush(
+                              config.sellerOfertaIrl,
+                              "Оферта",
                             );
                         },
                         child: Container(

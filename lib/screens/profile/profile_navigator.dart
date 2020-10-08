@@ -17,6 +17,7 @@ import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
+import 'package:refashioned_app/screens/components/webview_page.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
@@ -28,6 +29,7 @@ import 'package:refashioned_app/screens/profile/settings.dart';
 class ProfileNavigatorRoutes {
   static const String root = '/';
   static const String settings = '/settings';
+  static const String doc = '/doc';
   static const String products = '/products';
   static const String product = '/product';
   static const String favourites = '/favourites';
@@ -125,6 +127,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
   Order order;
   int totalPrice;
 
+  String docUrl;
+  String docTitle;
+
   @override
   initState() {
     createOrderRepository = CreateOrderRepository();
@@ -195,8 +200,27 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 onMapPageClick: () {
                   widget.pushPageOnTop(MapPage());
                 },
+                onDocPush: (String url, String title) {
+                  docUrl = url;
+                  docTitle = title;
+
+                  Navigator.of(context).pushNamed(ProfileNavigatorRoutes.doc);
+                },
               )
-            : SettingPage();
+            : SettingPage(
+                onDocPush: (String url, String title) {
+                  docUrl = url;
+                  docTitle = title;
+
+                  Navigator.of(context).pushNamed(ProfileNavigatorRoutes.doc);
+                },
+              );
+
+      case ProfileNavigatorRoutes.doc:
+        return WebViewPage(
+          initialUrl: docUrl,
+          title: docTitle,
+        );
 
       case ProfileNavigatorRoutes.products:
         topPanelController.needShow = true;
