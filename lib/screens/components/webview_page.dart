@@ -65,7 +65,7 @@ class _WebViewPageState extends State<WebViewPage> {
             data: TopBarData.simple(
               includeTopScreenPadding: false,
               middleText: widget.title,
-              onClose: () => Navigator.of(context).pop(),
+              onClose: Navigator.of(context).pop,
             ),
           ),
           Expanded(

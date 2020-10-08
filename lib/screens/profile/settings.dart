@@ -49,10 +49,10 @@ class _SettingPageState extends State<SettingPage> {
                           onTap: () {
                             if (config?.userAgreementUrl != null)
                               showCupertinoModalBottomSheet(
-                                enableDrag: false,
                                 context: context,
                                 useRootNavigator: true,
                                 expand: true,
+                                isDismissible: true,
                                 builder: (context, controller) => WebViewPage(
                                   initialUrl: config?.userAgreementUrl,
                                 ),
@@ -79,10 +79,10 @@ class _SettingPageState extends State<SettingPage> {
                           onTap: () {
                             if (config?.sellerOfertaIrl != null)
                               showCupertinoModalBottomSheet(
-                                enableDrag: false,
                                 context: context,
                                 useRootNavigator: true,
                                 expand: true,
+                                isDismissible: true,
                                 builder: (context, controller) => WebViewPage(
                                   initialUrl: config?.sellerOfertaIrl,
                                 ),
@@ -145,148 +145,146 @@ class _SettingForAuthUserState extends State<SettingForAuthUser> {
               ),
             ),
             Expanded(
-              child: Consumer<ConfigRepository>(
-                builder: (context, repository, loadingState) {
-                  if (repository.isLoading) {
-                    return Center(
-                        child: SizedBox(
-                          height: 32.0,
-                          width: 32.0,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            backgroundColor: accentColor,
-                            valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-                          ),
-                        ));
-                  }
-
-                  if (repository.isLoaded) {
-                    final config = repository.response?.content;
-
-                    return Column(
-                      children: [
-                        Tapable(
-                          padding: EdgeInsets.all(10),
-                          onTap: () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) => CitySelector(),
-                            ));
-                          },
-                          child: Container(
-                            padding: EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
-                            child: Row(
-                              children: [
-                                SVGIcon(
-                                  icon: IconAsset.location,
-                                  height: 30,
-                                  color: Colors.black,
-                                ),
-                                Text(
-                                  'Мой город',
-                                  style: textTheme.subtitle1,
-                                ),
-                                Spacer(),
-                                Consumer<CitiesRepository>(
-                                  builder: (context, value, _) => Text(
-                                    value.city?.name ?? "Город не выбран",
-                                    style: textTheme.subtitle2,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: Divider(),
-                        ),
-                        Tapable(
-                          padding: EdgeInsets.all(10),
-                          onTap: () {
-                            widget.onMapPageClick();
-                          },
-                          child: Container(
-                            padding: EdgeInsets.only(top: 15, left: 10, bottom: 10),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Пункты выдачи',
-                                  style: textTheme.subtitle1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: Divider(),
-                        ),
-                        Tapable(
-                          padding: EdgeInsets.all(10),
-                          onTap: () {
-                            if (config?.userAgreementUrl != null)
-                              showCupertinoModalBottomSheet(
-                                enableDrag: false,
-                                context: context,
-                                useRootNavigator: true,
-                                expand: true,
-                                builder: (context, controller) => WebViewPage(
-                                  initialUrl: config?.userAgreementUrl,
-                                ),
-                              );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.only(top: 20, left: 10, bottom: 10),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Пользовательское соглашение',
-                                  style: textTheme.subtitle1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: Divider(),
-                        ),
-                        Tapable(
-                          padding: EdgeInsets.all(10),
-                          onTap: () {
-                            if (config?.sellerOfertaIrl != null)
-                              showCupertinoModalBottomSheet(
-                                enableDrag: false,
-                                context: context,
-                                useRootNavigator: true,
-                                expand: true,
-                                builder: (context, controller) => WebViewPage(
-                                  initialUrl: config?.sellerOfertaIrl,
-                                ),
-                              );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Оферта для продавцов',
-                                  style: textTheme.subtitle1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: Divider(),
-                        ),
-                      ],
-                    );
-                  } else
-                    return loadingState;
+              child: Consumer<ConfigRepository>(builder: (context, repository, loadingState) {
+                if (repository.isLoading) {
+                  return Center(
+                      child: SizedBox(
+                    height: 32.0,
+                    width: 32.0,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      backgroundColor: accentColor,
+                      valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                    ),
+                  ));
                 }
-              ),
+
+                if (repository.isLoaded) {
+                  final config = repository.response?.content;
+
+                  return Column(
+                    children: [
+                      Tapable(
+                        padding: EdgeInsets.all(10),
+                        onTap: () {
+                          Navigator.of(context).push(CupertinoPageRoute(
+                            builder: (context) => CitySelector(),
+                          ));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(top: 20, left: 10, bottom: 10, right: 10),
+                          child: Row(
+                            children: [
+                              SVGIcon(
+                                icon: IconAsset.location,
+                                height: 30,
+                                color: Colors.black,
+                              ),
+                              Text(
+                                'Мой город',
+                                style: textTheme.subtitle1,
+                              ),
+                              Spacer(),
+                              Consumer<CitiesRepository>(
+                                builder: (context, value, _) => Text(
+                                  value.city?.name ?? "Город не выбран",
+                                  style: textTheme.subtitle2,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Divider(),
+                      ),
+                      Tapable(
+                        padding: EdgeInsets.all(10),
+                        onTap: () {
+                          widget.onMapPageClick();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(top: 15, left: 10, bottom: 10),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Пункты выдачи',
+                                style: textTheme.subtitle1,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Divider(),
+                      ),
+                      Tapable(
+                        padding: EdgeInsets.all(10),
+                        onTap: () {
+                          if (config?.userAgreementUrl != null)
+                            showCupertinoModalBottomSheet(
+                              context: context,
+                              useRootNavigator: true,
+                              expand: true,
+                              isDismissible: true,
+                              builder: (context, controller) => WebViewPage(
+                                initialUrl: config?.userAgreementUrl,
+                              ),
+                            );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(top: 20, left: 10, bottom: 10),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Пользовательское соглашение',
+                                style: textTheme.subtitle1,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Divider(),
+                      ),
+                      Tapable(
+                        padding: EdgeInsets.all(10),
+                        onTap: () {
+                          if (config?.sellerOfertaIrl != null)
+                            showCupertinoModalBottomSheet(
+                              context: context,
+                              useRootNavigator: true,
+                              expand: true,
+                              isDismissible: true,
+                              builder: (context, controller) => WebViewPage(
+                                initialUrl: config?.sellerOfertaIrl,
+                              ),
+                            );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Оферта для продавцов',
+                                style: textTheme.subtitle1,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Divider(),
+                      ),
+                    ],
+                  );
+                } else
+                  return loadingState;
+              }),
             )
           ],
         ),
