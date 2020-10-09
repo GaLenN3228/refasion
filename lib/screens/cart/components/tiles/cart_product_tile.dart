@@ -156,7 +156,10 @@ class _CartProductTileState extends State<CartProductTile> {
                       ProductStateTile(product: product),
                       ProductPriceTile(product: product),
                       ProductBrandTile(product: product),
-                      ProductSizeTile(product: product),
+                      ProductSizeTile(
+                        product: product,
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                      ),
                     ],
                   ),
                 ),
