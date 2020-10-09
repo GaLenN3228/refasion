@@ -15,6 +15,7 @@ import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/components/message.dart';
+import 'package:refashioned_app/screens/components/product/size.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
@@ -223,6 +224,10 @@ class _ProductPageState extends State<ProductPage> {
                         ),
                         ProductTitle(
                           product: product,
+                        ),
+                        ProductSizeTile(
+                          product: product,
+                          style: ProductSizeTileStyle.large,
                         ),
                         ProductSeller(
                           seller: product.seller,
