@@ -42,6 +42,19 @@ class _PhotosPageState extends State<PhotosPage> {
               DialogItemContent(DialogItemType.item, title: "Выбрать из галереи", onClick: () {
                 return openGallery(index);
               }, icon: IconAsset.image),
+              if (images[index] != null)
+                DialogItemContent(
+                  DialogItemType.item,
+                  title: "Удалить",
+                  onClick: () async {
+                    setState(() {
+                      images[index] = null;
+                    });
+                    Navigator.pop(dialogContext);
+                  },
+                  icon: IconAsset.delete,
+                  color: Colors.red,
+                ),
               DialogItemContent(
                 DialogItemType.system,
                 title: "Закрыть",
