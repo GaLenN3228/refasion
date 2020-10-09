@@ -33,7 +33,12 @@ class Product {
   final PickPoint pickUpAddress;
   final List<DeliveryType> deliveryTypes;
 
+  final bool available;
+  final List<ProductSize> sizes;
+
   Product({
+    this.sizes,
+    this.available,
     this.pickUpAddress,
     this.deliveryTypes,
     this.id,
@@ -58,9 +63,24 @@ class Product {
     final stateText = stateObject != null ? stateObject['text'] : null;
     final state = stateText != null ? _stateLabels[stateText] : null;
 
+    final reserveState = json['reserve_state'];
+
+    final reserveStatus = reserveState != null ? reserveState['status'] : null;
+    final reserveText = reserveState != null ? reserveState['text'] : null;
+
+    final available = reserveStatus != null && reserveText != null
+        ? !reserveStatus || reserveText.toString() == "Этот товар уже зарезервирован Вами"
+        : false;
+
     final deliveryTypes = [
       if (json['takeaways'] != null)
         for (final deliveryType in json['takeaways']) DeliveryType.fromJson(deliveryType)
+    ].where((element) => element != null).toList();
+
+    final size = json['size'];
+    final sizes = [
+      if (size != null && size['international_values'] != null)
+        for (final internationValue in size['international_values']) ProductSize.fromJson(internationValue)
     ].where((element) => element != null).toList();
 
     return Product(
@@ -85,6 +105,28 @@ class Product {
       pickUpAddress: json['pickup'] != null ? PickPoint.fromJson(json['pickup']) : null,
       deliveryTypes: deliveryTypes,
       state: state,
+      available: available,
+      sizes: sizes,
+    );
+  }
+}
+
+class ProductSize {
+  final String code;
+  final String shortCode;
+  final String value;
+  final String secondaryValue;
+
+  const ProductSize({this.shortCode, this.code, this.value, this.secondaryValue});
+
+  factory ProductSize.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    return ProductSize(
+      code: json['code'],
+      shortCode: json['short_code'],
+      value: json['value'],
+      secondaryValue: json['secondary_value'],
     );
   }
 }

@@ -19,7 +19,8 @@ class CartItemTile extends StatefulWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -34,8 +35,38 @@ class _CartItemTileState extends State<CartItemTile> {
         context,
         widget.cartItem.id,
         onClose: Provider.of<CartRepository>(context, listen: false).clearPendingIDs,
-        onFinish: (companyId, objectId) async => await Provider.of<CartRepository>(context, listen: false)
-            .setDelivery(widget.cartItem.id, companyId, objectId),
+        onSelect: (companyId, objectId) async {
+          final repository = Provider.of<CartRepository>(context, listen: false);
+          final result = await repository.setDelivery(widget.cartItem.id, companyId, objectId);
+
+          if (!result) {
+            showCupertinoDialog(
+              context: context,
+              useRootNavigator: true,
+              builder: (context) => CupertinoAlertDialog(
+                title: Text(
+                  "Ошибка",
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+                content: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    repository.response?.errors?.messages ?? "Неизвестная ошибка",
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                ),
+                actions: [
+                  CupertinoDialogAction(
+                    onPressed: Navigator.of(context).pop,
+                    child: Text("ОК"),
+                  )
+                ],
+              ),
+            );
+          }
+
+          return result;
+        },
         originalOverlayStyle: SystemUiOverlayStyle.light,
       );
 

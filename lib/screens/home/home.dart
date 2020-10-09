@@ -16,11 +16,11 @@ class HomePage extends StatefulWidget {
   static const String PRODUCTS = "PRODUCTS";
   static const String STORIES = "STORIES";
 
-
   final Function(Product) pushProduct;
   final Function(String url, String title) pushCollection;
+  final Function(String, String) onDocPush;
 
-  HomePage({Key key, this.pushProduct, this.pushCollection}) : super(key: key);
+  HomePage({Key key, this.pushProduct, this.pushCollection, this.onDocPush}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -55,11 +55,7 @@ class _HomePageState extends State<HomePage> {
       );
 
     textTheme = Theme.of(context).textTheme;
-    loadIcon = SizedBox(
-      width: 25.0,
-      height: 25.0,
-      child: const CupertinoActivityIndicator()
-    );
+    loadIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
 
     return CupertinoPageScaffold(
         backgroundColor: Colors.white,
@@ -168,29 +164,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _productsBlockList(context, HomeBlock homeBlock) {
-    return Container(
-        color: Colors.white,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ...homeBlock.items,
-            ].map(
-              (blockItem) {
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(left: 20, bottom: 20),
-                          child: Text(
-                            blockItem.name,
-                            style: textTheme.headline2,
-                          )),
-                      _productsList(context, blockItem),
-                    ]);
-              },
-            ).toList()));
+    return Material(
+        child: Container(
+            color: Colors.white,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...homeBlock.items,
+                ].map(
+                  (blockItem) {
+                    return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              margin: EdgeInsets.only(left: 20, bottom: 20),
+                              child: Text(
+                                blockItem.name,
+                                style: textTheme.headline2,
+                              )),
+                          _productsList(context, blockItem),
+                        ]);
+                  },
+                ).toList())));
   }
 
   Widget _productsList(context, HomeBlockItem homeBlockItem) {
@@ -200,7 +197,8 @@ class _HomePageState extends State<HomePage> {
         height: 245,
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
+          physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          // shrinkWrap: true,
           slivers: [
             SliverPadding(
                 padding: EdgeInsets.only(left: 14, right: 14),
@@ -244,9 +242,7 @@ class _HomePageState extends State<HomePage> {
                 style: textTheme.subtitle1,
               ),
             ),
-            Container(
-                padding: EdgeInsets.only(top: 5, bottom: 8),
-                child: Text('Москва', style: textTheme.caption)),
+            Container(padding: EdgeInsets.only(top: 5, bottom: 8), child: Text('Москва', style: textTheme.caption)),
             ProductPrice(
               product: product,
             ),
@@ -293,7 +289,10 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.only(right: 6, left: 6),
       child: Tapable(
         onTap: () {
-          widget.pushCollection(homeBlockItem.url, homeBlockItem.name);
+          if (homeBlockItem.url.contains("http") || homeBlockItem.url.contains("www"))
+            widget.onDocPush(homeBlockItem.url, homeBlockItem.name);
+          else
+            widget.pushCollection(homeBlockItem.url, homeBlockItem.name);
         },
         child: Container(
           child: Image.network(

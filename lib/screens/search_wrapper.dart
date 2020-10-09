@@ -97,9 +97,8 @@ class _SearchWrapperState extends State<SearchWrapper> with SingleTickerProvider
               child: Stack(children: [
                 widget.content,
                 _searchResultState == SearchResultState.VISIBLE
-                    ? Scaffold(
-                        resizeToAvoidBottomInset: true,
-                        body: Container(
+                    ? Material(
+                        child: Container(
                           color: Colors.white,
                           child: SlideTransition(
                             position: offset,

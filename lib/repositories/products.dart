@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/product_price.dart';
@@ -95,17 +99,27 @@ class CalcProductPrice extends BaseRepository<ProductPrice> {
       });
 }
 
-class AddProductRepository extends BaseRepository {
+class AddProductRepository extends BaseRepository<Product> {
   Future<void> addProduct(ProductData productData) => apiCall(() async {
-        response = BaseResponse.fromJson((await ApiService.addProducts(productData)).data, null);
+        response = BaseResponse.fromJson((await ApiService.addProducts(productData)).data,
+            (contentJson) => Product.fromJson(contentJson));
+        if (productData.photos.isNotEmpty)
+          await ApiService.addProductPhoto(response.content.id, productData.photos[0], true);
       });
+
+  Future<void> addOtherPhotos(ProductData productData) async {
+    productData.photos.asMap().forEach((key, value) {
+      if (key != 0) {
+        ApiService.addProductPhoto(response.content.id, value, false);
+      }
+    });
+  }
 }
 
 class ProfileProductsRepository extends BaseRepository<ProductsContent> {
-  ProductsContent productsContent;
-
   Future<void> getProducts() => apiCall(() async {
-    productsContent = ProductsContent.fromJson((await ApiService.getProfileProducts()).data);
+        response = BaseResponse.fromJson((await ApiService.getProfileProducts()).data,
+            (contentJson) => ProductsContent.fromJson(contentJson));
         await BaseRepository.isAuthorized().then((isAuthorized) async {
           if (isAuthorized) {
             FavouritesRepository favouritesRepository = FavouritesRepository();

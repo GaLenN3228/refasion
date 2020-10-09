@@ -8,6 +8,7 @@ import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/size.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/repositories/user_addresses.dart';
@@ -65,6 +66,9 @@ class _TabSwitcherState extends State<TabSwitcher> {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
       case BottomTab.cart:
+        Provider.of<CartRepository>(context, listen: false).refresh();
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        break;
       case BottomTab.profile:
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
@@ -78,6 +82,9 @@ class _TabSwitcherState extends State<TabSwitcher> {
       navigatorKeys[widget.currentTab.value]
           .currentState
           .pushNamedAndRemoveUntil('/', (route) => false);
+
+    if (widget.currentTab.value == BottomTab.cart)
+      Provider.of<CartRepository>(context, listen: false).refresh();
 
     if (widget.currentTab.value == BottomTab.catalog || widget.currentTab.value == BottomTab.home) {
       var topPanelController = Provider.of<TopPanelController>(
@@ -114,7 +121,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
     String id, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) async {
     if (!await BaseRepository.isAuthorized()) {
@@ -183,6 +191,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                       userAddresses: userAddresses,
                       onClose: () async {
                         await onClose?.call();
+
                         userAddressesRepository?.dispose();
 
                         Navigator.of(context).pop();
@@ -190,15 +199,22 @@ class _TabSwitcherState extends State<TabSwitcher> {
                         if (originalOverlayStyle != null)
                           SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
                       },
-                      onFinish: (id) async {
-                        await onFinish?.call(
+                      onSelect: (id) async {
+                        final result = await onSelect?.call(
                             deliveryType.deliveryOptions.first.deliveryCompany.id, id);
-                        userAddressesRepository?.dispose();
 
-                        Navigator.of(context).pop();
+                        if (result) {
+                          userAddressesRepository?.dispose();
 
-                        if (originalOverlayStyle != null)
-                          SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+                          onFinish?.call();
+
+                          await Future.delayed(const Duration(milliseconds: 400));
+
+                          Navigator.of(context).pop();
+
+                          if (originalOverlayStyle != null)
+                            SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+                        }
                       },
                     ),
                   ),
@@ -291,9 +307,26 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                     onClose: () {
                                       Navigator.of(context).pop();
                                     },
-                                    onProductCreated: () {
-                                      Navigator.of(context).pop();
+                                    onProductCreated: (productData) {
                                       widget.currentTab.value = BottomTab.profile;
+                                      var profileProductsRepository =
+                                          Provider.of<ProfileProductsRepository>(this.context,
+                                              listen: false);
+                                      profileProductsRepository.response = null;
+                                      profileProductsRepository.startLoading();
+                                      var addProductRepository = AddProductRepository();
+                                      addProductRepository.addListener(() {
+                                        if (addProductRepository.isLoaded) {
+                                          profileProductsRepository
+                                            ..response = null
+                                            ..getProducts();
+                                          if (productData.photos.length > 1) {
+                                            addProductRepository.addOtherPhotos(productData);
+                                          }
+                                        }
+                                      });
+                                      addProductRepository.addProduct(productData);
+                                      Navigator.of(context).pop();
                                     },
                                   ),
                                 ),

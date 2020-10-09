@@ -8,6 +8,7 @@ import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
+import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
@@ -30,11 +31,27 @@ class CartNavigatorRoutes {
 }
 
 class CartNavigatorObserver extends NavigatorObserver {
+  final Function() onCartFullReload;
+  final Function() onCartRefresh;
+
+  CartNavigatorObserver({this.onCartRefresh, this.onCartFullReload});
+
   @override
   void didPop(Route route, Route previousRoute) {
     switch (previousRoute?.settings?.name) {
       case CartNavigatorRoutes.cart:
+        switch (route?.settings?.name) {
+          case CartNavigatorRoutes.orderCreated:
+            // onCartFullReload?.call();
+            onCartRefresh?.call();
+            break;
+
+          default:
+            onCartRefresh?.call();
+        }
+
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
         break;
 
       default:
@@ -71,7 +88,8 @@ class CartNavigator extends StatefulWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -160,6 +178,30 @@ class _CartNavigatorState extends State<CartNavigator> {
               return Navigator.of(context).pushNamed(
                 CartNavigatorRoutes.checkout,
               );
+            else
+              showCupertinoDialog(
+                context: context,
+                useRootNavigator: true,
+                builder: (context) => CupertinoAlertDialog(
+                  title: Text(
+                    "Ошибка",
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                  content: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      createOrderRepository.response?.errors?.messages ?? "Неизвестная ошибка",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                  actions: [
+                    CupertinoDialogAction(
+                      onPressed: Navigator.of(context).pop,
+                      child: Text("ОК"),
+                    )
+                  ],
+                ),
+              );
           },
           onProductPush: (product) {
             return Navigator.of(context).push(
@@ -185,15 +227,12 @@ class _CartNavigatorState extends State<CartNavigator> {
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (orderParameters) async {
-              await createOrderRepository.update(orderParameters);
+            onCheckoutPush: (Order newOrder) {
+              if (newOrder != null) {
+                order = newOrder;
 
-              order = createOrderRepository.response?.content;
-
-              if (order != null)
-                return Navigator.of(context).pushNamed(
-                  CartNavigatorRoutes.checkout,
-                );
+                Navigator.of(context).pushNamed(CartNavigatorRoutes.checkout);
+              }
             },
             onProductPush: (product) {
               return Navigator.of(context)
@@ -265,6 +304,7 @@ class _CartNavigatorState extends State<CartNavigator> {
             ],
             builder: (context, _) {
               return FavouritesPage(
+                onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
                 onPush: (product) {
                   Navigator.of(context)
                       .push(
@@ -313,7 +353,12 @@ class _CartNavigatorState extends State<CartNavigator> {
   @override
   Widget build(BuildContext context) => Navigator(
         initialRoute: CartNavigatorRoutes.cart,
-        observers: [CartNavigatorObserver()],
+        observers: [
+          CartNavigatorObserver(
+            // onCartFullReload: () => Provider.of<CartRepository>(context, listen: false).refresh(fullReload: true),
+            onCartRefresh: () => Provider.of<CartRepository>(context, listen: false).refresh(),
+          )
+        ],
         key: widget.navigatorKey,
         onGenerateInitialRoutes: (navigatorState, initialRoute) => [
           CupertinoPageRoute(

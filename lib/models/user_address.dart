@@ -16,9 +16,9 @@ class UserAddress {
 
   final PickPoint address;
 
-  final String fio;
-  final String phone;
-  final String email;
+  String fio;
+  String phone;
+  String email;
 
   final String porch;
   final String floor;
@@ -27,7 +27,7 @@ class UserAddress {
   final String comment;
   final bool isPrivateHouse;
 
-  const UserAddress({
+  UserAddress({
     this.type,
     this.isPrivateHouse,
     this.pickpoint,

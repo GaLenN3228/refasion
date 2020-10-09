@@ -3,7 +3,6 @@ import 'package:refashioned_app/models/cart/delivery_data.dart';
 import 'package:refashioned_app/models/cart/delivery_option.dart';
 import 'package:refashioned_app/models/cart/item_summary.dart';
 import 'package:refashioned_app/models/cart/shipping_cost.dart';
-import 'package:refashioned_app/models/product.dart';
 
 class CartItem {
   final DeliveryOption deliveryOption;
@@ -30,8 +29,7 @@ class CartItem {
 
     if (products.isEmpty) return null;
 
-    final available = products.fold(
-        false, (previousValue, element) => previousValue || element.product.state == ProductState.published);
+    final available = products.fold(false, (previousValue, element) => previousValue || element.product.available);
 
     return CartItem(
       id: json['id'],

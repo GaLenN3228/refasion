@@ -154,11 +154,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               children: [
                 order == null
                     ? Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: accentColor,
-                          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-                          strokeWidth: 1,
-                        ),
+                        child: CupertinoActivityIndicator(),
                       )
                     : ListView(
                         padding:

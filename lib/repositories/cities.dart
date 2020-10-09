@@ -62,6 +62,8 @@ class CitiesRepository extends BaseRepository<CitiesProvider> {
       result = _selectCityRepository?.response?.status?.code == 200;
 
       await _sharedPreferences?.setString(Prefs.city_id, newCity.id);
+      await _sharedPreferences?.setString(Prefs.geo_lat, newCity.geoLat);
+      await _sharedPreferences?.setString(Prefs.geo_lon, newCity.geoLon);
 
       city = newCity;
 

@@ -14,14 +14,11 @@ import 'package:refashioned_app/screens/marketplace/components/add_photo_item.da
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class PhotosPage extends StatefulWidget {
-  final List<String> initialData;
-
   final Function() onClose;
-  final Function(List<String>) onUpdate;
   final Function() onPush;
+  final Function(File) onUpdate;
 
-  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.initialData})
-      : super(key: key);
+  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate}) : super(key: key);
 
   @override
   _PhotosPageState createState() => _PhotosPageState();
@@ -65,6 +62,7 @@ class _PhotosPageState extends State<PhotosPage> {
       setState(() {
         File _image = File(pickedFile.path);
         images[index] = _image;
+        widget.onUpdate(_image);
       });
       Navigator.pop(dialogContext);
     }
@@ -77,6 +75,7 @@ class _PhotosPageState extends State<PhotosPage> {
       setState(() {
         File _image = File(pickedFile.path);
         images[index] = _image;
+        widget.onUpdate(_image);
       });
       Navigator.pop(dialogContext);
     }
@@ -138,7 +137,9 @@ class _PhotosPageState extends State<PhotosPage> {
               bottom: 0,
               child: BottomButton(
                 title: "ПРОДОЛЖИТЬ",
-                action: widget.onPush,
+                action: () {
+                  widget.onPush();
+                },
               )),
         ],
       ),

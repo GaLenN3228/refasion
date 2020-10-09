@@ -32,6 +32,7 @@ class _ProductSliderState extends State<ProductSlider> {
         children: <Widget>[
           CarouselSlider(
             options: CarouselOptions(
+                enableInfiniteScroll: false,
                 height: 300.0,
                 onPageChanged: (index, reason) {
                   setState(() {
@@ -40,25 +41,26 @@ class _ProductSliderState extends State<ProductSlider> {
                 }),
             items: _getImagesSlider(),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: widget.images
-                .asMap()
-                .map((index, value) => MapEntry(
-                    index,
-                    Container(
-                      width: 7.0,
-                      height: 7.0,
-                      margin:
-                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _current == index ? accentColor : lightGrayColor,
-                      ),
-                    )))
-                .values
-                .toList(),
-          ),
+          widget.images.length > 1
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: widget.images
+                      .asMap()
+                      .map((index, value) => MapEntry(
+                          index,
+                          Container(
+                            width: 7.0,
+                            height: 7.0,
+                            margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _current == index ? accentColor : lightGrayColor,
+                            ),
+                          )))
+                      .values
+                      .toList(),
+                )
+              : SizedBox(height: 27),
         ],
       ),
     );

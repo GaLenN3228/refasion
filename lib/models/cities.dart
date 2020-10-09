@@ -107,15 +107,20 @@ class City {
   final String name;
   final String id;
   final Region region;
+  final String geoLat;
+  final String geoLon;
 
   final selected = ValueNotifier<bool>(false);
 
-  City({this.region, this.name, this.id});
+  City({this.geoLat, this.geoLon, this.region, this.name, this.id});
 
   factory City.fromJson(Map<String, dynamic> json) => City(
-      name: json['name'],
-      id: json['id'],
-      region: Region.fromJson(json['region']));
+        name: json['name'],
+        id: json['id'],
+        region: Region.fromJson(json['region']),
+        geoLat: json['geo_lat'],
+        geoLon: json['geo_lon'],
+      );
 
   @override
   String toString() => "City: " + name + ", " + region.toString();

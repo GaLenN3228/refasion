@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class TBSearchTextField extends StatefulWidget {
   final bool autofocus;
@@ -12,6 +13,8 @@ class TBSearchTextField extends StatefulWidget {
 
   final TextInputType keyboardType;
 
+  final MaskTextInputFormatter maskFormatter;
+
   const TBSearchTextField({
     Key key,
     this.focusNode,
@@ -20,6 +23,7 @@ class TBSearchTextField extends StatefulWidget {
     this.autofocus,
     this.hintText,
     this.keyboardType,
+    this.maskFormatter,
   }) : super(key: key);
 
   @override
@@ -31,6 +35,7 @@ class _TBSearchTextFieldState extends State<TBSearchTextField> {
   Widget build(BuildContext context) => Material(
         color: Colors.transparent,
         child: TextField(
+          inputFormatters: widget.maskFormatter != null ? [widget.maskFormatter] : [],
           controller: widget.textController,
           autofocus: widget.autofocus,
           enableSuggestions: false,

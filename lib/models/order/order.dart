@@ -26,9 +26,9 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
-    final totalPrice = json['products_price'];
-    final fullPrice = json['full_price'];
-    final discount = json['discount'];
+    final fullPrice = json['products_full_price'];
+    final totalPrice = json['full_price'];
+    final discount = json['total_discount'];
 
     final items = json['items'] != null
         ? [
@@ -43,12 +43,12 @@ class Order {
         final itemShippingCost = cartItem.shippingCost;
         if (itemShippingCost != null && (!hasPickUpAddress || itemShippingCost.shipping != Delivery.PICKUP_ADDRESS)) {
           shippingCost.add(itemShippingCost);
-          hasPickUpAddress = itemShippingCost.shipping == Delivery.PICKUP_ADDRESS;
+          if (itemShippingCost.shipping == Delivery.PICKUP_ADDRESS) hasPickUpAddress = true;
         }
       });
     }
 
-    final orderSummary = OrderSummary(totalPrice, discount, shippingCost, fullPrice);
+    final orderSummary = OrderSummary(fullPrice, discount, shippingCost, totalPrice);
 
     return Order(
       id: json['id'],

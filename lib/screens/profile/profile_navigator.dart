@@ -13,13 +13,11 @@ import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
-import 'package:refashioned_app/repositories/products.dart';
-import 'package:refashioned_app/repositories/products.dart';
-import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
+import 'package:refashioned_app/screens/components/webview_page.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
@@ -31,6 +29,7 @@ import 'package:refashioned_app/screens/profile/settings.dart';
 class ProfileNavigatorRoutes {
   static const String root = '/';
   static const String settings = '/settings';
+  static const String doc = '/doc';
   static const String products = '/products';
   static const String product = '/product';
   static const String favourites = '/favourites';
@@ -73,7 +72,8 @@ class ProfileNavigator extends StatefulWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -91,8 +91,7 @@ class ProfileNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) =>
-                _mapPageState._routeBuilder(context, ProfileNavigatorRoutes.favourites),
+            builder: (context) => _mapPageState._routeBuilder(context, ProfileNavigatorRoutes.favourites),
             settings: RouteSettings(name: ProfileNavigatorRoutes.favourites),
           ),
         )
@@ -104,8 +103,8 @@ class ProfileNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
       CupertinoPageRoute(
-        builder: (context) => _mapPageState._routeBuilder(context, ProfileNavigatorRoutes.products,
-            searchResult: searchResult),
+        builder: (context) =>
+            _mapPageState._routeBuilder(context, ProfileNavigatorRoutes.products, searchResult: searchResult),
         settings: RouteSettings(name: ProfileNavigatorRoutes.products),
       ),
     )
@@ -128,6 +127,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
   Order order;
   int totalPrice;
 
+  String docUrl;
+  String docTitle;
+
   @override
   initState() {
     createOrderRepository = CreateOrderRepository();
@@ -148,7 +150,6 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
       Product product,
       Seller seller,
       String parameters,
-      Order order,
       String productTitle,
       SearchResult searchResult}) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -157,38 +158,32 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
         topPanelController.needShowBack = true;
         topPanelController.needShow = false;
         return isAuthorized
-            ? ChangeNotifierProvider<ProfileProductsRepository>(create: (_) {
-                return ProfileProductsRepository()..getProducts();
-              }, builder: (context, _) {
-                return AuthorizedProfilePage(
-                  onProductPush: (product, {callback}) => Navigator.of(context).push(
+            ? AuthorizedProfilePage(
+                onProductPush: (product, {callback}) => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.product, product: product),
+                    settings: RouteSettings(name: ProfileNavigatorRoutes.product),
+                  ),
+                ),
+                onFavClick: () {
+                  widget.pushFavourites(context, false);
+                },
+                onSettingsClick: () {
+                  Navigator.of(context).push(
                     CupertinoPageRoute(
                       builder: (context) =>
-                          _routeBuilder(context, ProfileNavigatorRoutes.product, product: product),
-                      settings: RouteSettings(name: ProfileNavigatorRoutes.product),
+                          _routeBuilder(context, ProfileNavigatorRoutes.settings, isAuthorized: isAuthorized),
+                      settings: RouteSettings(name: ProfileNavigatorRoutes.settings),
                     ),
-                  ),
-                  onFavClick: () {
-                    widget.pushFavourites(context, false);
-                  },
-                  onSettingsClick: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => _routeBuilder(
-                            context, ProfileNavigatorRoutes.settings,
-                            isAuthorized: isAuthorized),
-                        settings: RouteSettings(name: ProfileNavigatorRoutes.settings),
-                      ),
-                    );
-                  },
-                );
-              })
+                  );
+                },
+              )
             : ProfilePage(
                 onSettingsClick: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(
-                      builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.settings,
-                          isAuthorized: isAuthorized),
+                      builder: (context) =>
+                          _routeBuilder(context, ProfileNavigatorRoutes.settings, isAuthorized: isAuthorized),
                       settings: RouteSettings(name: ProfileNavigatorRoutes.settings),
                     ),
                   );
@@ -204,8 +199,27 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 onMapPageClick: () {
                   widget.pushPageOnTop(MapPage());
                 },
+                onDocPush: (String url, String title) {
+                  docUrl = url;
+                  docTitle = title;
+
+                  Navigator.of(context).pushNamed(ProfileNavigatorRoutes.doc);
+                },
               )
-            : SettingPage();
+            : SettingPage(
+                onDocPush: (String url, String title) {
+                  docUrl = url;
+                  docTitle = title;
+
+                  Navigator.of(context).pushNamed(ProfileNavigatorRoutes.doc);
+                },
+              );
+
+      case ProfileNavigatorRoutes.doc:
+        return WebViewPage(
+          initialUrl: docUrl,
+          title: docTitle,
+        );
 
       case ProfileNavigatorRoutes.products:
         topPanelController.needShow = true;
@@ -220,8 +234,8 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             onPush: (product, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.product,
-                    product: product, category: category),
+                builder: (context) =>
+                    _routeBuilder(context, ProfileNavigatorRoutes.product, product: product, category: category),
                 settings: RouteSettings(name: ProfileNavigatorRoutes.product),
               ),
             )
@@ -246,8 +260,8 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             onProductPush: (product) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.product,
-                        product: product, category: category),
+                    builder: (context) =>
+                        _routeBuilder(context, ProfileNavigatorRoutes.product, product: product, category: category),
                     settings: RouteSettings(name: ProfileNavigatorRoutes.product),
                   ),
                 )
@@ -256,24 +270,18 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 .push(
                   CupertinoPageRoute(
                     builder: (context) => _routeBuilder(context, ProfileNavigatorRoutes.products,
-                        product: product,
-                        category: category,
-                        parameters: parameters,
-                        productTitle: title),
+                        product: product, category: category, parameters: parameters, productTitle: title),
                     settings: RouteSettings(name: ProfileNavigatorRoutes.products),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (orderParameters) async {
-              await createOrderRepository.update(orderParameters);
+            onCheckoutPush: (Order newOrder) {
+              if (newOrder != null) {
+                order = newOrder;
 
-              order = createOrderRepository.response?.content;
-
-              if (order != null)
-                return Navigator.of(context).pushNamed(
-                  ProfileNavigatorRoutes.checkout,
-                );
+                Navigator.of(context).pushNamed(ProfileNavigatorRoutes.checkout);
+              }
             },
           );
         });
@@ -281,14 +289,15 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
       case ProfileNavigatorRoutes.favourites:
         topPanelController.needShow = false;
         return MultiProvider(
-            providers: [
-              ChangeNotifierProvider<FavouritesProductsRepository>(
-                  create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(
-                  create: (_) => AddRemoveFavouriteRepository())
-            ],
-            builder: (context, _) {
-              return FavouritesPage(onPush: (product) {
+          providers: [
+            ChangeNotifierProvider<FavouritesProductsRepository>(
+                create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+          ],
+          builder: (context, _) {
+            return FavouritesPage(
+              onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
+              onPush: (product) {
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(
@@ -298,8 +307,10 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                       ),
                     )
                     .then((value) => topPanelController.needShow = false);
-              });
-            });
+              },
+            );
+          },
+        );
 
       case ProfileNavigatorRoutes.checkout:
         return CheckoutPage(
@@ -345,8 +356,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             observers: [ProfileNavigatorObserver()],
             onGenerateRoute: (routeSettings) {
               return CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, routeSettings.name, isAuthorized: snapshot.data),
+                builder: (context) => _routeBuilder(context, routeSettings.name, isAuthorized: snapshot.data),
                 settings: routeSettings,
               );
             },

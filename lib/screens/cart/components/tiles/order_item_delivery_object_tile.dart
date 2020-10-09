@@ -16,14 +16,11 @@ class OrderItemDeliveryObjectTile extends StatelessWidget {
 
       case Delivery.PICKUP_POINT:
         switch (deliveryObject.type) {
-          case UserAddressType.pickpoint:
-            return "Пункт выдачи";
-
           case UserAddressType.boxberry_pickpoint:
             return "Пункт выдачи Boxrberry";
 
           default:
-            return "Что-то не так";
+            return "Пункт выдачи";
         }
         break;
 

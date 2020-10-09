@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/products.dart';
 import 'package:refashioned_app/repositories/products.dart';
-
-import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/repositories/size.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
@@ -16,7 +17,7 @@ import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
-class AuthorizedProfilePage extends StatelessWidget {
+class AuthorizedProfilePage extends StatefulWidget {
   final Function() onFavClick;
   final Function(Product) onProductPush;
   final Function() onSettingsClick;
@@ -25,31 +26,58 @@ class AuthorizedProfilePage extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    var profileProductsRepository = context.watch<ProfileProductsRepository>();
+  _AuthorizedProfilePageState createState() => _AuthorizedProfilePageState();
+}
 
-    if (profileProductsRepository.productsContent == null) {
-      return Center(
-          child: SizedBox(
-        height: 32.0,
-        width: 32.0,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          backgroundColor: accentColor,
-          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-        ),
-      ));
-    }
+class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
+  Widget loadIcon;
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  @override
+  void initState() {
+    Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    loadIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
+
+    // if (profileProductsRepository.loadingFailed)
+    //   return Center(
+    //     child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+    //   );
 
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Column(
         children: [
           _appBar(context),
-          if (profileProductsRepository.productsContent.products.isNotEmpty)
-            _profileProducts(context, profileProductsRepository.productsContent)
-          else
-            _profilePlaceHolder(context)
+          Consumer<ProfileProductsRepository>(builder: (context, profileProductsRepository, child) {
+            if (profileProductsRepository.isLoading && profileProductsRepository.response == null) {
+              return Expanded(
+                  child: Center(
+                      child: SizedBox(
+                height: 32.0,
+                width: 32.0,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  backgroundColor: accentColor,
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                ),
+              )));
+            }
+
+            if (profileProductsRepository.loadingFailed)
+              return Expanded(
+                  child: Center(
+                child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+              ));
+
+            return _profileProducts(context, profileProductsRepository.response.content);
+
+            return SizedBox();
+          }),
         ],
       ),
     );
@@ -145,7 +173,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                 ),
                 Tapable(
                   onTap: () {
-                    onFavClick();
+                    widget.onFavClick();
                   },
                   padding: EdgeInsets.all(10),
                   child: Column(
@@ -180,7 +208,7 @@ class AuthorizedProfilePage extends StatelessWidget {
                 Tapable(
                   padding: EdgeInsets.all(10),
                   onTap: () {
-                    onSettingsClick();
+                    widget.onSettingsClick();
                   },
                   child: Column(
                     children: [
@@ -208,50 +236,102 @@ class AuthorizedProfilePage extends StatelessWidget {
   }
 
   Widget _profilePlaceHolder(context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-        child: Expanded(
+      height: MediaQuery.of(context).size.height - (268 + MediaQuery.of(context).padding.top),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SVGIcon(
-            icon: IconAsset.hanger,
-            height: 60,
-            color: Colors.black,
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: SVGIcon(
+                  icon: IconAsset.hanger,
+                  size: 48,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4),
+                child: SizedBox(
+                  width: 250,
+                  child: Text(
+                    "Ваш гардероб пуст",
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4),
+                child: SizedBox(
+                  width: 230,
+                  child: Text(
+                    "Вы еще не разместили ни одной вещи в вашем гардеробе",
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Text(
-            'Ваш гардероб пуст',
-            style: textTheme.headline1,
-          ),
-          Container(
-              padding: EdgeInsets.only(top: 10, bottom: 5),
-              child: Text(
-                'Вы еще не разместили ни одной вещи \n в вашем гардеробе',
-                textAlign: TextAlign.center,
-              )),
           Padding(
-            padding: const EdgeInsets.only(
-              top: 30,
-            ),
-            child: Button(
-              "РАЗМЕСТИТЬ ВЕЩЬ",
-              buttonStyle: ButtonStyle.dark,
-              height: 45,
-              width: 180,
-              borderRadius: 5,
-              onClick: () {
+            padding: const EdgeInsets.all(28),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
                 Navigator.of(context, rootNavigator: true).push(
-                  CupertinoPageRoute(
-                    builder: (context) => MarketplaceNavigator(
-                      onClose: Navigator.of(context).pop,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                      position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                      child: ChangeNotifierProvider<SizeRepository>(
+                        create: (_) => SizeRepository(),
+                        builder: (context, _) => MarketplaceNavigator(
+                          onClose: () {
+                            Navigator.of(context).pop();
+                          },
+                          onProductCreated: (productData) {
+                            var addProductRepository = AddProductRepository();
+                            addProductRepository.addListener(() {
+                              if (addProductRepository.isLoaded) {
+                                Provider.of<ProfileProductsRepository>(this.context, listen: false)
+                                  ..response = null
+                                  ..getProducts();
+                              }
+                            });
+                            addProductRepository.addProduct(productData);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 );
               },
+              child: Container(
+                width: 180,
+                height: 35,
+                decoration: ShapeDecoration(
+                  color: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "РАЗМЕСТИТЬ ВЕЩЬ".toUpperCase(),
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        color: Colors.white,
+                      ),
+                ),
+              ),
             ),
-          ),
+          )
         ],
       ),
-    ));
+    );
   }
 
   Widget _profileProducts(context, ProductsContent productsContent) {
@@ -261,7 +341,7 @@ class AuthorizedProfilePage extends StatelessWidget {
       products.add(Column(children: <Widget>[
         ProfileProductTile(
           product: value,
-          onProductPush: onProductPush,
+          onProductPush: widget.onProductPush,
         ),
         if (key != productsContent.products.length - 1)
           Padding(
@@ -273,20 +353,45 @@ class AuthorizedProfilePage extends StatelessWidget {
       ]));
     });
     return Expanded(
-        child: ListView(
-      padding: EdgeInsets.only(bottom: 80),
-      shrinkWrap: true,
-      children: <Widget>[
-        _menuButtons(context),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
-          child: Text(
-            "Мои вещи",
-            style: Theme.of(context).textTheme.headline2,
-          ),
-        ),
-        ...products
-      ],
+        child: SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: false,
+      header: ClassicHeader(
+        completeDuration: Duration.zero,
+        completeIcon: null,
+        completeText: "",
+        idleIcon: loadIcon,
+        idleText: "Обновление",
+        refreshingText: "Обновление",
+        refreshingIcon: loadIcon,
+        releaseIcon: loadIcon,
+        releaseText: "Обновление",
+      ),
+      controller: _refreshController,
+      onRefresh: () async {
+        HapticFeedback.heavyImpact();
+        await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+        _refreshController.refreshCompleted();
+      },
+      child: ListView(
+        padding: EdgeInsets.only(bottom: 80),
+        shrinkWrap: true,
+        children: <Widget>[
+          _menuButtons(context),
+          productsContent.products.isNotEmpty
+              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
+                    child: Text(
+                      "Мои вещи",
+                      style: Theme.of(context).textTheme.headline2,
+                    ),
+                  ),
+                  ...products
+                ])
+              : _profilePlaceHolder(context)
+        ],
+      ),
     ));
   }
 }

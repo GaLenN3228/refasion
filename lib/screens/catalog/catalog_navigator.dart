@@ -12,7 +12,6 @@ import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
@@ -81,7 +80,8 @@ class CatalogNavigator extends StatefulWidget {
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -93,8 +93,6 @@ class CatalogNavigator extends StatefulWidget {
 }
 
 class _CatalogNavigatorState extends State<CatalogNavigator> {
-  CreateOrderRepository createOrderRepository;
-
   Order order;
   int totalPrice;
 
@@ -102,16 +100,12 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
 
   @override
   initState() {
-    createOrderRepository = CreateOrderRepository();
-
     topPanelController = Provider.of<TopPanelController>(context, listen: false);
     super.initState();
   }
 
   @override
   dispose() {
-    createOrderRepository.dispose();
-
     super.dispose();
   }
 
@@ -304,15 +298,12 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                   .then((value) => topPanelController.needShow = false);
             },
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (orderParameters) async {
-              await createOrderRepository.update(orderParameters);
+            onCheckoutPush: (Order newOrder) {
+              if (newOrder != null) {
+                order = newOrder;
 
-              order = createOrderRepository.response?.content;
-
-              if (order != null)
-                return Navigator.of(context).pushNamed(
-                  CatalogNavigatorRoutes.checkout,
-                );
+                Navigator.of(context).pushNamed(CatalogNavigatorRoutes.checkout);
+              }
             },
             onPickupAddressPush: widget.openPickUpAddressMap?.call,
           );
@@ -336,13 +327,15 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
       case CatalogNavigatorRoutes.favourites:
         topPanelController.needShow = false;
         return MultiProvider(
-            providers: [
-              ChangeNotifierProvider<FavouritesProductsRepository>(
-                  create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-              ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
-            ],
-            builder: (context, _) {
-              return FavouritesPage(onPush: (product) {
+          providers: [
+            ChangeNotifierProvider<FavouritesProductsRepository>(
+                create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+          ],
+          builder: (context, _) {
+            return FavouritesPage(
+              onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
+              onPush: (product) {
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(
@@ -351,8 +344,10 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                       ),
                     )
                     .then((value) => topPanelController.needShow = false);
-              });
-            });
+              },
+            );
+          },
+        );
 
       case CatalogNavigatorRoutes.checkout:
         return CheckoutPage(

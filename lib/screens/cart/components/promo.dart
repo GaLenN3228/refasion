@@ -35,7 +35,7 @@
 //               ),
 //               Button(
 //                 "Применить",
-//                 buttonStyle: ButtonStyle.gray,
+//                 buttonStyle: CustomButtonStyle.gray,
 //                 toUpperCase: false,
 //               )
 //             ],

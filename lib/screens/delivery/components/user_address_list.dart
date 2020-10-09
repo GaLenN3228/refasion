@@ -18,7 +18,7 @@ class UserAddressesList extends StatefulWidget {
   final String bottomText;
 
   final Function() onAddAddress;
-  final Function(String) onSelectAddress;
+  final Function(UserAddress) onSelectAddress;
 
   const UserAddressesList({
     Key key,
@@ -35,20 +35,20 @@ class UserAddressesList extends StatefulWidget {
 }
 
 class _UserAddressesListState extends State<UserAddressesList> {
-  String selectedUserAddressId;
+  UserAddress selectedUserAddressId;
 
   @override
   initState() {
-    if (widget.list.isNotEmpty) selectedUserAddressId = widget.list.first.id;
+    if (widget.list.isNotEmpty) selectedUserAddressId = widget.list.first;
 
     super.initState();
   }
 
-  onSelect(String id) {
+  onSelect(UserAddress userAddress) {
     HapticFeedback.selectionClick();
 
     setState(() {
-      selectedUserAddressId = id;
+      selectedUserAddressId = userAddress;
     });
   }
 
@@ -65,7 +65,7 @@ class _UserAddressesListState extends State<UserAddressesList> {
                 .map((userAddress) => UserAddressTile(
                       userAddress: userAddress,
                       deliveryType: widget.deliveryType,
-                      value: userAddress.id == selectedUserAddressId,
+                      value: userAddress.id == selectedUserAddressId.id,
                       onSelect: onSelect,
                     ))
                 .toList(),

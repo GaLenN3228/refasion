@@ -119,7 +119,7 @@ class BaseRepository<T> with ChangeNotifier {
 
   static Future<void> setAuthorized(bool isAuthorized) async {
     var prefs = await SharedPreferences.getInstance();
-    return await prefs.setBool(Prefs.is_authorized, isAuthorized);
+    return prefs.setBool(Prefs.is_authorized, isAuthorized);
   }
 
   static Future<bool> isAuthorized() async {

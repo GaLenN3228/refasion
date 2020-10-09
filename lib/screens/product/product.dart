@@ -1,18 +1,21 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
+import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
+import 'package:refashioned_app/screens/components/message.dart';
+import 'package:refashioned_app/screens/components/product/size.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
@@ -36,15 +39,15 @@ class ProductPage extends StatefulWidget {
   final Function(String parameters, String title) onSubCategoryClick;
   final Function() onCartPush;
   final Function(PickPoint) onPickupAddressPush;
-
-  final Function(String orderParameters) onCheckoutPush;
+  final Function(Order) onCheckoutPush;
 
   final Function(
     BuildContext,
     String, {
     List<DeliveryType> deliveryTypes,
     Function() onClose,
-    Function(String, String) onFinish,
+    Function() onFinish,
+    Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
@@ -55,8 +58,8 @@ class ProductPage extends StatefulWidget {
     this.onSubCategoryClick,
     this.onCartPush,
     this.openDeliveryTypesSelector,
-    this.onCheckoutPush,
     this.onPickupAddressPush,
+    this.onCheckoutPush,
   }) : assert(product != null);
 
   @override
@@ -65,6 +68,10 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   ProductRepository productRepository;
+
+  CreateOrderRepository createOrderRepository;
+
+  Order order;
 
   Status status;
 
@@ -77,6 +84,8 @@ class _ProductPageState extends State<ProductPage> {
 
     productRepository.statusNotifier.addListener(repositoryStatusListener);
 
+    createOrderRepository = CreateOrderRepository();
+
     super.initState();
   }
 
@@ -87,6 +96,8 @@ class _ProductPageState extends State<ProductPage> {
     productRepository.statusNotifier.removeListener(repositoryStatusListener);
 
     productRepository.dispose();
+
+    createOrderRepository.dispose();
 
     super.dispose();
   }
@@ -107,8 +118,8 @@ class _ProductPageState extends State<ProductPage> {
           );
 
         return Builder(
-          builder: (context) => Consumer<AddRemoveFavouriteRepository>(
-              builder: (context, addRemoveFavouriteRepository, child) {
+          builder: (context) =>
+              Consumer<AddRemoveFavouriteRepository>(builder: (context, addRemoveFavouriteRepository, child) {
             return RefashionedTopBar(
               data: TopBarData(
                   leftButtonData: TBButtonData.icon(
@@ -120,9 +131,7 @@ class _ProductPageState extends State<ProductPage> {
                     product.currentPrice.toString() + " ₽",
                   ),
                   rightButtonData: TBButtonData(
-                    iconType: widget.product.isFavourite
-                        ? TBIconType.favoriteFilled
-                        : TBIconType.favorite,
+                    iconType: widget.product.isFavourite ? TBIconType.favoriteFilled : TBIconType.favorite,
                     iconColor: widget.product.isFavourite ? Color(0xFFD12C2A) : Color(0xFF000000),
                     animated: true,
                     onTap: () async {
@@ -132,8 +141,7 @@ class _ProductPageState extends State<ProductPage> {
                             ? widget.product.isFavourite
                                 ? addRemoveFavouriteRepository
                                     .removeFromFavourites((widget.product..isFavourite = false).id)
-                                : addRemoveFavouriteRepository
-                                    .addToFavourites((widget.product..isFavourite = true).id)
+                                : addRemoveFavouriteRepository.addToFavourites((widget.product..isFavourite = true).id)
                             : showMaterialModalBottomSheet(
                                 expand: false,
                                 context: context,
@@ -193,8 +201,7 @@ class _ProductPageState extends State<ProductPage> {
           child: Stack(
             children: [
               ListView(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 22.0),
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 22.0),
                 children: <Widget>[
                   ProductSlider(
                     images: product.images,
@@ -204,11 +211,23 @@ class _ProductPageState extends State<ProductPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        if (!product.available)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: RefashionedMessage(
+                              title: "Товар в резерве",
+                              message: "Этот товар уже оплатил другой покупатель, и он находится в резерве.",
+                            ),
+                          ),
                         ProductPrice(
                           product: product,
                         ),
                         ProductTitle(
                           product: product,
+                        ),
+                        ProductSizeTile(
+                          product: product,
+                          style: ProductSizeTileStyle.large,
                         ),
                         ProductSeller(
                           seller: product.seller,
@@ -234,32 +253,68 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ],
               ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 99,
-                child: ProductBottomButtons(
-                  productId: widget.product.id,
-                  onCartPush: widget.onCartPush,
-                  openDeliveryTypesSelector: () => widget.openDeliveryTypesSelector?.call(
-                    context,
-                    widget.product.id,
-                    deliveryTypes: product.deliveryTypes,
-                    onFinish: (companyId, objectId) => widget.onCheckoutPush?.call(
-                      jsonEncode(
-                        [
-                          {
-                            "delivery_company": companyId,
-                            "delivery_object_id": objectId,
-                            "products": [product.id],
-                          },
-                        ],
-                      ),
+              if (product.available)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 99,
+                  child: ProductBottomButtons(
+                    productId: widget.product.id,
+                    onCartPush: widget.onCartPush,
+                    openDeliveryTypesSelector: () => widget.openDeliveryTypesSelector?.call(
+                      context,
+                      product.id,
+                      deliveryTypes: product.deliveryTypes,
+                      onFinish: () => widget.onCheckoutPush?.call(order),
+                      onSelect: (companyId, objectId) async {
+                        await createOrderRepository.update(
+                          jsonEncode(
+                            [
+                              {
+                                "delivery_company": companyId,
+                                "delivery_object_id": objectId,
+                                "products": [product.id],
+                              },
+                            ],
+                          ),
+                        );
+
+                        order = createOrderRepository.response?.content;
+
+                        final result = order != null;
+
+                        if (!result) {
+                          showCupertinoDialog(
+                            context: context,
+                            useRootNavigator: true,
+                            builder: (context) => CupertinoAlertDialog(
+                              title: Text(
+                                "Ошибка",
+                                style: Theme.of(context).textTheme.headline1,
+                              ),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  createOrderRepository.response?.errors?.messages ?? "Неизвестная ошибка",
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              ),
+                              actions: [
+                                CupertinoDialogAction(
+                                  onPressed: Navigator.of(context).pop,
+                                  child: Text("ОК"),
+                                )
+                              ],
+                            ),
+                          );
+                        }
+
+                        return result;
+                      },
+                      originalOverlayStyle: SystemUiOverlayStyle.dark,
                     ),
-                    originalOverlayStyle: SystemUiOverlayStyle.dark,
                   ),
                 ),
-              ),
             ],
           ),
         );

@@ -7,10 +7,8 @@ import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/repositories/filters.dart';
-import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
-import 'package:refashioned_app/screens/onbording/on_bording.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 void main() async {
@@ -31,6 +29,9 @@ class RefashionApp extends StatelessWidget {
 
     return MultiProvider(
         providers: [
+          ChangeNotifierProvider<ConfigRepository>(
+            create: (_) => ConfigRepository()..update(),
+          ),
           ChangeNotifierProvider<CatalogRepository>(
             create: (_) => CatalogRepository()..getCatalog(),
           ),
@@ -45,6 +46,9 @@ class RefashionApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<FiltersRepository>(
             create: (_) => FiltersRepository(),
+          ),
+          ChangeNotifierProvider<ProfileProductsRepository>(
+            create: (_) => ProfileProductsRepository(),
           ),
           Provider<SizesProvider>(
             create: (_) => SizesProvider(),
