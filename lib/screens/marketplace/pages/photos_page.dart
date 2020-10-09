@@ -134,8 +134,15 @@ class _PhotosPageState extends State<PhotosPage> {
               bottom: 0,
               child: BottomButton(
                 title: "ПРОДОЛЖИТЬ",
+                enabled: images.values.any((element) => element != null),
                 action: () {
-                  widget.onPush(images.values.toList());
+                  var finalPhotos = List<File>();
+                  images.forEach((key, value) {
+                    if (value != null) {
+                      finalPhotos.add(value);
+                    }
+                  });
+                  widget.onPush(finalPhotos);
                 },
               )),
         ],
