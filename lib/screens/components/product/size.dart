@@ -35,7 +35,10 @@ class ProductSizeTile extends StatelessWidget {
               Text(
                 "Размер: ${size.value} ${size.shortCode}" +
                     (size.secondaryValue != null ? " (${size.secondaryValue})" : ""),
-                style: Theme.of(context).textTheme.bodyText1.copyWith(height: 1.2),
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                      height: 1.0,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
               SizesTableLink(),
             ],

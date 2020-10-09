@@ -228,7 +228,7 @@ class _ProductPageState extends State<ProductPage> {
                         ProductSizeTile(
                           product: product,
                           style: ProductSizeTileStyle.large,
-                          padding: EdgeInsets.only(top: 5, bottom: 10),
+                          padding: EdgeInsets.only(bottom: 8),
                         ),
                         ProductSeller(
                           seller: product.seller,
