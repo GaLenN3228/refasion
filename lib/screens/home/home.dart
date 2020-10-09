@@ -197,7 +197,8 @@ class _HomePageState extends State<HomePage> {
         height: 245,
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
+          physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          // shrinkWrap: true,
           slivers: [
             SliverPadding(
                 padding: EdgeInsets.only(left: 14, right: 14),
@@ -241,9 +242,7 @@ class _HomePageState extends State<HomePage> {
                 style: textTheme.subtitle1,
               ),
             ),
-            Container(
-                padding: EdgeInsets.only(top: 5, bottom: 8),
-                child: Text('Москва', style: textTheme.caption)),
+            Container(padding: EdgeInsets.only(top: 5, bottom: 8), child: Text('Москва', style: textTheme.caption)),
             ProductPrice(
               product: product,
             ),
