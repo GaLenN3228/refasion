@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
-import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/sizes_table_link.dart';
 
 class FilterTileRange extends StatefulWidget {
   final Filter filter;
@@ -31,36 +31,14 @@ class _FilterTileRangeState extends State<FilterTileRange> {
                     children: [
                       Text(
                         widget.filter.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            .copyWith(fontWeight: FontWeight.w500),
+                        style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
                       ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SVGIcon(
-                            icon: IconAsset.info,
-                            size: 26,
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            "Таблица размеров",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                .copyWith(decoration: TextDecoration.underline),
-                          ),
-                        ],
-                      ),
+                      SizesTableLink(),
                     ],
                   )
                 : Text(
                     widget.filter.name,
-                    style:
-                        Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
+                    style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
                   ),
           ),
           SizedBox(

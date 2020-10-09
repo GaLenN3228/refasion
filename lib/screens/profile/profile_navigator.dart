@@ -150,7 +150,6 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
       Product product,
       Seller seller,
       String parameters,
-      Order order,
       String productTitle,
       SearchResult searchResult}) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);

@@ -34,8 +34,10 @@ class Product {
   final List<DeliveryType> deliveryTypes;
 
   final bool available;
+  final List<ProductSize> sizes;
 
   Product({
+    this.sizes,
     this.available,
     this.pickUpAddress,
     this.deliveryTypes,
@@ -75,6 +77,12 @@ class Product {
         for (final deliveryType in json['takeaways']) DeliveryType.fromJson(deliveryType)
     ].where((element) => element != null).toList();
 
+    final size = json['size'];
+    final sizes = [
+      if (size != null && size['international_values'] != null)
+        for (final internationValue in size['international_values']) ProductSize.fromJson(internationValue)
+    ].where((element) => element != null).toList();
+
     return Product(
       id: json['id'],
       article: json['article'],
@@ -98,6 +106,27 @@ class Product {
       deliveryTypes: deliveryTypes,
       state: state,
       available: available,
+      sizes: sizes,
+    );
+  }
+}
+
+class ProductSize {
+  final String code;
+  final String shortCode;
+  final String value;
+  final String secondaryValue;
+
+  const ProductSize({this.shortCode, this.code, this.value, this.secondaryValue});
+
+  factory ProductSize.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    return ProductSize(
+      code: json['code'],
+      shortCode: json['short_code'],
+      value: json['value'],
+      secondaryValue: json['secondary_value'],
     );
   }
 }
