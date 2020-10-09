@@ -79,7 +79,14 @@ class _BrandPageState extends State<BrandPage> {
 
                       final query = repository.query;
 
-                      if (results == null || results.isEmpty) return SizedBox();
+                      if (results == null || results.isEmpty)
+                        return Container(
+                            margin: EdgeInsets.only(bottom: 190),
+                            color: Colors.white,
+                            child: Center(
+                              child: Text("Не найдено, повторите запрос",
+                                  style: Theme.of(context).textTheme.bodyText1),
+                            ));
 
                       return ListView.separated(
                         padding: EdgeInsets.only(

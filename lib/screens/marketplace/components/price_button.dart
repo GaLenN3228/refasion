@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -22,6 +23,8 @@ class PriceButton extends StatelessWidget {
     PriceButtonType.tradeIn: "Сдать в Трейд-ин",
     PriceButtonType.diy: "Вы получите"
   };
+
+  final numberFormat = NumberFormat("#,###", "ru_Ru");
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +56,7 @@ class PriceButton extends StatelessWidget {
                     color: enabled ? accentColor : Colors.transparent,
                     padding: const EdgeInsets.symmetric(horizontal: 2),
                     child: Text(
-                      price.toString() + " ₽",
+                        "${numberFormat.format(price)}" + " ₽",
                       style: Theme.of(context).textTheme.headline1.copyWith(
                           fontSize: 22,
                           color: enabled ? primaryColor : darkGrayColor),
