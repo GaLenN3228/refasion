@@ -81,6 +81,10 @@ class CartNavigatorObserver extends NavigatorObserver {
 }
 
 class CartNavigator extends StatefulWidget {
+  static of(BuildContext context, {bool root = false}) => root
+      ? context.findRootAncestorStateOfType<_CartNavigatorState>()
+      : context.findAncestorStateOfType<_CartNavigatorState>();
+
   final GlobalKey<NavigatorState> navigatorKey;
 
   final Function(
@@ -92,8 +96,6 @@ class CartNavigator extends StatefulWidget {
     Future<bool> Function(String, String) onSelect,
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
-
-  _CartNavigatorState _cartNavigatorState;
 
   final Function(BottomTab) changeTabTo;
   final Function(PickPoint) openPickUpAddressMap;
@@ -107,7 +109,7 @@ class CartNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) => _cartNavigatorState._routeBuilder(context, CartNavigatorRoutes.favourites),
+            builder: (context) => CartNavigator.of(context)._routeBuilder(context, CartNavigatorRoutes.favourites),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -119,7 +121,7 @@ class CartNavigator extends StatefulWidget {
         .push(
           CupertinoPageRoute(
             builder: (context) =>
-                _cartNavigatorState._routeBuilder(context, CartNavigatorRoutes.products, searchResult: searchResult),
+                CartNavigator.of(context)._routeBuilder(context, CartNavigatorRoutes.products, searchResult: searchResult),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -127,8 +129,7 @@ class CartNavigator extends StatefulWidget {
 
   @override
   _CartNavigatorState createState() {
-    _cartNavigatorState = _CartNavigatorState();
-    return _cartNavigatorState;
+    return _CartNavigatorState();
   }
 }
 
