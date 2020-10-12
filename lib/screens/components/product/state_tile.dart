@@ -19,7 +19,9 @@ class ProductStateTile extends StatelessWidget {
 
   final bool showAllStates;
 
-  const ProductStateTile({this.product, this.showAllStates: false});
+  final EdgeInsets padding;
+
+  const ProductStateTile({this.product, this.showAllStates: false, this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class ProductStateTile extends StatelessWidget {
     if (state == null || (!showAllStates && product.available)) return SizedBox();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: padding ?? EdgeInsets.zero,
       child: Text(
         stateLabels[state],
         style: Theme.of(context).textTheme.subtitle2.copyWith(color: stateColors[state], height: 1.0),
