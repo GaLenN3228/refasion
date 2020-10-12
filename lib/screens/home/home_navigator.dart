@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
+import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/components/webview_page.dart';
@@ -29,6 +30,7 @@ class HomeNavigatorRoutes {
   static const String favourites = '/favourites';
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
+  static const String paymentFailed = '/payment_failed';
   static const String doc = '/doc';
 }
 
@@ -51,19 +53,14 @@ class HomeNavigator extends StatefulWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  HomeNavigator(
-      {this.navigatorKey,
-      this.changeTabTo,
-      this.openPickUpAddressMap,
-      this.openDeliveryTypesSelector});
+  HomeNavigator({this.navigatorKey, this.changeTabTo, this.openPickUpAddressMap, this.openDeliveryTypesSelector});
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) =>
-                HomeNavigator.of(context)._routeBuilder(context, HomeNavigatorRoutes.favourites),
+            builder: (context) => HomeNavigator.of(context)._routeBuilder(context, HomeNavigatorRoutes.favourites),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -74,8 +71,8 @@ class HomeNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
       CupertinoPageRoute(
-        builder: (context) => HomeNavigator.of(context)
-            ._routeBuilder(context, HomeNavigatorRoutes.products, searchResult: searchResult),
+        builder: (context) =>
+            HomeNavigator.of(context)._routeBuilder(context, HomeNavigatorRoutes.products, searchResult: searchResult),
       ),
     )
         .then((value) {
@@ -129,8 +126,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) =>
-                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
+                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
                   ),
                 )
                 .then((value) => topPanelController.needShow = true);
@@ -139,20 +135,18 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
-                        collectionUrl: url, productTitle: title),
+                    builder: (context) =>
+                        _routeBuilder(context, HomeNavigatorRoutes.products, collectionUrl: url, productTitle: title),
                     settings: RouteSettings(name: HomeNavigatorRoutes.products),
                   ),
                 )
-                .then((value) =>
-                    {topPanelController.needShow = true, topPanelController.needShowBack = false});
+                .then((value) => {topPanelController.needShow = true, topPanelController.needShowBack = false});
           },
           onDocPush: (String url, String urlName) {
             Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) =>
-                    _routeBuilder(context, HomeNavigatorRoutes.doc, url: url, urlName: urlName),
+                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.doc, url: url, urlName: urlName),
               ),
             )
                 .then(
@@ -178,8 +172,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             onPush: (product, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                    product: product, category: category),
+                builder: (context) =>
+                    _routeBuilder(context, HomeNavigatorRoutes.product, product: product, category: category),
               ),
             )
                 .then(
@@ -203,8 +197,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             onProductPush: (product) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                        product: product, category: category),
+                    builder: (context) =>
+                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product, category: category),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
@@ -212,10 +206,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 .push(
                   CupertinoPageRoute(
                     builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
-                        product: product,
-                        category: category,
-                        parameters: parameters,
-                        productTitle: title),
+                        product: product, category: category, parameters: parameters, productTitle: title),
                     settings: RouteSettings(name: HomeNavigatorRoutes.products),
                   ),
                 )
@@ -237,8 +228,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
           providers: [
             ChangeNotifierProvider<FavouritesProductsRepository>(
                 create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-            ChangeNotifierProvider<AddRemoveFavouriteRepository>(
-                create: (_) => AddRemoveFavouriteRepository())
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
           ],
           builder: (context, _) {
             return FavouritesPage(
@@ -247,8 +237,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(
-                        builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                            product: product, category: category),
+                        builder: (context) =>
+                            _routeBuilder(context, HomeNavigatorRoutes.product, product: product, category: category),
                       ),
                     )
                     .then((value) => topPanelController.needShow = false);
@@ -260,10 +250,11 @@ class _HomeNavigatorState extends State<HomeNavigator> {
       case HomeNavigatorRoutes.checkout:
         return CheckoutPage(
           order: order,
-          onOrderCreatedPush: (newTotalPrice) async {
+          onPush: (newTotalPrice, {bool success}) async {
             totalPrice = newTotalPrice;
+
             await Navigator.of(context).pushReplacementNamed(
-              HomeNavigatorRoutes.orderCreated,
+              success ?? false ? HomeNavigatorRoutes.orderCreated : HomeNavigatorRoutes.paymentFailed,
             );
           },
         );
@@ -274,6 +265,11 @@ class _HomeNavigatorState extends State<HomeNavigator> {
           onUserOrderPush: () => widget.changeTabTo(
             BottomTab.profile,
           ),
+        );
+
+      case HomeNavigatorRoutes.paymentFailed:
+        return PaymentFailedPage(
+          totalPrice: totalPrice,
         );
 
       case HomeNavigatorRoutes.doc:

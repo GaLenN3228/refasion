@@ -59,7 +59,9 @@ enum IconAsset {
   marketPlaceCategory2,
   marketPlaceCategory3,
 
-  remove_from_publication
+  remove_from_publication,
+
+  paymentFailed,
 }
 
 final assets = {
@@ -113,6 +115,7 @@ final assets = {
   IconAsset.marketPlaceCategory2: "market_place_category_2.svg",
   IconAsset.marketPlaceCategory3: "market_place_category_3.svg",
   IconAsset.remove_from_publication: "remove_from_publication.svg",
+  IconAsset.paymentFailed: "payment_failed.svg",
 };
 
 class SVGIcon extends StatelessWidget {

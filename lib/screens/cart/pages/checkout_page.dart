@@ -13,15 +13,14 @@ import 'package:refashioned_app/screens/components/button/components/button_deco
 import 'package:refashioned_app/screens/components/button/components/button_title.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
-import 'package:refashioned_app/utils/colors.dart';
 
 class CheckoutPage extends StatefulWidget {
   final Function() onClose;
-  final Function(int) onOrderCreatedPush;
+  final Function(int, {bool success}) onPush;
 
   final Order order;
 
-  const CheckoutPage({Key key, this.onClose, this.order, this.onOrderCreatedPush}) : super(key: key);
+  const CheckoutPage({Key key, this.onClose, this.order, this.onPush}) : super(key: key);
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
@@ -91,7 +90,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         expand: true,
         builder: (context, controller) => PaymentPage(
           initialUrl: paymentUrl,
-          onFinish: () => widget.onOrderCreatedPush?.call(order?.orderSummary?.total),
+          onFinish: () => widget.onPush?.call(order?.orderSummary?.total, success: true),
         ),
       );
     }

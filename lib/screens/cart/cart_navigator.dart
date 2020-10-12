@@ -14,6 +14,7 @@ import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
+import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/product/product.dart';
@@ -26,6 +27,7 @@ class CartNavigatorRoutes {
   static const String seller = '/seller';
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
+  static const String paymentFailed = '/payment_failed';
   static const String products = '/products';
   static const String favourites = '/favourites';
 }
@@ -120,8 +122,8 @@ class CartNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) =>
-                CartNavigator.of(context)._routeBuilder(context, CartNavigatorRoutes.products, searchResult: searchResult),
+            builder: (context) => CartNavigator.of(context)
+                ._routeBuilder(context, CartNavigatorRoutes.products, searchResult: searchResult),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -322,10 +324,11 @@ class _CartNavigatorState extends State<CartNavigator> {
       case CartNavigatorRoutes.checkout:
         return CheckoutPage(
           order: order,
-          onOrderCreatedPush: (newTotalPrice) async {
+          onPush: (newTotalPrice, {bool success}) async {
             totalPrice = newTotalPrice;
+
             await Navigator.of(context).pushReplacementNamed(
-              CartNavigatorRoutes.orderCreated,
+              success ?? false ? CartNavigatorRoutes.orderCreated : CartNavigatorRoutes.paymentFailed,
             );
           },
         );
@@ -336,6 +339,11 @@ class _CartNavigatorState extends State<CartNavigator> {
           onUserOrderPush: () => widget.changeTabTo(
             BottomTab.profile,
           ),
+        );
+
+      case CartNavigatorRoutes.paymentFailed:
+        return PaymentFailedPage(
+          totalPrice: totalPrice,
         );
 
       default:
