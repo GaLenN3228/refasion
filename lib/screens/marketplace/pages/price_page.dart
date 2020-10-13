@@ -9,6 +9,7 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/marketplace/components/price_button.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class PricePage extends StatefulWidget {
   final int initialData;
@@ -29,6 +30,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
   TextEditingController textController;
   Map<PriceButtonType, int> prices;
   PriceFormatter priceFormatter;
+  String hintMessage;
 
   final double bottomPadding = 16;
 
@@ -38,6 +40,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
   CalcProductPrice _calcProductPrice;
 
   int newPrice;
+  int price = 0;
 
   @override
   void initState() {
@@ -57,12 +60,15 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
 
     _calcProductPrice = Provider.of<CalcProductPrice>(context, listen: false);
     _calcProductPrice.addListener(() {
-      var price = 0;
       if (_calcProductPrice.isLoaded ||
           (_calcProductPrice.isLoading && _calcProductPrice.response != null)) {
         price = _calcProductPrice.response.content.cash;
       } else {
+        hintMessage = hintMessage != null || (_calcProductPrice.loadingFailed && _calcProductPrice.response.errors != null)
+            ? _calcProductPrice.response.errors.messages.replaceAll("[", "").replaceAll("]", "")
+            : "Вы не можете разметсить вещь, стоимостью меньше 500 рублей";
         _calcProductPrice.response = null;
+        price = 0;
       }
 
       widget.onUpdate(newPrice);
@@ -72,6 +78,10 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
 
         prices = {PriceButtonType.tradeIn: price, PriceButtonType.diy: price};
       });
+    });
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      _calcProductPrice.calcProductPrice(1);
     });
 
     super.initState();
@@ -150,7 +160,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                           keyboardType: TextInputType.number,
                           focusNode: widget.focusNode,
                           autofocus: true,
-                          style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
+                          style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20, color: price != 0 ? primaryColor: Colors.redAccent),
                           cursorWidth: 2.0,
                           cursorRadius: Radius.circular(2.0),
                           cursorColor: Color(0xFFE6E6E6),
@@ -163,14 +173,28 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                             enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
                             hintText: "   ₽",
-                            hintStyle: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
+                            hintStyle: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20, color: Colors.redAccent),
                           ),
                         ),
                       ),
                     ),
                   ),
+                  Container(
+                    padding: EdgeInsets.only(top: 8, bottom: 16),
+                    alignment: Alignment.center,
+                    child: Text(
+                      hintMessage,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ),
+                  PriceButton(
+                    type: PriceButtonType.diy,
+                    prices: prices,
+                    onPush: () => widget.onPush(),
+                  ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
+                    padding: const EdgeInsets.only(top: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -190,11 +214,6 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                         ),
                       ],
                     ),
-                  ),
-                  PriceButton(
-                    type: PriceButtonType.diy,
-                    prices: prices,
-                    onPush: () => widget.onPush(),
                   ),
                 ],
               ),
