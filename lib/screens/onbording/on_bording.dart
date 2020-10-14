@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,9 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
+
+  List<CachedNetworkImageProvider> images;
+  bool isImagesLoaded = false;
 
   List<Widget> _buildPageIndicator(int _numPages) {
     List<Widget> list = [];
@@ -49,11 +53,30 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       );
 
+  _loadAllImages(List<String> urls) {
+    List<CachedNetworkImageProvider> cachedImages = [];
+    urls.forEach((url) {
+      var configuration = createLocalImageConfiguration(context);
+      var cachedImageProvider = CachedNetworkImageProvider(url);
+      cachedImageProvider.resolve(configuration).addListener(
+        ImageStreamListener(
+          (info, call) {
+            setState(() {
+              isImagesLoaded = true;
+            });
+          },
+        ),
+      );
+      cachedImages.add(cachedImageProvider);
+    });
+    images = cachedImages;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<OnBoardingRepository>(
-      builder: (context, onboardingRepository, _) {
-        if (onboardingRepository.isLoading && onboardingRepository.response == null)
+      builder: (context, onBoardingRepository, _) {
+        if (onBoardingRepository.isLoading && onBoardingRepository.response == null)
           return Center(
             child: CircularProgressIndicator(
               backgroundColor: accentColor,
@@ -61,134 +84,149 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
           );
 
-        if (onboardingRepository.loadingFailed)
+        if (onBoardingRepository.loadingFailed)
           return Center(
             child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
           );
-        var onBoarding = onboardingRepository.response.content;
+
+        var onBoarding = onBoardingRepository.response.content;
+
+        if (!isImagesLoaded) {
+          _loadAllImages(onBoarding.map((e) => e.image).toList());
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: accentColor,
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+            ),
+          );
+        }
+
         return Scaffold(
-          body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light,
-            child: Container(
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  Container(
-                    child: PageView(
-                        physics: ClampingScrollPhysics(),
-                        controller: _pageController,
-                        onPageChanged: (int page) {
-                          setState(() {
-                            _currentPage = page;
-                          });
-                        },
-                        children: [
-                          ...onBoarding,
-                        ].map(
-                          (item) {
-                            return SlideTile(
-                              imagePath: '${item.image}',
-                              title: "${item.title}",
-                              subtitle: Text(
-                                '${item.description}',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 18,
-                                    color: Color(0xFFFFFFFF)),
-                              ),
-                            );
-                          },
-                        ).toList()),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: _buildPageIndicator(onBoarding.length),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 25, bottom: 5),
-                        child: BottomButton(
-                          backgroundColor: Color(0xFFFAD24E),
-                          title: "дальше".toUpperCase(),
-                          enabled: true,
-                          titleColor: Colors.black,
-                          action: () {
-                            if (_currentPage == onBoarding.length - 1) {
-                              Future.delayed(Duration(milliseconds: 200), () {
-                                push(PhonePage(
-                                  needDismiss: false,
-                                  onAuthorizationDone: (context) {
-                                    push(TabSwitcher(), context: context);
-                                  },
-                                  onAuthorizationCancel: (context) {
-                                    push(TabSwitcher(), context: context);
-                                  },
-                                ));
-                              });
-                            } else {
-                              _pageController.nextPage(
-                                duration: Duration(milliseconds: 500),
-                                curve: Curves.ease,
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                      Tapable(
-                        padding: EdgeInsets.only(bottom: 40),
-                        onTap: () {
-                          Future.delayed(Duration(milliseconds: 200), () {
-                            push(PhonePage(
-                              needDismiss: false,
-                              onAuthorizationDone: (context) {
-                                push(TabSwitcher(), context: context);
-                              },
-                              onAuthorizationCancel: (context) {
-                                push(TabSwitcher(), context: context);
-                              },
-                            ));
-                          });
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                                padding: EdgeInsets.only(right: 5),
-                                child: Text(
-                                  'ПРОПУСТИТЬ',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .button
-                                      .copyWith(color: Colors.white),
-                                )),
-                            SVGIcon(
-                              icon: IconAsset.next,
-                              width: 12,
-                              height: 12,
-                              color: Colors.white,
+            body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light,
+          child: Container(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                Container(
+                  child: PageView(
+                      physics: ClampingScrollPhysics(),
+                      controller: _pageController,
+                      onPageChanged: (int page) {
+                        setState(() {
+                          _currentPage = page;
+                        });
+                      },
+                      children: [
+                        ...onBoarding,
+                      ].map(
+                        (item) {
+                          CachedNetworkImageProvider image =
+                              images.firstWhere((element) => element.url == item.image);
+                          return SlideTile(
+                            imagePath: image,
+                            title: item.title,
+                            subtitle: Text(
+                              item.description,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 18,
+                                  height: 1.4,
+                                  color: Color(0xFFFFFFFF)),
                             ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+                          );
+                        },
+                      ).toList()),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: _buildPageIndicator(onBoarding.length),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 25, bottom: 5),
+                      child: BottomButton(
+                        backgroundColor: Color(0xFFFAD24E),
+                        title: "дальше".toUpperCase(),
+                        enabled: true,
+                        titleColor: Colors.black,
+                        action: () {
+                          if (_currentPage == onBoarding.length - 1) {
+                            Future.delayed(Duration(milliseconds: 200), () {
+                              push(PhonePage(
+                                needDismiss: false,
+                                onAuthorizationDone: (context) {
+                                  push(TabSwitcher(), context: context);
+                                },
+                                onAuthorizationCancel: (context) {
+                                  push(TabSwitcher(), context: context);
+                                },
+                              ));
+                            });
+                          } else {
+                            _pageController.nextPage(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.ease,
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    Tapable(
+                      padding: EdgeInsets.only(bottom: 40),
+                      onTap: () {
+                        Future.delayed(Duration(milliseconds: 200), () {
+                          push(PhonePage(
+                            needDismiss: false,
+                            onAuthorizationDone: (context) {
+                              push(TabSwitcher(), context: context);
+                            },
+                            onAuthorizationCancel: (context) {
+                              push(TabSwitcher(), context: context);
+                            },
+                          ));
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              padding: EdgeInsets.only(right: 5),
+                              child: Text(
+                                'ПРОПУСТИТЬ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .button
+                                    .copyWith(color: Colors.white),
+                              )),
+                          SVGIcon(
+                            icon: IconAsset.next,
+                            width: 12,
+                            height: 12,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ],
             ),
           ),
-        );
+        ));
       },
     );
   }
 }
 
 class SlideTile extends StatelessWidget {
-  String imagePath, title;
+  ImageProvider imagePath;
+  String title;
   Widget subtitle;
 
   SlideTile({this.imagePath, this.title, this.subtitle});
@@ -202,11 +240,7 @@ class SlideTile extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.transparent,
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(
-                    imagePath,
-                  )),
+              image: DecorationImage(fit: BoxFit.cover, image: imagePath),
             ),
           ),
           Container(

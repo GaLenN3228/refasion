@@ -9,7 +9,7 @@ class OnBoardingModel {
     return OnBoardingModel(
       title: json['title'],
       description: json['description'],
-      image: json['image'],
+      image: json['image'] ?? "https://admin.refashioned.ru/media/shutterstock_1484435264_1.jpg",
     );
   }
 }
