@@ -7,14 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
-import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:refashioned_app/utils/colors.dart';
-
-
-
 
 class OnboardingPage extends StatefulWidget {
   @override
@@ -22,10 +18,10 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final int _numPages =5;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
-  List<Widget> _buildPageIndicator() {
+
+  List<Widget> _buildPageIndicator(int _numPages) {
     List<Widget> list = [];
     for (int i = 0; i < _numPages; i++) {
       list.add(i == _currentPage ? _indicator(true) : _indicator(false));
@@ -40,205 +36,177 @@ class _OnboardingPageState extends State<OnboardingPage> {
       height: 8.0,
       width: 8.0,
       decoration: BoxDecoration(
-        color: isActive ? Color(0xFFFAD24E) : Color(0xFFE6E6E6),
+        color: isActive ? Color(0xFFFAD24E) : Color(0x60E6E6E6),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     );
   }
 
-  push(Widget widget, {BuildContext context}) => Navigator.of(context ?? this.context).pushReplacement(
-    MaterialWithModalsPageRoute(
-      builder: (context) => widget,
-    ),
-  );
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<OnboardingRepository>(builder: (context, onboardingRepository, _){
-      if (onboardingRepository.isLoading && onboardingRepository.response == null)
-        return Center(
-          child: CircularProgressIndicator(
-            backgroundColor: accentColor,
-            valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-          ),
-        );
-
-      if (onboardingRepository.loadingFailed)
-        return Center(
-          child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-        );
-      var onboarding = onboardingRepository.response.content;
-      return Scaffold(
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light,
-          child: Container(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Container(
-                  child: PageView(
-                    physics: ClampingScrollPhysics(),
-                    controller: _pageController,
-                    onPageChanged: (int page) {
-                      setState(() {
-                        _currentPage = page;
-                      });
-                    },
-                    children: <Widget>[
-                      SlideTile(
-                        imagePath: '${onboarding.image0}',
-                        title: "${onboarding.title0}",
-                        subtitle: Text(
-                          '${onboarding.desc0}',textAlign: TextAlign.center, style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 20,
-                            color: Color(0xFFFFFFFF)
-                        ),
-                        ),
-                      ),
-                      SlideTile(
-                        imagePath: '${onboarding.image1}',
-                        title: "${onboarding.title1}",
-                        subtitle: Text(
-                          '${onboarding.desc1}',textAlign: TextAlign.center, style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 20,
-                            color: Color(0xFFFFFFFF)
-                        ),
-                        ),
-                      ),
-                      SlideTile(
-                        imagePath: '${onboarding.image2}',
-                        title: "${onboarding.title2}",
-                        subtitle: Text(
-                          '${onboarding.desc2}',textAlign: TextAlign.center, style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 20,
-                            color: Color(0xFFFFFFFF)
-                        ),
-                        ),
-                      ),
-                      SlideTile(
-                        imagePath: '${onboarding.image3}',
-                        title: "${onboarding.title3}",
-                        subtitle: Text(
-                          '${onboarding.desc3}',textAlign: TextAlign.center, style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 20,
-                            color: Color(0xFFFFFFFF)
-                        ),
-                        ),
-                      ),
-                      SlideTile(
-                        imagePath: '${onboarding.image4}',
-                        title: "${onboarding.title4}",
-                        subtitle: Text(
-                          '${onboarding.desc4}',textAlign: TextAlign.center, style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 20,
-                            color: Color(0xFFFFFFFF)
-                        ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: _buildPageIndicator(),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(top: 25, bottom: 15),
-                      child: BottomButton(
-                        backgroundColor: Color(0xFFFAD24E),
-                        title: "дальше".toUpperCase(),
-                        enabled: true,
-                        titleColor: Colors.black,
-                        action: () {
-                          if(_currentPage == 4){
-                            Future.delayed(Duration(milliseconds: 200), () {
-                              push(PhonePage(
-                                needDismiss: false,
-                                onAuthorizationDone: (context) {
-                                  push(TabSwitcher(), context: context);
-                                },
-                                onAuthorizationCancel: (context) {
-                                  push(TabSwitcher(), context: context);
-                                },
-                              ));
-                            });
-                          }
-                          _pageController.nextPage(
-                            duration: Duration(milliseconds: 500),
-                            curve: Curves.ease,
-                          );
-                        },
-                      ),
-                    ),
-                    Tapable(
-                      padding: EdgeInsets.only(bottom: 30 ),
-                      onTap: (){
-                        Future.delayed(Duration(milliseconds: 200), () {
-                          push(PhonePage(
-                            needDismiss: false,
-                            onAuthorizationDone: (context) {
-                              push(TabSwitcher(), context: context);
-                            },
-                            onAuthorizationCancel: (context) {
-                              push(TabSwitcher(), context: context);
-                            },
-                          ));
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                              padding: EdgeInsets.only(right: 5),
-                              child: Text('ПРОПУСТИТЬ', style: Theme.of(context).textTheme.button.copyWith(color: Colors.white),)),
-                          SVGIcon(
-                            icon: IconAsset.next,
-                            width: 12,
-                            height: 12,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    )],
-                ),
-              ],
-            ),
-          ),
+  push(Widget widget, {BuildContext context}) =>
+      Navigator.of(context ?? this.context).pushReplacement(
+        MaterialWithModalsPageRoute(
+          builder: (context) => widget,
         ),
       );
 
-    },);
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<OnBoardingRepository>(
+      builder: (context, onboardingRepository, _) {
+        if (onboardingRepository.isLoading && onboardingRepository.response == null)
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: accentColor,
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+            ),
+          );
+
+        if (onboardingRepository.loadingFailed)
+          return Center(
+            child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+          );
+        var onBoarding = onboardingRepository.response.content;
+        return Scaffold(
+          body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.light,
+            child: Container(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Container(
+                    child: PageView(
+                        physics: ClampingScrollPhysics(),
+                        controller: _pageController,
+                        onPageChanged: (int page) {
+                          setState(() {
+                            _currentPage = page;
+                          });
+                        },
+                        children: [
+                          ...onBoarding,
+                        ].map(
+                          (item) {
+                            return SlideTile(
+                              imagePath: '${item.image}',
+                              title: "${item.title}",
+                              subtitle: Text(
+                                '${item.description}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 18,
+                                    color: Color(0xFFFFFFFF)),
+                              ),
+                            );
+                          },
+                        ).toList()),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: _buildPageIndicator(onBoarding.length),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(top: 25, bottom: 5),
+                        child: BottomButton(
+                          backgroundColor: Color(0xFFFAD24E),
+                          title: "дальше".toUpperCase(),
+                          enabled: true,
+                          titleColor: Colors.black,
+                          action: () {
+                            if (_currentPage == onBoarding.length - 1) {
+                              Future.delayed(Duration(milliseconds: 200), () {
+                                push(PhonePage(
+                                  needDismiss: false,
+                                  onAuthorizationDone: (context) {
+                                    push(TabSwitcher(), context: context);
+                                  },
+                                  onAuthorizationCancel: (context) {
+                                    push(TabSwitcher(), context: context);
+                                  },
+                                ));
+                              });
+                            } else {
+                              _pageController.nextPage(
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.ease,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                      Tapable(
+                        padding: EdgeInsets.only(bottom: 40),
+                        onTap: () {
+                          Future.delayed(Duration(milliseconds: 200), () {
+                            push(PhonePage(
+                              needDismiss: false,
+                              onAuthorizationDone: (context) {
+                                push(TabSwitcher(), context: context);
+                              },
+                              onAuthorizationCancel: (context) {
+                                push(TabSwitcher(), context: context);
+                              },
+                            ));
+                          });
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                                padding: EdgeInsets.only(right: 5),
+                                child: Text(
+                                  'ПРОПУСТИТЬ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .button
+                                      .copyWith(color: Colors.white),
+                                )),
+                            SVGIcon(
+                              icon: IconAsset.next,
+                              width: 12,
+                              height: 12,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
+
 class SlideTile extends StatelessWidget {
-  String imagePath,  title;
+  String imagePath, title;
   Widget subtitle;
+
   SlideTile({this.imagePath, this.title, this.subtitle});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      child:
-      Stack(
+      child: Stack(
         fit: StackFit.expand,
         children: [
           Container(
             decoration: BoxDecoration(
               color: Colors.transparent,
               image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  imagePath,
-                )
-              ),
+                  fit: BoxFit.cover,
+                  image: NetworkImage(
+                    imagePath,
+                  )),
             ),
           ),
           Container(
@@ -266,11 +234,12 @@ class SlideTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(title, textAlign: TextAlign.center,style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 24,
-                      color: Colors.white
-                  ),),
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 24, color: Colors.white),
+                  ),
                   Container(
                     padding: EdgeInsets.only(top: 20),
                     child: subtitle,

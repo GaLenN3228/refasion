@@ -56,8 +56,8 @@ class RefashionApp extends StatelessWidget {
           Provider<SizesProvider>(
             create: (_) => SizesProvider(),
           ),
-          ChangeNotifierProvider<OnboardingRepository>(
-            create: (_) => OnboardingRepository()..getOnboardingData(),
+          ChangeNotifierProvider<OnBoardingRepository>(
+            create: (_) => OnBoardingRepository()..getOnBoardingData(),
           ),
         ],
         child: MaterialApp(
