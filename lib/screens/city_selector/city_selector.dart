@@ -40,6 +40,8 @@ class _CitySelectorState extends State<CitySelector> {
     citiesRepository = Provider.of<CitiesRepository>(context, listen: false);
 
     if (widget.onFirstLaunch) citiesRepository.addListener(repositoryListener);
+
+    Provider.of<OnBoardingRepository>(context, listen: false).getOnBoardingData(context);
   }
 
   repositoryListener() {

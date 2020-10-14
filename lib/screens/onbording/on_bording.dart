@@ -22,9 +22,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
-  List<CachedNetworkImageProvider> images;
-  bool isImagesLoaded = false;
-
   List<Widget> _buildPageIndicator(int _numPages) {
     List<Widget> list = [];
     for (int i = 0; i < _numPages; i++) {
@@ -53,24 +50,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       );
 
-  _loadAllImages(List<String> urls) {
-    List<CachedNetworkImageProvider> cachedImages = [];
-    urls.forEach((url) {
-      var configuration = createLocalImageConfiguration(context);
-      var cachedImageProvider = CachedNetworkImageProvider(url);
-      cachedImageProvider.resolve(configuration).addListener(
-        ImageStreamListener(
-          (info, call) {
-            setState(() {
-              isImagesLoaded = true;
-            });
-          },
-        ),
-      );
-      cachedImages.add(cachedImageProvider);
-    });
-    images = cachedImages;
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,16 +70,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
           );
 
         var onBoarding = onBoardingRepository.response.content;
-
-        if (!isImagesLoaded) {
-          _loadAllImages(onBoarding.map((e) => e.image).toList());
-          return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: accentColor,
-              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-            ),
-          );
-        }
 
         return Scaffold(
             body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -122,7 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ].map(
                         (item) {
                           CachedNetworkImageProvider image =
-                              images.firstWhere((element) => element.url == item.image);
+                          onBoardingRepository.cachedImages.firstWhere((element) => element.url == item.image);
                           return SlideTile(
                             imagePath: image,
                             title: item.title,
