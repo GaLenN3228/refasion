@@ -160,7 +160,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                               });
                             } else if (codeAuthorizationRepository.getStatusCode == 200 ||
                                 codeAuthorizationRepository.getStatusCode == 201) {
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                              Navigator.of(this.context).pushReplacement(MaterialPageRoute(
                                   builder: (context) => NamePage(
                                         needDismiss: widget.needDismiss,
                                         onAuthorizationDone: widget.onAuthorizationDone,

@@ -43,8 +43,7 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
     super.dispose();
   }
 
-  addToFavorites() async =>
-      await addRemoveFavouriteRepository.addToFavourites((widget.product..isFavourite = true).id);
+  addToFavorites() async => await addRemoveFavouriteRepository.addToFavourites((widget.product..isFavourite = true).id);
 
   removeFromCart() async => await cartRepository.removeFromCart(widget.product.id);
 
@@ -138,7 +137,10 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
                       ProductStateTile(product: product, showAllStates: true),
                       ProductPriceTile(product: product),
                       ProductBrandTile(product: product),
-                      ProductSizeTile(product: product),
+                      ProductSizeTile(
+                        product: product,
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                      ),
                     ],
                   ),
                 ),

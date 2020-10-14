@@ -33,6 +33,10 @@ class HomeNavigatorRoutes {
 }
 
 class HomeNavigator extends StatefulWidget {
+  static of(BuildContext context, {bool root = false}) => root
+      ? context.findRootAncestorStateOfType<_HomeNavigatorState>()
+      : context.findAncestorStateOfType<_HomeNavigatorState>();
+
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
   final Function(PickPoint) openPickUpAddressMap;
@@ -47,8 +51,6 @@ class HomeNavigator extends StatefulWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  _HomeNavigatorState _homeNavigatorState;
-
   HomeNavigator(
       {this.navigatorKey,
       this.changeTabTo,
@@ -61,7 +63,7 @@ class HomeNavigator extends StatefulWidget {
         .push(
           CupertinoPageRoute(
             builder: (context) =>
-                _homeNavigatorState._routeBuilder(context, HomeNavigatorRoutes.favourites),
+                HomeNavigator.of(context)._routeBuilder(context, HomeNavigatorRoutes.favourites),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -72,7 +74,7 @@ class HomeNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
       CupertinoPageRoute(
-        builder: (context) => _homeNavigatorState
+        builder: (context) => HomeNavigator.of(context)
             ._routeBuilder(context, HomeNavigatorRoutes.products, searchResult: searchResult),
       ),
     )
@@ -84,8 +86,7 @@ class HomeNavigator extends StatefulWidget {
 
   @override
   _HomeNavigatorState createState() {
-    _homeNavigatorState = _HomeNavigatorState();
-    return _homeNavigatorState;
+    return _HomeNavigatorState();
   }
 }
 
@@ -147,12 +148,15 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                     {topPanelController.needShow = true, topPanelController.needShowBack = false});
           },
           onDocPush: (String url, String urlName) {
-            Navigator.of(context).push(
+            Navigator.of(context)
+                .push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.doc, url: url, urlName: urlName),
+                builder: (context) =>
+                    _routeBuilder(context, HomeNavigatorRoutes.doc, url: url, urlName: urlName),
               ),
-            ).then(
-                  (flag) {
+            )
+                .then(
+              (flag) {
                 topPanelController.needShow = true;
               },
             );

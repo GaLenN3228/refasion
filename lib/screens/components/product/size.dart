@@ -10,9 +10,12 @@ class ProductSizeTile extends StatelessWidget {
   final Product product;
   final ProductSizeTileStyle style;
 
+  final EdgeInsets padding;
+
   const ProductSizeTile({
     this.product,
     this.style: ProductSizeTileStyle.small,
+    this.padding,
   });
 
   @override
@@ -24,7 +27,7 @@ class ProductSizeTile extends StatelessWidget {
     switch (style) {
       case ProductSizeTileStyle.large:
         return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: padding ?? EdgeInsets.zero,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -32,7 +35,10 @@ class ProductSizeTile extends StatelessWidget {
               Text(
                 "Размер: ${size.value} ${size.shortCode}" +
                     (size.secondaryValue != null ? " (${size.secondaryValue})" : ""),
-                style: Theme.of(context).textTheme.bodyText1.copyWith(height: 1.2),
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                      height: 1.0,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
               SizesTableLink(),
             ],
@@ -41,7 +47,7 @@ class ProductSizeTile extends StatelessWidget {
 
       default:
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: padding ?? EdgeInsets.zero,
           child: RichText(
             text: TextSpan(
               text: "Размер: ",

@@ -51,7 +51,7 @@ class RefashionApp extends StatelessWidget {
             create: (_) => FiltersRepository(),
           ),
           ChangeNotifierProvider<ProfileProductsRepository>(
-            create: (_) => ProfileProductsRepository(),
+            create: (_) => ProfileProductsRepository()..getProducts(),
           ),
           Provider<SizesProvider>(
             create: (_) => SizesProvider(),

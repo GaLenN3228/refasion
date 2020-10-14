@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
@@ -15,7 +14,7 @@ import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
 class PhotosPage extends StatefulWidget {
   final Function() onClose;
-  final Function() onPush;
+  final Function(List<File>) onPush;
   final Function(File) onUpdate;
 
   const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate}) : super(key: key);
@@ -43,6 +42,19 @@ class _PhotosPageState extends State<PhotosPage> {
               DialogItemContent(DialogItemType.item, title: "Выбрать из галереи", onClick: () {
                 return openGallery(index);
               }, icon: IconAsset.image),
+              if (images[index] != null)
+                DialogItemContent(
+                  DialogItemType.item,
+                  title: "Удалить",
+                  onClick: () async {
+                    setState(() {
+                      images[index] = null;
+                    });
+                    Navigator.pop(dialogContext);
+                  },
+                  icon: IconAsset.delete,
+                  color: Colors.red,
+                ),
               DialogItemContent(
                 DialogItemType.system,
                 title: "Закрыть",
@@ -62,7 +74,6 @@ class _PhotosPageState extends State<PhotosPage> {
       setState(() {
         File _image = File(pickedFile.path);
         images[index] = _image;
-        widget.onUpdate(_image);
       });
       Navigator.pop(dialogContext);
     }
@@ -75,7 +86,6 @@ class _PhotosPageState extends State<PhotosPage> {
       setState(() {
         File _image = File(pickedFile.path);
         images[index] = _image;
-        widget.onUpdate(_image);
       });
       Navigator.pop(dialogContext);
     }
@@ -137,8 +147,15 @@ class _PhotosPageState extends State<PhotosPage> {
               bottom: 0,
               child: BottomButton(
                 title: "ПРОДОЛЖИТЬ",
+                enabled: images.values.any((element) => element != null),
                 action: () {
-                  widget.onPush();
+                  var finalPhotos = List<File>();
+                  images.forEach((key, value) {
+                    if (value != null) {
+                      finalPhotos.add(value);
+                    }
+                  });
+                  widget.onPush(finalPhotos);
                 },
               )),
         ],
