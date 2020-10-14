@@ -64,9 +64,13 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
           (_calcProductPrice.isLoading && _calcProductPrice.response != null)) {
         price = _calcProductPrice.response.content.cash;
       } else {
-        hintMessage = hintMessage != null || (_calcProductPrice.loadingFailed && _calcProductPrice.response.errors != null)
-            ? _calcProductPrice.response.errors.messages.replaceAll("[", "").replaceAll("]", "")
-            : "Вы не можете разметсить вещь, стоимостью меньше 500 рублей";
+        hintMessage = hintMessage != null ||
+                (_calcProductPrice.loadingFailed &&
+                    _calcProductPrice.response != null &&
+                    _calcProductPrice.response.errors != null)
+            // ? _calcProductPrice.response.errors.messages.replaceAll("[", "").replaceAll("]", "")
+            ? "Мы принимаем вещи от 500 ₽"
+            : "";
         _calcProductPrice.response = null;
         price = 0;
       }
@@ -160,7 +164,9 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                           keyboardType: TextInputType.number,
                           focusNode: widget.focusNode,
                           autofocus: true,
-                          style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20, color: price != 0 ? primaryColor: Colors.redAccent),
+                          style: Theme.of(context).textTheme.headline1.copyWith(
+                              fontSize: 20,
+                              color: price != 0 || newPrice == 0 ? primaryColor : Colors.redAccent),
                           cursorWidth: 2.0,
                           cursorRadius: Radius.circular(2.0),
                           cursorColor: Color(0xFFE6E6E6),
@@ -173,7 +179,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                             enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Color(0xFFE6E6E6), width: 1)),
                             hintText: "   ₽",
-                            hintStyle: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20, color: Colors.redAccent),
+                            hintStyle: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
                           ),
                         ),
                       ),
@@ -183,20 +189,20 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                     padding: EdgeInsets.only(top: 8, bottom: 16),
                     alignment: Alignment.center,
                     child: Text(
-                      hintMessage,
+                      hintMessage ?? "",
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 14),
                     ),
                   ),
                   PriceButton(
                     type: PriceButtonType.diy,
                     prices: prices,
-                    onPush: () => widget.onPush(),
+                    onPush: () => {},
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(top: 20, left: 16),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SVGIcon(
                           icon: IconAsset.info,
@@ -206,11 +212,11 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                           width: 4,
                         ),
                         Text(
-                          "Как рассчитывается стоимость вещи?",
+                          "Как рассчитывается стоимость?",
                           style: Theme.of(context)
                               .textTheme
                               .bodyText2
-                              .copyWith(decoration: TextDecoration.underline),
+                              .copyWith(decoration: TextDecoration.underline, fontSize: 14),
                         ),
                       ],
                     ),
