@@ -22,7 +22,7 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final int _numPages = 1;
+  final int _numPages =5;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
   List<Widget> _buildPageIndicator() {
@@ -67,7 +67,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
           child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
         );
       var onboarding = onboardingRepository.response.content;
-      print('1!@#!@# ${onboarding.title}');
       return Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light,
@@ -86,115 +85,60 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     },
                     children: <Widget>[
                       SlideTile(
-                        imagePath: '${onboarding.image}',
-                        title: "${onboarding.title}",
+                        imagePath: '${onboarding.image0}',
+                        title: "${onboarding.title0}",
                         subtitle: Text(
-                          '${onboarding.desc}',textAlign: TextAlign.center, style: TextStyle(
+                          '${onboarding.desc0}',textAlign: TextAlign.center, style: TextStyle(
                             fontWeight: FontWeight.w300,
                             fontSize: 20,
                             color: Color(0xFFFFFFFF)
                         ),
                         ),
                       ),
-                /*      SlideTile(
-                        imagePath: 'assets/images/png/onbording.png',
-                        title: "Умное ценообразование",
-                        subtitle: RichText(
-                          textAlign: TextAlign.center ,
-                          text: TextSpan(
-                              text: 'Одежда, обувь и аксессуары со скидкой до ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 20,
-                                  color: Color(0xFFFFFFFF)
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '90%',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 20,
-                                      color: Color(0xFFFAD24E)
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: ' каждый день',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 20,
-                                      color: Color(0xFFFFFFFF)
-                                  ),
-                                )
-                              ]
-                          ),
+                      SlideTile(
+                        imagePath: '${onboarding.image1}',
+                        title: "${onboarding.title1}",
+                        subtitle: Text(
+                          '${onboarding.desc1}',textAlign: TextAlign.center, style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 20,
+                            color: Color(0xFFFFFFFF)
+                        ),
                         ),
                       ),
                       SlideTile(
-                        imagePath: 'assets/images/png/onbording.png',
-                        title: "Умное ценообразование",
-                        subtitle: RichText(
-                          textAlign: TextAlign.center ,
-                          text: TextSpan(
-                              text: 'Одежда, обувь и аксессуары со скидкой до ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 20,
-                                  color: Color(0xFFFFFFFF)
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '90%',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 20,
-                                      color: Color(0xFFFAD24E)
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: ' каждый день',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 20,
-                                      color: Color(0xFFFFFFFF)
-                                  ),
-                                )
-                              ]
-                          ),
+                        imagePath: '${onboarding.image2}',
+                        title: "${onboarding.title2}",
+                        subtitle: Text(
+                          '${onboarding.desc2}',textAlign: TextAlign.center, style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 20,
+                            color: Color(0xFFFFFFFF)
                         ),
-                      ),*/
-                   /*   SlideTile(
-                        imagePath: 'assets/images/png/onbording.png',
-                        title: "Умное ценообразование",
-                        subtitle: RichText(
-                          textAlign: TextAlign.center ,
-                          text: TextSpan(
-                              text: 'Одежда, обувь и аксессуары со скидкой до ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 20,
-                                  color: Color(0xFFFFFFFF)
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '90%',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 20,
-                                      color: Color(0xFFFAD24E)
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: ' каждый день',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 20,
-                                      color: Color(0xFFFFFFFF)
-                                  ),
-                                )
-                              ]
-                          ),
                         ),
-                      ),*/
+                      ),
+                      SlideTile(
+                        imagePath: '${onboarding.image3}',
+                        title: "${onboarding.title3}",
+                        subtitle: Text(
+                          '${onboarding.desc3}',textAlign: TextAlign.center, style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 20,
+                            color: Color(0xFFFFFFFF)
+                        ),
+                        ),
+                      ),
+                      SlideTile(
+                        imagePath: '${onboarding.image4}',
+                        title: "${onboarding.title4}",
+                        subtitle: Text(
+                          '${onboarding.desc4}',textAlign: TextAlign.center, style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 20,
+                            color: Color(0xFFFFFFFF)
+                        ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -215,7 +159,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         enabled: true,
                         titleColor: Colors.black,
                         action: () {
-                          if(_currentPage == 3){
+                          if(_currentPage == 4){
                             Future.delayed(Duration(milliseconds: 200), () {
                               push(PhonePage(
                                 needDismiss: false,
@@ -293,7 +237,7 @@ class SlideTile extends StatelessWidget {
                 fit: BoxFit.cover,
                 image: NetworkImage(
                   imagePath,
-                ),
+                )
               ),
             ),
           ),

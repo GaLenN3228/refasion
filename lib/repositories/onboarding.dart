@@ -8,7 +8,7 @@ class OnboardingRepository extends BaseRepository<OnboardingModel> {
   Future<void> getOnboardingData() => apiCall(() async {
     response =
         BaseResponse.fromJson((await ApiService.getOnboardingData()).data, (contentJson) {
-          return OnboardingModel.fromJson(contentJson[0]);
+          return OnboardingModel.fromJson(contentJson);
         });
   });
 }
