@@ -30,15 +30,14 @@ class UserAddressesListHeader extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: Row(
         children: [
           SVGIcon(
             icon: icon,
-            size: 28,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               title,
               style: Theme.of(context).textTheme.headline1,
