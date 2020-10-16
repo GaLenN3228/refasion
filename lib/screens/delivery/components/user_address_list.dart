@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/user_address.dart';
-import 'package:refashioned_app/screens/components/button/button.dart';
-import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
-import 'package:refashioned_app/screens/components/button/components/button_title.dart';
+import 'package:refashioned_app/screens/components/button/simple_button.dart';
 import 'package:refashioned_app/screens/delivery/components/user_address_tile.dart';
 import 'package:refashioned_app/screens/marketplace/components/border_button.dart';
 
@@ -107,17 +105,12 @@ class _UserAddressesListState extends State<UserAddressesList> {
           bottom: 0,
           child: Padding(
             padding: EdgeInsets.fromLTRB(20, 10, 20, MediaQuery.of(context).padding.bottom),
-            child: RefashionedButton(
-                data: ButtonData(
-                  buttonContainerData: ButtonContainerData(
-                    decorationType: ButtonDecorationType.black,
-                  ),
-                  titleData: ButtonTitleData(
-                    text: "Выбрать",
-                    color: ButtonTitleColor.white,
-                  ),
-                ),
-                onTap: onPush),
+            child: SimpleButton(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              enabled: true,
+              label: "Выбрать",
+              onPush: onPush,
+            ),
           ),
         ),
       ],

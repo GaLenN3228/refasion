@@ -9,9 +9,7 @@ import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/user_addresses.dart';
 import 'package:refashioned_app/repositories/user_pickpoints.dart';
-import 'package:refashioned_app/screens/components/button/button.dart';
-import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
-import 'package:refashioned_app/screens/components/button/components/button_title.dart';
+import 'package:refashioned_app/screens/components/button/simple_button.dart';
 import 'package:refashioned_app/screens/components/checkbox/stateful.dart';
 import 'package:refashioned_app/screens/components/textfield/phone_ref_textfield.dart';
 import 'package:refashioned_app/screens/components/textfield/ref_textfield.dart';
@@ -39,36 +37,16 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   bool courierDelivery;
 
-  ValueNotifier<ButtonState> buttonState;
-  Map<ButtonState, ButtonData> buttonStatesData;
-
   Map<InfoField, String> info;
   String addressText;
 
   bool privateHouse;
 
+  bool buttonEnabled;
+
   @override
   initState() {
-    buttonStatesData = {
-      ButtonState.enabled: ButtonData(
-        buttonContainerData: ButtonContainerData(
-          decorationType: ButtonDecorationType.black,
-        ),
-        titleData: ButtonTitleData(
-          text: "Продолжить",
-          color: ButtonTitleColor.white,
-        ),
-      ),
-      ButtonState.disabled: ButtonData(
-        buttonContainerData: ButtonContainerData(
-          decorationType: ButtonDecorationType.gray,
-        ),
-        titleData: ButtonTitleData(
-          text: "Продолжить",
-          color: ButtonTitleColor.white,
-        ),
-      ),
-    };
+    buttonEnabled = false;
 
     courierDelivery =
         widget.deliveryType.type == Delivery.COURIER_DELIVERY || widget.deliveryType.type == Delivery.EXPRESS_DEVILERY;
@@ -82,8 +60,6 @@ class _InfoPageState extends State<InfoPage> {
       addressText = "Адрес пункта выдачи";
     }
 
-    buttonState = ValueNotifier(ButtonState.disabled);
-
     privateHouse = false;
 
     super.initState();
@@ -96,9 +72,11 @@ class _InfoPageState extends State<InfoPage> {
 
   check() {
     final check =
-    info.entries.fold(true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
+        info.entries.fold(true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
 
-    buttonState.value = check ? ButtonState.enabled : ButtonState.disabled;
+    setState(() {
+      buttonEnabled = check;
+    });
   }
 
   bool fieldCheck(InfoField infoField, String text) {
@@ -171,8 +149,6 @@ class _InfoPageState extends State<InfoPage> {
 
   @override
   void dispose() {
-    buttonState.dispose();
-
     super.dispose();
   }
 
@@ -367,13 +343,11 @@ class _InfoPageState extends State<InfoPage> {
             bottom: 0,
             child: Padding(
               padding: EdgeInsets.fromLTRB(20, 10, 20, max(MediaQuery.of(context).padding.bottom, 20)),
-              child: RefashionedButton(
-                states: buttonState,
-                statesData: buttonStatesData,
-                animateContent: false,
-                onTap: () {
-                  if (buttonState.value == ButtonState.enabled) onPush();
-                },
+              child: SimpleButton(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                enabled: buttonEnabled,
+                label: "Продолжить",
+                onPush: onPush,
               ),
             ),
           )

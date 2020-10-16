@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/pick_point.dart';
-import 'package:refashioned_app/screens/components/button/button.dart';
-import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
-import 'package:refashioned_app/screens/components/button/components/button_title.dart';
+import 'package:refashioned_app/screens/components/button/simple_button.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
@@ -26,33 +24,11 @@ class TakeOptionsPage extends StatefulWidget {
 class _TakeOptionsPageState extends State<TakeOptionsPage> {
   Map<TakeOption, ValueNotifier<bool>> options;
 
-  ValueNotifier<ButtonState> buttonState;
-  Map<ButtonState, ButtonData> buttonStatesData;
+  bool buttonEnabled;
 
   @override
   initState() {
-    buttonStatesData = {
-      ButtonState.enabled: ButtonData(
-        buttonContainerData: ButtonContainerData(
-          decorationType: ButtonDecorationType.black,
-        ),
-        titleData: ButtonTitleData(
-          text: "Продолжить",
-          color: ButtonTitleColor.white,
-        ),
-      ),
-      ButtonState.disabled: ButtonData(
-        buttonContainerData: ButtonContainerData(
-          decorationType: ButtonDecorationType.gray,
-        ),
-        titleData: ButtonTitleData(
-          text: "Продолжить",
-          color: ButtonTitleColor.white,
-        ),
-      ),
-    };
-
-    buttonState = ValueNotifier(ButtonState.disabled);
+    buttonEnabled = false;
 
     options = Map.fromIterable(
       TakeOption.values,
@@ -72,7 +48,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
         return list;
       });
 
-  onUpdate() => buttonState.value = getSelectedOptions().length != 0 ? ButtonState.enabled : ButtonState.disabled;
+  onUpdate() => setState(() => buttonEnabled = getSelectedOptions().length != 0);
 
   @override
   void dispose() {
@@ -179,13 +155,11 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(20, 20, 20, defaultTargetPlatform == TargetPlatform.iOS ? 31 : 20),
-            child: RefashionedButton(
-              states: buttonState,
-              statesData: buttonStatesData,
-              animateContent: false,
-              onTap: () {
-                if (buttonState.value == ButtonState.enabled) onPush();
-              },
+            child: SimpleButton(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              enabled: buttonEnabled,
+              label: "Продолжить",
+              onPush: onPush,
             ),
           ),
         ],
