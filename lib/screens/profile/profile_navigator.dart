@@ -24,11 +24,13 @@ import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
 import 'package:refashioned_app/screens/profile/loginned_profile.dart';
 import 'package:refashioned_app/screens/profile/map_page.dart';
+import 'package:refashioned_app/screens/profile/pages/my_addresses.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
 
 class ProfileNavigatorRoutes {
   static const String root = '/';
+  static const String myAddresses = '/my_addresses';
   static const String settings = '/settings';
   static const String doc = '/doc';
   static const String products = '/products';
@@ -181,6 +183,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                     ),
                   );
                 },
+                onMyAddressesPush: () => Navigator.of(context).pushNamed(ProfileNavigatorRoutes.myAddresses),
               )
             : ProfilePage(
                 onSettingsClick: () {
@@ -196,6 +199,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                   widget.pushPageOnTop(MapPage());
                 },
               );
+
+      case ProfileNavigatorRoutes.myAddresses:
+        return MyAddressesPage();
 
       case ProfileNavigatorRoutes.settings:
         return isAuthorized

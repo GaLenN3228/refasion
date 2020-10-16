@@ -21,8 +21,15 @@ class AuthorizedProfilePage extends StatefulWidget {
   final Function() onFavClick;
   final Function(Product) onProductPush;
   final Function() onSettingsClick;
+  final Function() onMyAddressesPush;
 
-  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush}) : super(key: key);
+  const AuthorizedProfilePage({
+    Key key,
+    this.onFavClick,
+    this.onSettingsClick,
+    this.onProductPush,
+    this.onMyAddressesPush,
+  }) : super(key: key);
 
   @override
   _AuthorizedProfilePageState createState() => _AuthorizedProfilePageState();
@@ -160,6 +167,21 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                   ),
                 ),
                 Tapable(
+                  padding: EdgeInsets.all(10),
+                  onTap: widget.onMyAddressesPush?.call,
+                  child: Column(
+                    children: [
+                      SVGIcon(
+                        icon: IconAsset.location,
+                        height: 35,
+                        color: Colors.black,
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(top: 7), child: Text('Мои адреса', style: textTheme.bodyText1)),
+                    ],
+                  ),
+                ),
+                Tapable(
                   onTap: () {
                     widget.onFavClick();
                   },
@@ -172,20 +194,6 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         color: Colors.black,
                       ),
                       Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
-                    ],
-                  ),
-                ),
-                Tapable(
-                  padding: EdgeInsets.all(10),
-                  onTap: () {},
-                  child: Column(
-                    children: [
-                      SVGIcon(
-                        icon: IconAsset.notifications,
-                        height: 35,
-                        color: Colors.black,
-                      ),
-                      Container(padding: EdgeInsets.only(top: 7), child: Text('Подписки', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
