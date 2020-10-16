@@ -11,7 +11,7 @@ class AddPhotoDescriptionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      padding: const EdgeInsets.fromLTRB(15, 5, 20, 5),
+      padding: const EdgeInsets.fromLTRB(0, 5, 20, 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

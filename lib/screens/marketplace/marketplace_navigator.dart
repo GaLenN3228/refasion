@@ -351,7 +351,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         return PhotosPage(
           onClose: widget.onClose,
           onPush: (photos) {
-            productData.updatePhotos(photos);
+            productData.updatePhotos(photos.map((e) => e.file).toList());
             final hasSellProperties = (sellPropertiesRepository != null &&
                 sellPropertiesRepository.isLoaded &&
                 sellPropertiesRepository.response.status.code == 200 &&
