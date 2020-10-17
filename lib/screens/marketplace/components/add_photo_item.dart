@@ -1,18 +1,17 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/marketplace/pages/photos_page.dart';
 
 class AddPhotoItem extends StatelessWidget {
-  final Function(int) onPush;
-  final int type;
-  final File image;
+  final Function(PhotoItemData) onPush;
+  final PhotoItemData photoItemData;
 
-  const AddPhotoItem({Key key, this.type, this.onPush, this.image})
-      : super(key: key);
+  const AddPhotoItem({Key key, this.onPush, this.photoItemData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => onPush(type),
+        onTap: () => onPush(photoItemData),
         child: Container(
           height: 160,
           decoration: ShapeDecoration(
@@ -21,7 +20,7 @@ class AddPhotoItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(3),
             ),
           ),
-          child: image == null
+          child: photoItemData.file == null
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,7 +32,7 @@ class AddPhotoItem extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        getTitle(),
+                        photoItemData.title,
                         style: Theme.of(context).textTheme.subtitle1,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -41,20 +40,7 @@ class AddPhotoItem extends StatelessWidget {
                     ),
                   ],
                 )
-              : Image.file(image, fit: BoxFit.cover),
+              : Image.file(photoItemData.file, fit: BoxFit.cover),
         ),
       );
-
-  String getTitle() {
-    switch (type) {
-      case 0:
-        return "Вид спереди";
-      case 1:
-        return "Вид сзади";
-      case 2:
-        return "Вид сбоку";
-      default:
-        return "Больше фото";
-    }
-  }
 }
