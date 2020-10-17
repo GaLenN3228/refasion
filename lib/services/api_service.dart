@@ -340,6 +340,11 @@ class ApiService {
     return dioClient.get(Url.sizes(categoryId));
   }
 
+  static Future<Response> getOnboardingData() async {
+    Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
+    return dioClient.get(Url.onboarding);
+  }
+
   static Future<Response> getHome() async {
     Dio dioClient = await DioClient().getClient(logging: LOG_ENABLE);
     return dioClient.get(Url.home);

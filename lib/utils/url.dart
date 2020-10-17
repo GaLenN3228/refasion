@@ -86,4 +86,9 @@ class Url {
 
   //Profile
   static const profileProducts = '$refashionedBaseUrl/users/profile/products/';
+
+  //onboarding
+
+  static const onboarding = '$refashionedBaseUrl/content/onboarding/';
+
 }
