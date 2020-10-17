@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/components/scaffold/components/action.dart';
 import 'package:refashioned_app/screens/components/scaffold/components/actions_provider.dart';
 import 'package:refashioned_app/screens/components/topbar/components/search/tb_search.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
@@ -30,8 +29,7 @@ class TBMiddle extends StatefulWidget {
   _TBMiddleState createState() => _TBMiddleState();
 }
 
-class _TBMiddleState extends State<TBMiddle>
-    with SingleTickerProviderStateMixin {
+class _TBMiddleState extends State<TBMiddle> with SingleTickerProviderStateMixin {
   Color contentColor;
   Color secondContentColor;
 
@@ -74,15 +72,9 @@ class _TBMiddleState extends State<TBMiddle>
   titleTextStyle() {
     switch (widget.type) {
       case TBType.MATERIAL:
-        return Theme.of(context)
-            .textTheme
-            .headline3
-            .copyWith(color: contentColor);
+        return Theme.of(context).textTheme.headline3.copyWith(color: contentColor);
       default:
-        return Theme.of(context)
-            .textTheme
-            .headline1
-            .copyWith(color: contentColor);
+        return Theme.of(context).textTheme.headline1.copyWith(color: contentColor);
     }
   }
 
@@ -93,9 +85,10 @@ class _TBMiddleState extends State<TBMiddle>
     updateByTheme();
     updateByType();
 
+    if (widget.data.child != null) return widget.data.child;
+
     if (widget.data?.titleText != null && widget.data.titleText.isNotEmpty) {
-      if (widget.data?.subtitleText != null &&
-          widget.data.subtitleText.isNotEmpty) {
+      if (widget.data?.subtitleText != null && widget.data.subtitleText.isNotEmpty) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -113,10 +106,7 @@ class _TBMiddleState extends State<TBMiddle>
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .subtitle1
-                  .copyWith(color: secondContentColor),
+              style: Theme.of(context).textTheme.subtitle1.copyWith(color: secondContentColor),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

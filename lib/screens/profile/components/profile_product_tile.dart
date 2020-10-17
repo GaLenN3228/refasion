@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
-import 'package:refashioned_app/repositories/cart/cart.dart';
-import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/components/product/brand.dart';
 import 'package:refashioned_app/screens/components/product/price_tile.dart';
 import 'package:refashioned_app/screens/components/product/size.dart';
@@ -23,79 +20,60 @@ class ProfileProductTile extends StatefulWidget {
 }
 
 class _ProfileProductTileState extends State<ProfileProductTile> {
-  AddRemoveFavouriteRepository addRemoveFavouriteRepository;
+  dialog() => showDialog(
+        context: context,
+        builder: (dialogContext) {
+          List<DialogItemContent> dialogContent = [];
 
-  CartRepository cartRepository;
-
-  @override
-  initState() {
-    addRemoveFavouriteRepository = AddRemoveFavouriteRepository();
-
-    cartRepository = Provider.of<CartRepository>(context, listen: false);
-
-    super.initState();
-  }
-
-  @override
-  dispose() {
-    addRemoveFavouriteRepository = AddRemoveFavouriteRepository();
-
-    super.dispose();
-  }
-
-  addToFavorites() async => await addRemoveFavouriteRepository.addToFavourites((widget.product..isFavourite = true).id);
-
-  removeFromCart() async => await cartRepository.removeFromCart(widget.product.id);
-
-  dialog() {
-    return showDialog(
-      context: context,
-      builder: (dialogContext) => CustomDialog.Dialog(
-        dialogContent: [
           if (widget.product.state == ProductState.published)
-            DialogItemContent(
-              DialogItemType.item,
-              title: "Подробнее",
-              onClick: () {
-                Navigator.of(dialogContext).pop();
-                widget.onProductPush?.call(widget.product);
-              },
-              icon: IconAsset.info,
-            ),
-          if (widget.product.state == ProductState.published)
-            DialogItemContent(
-              DialogItemType.item,
-              title: "Снять с публикации",
-              onClick: () {},
-              icon: IconAsset.remove_from_publication,
-            ),
-          if (widget.product.state == ProductState.onModeration)
-            DialogItemContent(
-              DialogItemType.infoHeader,
-              title: "Товар на модерации",
-              subTitle: "Проверка может занимать до 24-х часов",
-            ),
-          if (widget.product.state == ProductState.onModeration)
-            DialogItemContent(
-              DialogItemType.item,
-              title: "Удалить",
-              onClick: () async {
-                await removeFromCart();
+            dialogContent = [
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Подробнее",
+                onClick: () {
+                  Navigator.of(dialogContext).pop();
+                  widget.onProductPush?.call(widget.product);
+                },
+                icon: IconAsset.info,
+              ),
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Снять с публикации",
+                onClick: () {},
+                icon: IconAsset.remove_from_publication,
+              ),
+              DialogItemContent(
+                DialogItemType.system,
+                title: "Отменить",
+                onClick: () => Navigator.of(dialogContext).pop(),
+              )
+            ];
+          else if (widget.product.state == ProductState.onModeration)
+            dialogContent = [
+              DialogItemContent(
+                DialogItemType.infoHeader,
+                title: "Товар на модерации",
+                subTitle: "Проверка может занимать до 24-х часов",
+              ),
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Удалить",
+                onClick: () => Navigator.of(dialogContext).pop(),
+                icon: IconAsset.delete,
+                color: Colors.red,
+              ),
+              DialogItemContent(
+                DialogItemType.system,
+                title: "Отменить",
+                onClick: () => Navigator.of(dialogContext).pop(),
+              ),
+            ];
 
-                Navigator.of(dialogContext).pop();
-              },
-              icon: IconAsset.delete,
-              color: Colors.red,
-            ),
-          DialogItemContent(
-            DialogItemType.system,
-            title: "Отменить",
-            onClick: () => Navigator.of(dialogContext).pop(),
-          )
-        ],
-      ),
-    );
-  }
+          return CustomDialog.Dialog(
+            dialogContent: dialogContent,
+          );
+        },
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -103,9 +81,7 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () {
-        dialog();
-      },
+      onTap: dialog,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: SizedBox(
@@ -121,6 +97,7 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
                         ? product.image
                         : "https://admin.refashioned.ru/media/product/2c8cb353-4feb-427d-9279-d2b75f46d786/2b22b56279182fe9bedb1f246d9b44b7.JPG",
                     width: 80,
+                    height: 80,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -134,12 +111,22 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProductStateTile(product: product, showAllStates: true),
-                      ProductPriceTile(product: product),
-                      ProductBrandTile(product: product),
-                      ProductSizeTile(
+                      ProductStateTile(
+                        product: product,
+                        showAllStates: true,
+                        padding: const EdgeInsets.only(bottom: 4),
+                      ),
+                      ProductPriceTile(
                         product: product,
                         padding: const EdgeInsets.symmetric(vertical: 4),
+                      ),
+                      ProductBrandTile(
+                        product: product,
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                      ),
+                      ProductSizeTile(
+                        product: product,
+                        padding: const EdgeInsets.only(top: 4),
                       ),
                     ],
                   ),

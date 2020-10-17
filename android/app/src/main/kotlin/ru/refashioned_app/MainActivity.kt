@@ -10,6 +10,9 @@ import androidx.annotation.NonNull;
 import com.yandex.mapkit.MapKitFactory
 
 
+import android.os.Build
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 class MainActivity: FlutterActivity() {
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {

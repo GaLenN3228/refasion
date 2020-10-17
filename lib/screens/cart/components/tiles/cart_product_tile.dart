@@ -153,12 +153,21 @@ class _CartProductTileState extends State<CartProductTile> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProductStateTile(product: product),
-                      ProductPriceTile(product: product),
-                      ProductBrandTile(product: product),
-                      ProductSizeTile(
+                      ProductStateTile(
+                        product: product,
+                        padding: const EdgeInsets.only(bottom: 4),
+                      ),
+                      ProductPriceTile(
                         product: product,
                         padding: const EdgeInsets.symmetric(vertical: 4),
+                      ),
+                      ProductBrandTile(
+                        product: product,
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                      ),
+                      ProductSizeTile(
+                        product: product,
+                        padding: const EdgeInsets.only(top: 4),
                       ),
                     ],
                   ),

@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:refashioned_app/models/cart/shipping_cost.dart';
 
 class CartSummary {
@@ -22,6 +23,8 @@ class CartSummary {
           _selectedDiscount
       : _totalPrice - _totalDiscount;
 
+  String get buttonCaption => countText(count) + ", ${NumberFormat("#,###", "ru_Ru").format(total)} ₽";
+
   List<ShippingCost> get shippingCost => _shippingCost;
 
   const CartSummary(
@@ -33,6 +36,23 @@ class CartSummary {
     this._selectedDiscount,
     this._shippingCost,
   );
+
+  String countText(int count) {
+    final tens = count % 100;
+
+    if (tens >= 11 && tens <= 19) return "$count вещей";
+
+    switch (count % 10) {
+      case 1:
+        return "$count вещь";
+      case 2:
+      case 3:
+      case 4:
+        return "$count вещи";
+      default:
+        return "$count вещей";
+    }
+  }
 
   @override
   String toString() =>
