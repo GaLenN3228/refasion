@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/city_selector/city_tile.dart';
@@ -16,6 +16,7 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.da
 import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/screens/onbording/on_bording.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CitySelector extends StatefulWidget {
@@ -39,6 +40,8 @@ class _CitySelectorState extends State<CitySelector> {
     citiesRepository = Provider.of<CitiesRepository>(context, listen: false);
 
     if (widget.onFirstLaunch) citiesRepository.addListener(repositoryListener);
+
+    Provider.of<OnBoardingRepository>(context, listen: false).getOnBoardingData(context);
   }
 
   repositoryListener() {
@@ -49,6 +52,7 @@ class _CitySelectorState extends State<CitySelector> {
 
       push(TabSwitcher());
     }
+
   }
 
   @override
@@ -187,17 +191,7 @@ class _CitySelectorState extends State<CitySelector> {
 
                               if (result) {
                                 if (widget.onFirstLaunch)
-                                  Future.delayed(Duration(milliseconds: 200), () {
-                                    push(PhonePage(
-                                      needDismiss: false,
-                                      onAuthorizationDone: (context) {
-                                        push(TabSwitcher(), context: context);
-                                      },
-                                      onAuthorizationCancel: (context) {
-                                        push(TabSwitcher(), context: context);
-                                      },
-                                    ));
-                                  });
+                                  push(OnboardingPage());
                                 else
                                   Navigator.of(context).pop();
                               }
