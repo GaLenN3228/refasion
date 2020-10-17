@@ -128,7 +128,7 @@ class _PhotosPageState extends State<PhotosPage> {
       backgroundColor: Colors.white,
       child: Stack(
         children: [
-          ListView(
+          Column(
             children: [
               RefashionedTopBar(
                 data: TopBarData.simple(
@@ -138,40 +138,42 @@ class _PhotosPageState extends State<PhotosPage> {
                   bottomText: "Внешний вид",
                 ),
               ),
-              StaggeredGridView.countBuilder(
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 76),
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                itemCount: images.length + 1,
-                itemBuilder: (BuildContext context, int index) => index == images.length
-                    ? Container(
-                        child: Column(
-                          children: [
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Информация для размещения",
-                                style: Theme.of(context).textTheme.headline1,
+              Expanded(
+                child: StaggeredGridView.countBuilder(
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 76),
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  itemCount: images.length + 1,
+                  itemBuilder: (BuildContext context, int index) => index == images.length
+                      ? Container(
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Информация для размещения",
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
                               ),
-                            ),
-                            AddPhotoDescriptionItem(
-                                title: "Сфотографируйте все имеющиеся деффекты"),
-                            AddPhotoDescriptionItem(
-                                title: "Сделайте фото бирки и ото этикетки с размером"),
-                            AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
-                          ],
-                        ),
-                      )
-                    : AddPhotoItem(
-                        photoItemData: images[index],
-                        onPush: (type) {
-                          getImage(index);
-                        }),
-                staggeredTileBuilder: (int index) =>
-                    index == images.length ? new StaggeredTile.fit(2) : new StaggeredTile.fit(1),
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
+                              AddPhotoDescriptionItem(
+                                  title: "Сфотографируйте все имеющиеся деффекты"),
+                              AddPhotoDescriptionItem(
+                                  title: "Сделайте фото бирки и ото этикетки с размером"),
+                              AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
+                            ],
+                          ),
+                        )
+                      : AddPhotoItem(
+                          photoItemData: images[index],
+                          onPush: (type) {
+                            getImage(index);
+                          }),
+                  staggeredTileBuilder: (int index) =>
+                      index == images.length ? new StaggeredTile.fit(2) : new StaggeredTile.fit(1),
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+              )
             ],
           ),
           Positioned(
