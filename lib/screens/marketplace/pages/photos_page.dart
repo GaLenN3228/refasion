@@ -43,7 +43,6 @@ class _PhotosPageState extends State<PhotosPage> {
     images.add(PhotoItemData(0, null, "Вид спереди"));
     images.add(PhotoItemData(1, null, "Вид сзади"));
     images.add(PhotoItemData(2, null, "Вид сбоку"));
-    images.add(PhotoItemData(3, null, "Больше фото"));
     super.initState();
   }
 
@@ -112,11 +111,11 @@ class _PhotosPageState extends State<PhotosPage> {
 
   void removePhotoFromCollection(int index) {
     setState(() {
-      if (index == 0 || index == 1 || index == 2 || index == 3) if (index == 3 && images.length > 4)
-        images.removeAt(index);
-      else
+      if (index == 0 || index == 1 || index == 2) {
         images[index].file = null;
-      else {
+        images.removeWhere((element) =>
+        element.index != 0 && element.index != 1 && element.index != 2 && element.file == null);
+      } else {
         images.removeAt(index);
       }
     });
@@ -144,32 +143,36 @@ class _PhotosPageState extends State<PhotosPage> {
                   shrinkWrap: true,
                   crossAxisCount: 2,
                   itemCount: images.length + 1,
-                  itemBuilder: (BuildContext context, int index) => index == images.length
+                  itemBuilder: (BuildContext context, int index) =>
+                  index == images.length
                       ? Container(
-                          child: Column(
-                            children: [
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Информация для размещения",
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
-                              ),
-                              AddPhotoDescriptionItem(
-                                  title: "Сфотографируйте все имеющиеся деффекты"),
-                              AddPhotoDescriptionItem(
-                                  title: "Сделайте фото бирки и ото этикетки с размером"),
-                              AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
-                            ],
+                    child: Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Информация для размещения",
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .headline1,
                           ),
-                        )
+                        ),
+                        AddPhotoDescriptionItem(
+                            title: "Сфотографируйте все имеющиеся деффекты"),
+                        AddPhotoDescriptionItem(
+                            title: "Сделайте фото бирки и ото этикетки с размером"),
+                        AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
+                      ],
+                    ),
+                  )
                       : AddPhotoItem(
-                          photoItemData: images[index],
-                          onPush: (type) {
-                            getImage(index);
-                          }),
+                      photoItemData: images[index],
+                      onPush: (type) {
+                        getImage(index);
+                      }),
                   staggeredTileBuilder: (int index) =>
-                      index == images.length ? new StaggeredTile.fit(2) : new StaggeredTile.fit(1),
+                  index == images.length ? new StaggeredTile.fit(2) : new StaggeredTile.fit(1),
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
