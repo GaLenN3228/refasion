@@ -384,6 +384,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       case MarketplaceNavigatorRoutes.sizes:
         return SizesPage(
           onBack: Navigator.of(context).pop,
+          onClose: widget.onClose,
           onPush: (sizes) {
             Navigator.of(context).push(
               CupertinoPageRoute(

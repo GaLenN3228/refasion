@@ -13,8 +13,9 @@ import 'package:refashioned_app/utils/colors.dart';
 class SizesPage extends StatefulWidget {
   final Function(Sizes) onPush;
   final Function() onBack;
+  final Function() onClose;
 
-  const SizesPage({Key key, this.onPush, this.onBack}) : super(key: key);
+  const SizesPage({Key key, this.onPush, this.onBack, this.onClose}) : super(key: key);
 
   @override
   _SizesPageState createState() => _SizesPageState();
@@ -35,7 +36,7 @@ class _SizesPageState extends State<SizesPage> {
                 data: TopBarData.simple(
                   onBack: Navigator.of(context).pop,
                   middleText: "Добавить вещь",
-                  onClose: widget.onBack,
+                  onClose: widget.onClose,
                   bottomText: "Выберите размер",
                 ),
               ),
