@@ -103,7 +103,7 @@ class _PhotosPageState extends State<PhotosPage> {
     setState(() {
       File _image = File(imagePath);
       images[index].file = _image;
-      if (images.every((element) => element.file != null))
+      if (images.every((element) => element.file != null) && images.length < 10)
         images.add(PhotoItemData(images.length, null, "Больше фото"));
     });
   }
@@ -133,7 +133,7 @@ class _PhotosPageState extends State<PhotosPage> {
                   onBack: () => Navigator.of(context).pop(),
                   middleText: "Добавить вещь",
                   onClose: widget.onClose,
-                  bottomText: "Внешний вид",
+                  bottomText: "Добавьте фотографии",
                 ),
               ),
               Expanded(

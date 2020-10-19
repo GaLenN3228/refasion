@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/repositories/config.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
@@ -161,41 +162,41 @@ class _UserProfileState extends State<UserProfile> {
                           ),
                         ),
                       ),
-                      ItemsDivider(),
-                      Tapable(
-                        padding: EdgeInsets.only(top: 14, bottom: 14),
-                        onTap: () {},
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.only(left: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // FutureBuilder(
-                              //   future: SharedPreferences.getInstance()
-                              //       .then((prefs) => prefs.getString(Prefs.user_phone)),
-                              //   builder: (context, snapshot) {
-                              //     if (snapshot.hasData) {
-                              //       return Text(
-                              //         snapshot.data.toString(),
-                              //         style: textTheme.subtitle1,
-                              //       );
-                              //     }
-                              //     return SizedBox();
-                              //   },
-                              // ),
-                              Text(
-                                "test@test.test",
-                                style: textTheme.subtitle1,
-                              ),
-                              Text(
-                                'Email',
-                                style: textTheme.subtitle2,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      // ItemsDivider(),
+                      // Tapable(
+                      //   padding: EdgeInsets.only(top: 14, bottom: 14),
+                      //   onTap: () {},
+                      //   child: Container(
+                      //     width: double.infinity,
+                      //     padding: EdgeInsets.only(left: 20),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // FutureBuilder(
+                      //         //   future: SharedPreferences.getInstance()
+                      //         //       .then((prefs) => prefs.getString(Prefs.user_phone)),
+                      //         //   builder: (context, snapshot) {
+                      //         //     if (snapshot.hasData) {
+                      //         //       return Text(
+                      //         //         snapshot.data.toString(),
+                      //         //         style: textTheme.subtitle1,
+                      //         //       );
+                      //         //     }
+                      //         //     return SizedBox();
+                      //         //   },
+                      //         // ),
+                      //         Text(
+                      //           "test@test.test",
+                      //           style: textTheme.subtitle1,
+                      //         ),
+                      //         Text(
+                      //           'Email',
+                      //           style: textTheme.subtitle2,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                       ItemsDivider(),
                       Tapable(
                         padding: EdgeInsets.only(top: 14, bottom: 14),

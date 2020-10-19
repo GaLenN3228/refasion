@@ -13,6 +13,7 @@ import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
+import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/authorization/name_page.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
@@ -193,6 +194,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
       case ProfileNavigatorRoutes.root:
         topPanelController.needShowBack = true;
         topPanelController.needShow = false;
+        if (isAuthorized) Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
         return isAuthorized
             ? AuthorizedProfilePage(
                 onProductPush: (product, {callback}) => Navigator.of(context).push(
