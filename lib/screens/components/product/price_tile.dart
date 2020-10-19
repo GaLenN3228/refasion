@@ -6,8 +6,9 @@ import 'package:refashioned_app/utils/colors.dart';
 
 class ProductPriceTile extends StatelessWidget {
   final Product product;
+  final EdgeInsets padding;
 
-  const ProductPriceTile({Key key, this.product}) : super(key: key);
+  const ProductPriceTile({Key key, this.product, this.padding}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class ProductPriceTile extends StatelessWidget {
 
     if (!hasDiscount)
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
+        padding: padding ?? EdgeInsets.zero,
         child: Text(
           "${numberFormat.format(regularPrice)} ₽",
           style: Theme.of(context).textTheme.subtitle1.copyWith(
@@ -31,7 +32,7 @@ class ProductPriceTile extends StatelessWidget {
       );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: padding ?? EdgeInsets.zero,
       child: Row(
         children: <Widget>[
           Padding(

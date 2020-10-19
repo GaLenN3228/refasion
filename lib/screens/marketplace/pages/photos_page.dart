@@ -1,7 +1,7 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/bottom_button.dart';
@@ -13,9 +13,17 @@ import 'package:refashioned_app/screens/marketplace/components/add_photo_descrip
 import 'package:refashioned_app/screens/marketplace/components/add_photo_item.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 
+class PhotoItemData {
+  int index;
+  File file;
+  String title;
+
+  PhotoItemData(this.index, this.file, this.title);
+}
+
 class PhotosPage extends StatefulWidget {
   final Function() onClose;
-  final Function() onPush;
+  final Function(List<PhotoItemData>) onPush;
   final Function(File) onUpdate;
 
   const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate}) : super(key: key);
@@ -28,7 +36,15 @@ class _PhotosPageState extends State<PhotosPage> {
   BuildContext dialogContext;
 
   final picker = ImagePicker();
-  Map<int, File> images = {0: null, 1: null, 2: null};
+  List<PhotoItemData> images = List();
+
+  @override
+  void initState() {
+    images.add(PhotoItemData(0, null, "Вид спереди"));
+    images.add(PhotoItemData(1, null, "Вид сзади"));
+    images.add(PhotoItemData(2, null, "Вид сбоку"));
+    super.initState();
+  }
 
   Future getImage(int index) async {
     showDialog(
@@ -43,6 +59,17 @@ class _PhotosPageState extends State<PhotosPage> {
               DialogItemContent(DialogItemType.item, title: "Выбрать из галереи", onClick: () {
                 return openGallery(index);
               }, icon: IconAsset.image),
+              if (images[index] != null && images[index].file != null)
+                DialogItemContent(
+                  DialogItemType.item,
+                  title: "Удалить",
+                  onClick: () async {
+                    removePhotoFromCollection(index);
+                    Navigator.pop(dialogContext);
+                  },
+                  icon: IconAsset.delete,
+                  color: Colors.red,
+                ),
               DialogItemContent(
                 DialogItemType.system,
                 title: "Закрыть",
@@ -59,11 +86,7 @@ class _PhotosPageState extends State<PhotosPage> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      setState(() {
-        File _image = File(pickedFile.path);
-        images[index] = _image;
-        widget.onUpdate(_image);
-      });
+      addPhotoToCollection(index, pickedFile.path);
       Navigator.pop(dialogContext);
     }
   }
@@ -72,13 +95,30 @@ class _PhotosPageState extends State<PhotosPage> {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
-      setState(() {
-        File _image = File(pickedFile.path);
-        images[index] = _image;
-        widget.onUpdate(_image);
-      });
+      addPhotoToCollection(index, pickedFile.path);
       Navigator.pop(dialogContext);
     }
+  }
+
+  void addPhotoToCollection(int index, String imagePath) {
+    setState(() {
+      File _image = File(imagePath);
+      images[index].file = _image;
+      if (images.every((element) => element.file != null))
+        images.add(PhotoItemData(images.length, null, "Больше фото"));
+    });
+  }
+
+  void removePhotoFromCollection(int index) {
+    setState(() {
+      if (index == 0 || index == 1 || index == 2) {
+        images[index].file = null;
+        images.removeWhere((element) =>
+        element.index != 0 && element.index != 1 && element.index != 2 && element.file == null);
+      } else {
+        images.removeAt(index);
+      }
+    });
   }
 
   @override
@@ -97,38 +137,46 @@ class _PhotosPageState extends State<PhotosPage> {
                   bottomText: "Внешний вид",
                 ),
               ),
-              StaggeredGridView.countBuilder(
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                itemCount: images.length,
-                itemBuilder: (BuildContext context, int index) => AddPhotoItem(
-                    type: index,
-                    image: images[index],
-                    onPush: (type) {
-                      getImage(index);
-                    }),
-                staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
               Expanded(
-                child: Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 16),
-                      child: Text(
-                        "Информация для размещения",
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
+                child: StaggeredGridView.countBuilder(
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 76),
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  itemCount: images.length + 1,
+                  itemBuilder: (BuildContext context, int index) =>
+                  index == images.length
+                      ? Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Информация для размещения",
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .headline1,
+                          ),
+                        ),
+                        AddPhotoDescriptionItem(
+                            title: "Сфотографируйте все имеющиеся деффекты"),
+                        AddPhotoDescriptionItem(
+                            title: "Сделайте фото бирки и ото этикетки с размером"),
+                        AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
+                      ],
                     ),
-                    AddPhotoDescriptionItem(title: "Сфотографируйте все имеющиеся деффекты"),
-                    AddPhotoDescriptionItem(title: "Сделайте фото бирки и ото этикетки с размером"),
-                    AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
-                  ],
+                  )
+                      : AddPhotoItem(
+                      photoItemData: images[index],
+                      onPush: (type) {
+                        getImage(index);
+                      }),
+                  staggeredTileBuilder: (int index) =>
+                  index == images.length ? new StaggeredTile.fit(2) : new StaggeredTile.fit(1),
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
                 ),
-              ),
+              )
             ],
           ),
           Positioned(
@@ -137,8 +185,9 @@ class _PhotosPageState extends State<PhotosPage> {
               bottom: 0,
               child: BottomButton(
                 title: "ПРОДОЛЖИТЬ",
+                enabled: images.any((element) => element.file != null),
                 action: () {
-                  widget.onPush();
+                  widget.onPush(images.where((element) => element.file != null).toList());
                 },
               )),
         ],

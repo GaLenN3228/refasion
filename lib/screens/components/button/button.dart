@@ -1,228 +1,154 @@
 import 'package:flutter/material.dart';
-import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
-import 'package:refashioned_app/screens/components/button/components/button_icon.dart';
-import 'package:refashioned_app/screens/components/button/components/button_title.dart';
-
-class ButtonData {
-  final ButtonContainerData buttonContainerData;
-
-  final ButtonIconData leftIconData;
-
-  final ButtonIconData rightIconData;
-
-  final ButtonTitleData titleData;
-
-  ButtonData(
-      {this.leftIconData,
-      this.rightIconData,
-      this.titleData,
-      this.buttonContainerData})
-      : assert(buttonContainerData != null &&
-            (titleData != null ||
-                leftIconData != null ||
-                rightIconData != null));
-}
-
-enum ButtonState { enabled, loading, done, error, disabled }
+import 'package:provider/provider.dart';
+import 'package:refashioned_app/screens/components/button/components/content.dart';
+import 'package:refashioned_app/screens/components/button/components/decoration.dart';
+import 'package:refashioned_app/screens/components/button/data/data.dart';
+import 'package:refashioned_app/screens/components/button/data/state_data.dart';
 
 class RefashionedButton extends StatefulWidget {
-  final ButtonData data;
+  final RBData data;
+  final EdgeInsets padding;
 
-  final ValueNotifier<ButtonState> states;
-  final Map<ButtonState, ButtonData> statesData;
-
-  final Function() onTap;
-
-  final bool animateContent;
-
-  final double height;
-
-  const RefashionedButton({
-    this.states,
-    this.data,
-    this.statesData,
-    this.onTap,
-    this.animateContent: true,
-    this.height: 45,
-  }) : assert(data != null || (statesData != null && states != null));
+  const RefashionedButton({this.data, this.padding});
 
   @override
   _RefashionedButtonState createState() => _RefashionedButtonState();
 }
 
-class _RefashionedButtonState extends State<RefashionedButton>
-    with SingleTickerProviderStateMixin {
+class _RefashionedButtonState extends State<RefashionedButton> with TickerProviderStateMixin {
+  AnimationController animationPressController;
+  Animation<double> animationPress;
+
   AnimationController animationController;
   Animation<double> animation;
   Animation<double> animationIn;
   Animation<double> animationOut;
 
-  ButtonData currentData;
-  ButtonData nextData;
+  RBStateData currentData;
+  RBStateData nextData;
+
+  int stackIndex;
+
+  bool awaiting;
 
   @override
   initState() {
-    animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
+    if (widget.data.animatePress) {
+      animationPressController =
+          AnimationController(vsync: this, duration: Duration(milliseconds: (widget.data.duration / 4).round()));
+      animationPress = Tween(begin: 1.0, end: 0.99).animate(animationPressController);
+    }
+
+    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: widget.data.duration));
+
     animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
+
     animationOut = CurvedAnimation(
       parent: animation,
-      curve: Interval(0.0, 0.5, curve: Curves.easeIn),
+      curve: Interval(0.0, 0.5, curve: Curves.easeInOut),
     );
     animationIn = CurvedAnimation(
       parent: animation,
-      curve: Interval(0.5, 1.0, curve: Curves.easeOut),
+      curve: Interval(0.5, 1.0, curve: Curves.easeInOut),
     );
 
-    nextData = currentData = widget.states != null && widget.statesData != null
-        ? widget.statesData[widget.states.value]
-        : widget.data;
+    stackIndex = 0;
 
-    widget.states?.addListener(buttonStateListener);
+    awaiting = false;
+
+    nextData = currentData = widget.data.stateData;
+
+    widget.data.addListener(dataListener);
+
+    animationOut.addListener(animationOutListener);
 
     super.initState();
   }
 
-  buttonStateListener() {
-    setState(
-        () => nextData = widget.statesData[widget.states.value] ?? widget.data);
+  dataListener() {
+    setState(() {
+      nextData = widget.data.stateData;
 
-    animationController
-        .forward(from: 0.0)
-        .then((_) => setState(() => currentData = nextData));
+      stackIndex = 0;
+    });
+
+    animationController.forward(from: 0.0).then((value) => setState(() => currentData = nextData));
+  }
+
+  animationOutListener() {
+    if (animationOut.value == 1.0) setState(() => stackIndex = 1);
   }
 
   @override
   dispose() {
-    widget.states?.removeListener(buttonStateListener);
+    widget.data.removeListener(dataListener);
 
-    animationController.dispose();
+    animationOut.removeListener(animationOutListener);
+
+    animationController?.dispose();
+
+    animationPressController?.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: widget.onTap ?? () {},
-      child: SizedBox(
-        height: widget.height,
-        child: ButtonContainer(
-          currentData: currentData.buttonContainerData,
-          nextData: nextData.buttonContainerData,
-          animation: animation,
-          child: widget.animateContent
-              ? Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    FadeTransition(
-                      opacity:
-                          Tween(begin: 1.0, end: 0.0).animate(animationOut),
-                      child: SlideTransition(
-                        position: Tween(begin: Offset.zero, end: Offset(-1, 0))
-                            .animate(animationOut),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            ButtonIcon(
-                              currentData: currentData.leftIconData != null
-                                  ? ButtonIconData(
-                                      icon: currentData.leftIconData.icon,
-                                      color: currentData.leftIconData.color,
-                                    )
-                                  : ButtonIconData(icon: ButtonIconType.none),
-                              align: ButtonIconAlign.left,
-                            ),
-                            ButtonTitle(
-                              currentData: ButtonTitleData(
-                                text: currentData.titleData.text,
-                                color: currentData.titleData.color,
-                              ),
-                            ),
-                            ButtonIcon(
-                              currentData: currentData.rightIconData != null
-                                  ? ButtonIconData(
-                                      icon: currentData.rightIconData.icon,
-                                      color: currentData.rightIconData.color,
-                                    )
-                                  : ButtonIconData(icon: ButtonIconType.none),
-                              align: ButtonIconAlign.right,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    FadeTransition(
-                      opacity: Tween(begin: 0.0, end: 1.0).animate(animationIn),
-                      child: SlideTransition(
-                        position: Tween(begin: Offset(1, 0), end: Offset.zero)
-                            .animate(animationIn),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            ButtonIcon(
-                              currentData: nextData.leftIconData != null
-                                  ? ButtonIconData(
-                                      icon: nextData.leftIconData.icon,
-                                      color: nextData.leftIconData.color,
-                                    )
-                                  : ButtonIconData(icon: ButtonIconType.none),
-                              align: ButtonIconAlign.left,
-                            ),
-                            ButtonTitle(
-                              currentData: ButtonTitleData(
-                                text: nextData.titleData.text,
-                                color: nextData.titleData.color,
-                              ),
-                            ),
-                            ButtonIcon(
-                              currentData: nextData.rightIconData != null
-                                  ? ButtonIconData(
-                                      icon: nextData.rightIconData.icon,
-                                      color: nextData.rightIconData.color,
-                                    )
-                                  : ButtonIconData(icon: ButtonIconType.none),
-                              align: ButtonIconAlign.right,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    ButtonIcon(
-                      currentData: currentData.leftIconData != null
-                          ? ButtonIconData(
-                              icon: currentData.leftIconData.icon,
-                              color: currentData.leftIconData.color,
-                            )
-                          : ButtonIconData(icon: ButtonIconType.none),
-                      align: ButtonIconAlign.left,
-                    ),
-                    ButtonTitle(
-                      currentData: ButtonTitleData(
-                        text: currentData.titleData.text,
-                        color: currentData.titleData.color,
-                      ),
-                    ),
-                    ButtonIcon(
-                      currentData: currentData.rightIconData != null
-                          ? ButtonIconData(
-                              icon: currentData.rightIconData.icon,
-                              color: currentData.rightIconData.color,
-                            )
-                          : ButtonIconData(icon: ButtonIconType.none),
-                      align: ButtonIconAlign.right,
-                    ),
-                  ],
-                ),
+    if (widget.data == null) return SizedBox();
+
+    return ChangeNotifierProvider<RBData>(
+      create: (_) => widget.data,
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTapDown: (_) {
+          if (widget.data.animatePress) animationPressController.forward();
+        },
+        onPanDown: (_) {
+          if (widget.data.animatePress) animationPressController.forward();
+        },
+        onTapUp: (_) {
+          if (widget.data.animatePress) animationPressController.reverse();
+        },
+        onPanEnd: (_) {
+          if (widget.data.animatePress) animationPressController.reverse();
+        },
+        onTap: () async {
+          if (widget.data.available.value) currentData.onTap?.call();
+        },
+        child: ScaleTransition(
+          scale: animationPress,
+          child: Container(
+            height: widget.data.height,
+            padding: widget.padding ?? EdgeInsets.zero,
+            child: ButtonContainer(
+              currentData: currentData.decoration,
+              nextData: nextData.decoration,
+              animation: animation,
+              child: IndexedStack(
+                sizing: StackFit.expand,
+                index: stackIndex,
+                alignment: Alignment.center,
+                children: [
+                  RBContent(
+                    data: currentData,
+                    animateTitle: nextData.animateTitleOut,
+                    animateCaption: nextData.animateCaptionOut,
+                    animateIcon: nextData.animateIconOut,
+                    animation: animationOut,
+                    direction: RBContentAnimationDirection.animationOut,
+                  ),
+                  RBContent(
+                    data: nextData,
+                    animation: animationIn,
+                    animateTitle: nextData.animateTitleIn,
+                    animateCaption: nextData.animateCaptionIn,
+                    animateIcon: nextData.animateIconIn,
+                    direction: RBContentAnimationDirection.animationIn,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

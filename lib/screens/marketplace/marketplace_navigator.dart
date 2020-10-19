@@ -129,7 +129,7 @@ class ProductData {
 
   List<SellProperty> properties = List();
 
-  List<File> photos = List();
+  List<File> photos;
 
   PickPoint address;
 
@@ -143,9 +143,7 @@ class ProductData {
 
   updateCategory(Category newCategory) => category = newCategory;
 
-  updatePhotos(File photo) {
-    photos.add(photo);
-  }
+  updatePhotos(List<File> photos) => this.photos = photos;
 
   updateAddress(PickPoint newAddress) => address = newAddress;
 
@@ -352,10 +350,8 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       case MarketplaceNavigatorRoutes.photos:
         return PhotosPage(
           onClose: widget.onClose,
-          onUpdate: (photo) {
-            productData.updatePhotos(photo);
-          },
-          onPush: () {
+          onPush: (photos) {
+            productData.updatePhotos(photos.map((e) => e.file).toList());
             final hasSellProperties = (sellPropertiesRepository != null &&
                 sellPropertiesRepository.isLoaded &&
                 sellPropertiesRepository.response.status.code == 200 &&

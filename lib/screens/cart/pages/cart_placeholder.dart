@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/cart/components/placeholders/cart_item_placeholder.dart';
 import 'package:refashioned_app/screens/cart/components/placeholders/summary_placeholder.dart';
 import 'package:refashioned_app/screens/components/button/button.dart';
-import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
-import 'package:refashioned_app/screens/components/button/components/button_title.dart';
+import 'package:refashioned_app/screens/components/button/data/data.dart';
+import 'package:refashioned_app/screens/components/button/data/decoration.dart';
+import 'package:refashioned_app/screens/components/button/data/label_data.dart';
+import 'package:refashioned_app/screens/components/button/data/state_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class CartPlaceholder extends StatelessWidget {
   final List<int> scheme;
@@ -32,8 +35,7 @@ class CartPlaceholder extends StatelessWidget {
                 children: [
                   AnimatedList(
                     initialItemCount: scheme.length,
-                    padding: EdgeInsets.fromLTRB(
-                        15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
+                    padding: EdgeInsets.fromLTRB(15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
                     itemBuilder: (context, index, animation) {
                       print("index: " + index.toString());
                       Widget placeholder = Container(
@@ -88,17 +90,12 @@ class CartPlaceholder extends StatelessWidget {
                     left: 0,
                     right: 0,
                     bottom: MediaQuery.of(context).padding.bottom + 65.0,
-                    child: Padding(
+                    child: RefashionedButton(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: RefashionedButton(
-                        data: ButtonData(
-                          buttonContainerData: ButtonContainerData(
-                            decorationType: ButtonDecorationType.gray,
-                          ),
-                          titleData: ButtonTitleData(
-                            text: "Перейти к оформлению",
-                            color: ButtonTitleColor.white,
-                          ),
+                      data: RBData.single(
+                        data: RBStateData.simple(
+                          decoration: RBDecorationData.ofStyle(RBDecoration.gray),
+                          label: RBLabelData.ofTitle("Перейти к оформлению", color: white),
                         ),
                       ),
                     ),

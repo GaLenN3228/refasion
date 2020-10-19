@@ -1,54 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:refashioned_app/screens/components/button/data/decoration.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-enum ButtonDecorationType { black, gray, accent, outlined, red }
-
-class ButtonContainerData {
-  final ButtonDecorationType decorationType;
-
-  final double cornerRadius;
-  final double borderWidth;
-
-  ButtonContainerData({
-    this.decorationType,
-    this.cornerRadius: 5,
-    this.borderWidth: 2,
-  }) : assert((decorationType != null));
-}
-
 class ButtonContainer extends StatelessWidget {
-  final ButtonContainerData currentData;
-  final ButtonContainerData nextData;
+  final RBDecorationData currentData;
+  final RBDecorationData nextData;
 
   final Animation<double> animation;
 
   final Widget child;
 
-  const ButtonContainer(
-      {this.currentData, this.nextData, this.child, this.animation})
-      : assert(currentData != null);
+  const ButtonContainer({Key key, this.currentData, this.nextData, this.animation, this.child}) : super(key: key);
 
-  selectDecoration(ButtonContainerData newData) {
+  selectDecoration(RBDecorationData newData) {
     switch (newData.decorationType) {
-      case ButtonDecorationType.black:
+      case RBDecoration.black:
         return ShapeDecoration(
           color: primaryColor,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(newData.cornerRadius)),
+            borderRadius: BorderRadius.circular(newData.cornerRadius),
+          ),
         );
-      case ButtonDecorationType.gray:
+      case RBDecoration.gray:
         return ShapeDecoration(
           color: Color(0xFFBFBFBF),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(newData.cornerRadius)),
+            borderRadius: BorderRadius.circular(newData.cornerRadius),
+          ),
         );
-      case ButtonDecorationType.accent:
+      case RBDecoration.accent:
         return ShapeDecoration(
           color: accentColor,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(newData.cornerRadius)),
+            borderRadius: BorderRadius.circular(newData.cornerRadius),
+          ),
         );
-      case ButtonDecorationType.outlined:
+      case RBDecoration.outlined:
         return ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -56,11 +43,12 @@ class ButtonContainer extends StatelessWidget {
             side: BorderSide(color: primaryColor, width: newData.borderWidth),
           ),
         );
-      case ButtonDecorationType.red:
+      case RBDecoration.red:
         return ShapeDecoration(
           color: Colors.red,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(newData.cornerRadius)),
+            borderRadius: BorderRadius.circular(newData.cornerRadius),
+          ),
         );
     }
   }
@@ -79,12 +67,18 @@ class ButtonContainer extends StatelessWidget {
         child: ClipRRect(
           child: child,
           borderRadius: BorderRadius.lerp(
-              currentBorderRadius, nextBorderRadius, animation.value),
+            currentBorderRadius,
+            nextBorderRadius,
+            animation.value,
+          ),
         ),
         height: double.infinity,
         width: double.infinity,
         decoration: ShapeDecoration.lerp(
-            currentDecoration, nextDecoration, animation.value),
+          currentDecoration,
+          nextDecoration,
+          animation.value,
+        ),
       ),
     );
   }

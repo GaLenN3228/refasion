@@ -13,12 +13,14 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
+import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/components/webview_page.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
+import 'package:refashioned_app/screens/seller/seller_page.dart';
 
 import 'home.dart';
 
@@ -26,13 +28,57 @@ class HomeNavigatorRoutes {
   static const String root = '/';
   static const String products = '/products';
   static const String product = '/product';
+  static const String seller = '/seller';
   static const String favourites = '/favourites';
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
+  static const String paymentFailed = '/payment_failed';
   static const String doc = '/doc';
 }
 
+class HomeNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPop(Route route, Route previousRoute) {
+    switch (previousRoute?.settings?.name) {
+      case HomeNavigatorRoutes.seller:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        break;
+
+      case HomeNavigatorRoutes.product:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+        break;
+
+      default:
+        break;
+    }
+
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didPush(Route route, Route previousRoute) {
+    switch (route?.settings?.name) {
+      case HomeNavigatorRoutes.seller:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        break;
+
+      case HomeNavigatorRoutes.product:
+      case HomeNavigatorRoutes.checkout:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+        break;
+
+      default:
+        break;
+    }
+    super.didPush(route, previousRoute);
+  }
+}
+
 class HomeNavigator extends StatefulWidget {
+  static of(BuildContext context, {bool root = false}) => root
+      ? context.findRootAncestorStateOfType<_HomeNavigatorState>()
+      : context.findAncestorStateOfType<_HomeNavigatorState>();
+
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
   final Function(PickPoint) openPickUpAddressMap;
@@ -47,21 +93,20 @@ class HomeNavigator extends StatefulWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  _HomeNavigatorState _homeNavigatorState;
-
-  HomeNavigator(
-      {this.navigatorKey,
-      this.changeTabTo,
-      this.openPickUpAddressMap,
-      this.openDeliveryTypesSelector});
+  HomeNavigator({this.navigatorKey, this.changeTabTo, this.openPickUpAddressMap, this.openDeliveryTypesSelector});
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
     Navigator.of(context)
         .push(
           CupertinoPageRoute(
-            builder: (context) =>
-                _homeNavigatorState._routeBuilder(context, HomeNavigatorRoutes.favourites),
+            builder: (context) => HomeNavigator.of(context)._routeBuilder(
+              context,
+              HomeNavigatorRoutes.favourites,
+            ),
+            settings: RouteSettings(
+              name: HomeNavigatorRoutes.favourites,
+            ),
           ),
         )
         .then((value) => topPanelController.needShow = true);
@@ -72,8 +117,14 @@ class HomeNavigator extends StatefulWidget {
     Navigator.of(context)
         .push(
       CupertinoPageRoute(
-        builder: (context) => _homeNavigatorState
-            ._routeBuilder(context, HomeNavigatorRoutes.products, searchResult: searchResult),
+        builder: (context) => HomeNavigator.of(context)._routeBuilder(
+          context,
+          HomeNavigatorRoutes.products,
+          searchResult: searchResult,
+        ),
+        settings: RouteSettings(
+          name: HomeNavigatorRoutes.products,
+        ),
       ),
     )
         .then((value) {
@@ -84,8 +135,7 @@ class HomeNavigator extends StatefulWidget {
 
   @override
   _HomeNavigatorState createState() {
-    _homeNavigatorState = _HomeNavigatorState();
-    return _homeNavigatorState;
+    return _HomeNavigatorState();
   }
 }
 
@@ -94,6 +144,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
 
   Order order;
   int totalPrice;
+
+  Seller seller;
 
   @override
   initState() {
@@ -112,7 +164,6 @@ class _HomeNavigatorState extends State<HomeNavigator> {
   Widget _routeBuilder(BuildContext context, String route,
       {Category category,
       Product product,
-      Seller seller,
       String parameters,
       String productTitle,
       SearchResult searchResult,
@@ -128,8 +179,14 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) =>
-                        _routeBuilder(context, HomeNavigatorRoutes.product, product: product),
+                    builder: (context) => _routeBuilder(
+                      context,
+                      HomeNavigatorRoutes.product,
+                      product: product,
+                    ),
+                    settings: RouteSettings(
+                      name: HomeNavigatorRoutes.product,
+                    ),
                   ),
                 )
                 .then((value) => topPanelController.needShow = true);
@@ -138,21 +195,36 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
-                        collectionUrl: url, productTitle: title),
-                    settings: RouteSettings(name: HomeNavigatorRoutes.products),
+                    builder: (context) => _routeBuilder(
+                      context,
+                      HomeNavigatorRoutes.products,
+                      collectionUrl: url,
+                      productTitle: title,
+                    ),
+                    settings: RouteSettings(
+                      name: HomeNavigatorRoutes.products,
+                    ),
                   ),
                 )
-                .then((value) =>
-                    {topPanelController.needShow = true, topPanelController.needShowBack = false});
+                .then((value) => {topPanelController.needShow = true, topPanelController.needShowBack = false});
           },
           onDocPush: (String url, String urlName) {
-            Navigator.of(context).push(
+            Navigator.of(context)
+                .push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.doc, url: url, urlName: urlName),
+                builder: (context) => _routeBuilder(
+                  context,
+                  HomeNavigatorRoutes.doc,
+                  url: url,
+                  urlName: urlName,
+                ),
+                settings: RouteSettings(
+                  name: HomeNavigatorRoutes.doc,
+                ),
               ),
-            ).then(
-                  (flag) {
+            )
+                .then(
+              (flag) {
                 topPanelController.needShow = true;
               },
             );
@@ -174,8 +246,15 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             onPush: (product, {callback}) => Navigator.of(context)
                 .push(
               CupertinoPageRoute(
-                builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                    product: product, category: category),
+                builder: (context) => _routeBuilder(
+                  context,
+                  HomeNavigatorRoutes.product,
+                  product: product,
+                  category: category,
+                ),
+                settings: RouteSettings(
+                  name: HomeNavigatorRoutes.product,
+                ),
               ),
             )
                 .then(
@@ -199,20 +278,37 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             onProductPush: (product) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                        product: product, category: category),
+                    builder: (context) => _routeBuilder(
+                      context,
+                      HomeNavigatorRoutes.product,
+                      product: product,
+                      category: category,
+                    ),
+                    settings: RouteSettings(
+                      name: HomeNavigatorRoutes.product,
+                    ),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
+            onSellerPush: (newSeller) {
+              seller = newSeller;
+
+              Navigator.of(context).pushNamed(HomeNavigatorRoutes.seller);
+            },
             onSubCategoryClick: (parameters, title) => Navigator.of(context)
                 .push(
                   CupertinoPageRoute(
-                    builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.products,
-                        product: product,
-                        category: category,
-                        parameters: parameters,
-                        productTitle: title),
-                    settings: RouteSettings(name: HomeNavigatorRoutes.products),
+                    builder: (context) => _routeBuilder(
+                      context,
+                      HomeNavigatorRoutes.products,
+                      product: product,
+                      category: category,
+                      parameters: parameters,
+                      productTitle: title,
+                    ),
+                    settings: RouteSettings(
+                      name: HomeNavigatorRoutes.products,
+                    ),
                   ),
                 )
                 .then((value) => topPanelController.needShow = false),
@@ -227,14 +323,33 @@ class _HomeNavigatorState extends State<HomeNavigator> {
           );
         });
 
+      case HomeNavigatorRoutes.seller:
+        return SellerPage(
+          seller: seller,
+          onProductPush: (product) => Navigator.of(context)
+              .push(
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(
+                    context,
+                    HomeNavigatorRoutes.product,
+                    product: product,
+                    category: category,
+                  ),
+                  settings: RouteSettings(
+                    name: HomeNavigatorRoutes.product,
+                  ),
+                ),
+              )
+              .then((value) => topPanelController.needShow = true),
+        );
+
       case HomeNavigatorRoutes.favourites:
         topPanelController.needShow = false;
         return MultiProvider(
           providers: [
             ChangeNotifierProvider<FavouritesProductsRepository>(
                 create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-            ChangeNotifierProvider<AddRemoveFavouriteRepository>(
-                create: (_) => AddRemoveFavouriteRepository())
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
           ],
           builder: (context, _) {
             return FavouritesPage(
@@ -243,8 +358,15 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 Navigator.of(context)
                     .push(
                       CupertinoPageRoute(
-                        builder: (context) => _routeBuilder(context, HomeNavigatorRoutes.product,
-                            product: product, category: category),
+                        builder: (context) => _routeBuilder(
+                          context,
+                          HomeNavigatorRoutes.product,
+                          product: product,
+                          category: category,
+                        ),
+                        settings: RouteSettings(
+                          name: HomeNavigatorRoutes.product,
+                        ),
                       ),
                     )
                     .then((value) => topPanelController.needShow = false);
@@ -256,10 +378,11 @@ class _HomeNavigatorState extends State<HomeNavigator> {
       case HomeNavigatorRoutes.checkout:
         return CheckoutPage(
           order: order,
-          onOrderCreatedPush: (newTotalPrice) async {
+          onPush: (newTotalPrice, {bool success}) async {
             totalPrice = newTotalPrice;
+
             await Navigator.of(context).pushReplacementNamed(
-              HomeNavigatorRoutes.orderCreated,
+              success ?? false ? HomeNavigatorRoutes.orderCreated : HomeNavigatorRoutes.paymentFailed,
             );
           },
         );
@@ -270,6 +393,11 @@ class _HomeNavigatorState extends State<HomeNavigator> {
           onUserOrderPush: () => widget.changeTabTo(
             BottomTab.profile,
           ),
+        );
+
+      case HomeNavigatorRoutes.paymentFailed:
+        return PaymentFailedPage(
+          totalPrice: totalPrice,
         );
 
       case HomeNavigatorRoutes.doc:
@@ -295,8 +423,22 @@ class _HomeNavigatorState extends State<HomeNavigator> {
   Widget build(BuildContext context) => Navigator(
         key: widget.navigatorKey,
         initialRoute: HomeNavigatorRoutes.root,
+        observers: [
+          HomeNavigatorObserver(),
+        ],
+        onGenerateInitialRoutes: (navigatorState, initialRoute) => [
+          CupertinoPageRoute(
+            builder: (context) => _routeBuilder(context, initialRoute),
+            settings: RouteSettings(
+              name: initialRoute,
+            ),
+          ),
+        ],
         onGenerateRoute: (routeSettings) => CupertinoPageRoute(
-          builder: (context) => _routeBuilder(context, routeSettings.name),
+          builder: (context) => _routeBuilder(
+            context,
+            routeSettings.name,
+          ),
         ),
       );
 }

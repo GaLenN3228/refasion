@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:refashioned_app/models/brand.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -10,8 +11,7 @@ class PriceButton extends StatelessWidget {
   final Map<PriceButtonType, int> prices;
   final Function() onPush;
 
-  PriceButton({Key key, this.type, this.brand, this.prices, this.onPush})
-      : super(key: key);
+  PriceButton({Key key, this.type, this.brand, this.prices, this.onPush}) : super(key: key);
 
   final bodyText = {
     PriceButtonType.tradeIn: "Максимальная скидка на новую вещь бренда",
@@ -22,6 +22,8 @@ class PriceButton extends StatelessWidget {
     PriceButtonType.tradeIn: "Сдать в Трейд-ин",
     PriceButtonType.diy: "Вы получите"
   };
+
+  final numberFormat = NumberFormat("#,###", "ru_Ru");
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +41,7 @@ class PriceButton extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               decoration: ShapeDecoration(
                   color: Color.fromRGBO(0, 0, 0, 0.05),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5))),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -53,15 +54,16 @@ class PriceButton extends StatelessWidget {
                     color: enabled ? accentColor : Colors.transparent,
                     padding: const EdgeInsets.symmetric(horizontal: 2),
                     child: Text(
-                      price.toString() + " ₽",
-                      style: Theme.of(context).textTheme.headline1.copyWith(
-                          fontSize: 22,
-                          color: enabled ? primaryColor : darkGrayColor),
+                      "${numberFormat.format(price)}" + " ₽",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1
+                          .copyWith(fontSize: 22, color: enabled ? primaryColor : darkGrayColor),
                     ),
                   ),
                   Text(
                     bodyText[type],
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.subtitle2.copyWith(fontSize: 14),
                   ),
                 ],
               ),

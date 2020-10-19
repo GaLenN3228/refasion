@@ -17,10 +17,10 @@ class AddRemoveFavouriteRepository extends BaseRepository {
 }
 
 class FavouritesRepository extends BaseRepository<List<Favourite>> {
-  Future<void> getFavourites() => apiCall(() async {
-        response = BaseResponse.fromJson((await ApiService.getFavourites()).data,
-            (contentJson) => [for (final favourite in contentJson) Favourite.fromJson(favourite)]);
-      });
+  Future<void> getFavourites() async {
+    response = BaseResponse.fromJson((await ApiService.getFavourites()).data,
+        (contentJson) => [for (final favourite in contentJson) Favourite.fromJson(favourite)]);
+  }
 }
 
 class FavouritesProductsRepository extends BaseRepository<ProductsContent> {

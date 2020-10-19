@@ -228,6 +228,7 @@ class _ProductPageState extends State<ProductPage> {
                         ProductSizeTile(
                           product: product,
                           style: ProductSizeTileStyle.large,
+                          padding: EdgeInsets.only(bottom: 8),
                         ),
                         ProductSeller(
                           seller: product.seller,
@@ -259,7 +260,7 @@ class _ProductPageState extends State<ProductPage> {
                   right: 0,
                   bottom: 99,
                   child: ProductBottomButtons(
-                    productId: widget.product.id,
+                    product: widget.product,
                     onCartPush: widget.onCartPush,
                     openDeliveryTypesSelector: () => widget.openDeliveryTypesSelector?.call(
                       context,

@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:refashioned_app/repositories/base.dart';
+import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
-import 'package:refashioned_app/screens/components/button/button.dart';
-import 'package:refashioned_app/screens/components/button/components/button_decoration.dart';
-import 'package:refashioned_app/screens/components/button/components/button_icon.dart';
-import 'package:refashioned_app/screens/components/button/components/button_title.dart';
+import 'package:refashioned_app/screens/components/button/data/data.dart';
+import 'package:refashioned_app/screens/product/components/add_to_cart_button.dart';
+import 'package:refashioned_app/screens/product/components/order_now_button.dart';
 
 class ProductBottomButtons extends StatefulWidget {
-  final String productId;
+  final Product product;
   final Function() onCartPush;
   final Function() openDeliveryTypesSelector;
 
-  const ProductBottomButtons({this.productId, this.onCartPush, this.openDeliveryTypesSelector});
+  const ProductBottomButtons({this.product, this.onCartPush, this.openDeliveryTypesSelector});
   @override
   _ProductBottomButtonsState createState() => _ProductBottomButtonsState();
 }
@@ -21,145 +20,86 @@ class ProductBottomButtons extends StatefulWidget {
 class _ProductBottomButtonsState extends State<ProductBottomButtons> {
   CartRepository cartRepository;
 
-  ValueNotifier<ButtonState> addToCartButtonState;
+  RBState addToCartButtonState;
+  RBState orderNowButtonState;
 
   @override
   void initState() {
-    addToCartButtonState = ValueNotifier<ButtonState>(ButtonState.disabled);
-
     cartRepository = Provider.of<CartRepository>(context, listen: false);
 
-    if (cartRepository != null) addToCartButtonState.value = ButtonState.enabled;
+    addToCartButtonState = RBState.disabled;
+    orderNowButtonState = RBState.disabled;
 
-    if (cartRepository.checkPresence(widget.productId))
-      addToCartButtonState.value = ButtonState.done;
+    if (cartRepository != null) addToCartButtonState = RBState.enabled;
 
-    if (addToCartButtonState.value != ButtonState.done)
-      cartRepository?.addProduct?.addListener(addToCartRepositoryListener);
+    if (cartRepository.checkPresence(widget.product.id)) addToCartButtonState = RBState.done;
+
+    if (widget.product.available) orderNowButtonState = RBState.enabled;
 
     super.initState();
   }
 
   addToCart() async {
-    if (addToCartButtonState.value != ButtonState.done) {
-      HapticFeedback.heavyImpact();
-      cartRepository?.addToCart(widget.productId);
-    } else
-      widget.onCartPush();
+    HapticFeedback.heavyImpact();
+
+    setState(() => addToCartButtonState = RBState.loading);
+
+    await cartRepository?.addToCart(widget.product.id);
+
+    final repository = cartRepository.addProduct;
+
+    if (repository.lastProductId == widget.product.id) {
+      setState(
+        () {
+          if (repository.isLoaded)
+            addToCartButtonState = RBState.done;
+          else
+            addToCartButtonState = RBState.disabled;
+        },
+      );
+    }
   }
 
-  addToCartRepositoryListener() {
-    if (cartRepository != null && cartRepository.addProduct.lastProductId == widget.productId) {
-      switch (cartRepository.addProduct.status) {
-        case Status.LOADING:
-          addToCartButtonState.value = ButtonState.loading;
-          break;
-        case Status.ERROR:
-          HapticFeedback.vibrate();
-          addToCartButtonState.value = ButtonState.error;
-          break;
-        case Status.LOADED:
-          addToCartButtonState.value = ButtonState.done;
-          break;
-      }
-    }
+  orderNow() async {
+    setState(() => orderNowButtonState = RBState.loading);
+
+    await widget.openDeliveryTypesSelector?.call();
+
+    final newState = widget.product.available ? RBState.enabled : RBState.disabled;
+
+    setState(() => orderNowButtonState = newState);
   }
 
   @override
   void dispose() {
-    cartRepository?.addProduct?.removeListener(addToCartRepositoryListener);
-
     super.dispose();
   }
 
-  final addToCartButtonStatesData = {
-    ButtonState.disabled: ButtonData(
-      buttonContainerData: ButtonContainerData(
-        decorationType: ButtonDecorationType.gray,
-      ),
-      titleData: ButtonTitleData(
-        text: "В корзину",
-        color: ButtonTitleColor.white,
-      ),
-    ),
-    ButtonState.enabled: ButtonData(
-      buttonContainerData: ButtonContainerData(
-        decorationType: ButtonDecorationType.accent,
-      ),
-      titleData: ButtonTitleData(
-        text: "В корзину",
-        color: ButtonTitleColor.black,
-      ),
-    ),
-    ButtonState.loading: ButtonData(
-      buttonContainerData: ButtonContainerData(
-        decorationType: ButtonDecorationType.black,
-      ),
-      titleData: ButtonTitleData(
-        text: "Добавляем",
-        color: ButtonTitleColor.white,
-      ),
-    ),
-    ButtonState.done: ButtonData(
-      buttonContainerData: ButtonContainerData(
-        decorationType: ButtonDecorationType.outlined,
-      ),
-      titleData: ButtonTitleData(
-        text: "Добавлено",
-        color: ButtonTitleColor.black,
-      ),
-      rightIconData: ButtonIconData(
-        icon: ButtonIconType.arrow_right_long,
-        color: ButtonIconColor.black,
-      ),
-    ),
-    ButtonState.error: ButtonData(
-      buttonContainerData: ButtonContainerData(
-        decorationType: ButtonDecorationType.red,
-      ),
-      titleData: ButtonTitleData(
-        text: "Ошибка",
-        color: ButtonTitleColor.white,
-      ),
-    ),
-  };
-
   @override
   Widget build(BuildContext context) {
-    if (widget.productId == null) return SizedBox();
+    if (widget.product == null) return SizedBox();
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: RefashionedButton(
-              height: 40,
-              onTap: widget.openDeliveryTypesSelector?.call,
-              data: ButtonData(
-                buttonContainerData: ButtonContainerData(
-                  decorationType: ButtonDecorationType.black,
-                ),
-                titleData: ButtonTitleData(
-                  text: "Купить сейчас",
-                  color: ButtonTitleColor.white,
-                ),
-              ),
-            ),
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: OrderNowButton(
+            padding: const EdgeInsets.only(left: 20),
+            onEnabledPush: orderNow,
+            state: orderNowButtonState,
           ),
-          Container(
-            width: 5,
+        ),
+        Container(
+          width: 5,
+        ),
+        Expanded(
+          child: AddToCartButton(
+            padding: const EdgeInsets.only(right: 20),
+            onEnabledPush: addToCart,
+            onDonePush: widget.onCartPush?.call,
+            state: addToCartButtonState,
           ),
-          Expanded(
-            child: RefashionedButton(
-              height: 40,
-              onTap: addToCart,
-              states: addToCartButtonState,
-              statesData: addToCartButtonStatesData,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

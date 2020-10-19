@@ -5,7 +5,9 @@ import 'package:refashioned_app/models/product.dart';
 class ProductBrandTile extends StatelessWidget {
   final Product product;
 
-  const ProductBrandTile({this.product});
+  final EdgeInsets padding;
+
+  const ProductBrandTile({this.product, this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class ProductBrandTile extends StatelessWidget {
     if (brand == null) return SizedBox();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: padding ?? EdgeInsets.zero,
       child: Text(
         brand,
         style: Theme.of(context).textTheme.subtitle2.copyWith(height: 1.0),

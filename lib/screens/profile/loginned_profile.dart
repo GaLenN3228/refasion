@@ -21,9 +21,15 @@ class AuthorizedProfilePage extends StatefulWidget {
   final Function() onFavClick;
   final Function(Product) onProductPush;
   final Function() onSettingsClick;
+  final Function() onMyAddressesPush;
 
-  const AuthorizedProfilePage({Key key, this.onFavClick, this.onSettingsClick, this.onProductPush})
-      : super(key: key);
+  const AuthorizedProfilePage({
+    Key key,
+    this.onFavClick,
+    this.onSettingsClick,
+    this.onProductPush,
+    this.onMyAddressesPush,
+  }) : super(key: key);
 
   @override
   _AuthorizedProfilePageState createState() => _AuthorizedProfilePageState();
@@ -35,48 +41,40 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
 
   @override
   void initState() {
-    Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+    loadIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    loadIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
-
-    // if (profileProductsRepository.loadingFailed)
-    //   return Center(
-    //     child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-    //   );
-
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Column(
         children: [
           _appBar(context),
           Consumer<ProfileProductsRepository>(builder: (context, profileProductsRepository, child) {
-            if (profileProductsRepository.isLoading && profileProductsRepository.response == null) {
+            if (profileProductsRepository.fullReload && profileProductsRepository.isLoading) {
               return Expanded(
-                  child: Center(
-                      child: SizedBox(
-                height: 32.0,
-                width: 32.0,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  backgroundColor: accentColor,
-                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                child: Center(
+                  child: SizedBox(
+                    height: 25.0,
+                    width: 25.0,
+                    child: CupertinoActivityIndicator(),
+                  ),
                 ),
-              )));
+              );
             }
 
             if (profileProductsRepository.loadingFailed)
               return Expanded(
-                  child: Center(
-                child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-              ));
+                child: Center(
+                  child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+                ),
+              );
+
+            if (profileProductsRepository.response?.content == null) return SizedBox();
 
             return _profileProducts(context, profileProductsRepository.response.content);
-
-            return SizedBox();
           }),
         ],
       ),
@@ -110,14 +108,12 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       FutureBuilder(
-                        future: SharedPreferences.getInstance()
-                            .then((prefs) => prefs.getString(Prefs.user_name)),
+                        future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
                               snapshot.data.toString(),
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                             );
                           }
                           return SizedBox();
@@ -166,8 +162,22 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Мои заказы', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7), child: Text('Мои заказы', style: textTheme.bodyText1)),
+                    ],
+                  ),
+                ),
+                Tapable(
+                  padding: EdgeInsets.all(10),
+                  onTap: widget.onMyAddressesPush?.call,
+                  child: Column(
+                    children: [
+                      SVGIcon(
+                        icon: IconAsset.location,
+                        height: 35,
+                        color: Colors.black,
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(top: 7), child: Text('Мои адреса', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -183,25 +193,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Избранное', style: textTheme.bodyText1)),
-                    ],
-                  ),
-                ),
-                Tapable(
-                  padding: EdgeInsets.all(10),
-                  onTap: () {},
-                  child: Column(
-                    children: [
-                      SVGIcon(
-                        icon: IconAsset.notifications,
-                        height: 35,
-                        color: Colors.black,
-                      ),
-                      Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Подписки', style: textTheme.bodyText1)),
+                      Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -370,7 +362,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       controller: _refreshController,
       onRefresh: () async {
         HapticFeedback.heavyImpact();
-        await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+        await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts(makeFullReload: false);
         _refreshController.refreshCompleted();
       },
       child: ListView(

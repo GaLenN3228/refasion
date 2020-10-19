@@ -5,11 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
+import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/cart_item_tile.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/order_button.dart';
+import 'package:refashioned_app/screens/cart/components/tiles/create_order_button.dart';
 import 'package:refashioned_app/screens/cart/components/tiles/cart_summary_tile.dart';
+import 'package:refashioned_app/screens/components/button/data/data.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
@@ -34,7 +37,7 @@ class CartPage extends StatefulWidget {
 
   final Function() onCatalogPush;
 
-  final Function(String) onCheckoutPush;
+  final Function(Order) onCheckoutPush;
 
   const CartPage(
       {Key key,
@@ -54,13 +57,74 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
 
   RefreshController refreshController;
 
+  CreateOrderRepository createOrderRepository;
+
+  RBState buttonState;
+  bool updateButtonStateByRepository;
+
   @override
   void initState() {
+    createOrderRepository = CreateOrderRepository();
+
     loadingIcon = SizedBox(width: 25.0, height: 25.0, child: const CupertinoActivityIndicator());
 
     refreshController = RefreshController(initialRefresh: false);
 
+    buttonState = RBState.disabled;
+    updateButtonStateByRepository = true;
+
     super.initState();
+  }
+
+  onCheckoutPush(String orderParameters) async {
+    updateButtonStateByRepository = false;
+
+    setState(() => buttonState = RBState.loading);
+
+    await createOrderRepository.update(orderParameters);
+
+    final order = createOrderRepository.response?.content;
+
+    if (order != null) {
+      widget.onCheckoutPush?.call(order);
+    } else {
+      await showCupertinoDialog(
+        context: context,
+        useRootNavigator: true,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text(
+            "Ошибка",
+            style: Theme.of(context).textTheme.headline1,
+          ),
+          content: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              createOrderRepository.response?.errors?.messages ?? "Неизвестная ошибка",
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: Navigator.of(context).pop,
+              child: Text("ОК"),
+            )
+          ],
+        ),
+      );
+
+      setState(() => buttonState = RBState.disabled);
+    }
+
+    updateButtonStateByRepository = true;
+  }
+
+  @override
+  dispose() {
+    createOrderRepository.dispose();
+
+    refreshController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -91,6 +155,14 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
 
           final cart = repository?.response?.content;
 
+          if (updateButtonStateByRepository) {
+            if (repository.isLoading)
+              buttonState = RBState.loading;
+            else if (repository.isLoaded && repository.summary.canOrder)
+              buttonState = RBState.enabled;
+            else
+              buttonState = RBState.disabled;
+          }
           return CupertinoPageScaffold(
             backgroundColor: Colors.white,
             child: Column(
@@ -232,9 +304,10 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
                           left: 0,
                           right: 0,
                           bottom: MediaQuery.of(context).padding.bottom + 65.0,
-                          child: CartOrderButton(
+                          child: CreateOrderButton(
                             cartSummary: repository.summary,
-                            onCheckoutPush: () async => await widget.onCheckoutPush?.call(repository.orderParameters),
+                            state: buttonState,
+                            onPush: () async => await onCheckoutPush?.call(repository.orderParameters),
                           ),
                         )
                     ],
