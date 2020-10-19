@@ -58,7 +58,7 @@ class ProfileNavigatorObserver extends NavigatorObserver {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
 
-      case ProfileNavigatorRoutes.product:
+      default:
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
     }
@@ -73,16 +73,8 @@ class ProfileNavigatorObserver extends NavigatorObserver {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
 
-      case ProfileNavigatorRoutes.myAddresses:
-      case ProfileNavigatorRoutes.favourites:
-      case ProfileNavigatorRoutes.settings:
-      case ProfileNavigatorRoutes.product:
-      case ProfileNavigatorRoutes.checkout:
-      case ProfileNavigatorRoutes.userProfile:
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-        break;
-
       default:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
     }
     super.didPush(route, previousRoute);
