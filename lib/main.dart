@@ -47,6 +47,9 @@ class RefashionApp extends StatelessWidget {
           ChangeNotifierProvider<CodeAuthorizationRepository>(
             create: (_) => CodeAuthorizationRepository(),
           ),
+          ChangeNotifierProvider<LogoutRepository>(
+            create: (_) => LogoutRepository(),
+          ),
           ChangeNotifierProvider<FiltersRepository>(
             create: (_) => FiltersRepository(),
           ),

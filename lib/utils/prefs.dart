@@ -6,4 +6,5 @@ class Prefs {
   static const need_show_authorization_screen = "need_show_authorization_screen";
   static const user_name = "user_name";
   static const user_phone = "user_phone";
+  static const user_photo = "user_photo";
 }

@@ -261,6 +261,11 @@ class ApiService {
     return dioClient.post(Url.authorization, data: body);
   }
 
+  static Future<Response> logout() async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
+    return dioClient.get(Url.logout);
+  }
+
   static Future<Response> sendCode(String phone, String hash, String code) async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_ENABLE);
     var body = {"code": code};

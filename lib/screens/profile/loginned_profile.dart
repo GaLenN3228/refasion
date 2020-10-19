@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,6 +21,7 @@ import 'package:provider/provider.dart';
 
 class AuthorizedProfilePage extends StatefulWidget {
   final Function() onFavClick;
+  final Function() onUserProfileClick;
   final Function(Product) onProductPush;
   final Function() onSettingsClick;
   final Function() onMyAddressesPush;
@@ -29,6 +32,7 @@ class AuthorizedProfilePage extends StatefulWidget {
     this.onSettingsClick,
     this.onProductPush,
     this.onMyAddressesPush,
+    this.onUserProfileClick,
   }) : super(key: key);
 
   @override
@@ -90,17 +94,31 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
         height: MediaQuery.of(context).padding.top + 80,
         width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 50),
+          padding: const EdgeInsets.only(left: 20, right: 20),
           child: Tapable(
             padding: EdgeInsets.only(top: 10, bottom: 10),
-            onTap: () {},
+            onTap: () {
+              widget.onUserProfileClick();
+            },
             child: Row(
               children: [
-                // Container(
-                //   width: 70,
-                //   height: 70,
-                //   child: Image.asset('assets/user_placeholder.png'),
-                // ),
+                Container(
+                    width: 50,
+                    height: 50,
+                    child: FutureBuilder(
+                        future: SharedPreferences.getInstance()
+                            .then((prefs) => prefs.getString(Prefs.user_photo)),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child: Image.file(
+                                  File(snapshot.data),
+                                  fit: BoxFit.cover,
+                                ));
+                          }
+                          return Image.asset('assets/icons/png/user_placeholder_yellow.png');
+                        })),
                 Container(
                   padding: EdgeInsets.only(left: 20),
                   child: Column(
@@ -108,12 +126,14 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       FutureBuilder(
-                        future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
+                        future: SharedPreferences.getInstance()
+                            .then((prefs) => prefs.getString(Prefs.user_name)),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
                               snapshot.data.toString(),
-                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                             );
                           }
                           return SizedBox();
@@ -162,7 +182,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7), child: Text('Мои заказы', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Мои заказы', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -177,7 +198,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7), child: Text('Мои адреса', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Мои адреса', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -193,7 +215,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         height: 35,
                         color: Colors.black,
                       ),
-                      Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
+                      Container(
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -362,7 +386,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       controller: _refreshController,
       onRefresh: () async {
         HapticFeedback.heavyImpact();
-        await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts(makeFullReload: false);
+        await Provider.of<ProfileProductsRepository>(context, listen: false)
+            .getProducts(makeFullReload: false);
         _refreshController.refreshCompleted();
       },
       child: ListView(

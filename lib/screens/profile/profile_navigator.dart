@@ -27,7 +27,9 @@ import 'package:refashioned_app/screens/profile/map_page.dart';
 import 'package:refashioned_app/screens/profile/pages/my_addresses.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
+import 'package:refashioned_app/screens/profile/user_profile.dart';
 import 'package:refashioned_app/screens/seller/seller_page.dart';
+import 'package:refashioned_app/utils/colors.dart';
 
 class ProfileNavigatorRoutes {
   static const String root = '/';
@@ -41,6 +43,7 @@ class ProfileNavigatorRoutes {
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
   static const String paymentFailed = '/payment_failed';
+  static const String userProfile = '/user_profile';
 }
 
 class ProfileNavigatorObserver extends NavigatorObserver {
@@ -225,6 +228,19 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                     ),
                   );
                 },
+                onUserProfileClick: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) => _routeBuilder(
+                        context,
+                        ProfileNavigatorRoutes.userProfile,
+                      ),
+                      settings: RouteSettings(
+                        name: ProfileNavigatorRoutes.userProfile,
+                      ),
+                    ),
+                  );
+                },
                 onMyAddressesPush: () => Navigator.of(context).pushNamed(
                   ProfileNavigatorRoutes.myAddresses,
                 ),
@@ -273,6 +289,19 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                   Navigator.of(context).pushNamed(ProfileNavigatorRoutes.doc);
                 },
               );
+
+      case ProfileNavigatorRoutes.userProfile:
+        return UserProfile(
+          onMapPageClick: () {
+            widget.pushPageOnTop(MapPage());
+          },
+          onDocPush: (String url, String title) {
+            docUrl = url;
+            docTitle = title;
+
+            Navigator.of(context).pushNamed(ProfileNavigatorRoutes.doc);
+          },
+        );
 
       case ProfileNavigatorRoutes.doc:
         return WebViewPage(
@@ -396,7 +425,8 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
           providers: [
             ChangeNotifierProvider<FavouritesProductsRepository>(
                 create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(
+                create: (_) => AddRemoveFavouriteRepository())
           ],
           builder: (context, _) {
             return FavouritesPage(
@@ -429,7 +459,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             totalPrice = newTotalPrice;
 
             await Navigator.of(context).pushReplacementNamed(
-              success ?? false ? ProfileNavigatorRoutes.orderCreated : ProfileNavigatorRoutes.paymentFailed,
+              success ?? false
+                  ? ProfileNavigatorRoutes.orderCreated
+                  : ProfileNavigatorRoutes.paymentFailed,
             );
           },
         );
@@ -461,40 +493,53 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<CodeAuthorizationRepository>();
-    return FutureBuilder<bool>(
-      future: BaseRepository.isAuthorized(),
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-          return Navigator(
-            key: widget.navigatorKey,
-            initialRoute: ProfileNavigatorRoutes.root,
-            observers: [
-              ProfileNavigatorObserver(),
-            ],
-            onGenerateInitialRoutes: (navigatorState, initialRoute) => [
-              CupertinoPageRoute(
+    return Consumer2<CodeAuthorizationRepository, LogoutRepository>(
+        builder: (context, codeAuthorization, logoutRepository, child) {
+      if (codeAuthorization.isLoading || logoutRepository.isLoading)
+        return Center(
+            child: SizedBox(
+          height: 32.0,
+          width: 32.0,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            backgroundColor: accentColor,
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+          ),
+        ));
+      return FutureBuilder<bool>(
+        future: BaseRepository.isAuthorized(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+            return Navigator(
+              key: widget.navigatorKey,
+              initialRoute: ProfileNavigatorRoutes.root,
+              observers: [
+                ProfileNavigatorObserver(),
+              ],
+              onGenerateInitialRoutes: (navigatorState, initialRoute) => [
+                CupertinoPageRoute(
+                  builder: (context) => _routeBuilder(
+                    context,
+                    initialRoute,
+                    isAuthorized: snapshot.data,
+                  ),
+                  settings: RouteSettings(
+                    name: initialRoute,
+                  ),
+                ),
+              ],
+              onGenerateRoute: (routeSettings) => CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
                   context,
-                  initialRoute,
-                  isAuthorized: snapshot.data,
+                  routeSettings.name,
                 ),
-                settings: RouteSettings(
-                  name: initialRoute,
-                ),
+                settings: routeSettings,
               ),
-            ],
-            onGenerateRoute: (routeSettings) => CupertinoPageRoute(
-              builder: (context) => _routeBuilder(
-                context,
-                routeSettings.name,
-              ),
-              settings: routeSettings,
-            ),
-          );
-        }
-        return SizedBox();
-      },
-    );
+            );
+          }
+          return SizedBox();
+        },
+      );
+    });
   }
 }

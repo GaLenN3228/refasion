@@ -47,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Container(
                     width: 80,
                     height: 80,
-                    child: Image.asset('assets/user_placeholder.png'),
+                    child: Image.asset('assets/icons/png/user_placeholder_yellow.png'),
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 14.0),

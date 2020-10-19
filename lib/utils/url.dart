@@ -72,6 +72,7 @@ class Url {
 
   //Authorization
   static const authorization = '$refashionedBaseUrl/users/authorization/';
+  static const logout = '$refashionedBaseUrl/users/authorization/logout';
   static String codeAuthorization(String phone, String hash) => '$authorization' + phone + '_' + hash + '/';
 
   //Favourites

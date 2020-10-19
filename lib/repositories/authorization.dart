@@ -30,3 +30,14 @@ class CodeAuthorizationRepository extends BaseRepository<Authorization> {
         }
       });
 }
+
+class LogoutRepository extends BaseRepository {
+  Future<void> logout() => apiCall(() async {
+    response = BaseResponse.fromJson((await ApiService.logout()).data,
+            null);
+    if (response.getStatusCode == HttpStatus.ok) {
+      await BaseRepository.setAuthorized(false);
+      notifyListeners();
+    }
+  });
+}
