@@ -110,8 +110,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                       width: 50,
                       height: 50,
                       child: FutureBuilder(
-                          future: SharedPreferences.getInstance()
-                              .then((prefs) => prefs.getString(Prefs.user_photo)),
+                          future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_photo)),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return ClipRRect(
@@ -132,14 +131,12 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         FutureBuilder(
-                          future: SharedPreferences.getInstance()
-                              .then((prefs) => prefs.getString(Prefs.user_name)),
+                          future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Text(
                                 snapshot.data.toString(),
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                               );
                             }
                             return SizedBox();
@@ -185,12 +182,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     children: [
                       SVGIcon(
                         icon: IconAsset.box,
-                        height: 35,
-                        color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Мои заказы', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7), child: Text('Мои заказы', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -201,12 +195,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     children: [
                       SVGIcon(
                         icon: IconAsset.location,
-                        height: 35,
-                        color: Colors.black,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Мои адреса', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7), child: Text('Мои адреса', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -219,12 +210,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     children: [
                       SVGIcon(
                         icon: IconAsset.favoriteBorder,
-                        height: 35,
-                        color: Colors.black,
                       ),
-                      Container(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text('Избранное', style: textTheme.bodyText1)),
+                      Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -237,8 +224,6 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     children: [
                       SVGIcon(
                         icon: IconAsset.settings,
-                        height: 35,
-                        color: Colors.black,
                       ),
                       Container(
                           padding: EdgeInsets.only(top: 7),
@@ -393,8 +378,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       controller: _refreshController,
       onRefresh: () async {
         HapticFeedback.heavyImpact();
-        await Provider.of<ProfileProductsRepository>(context, listen: false)
-            .getProducts(makeFullReload: false);
+        await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts(makeFullReload: false);
         _refreshController.refreshCompleted();
       },
       child: ListView(
