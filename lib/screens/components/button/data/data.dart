@@ -35,9 +35,10 @@ class RBData extends ChangeNotifier {
   }) async {
     if (_state != newState) {
       if (_data.containsKey(newState)) {
-        if (!available.value) await Future.delayed(Duration(milliseconds: duration));
-
-        available.value = false;
+        if (available.value)
+          available.value = false;
+        else
+          await Future.delayed(Duration(milliseconds: duration));
 
         _state = newState;
         _stateData = _data[_state]

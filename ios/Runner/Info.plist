@@ -25,13 +25,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>${PRODUCT_NAME} uses camera to take photos of selling items</string>
+	<string>Приложению нужен доступ к камере, чтобы делать фотографии вещей</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>${PRODUCT_NAME} uses user location to simplify navigation and search of an user address or a nearest pickup office</string>
+	<string>Данные о вашем местоположении используются при выборе адреса хранения и доставки вещей</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>${PRODUCT_NAME} uses user location to simplify navigation and search of an user address or a nearest pickup office</string>
+	<string>Данные о вашем местоположении используются при выборе адреса хранения и доставки вещей</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>${PRODUCT_NAME} uses images from library as selling item photos </string>
+	<string>Приложению нужен доступ к галерее, чтобы добавлять фотографии вещей</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -156,9 +156,7 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
           final cart = repository?.response?.content;
 
           if (updateButtonStateByRepository) {
-            if (repository.isLoading)
-              buttonState = RBState.loading;
-            else if (repository.isLoaded && repository.summary.canOrder)
+            if (repository.isLoaded && repository.summary.canOrder)
               buttonState = RBState.enabled;
             else
               buttonState = RBState.disabled;
