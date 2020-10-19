@@ -13,6 +13,7 @@ import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
+import 'package:refashioned_app/screens/authorization/name_page.dart';
 import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
 import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
@@ -294,13 +295,12 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
 
       case ProfileNavigatorRoutes.userProfile:
         return UserProfile(
-          onUserNamePush: (){
+          onUserNamePush: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
                   context,
                   ProfileNavigatorRoutes.userName,
-                  isAuthorized: isAuthorized,
                 ),
                 settings: RouteSettings(
                   name: ProfileNavigatorRoutes.userName,
@@ -320,7 +320,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
         );
 
       case ProfileNavigatorRoutes.userName:
-        return UserNamePage();
+        return NamePage(
+          needDismiss: true,
+        );
 
       case ProfileNavigatorRoutes.doc:
         return WebViewPage(

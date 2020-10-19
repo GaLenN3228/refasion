@@ -25,13 +25,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Приложению нужен доступ к камере, чтобы делать фотографии вещей</string>
+	<string>Приложению нужен доступ к камере, чтобы сделать фотографии</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Данные о вашем местоположении используются при выборе адреса хранения и доставки вещей</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Данные о вашем местоположении используются при выборе адреса хранения и доставки вещей</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Приложению нужен доступ к галерее, чтобы добавлять фотографии вещей</string>
+	<string>Приложению нужен доступ к галерее, чтобы добавить фотографии</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

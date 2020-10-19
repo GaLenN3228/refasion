@@ -97,7 +97,7 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
         height: MediaQuery.of(context).padding.top + 80,
         width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 20, right: 20),
           child: Tapable(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             onTap: () {

@@ -12,6 +12,7 @@ import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
+import 'package:refashioned_app/screens/profile/components/user_name_controller.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 void main() async {
@@ -62,6 +63,7 @@ class RefashionApp extends StatelessWidget {
           ChangeNotifierProvider<OnBoardingRepository>(
             create: (_) => OnBoardingRepository(),
           ),
+          ChangeNotifierProvider<UserNameController>(create: (_) => UserNameController())
         ],
         child: MaterialApp(
           theme: _materialTheme(),
@@ -78,9 +80,17 @@ ThemeData _materialTheme() {
       bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
       textTheme: TextTheme(
         headline1: TextStyle(
-            fontSize: 16, fontFamily: "SF UI Text", color: primaryColor, height: 1.2, fontWeight: FontWeight.w600),
+            fontSize: 16,
+            fontFamily: "SF UI Text",
+            color: primaryColor,
+            height: 1.2,
+            fontWeight: FontWeight.w600),
         headline2: TextStyle(
-            fontSize: 16, fontFamily: "SF UI Text", color: primaryColor, fontWeight: FontWeight.w600, height: 1.2),
+            fontSize: 16,
+            fontFamily: "SF UI Text",
+            color: primaryColor,
+            fontWeight: FontWeight.w600,
+            height: 1.2),
         headline3: TextStyle(
           fontSize: 28,
           fontFamily: "SF UI Text",
@@ -88,20 +98,52 @@ ThemeData _materialTheme() {
           fontWeight: FontWeight.w600,
         ),
         headline5: TextStyle(
-            fontSize: 16, fontFamily: "SF UI Text", color: primaryColor, fontWeight: FontWeight.normal, height: 1.2),
+            fontSize: 16,
+            fontFamily: "SF UI Text",
+            color: primaryColor,
+            fontWeight: FontWeight.normal,
+            height: 1.2),
         headline6: TextStyle(
-            fontSize: 16, fontFamily: "SF UI Text", color: primaryColor, fontWeight: FontWeight.w600, height: 1.2),
+            fontSize: 16,
+            fontFamily: "SF UI Text",
+            color: primaryColor,
+            fontWeight: FontWeight.w600,
+            height: 1.2),
         bodyText1: TextStyle(
-            fontSize: 12, fontFamily: "SF UI Text", color: primaryColor, fontWeight: FontWeight.normal, height: 1.5),
+            fontSize: 12,
+            fontFamily: "SF UI Text",
+            color: primaryColor,
+            fontWeight: FontWeight.normal,
+            height: 1.5),
         bodyText2: TextStyle(
-            fontSize: 12, fontFamily: "SF UI Text", color: darkGrayColor, fontWeight: FontWeight.normal, height: 1.2),
+            fontSize: 12,
+            fontFamily: "SF UI Text",
+            color: darkGrayColor,
+            fontWeight: FontWeight.normal,
+            height: 1.2),
         subtitle1: TextStyle(
-            fontSize: 12, fontFamily: "SF UI Text", fontWeight: FontWeight.w600, color: primaryColor, height: 1.2),
+            fontSize: 12,
+            fontFamily: "SF UI Text",
+            fontWeight: FontWeight.w600,
+            color: primaryColor,
+            height: 1.2),
         subtitle2: TextStyle(
-            fontSize: 12, fontFamily: "SF UI Text", fontWeight: FontWeight.normal, color: darkGrayColor, height: 1.6),
+            fontSize: 12,
+            fontFamily: "SF UI Text",
+            fontWeight: FontWeight.normal,
+            color: darkGrayColor,
+            height: 1.6),
         caption: TextStyle(
-            fontSize: 10, fontFamily: "SF UI Text", fontWeight: FontWeight.normal, color: darkGrayColor, height: 1.2),
+            fontSize: 10,
+            fontFamily: "SF UI Text",
+            fontWeight: FontWeight.normal,
+            color: darkGrayColor,
+            height: 1.2),
         button: TextStyle(
-            fontSize: 12, fontFamily: "SF UI Text", fontWeight: FontWeight.w600, color: primaryColor, height: 1.2),
+            fontSize: 12,
+            fontFamily: "SF UI Text",
+            fontWeight: FontWeight.w600,
+            color: primaryColor,
+            height: 1.2),
       ));
 }

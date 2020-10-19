@@ -9,7 +9,6 @@ import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dar
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog.dart' as CustomDialog;
-import 'package:refashioned_app/screens/marketplace/components/add_photo_description_item.dart';
 import 'package:refashioned_app/screens/marketplace/components/add_photo_item.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 

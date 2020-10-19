@@ -278,6 +278,8 @@ class _UserProfileState extends State<UserProfile> {
                         onTap: () {
                           SharedPreferences.getInstance().then((prefs) async {
                             await prefs.remove(Prefs.user_photo);
+                            await prefs.remove(Prefs.user_name);
+                            await prefs.remove(Prefs.user_phone);
                             Provider.of<LogoutRepository>(context, listen: false).logout();
                           });
                         },
@@ -412,10 +414,10 @@ class _UserProfileState extends State<UserProfile> {
     return Material(
       color: Colors.transparent,
       child: Container(
-        height: MediaQuery.of(context).padding.top + 90,
+        height: 80,
         width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+          padding: const EdgeInsets.only(left: 20, right: 20),
           child: Row(
             children: [
               Tapable(
