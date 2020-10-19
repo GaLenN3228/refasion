@@ -26,7 +26,6 @@ import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
 import 'package:refashioned_app/screens/profile/loginned_profile.dart';
 import 'package:refashioned_app/screens/profile/map_page.dart';
-import 'package:refashioned_app/screens/profile/name_page.dart';
 import 'package:refashioned_app/screens/profile/pages/my_addresses.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';

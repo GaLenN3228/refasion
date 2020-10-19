@@ -110,7 +110,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                       width: 50,
                       height: 50,
                       child: FutureBuilder(
-                          future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_photo)),
+                          future: SharedPreferences.getInstance()
+                              .then((prefs) => prefs.getString(Prefs.user_photo)),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return ClipRRect(
@@ -131,13 +132,25 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         FutureBuilder(
-                          future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_name)),
+                          future: SharedPreferences.getInstance(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              return Text(
-                                snapshot.data.toString(),
-                                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
-                              );
+                              SharedPreferences sp = snapshot.data;
+                              return sp.containsKey(Prefs.user_name)
+                                  ? Text(
+                                      sp.getString(Prefs.user_name),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                                  : Text(
+                                      sp.getString(Prefs.user_phone),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600),
+                                    );
                             }
                             return SizedBox();
                           },
@@ -184,7 +197,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         icon: IconAsset.box,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7), child: Text('Мои заказы', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Мои заказы', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -197,7 +211,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                         icon: IconAsset.location,
                       ),
                       Container(
-                          padding: EdgeInsets.only(top: 7), child: Text('Мои адреса', style: textTheme.bodyText1)),
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Мои адреса', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -211,7 +226,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                       SVGIcon(
                         icon: IconAsset.favoriteBorder,
                       ),
-                      Container(padding: EdgeInsets.only(top: 7), child: Text('Избранное', style: textTheme.bodyText1)),
+                      Container(
+                          padding: EdgeInsets.only(top: 7),
+                          child: Text('Избранное', style: textTheme.bodyText1)),
                     ],
                   ),
                 ),
@@ -378,7 +395,8 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
       controller: _refreshController,
       onRefresh: () async {
         HapticFeedback.heavyImpact();
-        await Provider.of<ProfileProductsRepository>(context, listen: false).getProducts(makeFullReload: false);
+        await Provider.of<ProfileProductsRepository>(context, listen: false)
+            .getProducts(makeFullReload: false);
         _refreshController.refreshCompleted();
       },
       child: ListView(

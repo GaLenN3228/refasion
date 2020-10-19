@@ -458,13 +458,18 @@ class _UserProfileState extends State<UserProfile> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         FutureBuilder(
-                          future: SharedPreferences.getInstance()
-                              .then((prefs) => prefs.getString(Prefs.user_name)),
+                          future: SharedPreferences.getInstance(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              return Text(
-                                snapshot.data.toString(),
+                              SharedPreferences sp = snapshot.data;
+                              return sp.containsKey(Prefs.user_name)
+                                  ? Text(
+                                sp.getString(Prefs.user_name),
                                 style: textTheme.subtitle1,
+                              )
+                                  : Text(
+                                sp.getString(Prefs.user_phone),
+                                style:textTheme.subtitle1,
                               );
                             }
                             return SizedBox();

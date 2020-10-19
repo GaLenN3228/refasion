@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +78,6 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                         (prefs) async {
                           if (widget.phone != null) {
                             await prefs.setString(Prefs.user_phone, widget.phone);
-                            await prefs.setString(Prefs.user_name, widget.phone);
                           }
                           widget.onAuthorizationDone?.call(context);
                           if (widget.needDismiss) if (Navigator.canPop(context)) {
@@ -132,9 +132,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
             Expanded(
               flex: 1,
               child: Container(
-                margin: widget.phone == null
-                    ? const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 70)
-                    : const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
                 alignment: Alignment.bottomCenter,
                 child: Button(
                   widget.phone == null ? "СОХРАНИТЬ" : "ЗАВЕРШИТЬ",

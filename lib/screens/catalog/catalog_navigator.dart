@@ -103,6 +103,8 @@ class CatalogNavigator extends StatefulWidget {
 
   void pushProducts(BuildContext context, SearchResult searchResult) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
+    topPanelController.needShow = true;
+    topPanelController.needShowBack = true;
     Navigator.of(context)
         .push(
       CupertinoPageRoute(
@@ -217,6 +219,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           topCategory: category,
           level: CategoryLevel.categories,
           onPush: (category, {callback}) {
+            topPanelController.needShow = true;
+            topPanelController.needShowBack = true;
             final newRoute =
                 category.children.isNotEmpty ? CatalogNavigatorRoutes.category : CatalogNavigatorRoutes.products;
 
@@ -247,7 +251,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             level: CategoryLevel.category,
             onPush: (_, {callback}) {
               Provider.of<CategoryBrandsRepository>(context, listen: false).response = null;
-
+              topPanelController.needShow = true;
+              topPanelController.needShowBack = true;
               return Navigator.of(context)
                   .push(
                 CupertinoPageRoute(
@@ -297,6 +302,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
               return CategoryBrandsPage(
                 topCategory: category,
                 onPush: (_, brands, {callback}) {
+                  topPanelController.needShow = true;
+                  topPanelController.needShowBack = true;
                   return Navigator.of(context)
                       .push(
                     CupertinoPageRoute(
@@ -319,8 +326,6 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             });
 
       case CatalogNavigatorRoutes.products:
-        topPanelController.needShow = true;
-        topPanelController.needShowBack = true;
         return ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
@@ -382,9 +387,11 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             onSellerPush: (newSeller) {
               seller = newSeller;
 
-              Navigator.of(context).pushNamed(CatalogNavigatorRoutes.seller);
+              Navigator.of(context).pushNamed(CatalogNavigatorRoutes.seller).then((value) => topPanelController.needShow = false);
             },
             onSubCategoryClick: (parameters, title) {
+              topPanelController.needShow = true;
+              topPanelController.needShowBack = true;
               return Navigator.of(context)
                   .push(
                     CupertinoPageRoute(
@@ -415,6 +422,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         });
 
       case CatalogNavigatorRoutes.seller:
+        topPanelController.needShow = false;
         return SellerPage(
           seller: seller,
           onProductPush: (product) => Navigator.of(context)

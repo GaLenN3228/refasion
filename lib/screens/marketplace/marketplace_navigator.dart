@@ -233,7 +233,10 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
     //FIXME kostyl
     var sp = await SharedPreferences.getInstance();
-    userAddress.fio = sp.getString(Prefs.user_name);
+    userAddress.fio =
+    sp.containsKey(Prefs.user_name)
+        ? sp.getString(Prefs.user_name)
+        : sp.getString(Prefs.user_phone);
     userAddress.phone = sp.getString(Prefs.user_phone);
     userAddress.email = "test@test.test";
 
