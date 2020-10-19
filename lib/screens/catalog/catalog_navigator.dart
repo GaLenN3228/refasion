@@ -553,6 +553,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         builder: (context) => _routeBuilder(
           context,
           routeSettings.name,
+          categories: catalogRepository.response.content,
         ),
         settings: routeSettings,
       ),

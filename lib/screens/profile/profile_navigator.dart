@@ -551,6 +551,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 builder: (context) => _routeBuilder(
                   context,
                   routeSettings.name,
+                  isAuthorized: snapshot.data,
                 ),
                 settings: routeSettings,
               ),
