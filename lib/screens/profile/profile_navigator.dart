@@ -77,6 +77,7 @@ class ProfileNavigatorObserver extends NavigatorObserver {
       case ProfileNavigatorRoutes.settings:
       case ProfileNavigatorRoutes.product:
       case ProfileNavigatorRoutes.checkout:
+      case ProfileNavigatorRoutes.userProfile:
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
 
@@ -294,7 +295,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
 
       case ProfileNavigatorRoutes.userProfile:
         return UserProfile(
-          onUserNamePush: (){
+          onUserNamePush: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (context) => _routeBuilder(
@@ -444,8 +445,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
           providers: [
             ChangeNotifierProvider<FavouritesProductsRepository>(
                 create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-            ChangeNotifierProvider<AddRemoveFavouriteRepository>(
-                create: (_) => AddRemoveFavouriteRepository())
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
           ],
           builder: (context, _) {
             return FavouritesPage(
@@ -478,9 +478,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             totalPrice = newTotalPrice;
 
             await Navigator.of(context).pushReplacementNamed(
-              success ?? false
-                  ? ProfileNavigatorRoutes.orderCreated
-                  : ProfileNavigatorRoutes.paymentFailed,
+              success ?? false ? ProfileNavigatorRoutes.orderCreated : ProfileNavigatorRoutes.paymentFailed,
             );
           },
         );
