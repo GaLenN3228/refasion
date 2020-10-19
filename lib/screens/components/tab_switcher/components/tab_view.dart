@@ -12,6 +12,8 @@ import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/home/home_navigator.dart';
+import 'package:refashioned_app/screens/profile/components/user_name_controller.dart';
+import 'package:refashioned_app/screens/profile/components/user_photo_controller.dart';
 import 'package:refashioned_app/screens/profile/profile_navigator.dart';
 import 'package:refashioned_app/screens/search_wrapper.dart';
 
@@ -151,7 +153,9 @@ class TabView extends StatelessWidget {
             providers: [
               ChangeNotifierProvider<TopPanelController>(create: (_) => TopPanelController()),
               ChangeNotifierProvider<SearchRepository>(create: (_) => SearchRepository()),
-              ChangeNotifierProvider<CategoryBrandsRepository>(create: (_) => CategoryBrandsRepository())
+              ChangeNotifierProvider<CategoryBrandsRepository>(create: (_) => CategoryBrandsRepository()),
+              ChangeNotifierProvider<UserPhotoController>(create: (_) => UserPhotoController()),
+              ChangeNotifierProvider<UserNameController>(create: (_) => UserNameController())
             ],
             child: SearchWrapper(
               content: profileNavigator,

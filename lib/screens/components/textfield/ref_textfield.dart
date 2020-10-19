@@ -8,6 +8,7 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_search_data.da
 
 class RefashionedTextField extends StatefulWidget {
   final String hintText;
+  final String text;
   final Function(String) onSearchUpdate;
   final Function() onCancel;
 
@@ -31,7 +32,8 @@ class RefashionedTextField extends StatefulWidget {
       this.formKey,
       this.keyboardType,
       this.height: 45,
-      this.maskFormatter})
+      this.maskFormatter,
+      this.text})
       : super(key: key);
 
   factory RefashionedTextField.fromTbSearchData(TBSearchData data) => RefashionedTextField(
@@ -71,6 +73,9 @@ class _RefashionedTextFieldState extends State<RefashionedTextField>
     }
 
     textController = TextEditingController();
+
+    if (widget.text != null) textController.text = widget.text;
+
     textController.addListener(textListener);
 
     hasText = ValueNotifier(false);

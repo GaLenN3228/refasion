@@ -19,6 +19,9 @@ import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
+import 'components/user_name_controller.dart';
+import 'components/user_photo_controller.dart';
+
 class AuthorizedProfilePage extends StatefulWidget {
   final Function() onFavClick;
   final Function() onUserProfileClick;
@@ -102,50 +105,54 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
             },
             child: Row(
               children: [
-                Container(
-                    width: 50,
-                    height: 50,
-                    child: FutureBuilder(
-                        future: SharedPreferences.getInstance()
-                            .then((prefs) => prefs.getString(Prefs.user_photo)),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return ClipRRect(
-                                borderRadius: BorderRadius.circular(25),
-                                child: Image.file(
-                                  File(snapshot.data),
-                                  fit: BoxFit.cover,
-                                ));
-                          }
-                          return Image.asset('assets/icons/png/user_placeholder_yellow.png');
-                        })),
-                Container(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FutureBuilder(
-                        future: SharedPreferences.getInstance()
-                            .then((prefs) => prefs.getString(Prefs.user_name)),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                              snapshot.data.toString(),
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
-                            );
-                          }
-                          return SizedBox();
-                        },
-                      ),
-                      Text(
-                        'Мой профиль',
-                        style: textTheme.subtitle2,
-                      ),
-                    ],
-                  ),
-                ),
+                Consumer<UserPhotoController>(builder: (context, userPhotoController, child) {
+                  return Container(
+                      width: 50,
+                      height: 50,
+                      child: FutureBuilder(
+                          future: SharedPreferences.getInstance()
+                              .then((prefs) => prefs.getString(Prefs.user_photo)),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return ClipRRect(
+                                  borderRadius: BorderRadius.circular(25),
+                                  child: Image.file(
+                                    File(snapshot.data),
+                                    fit: BoxFit.cover,
+                                  ));
+                            }
+                            return Image.asset('assets/icons/png/user_placeholder_yellow.png');
+                          }));
+                }),
+                Consumer<UserNameController>(builder: (context, userNameController, child) {
+                  return Container(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FutureBuilder(
+                          future: SharedPreferences.getInstance()
+                              .then((prefs) => prefs.getString(Prefs.user_name)),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                snapshot.data.toString(),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                              );
+                            }
+                            return SizedBox();
+                          },
+                        ),
+                        Text(
+                          'Мой профиль',
+                          style: textTheme.subtitle2,
+                        ),
+                      ],
+                    ),
+                  );
+                }),
                 Spacer(),
                 SVGIcon(
                   icon: IconAsset.next,

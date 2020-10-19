@@ -24,6 +24,7 @@ import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
 import 'package:refashioned_app/screens/profile/loginned_profile.dart';
 import 'package:refashioned_app/screens/profile/map_page.dart';
+import 'package:refashioned_app/screens/profile/name_page.dart';
 import 'package:refashioned_app/screens/profile/pages/my_addresses.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
@@ -44,6 +45,7 @@ class ProfileNavigatorRoutes {
   static const String orderCreated = '/order_created';
   static const String paymentFailed = '/payment_failed';
   static const String userProfile = '/user_profile';
+  static const String userName = '/user_name';
 }
 
 class ProfileNavigatorObserver extends NavigatorObserver {
@@ -292,6 +294,20 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
 
       case ProfileNavigatorRoutes.userProfile:
         return UserProfile(
+          onUserNamePush: (){
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(
+                  context,
+                  ProfileNavigatorRoutes.userName,
+                  isAuthorized: isAuthorized,
+                ),
+                settings: RouteSettings(
+                  name: ProfileNavigatorRoutes.userName,
+                ),
+              ),
+            );
+          },
           onMapPageClick: () {
             widget.pushPageOnTop(MapPage());
           },
@@ -302,6 +318,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             Navigator.of(context).pushNamed(ProfileNavigatorRoutes.doc);
           },
         );
+
+      case ProfileNavigatorRoutes.userName:
+        return UserNamePage();
 
       case ProfileNavigatorRoutes.doc:
         return WebViewPage(

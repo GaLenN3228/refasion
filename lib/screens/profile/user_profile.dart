@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +15,8 @@ import 'package:refashioned_app/screens/components/tapable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/screens/profile/components/user_name_controller.dart';
+import 'package:refashioned_app/screens/profile/components/user_photo_controller.dart';
 import 'package:refashioned_app/utils/colors.dart';
 import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,10 +24,12 @@ import 'package:refashioned_app/screens/components/custom_dialog/dialog.dart' as
 
 class UserProfile extends StatefulWidget {
   final Function(String, String) onDocPush;
+  final Function() onUserNamePush;
 
   final Function() onMapPageClick;
 
-  const UserProfile({Key key, this.onMapPageClick, this.onDocPush}) : super(key: key);
+  const UserProfile({Key key, this.onMapPageClick, this.onDocPush, this.onUserNamePush})
+      : super(key: key);
 
   @override
   _UserProfileState createState() => _UserProfileState();
@@ -38,6 +41,7 @@ class _UserProfileState extends State<UserProfile> {
   final picker = ImagePicker();
 
   String userPhoto;
+  String userGender = "Мужской";
 
   @override
   void initState() {
@@ -185,7 +189,7 @@ class _UserProfileState extends State<UserProfile> {
                                 style: textTheme.subtitle1,
                               ),
                               Text(
-                                'Телефон',
+                                'Email',
                                 style: textTheme.subtitle2,
                               ),
                             ],
@@ -195,7 +199,9 @@ class _UserProfileState extends State<UserProfile> {
                       ItemsDivider(),
                       Tapable(
                         padding: EdgeInsets.only(top: 14, bottom: 14),
-                        onTap: () {},
+                        onTap: () {
+                          getGender();
+                        },
                         child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.only(left: 20),
@@ -203,7 +209,7 @@ class _UserProfileState extends State<UserProfile> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Мужской",
+                                userGender,
                                 style: textTheme.subtitle1,
                               ),
                               Text(
@@ -270,7 +276,10 @@ class _UserProfileState extends State<UserProfile> {
                       Tapable(
                         padding: EdgeInsets.all(10),
                         onTap: () {
-                          Provider.of<LogoutRepository>(context, listen: false).logout();
+                          SharedPreferences.getInstance().then((prefs) async {
+                            await prefs.remove(Prefs.user_photo);
+                            Provider.of<LogoutRepository>(context, listen: false).logout();
+                          });
                         },
                         child: Container(
                           padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
@@ -283,11 +292,6 @@ class _UserProfileState extends State<UserProfile> {
                             ],
                           ),
                         ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 14),
-                        width: double.infinity,
-                        color: Color(0xFFF2F2F2),
                       ),
                     ],
                   );
@@ -320,7 +324,11 @@ class _UserProfileState extends State<UserProfile> {
                   title: "Удалить",
                   onClick: () async {
                     setState(() {
-                      userPhoto = null;
+                      SharedPreferences.getInstance().then((prefs) async {
+                        await prefs.remove(Prefs.user_photo);
+                        userPhoto = null;
+                        Provider.of<UserPhotoController>(context, listen: false).update();
+                      });
                     });
                     Navigator.pop(dialogContext);
                   },
@@ -339,6 +347,36 @@ class _UserProfileState extends State<UserProfile> {
         });
   }
 
+  void getGender() {
+    showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return CustomDialog.Dialog(
+            dialogContent: [
+              DialogItemContent(DialogItemType.item, title: "Мужской", onClick: () {
+                setState(() {
+                  userGender = "Мужской";
+                });
+                Navigator.pop(dialogContext);
+              }),
+              DialogItemContent(DialogItemType.item, title: "Женский", onClick: () {
+                setState(() {
+                  userGender = "Женский";
+                });
+                Navigator.pop(dialogContext);
+              }),
+              DialogItemContent(
+                DialogItemType.system,
+                title: "Отменить",
+                onClick: () {
+                  Navigator.pop(dialogContext);
+                },
+              )
+            ],
+          );
+        });
+  }
+
   Future openGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
@@ -348,6 +386,7 @@ class _UserProfileState extends State<UserProfile> {
       });
       SharedPreferences.getInstance().then((prefs) async {
         await prefs.setString(Prefs.user_photo, pickedFile.path);
+        Provider.of<UserPhotoController>(context, listen: false).update();
       });
       Navigator.pop(dialogContext);
     }
@@ -362,6 +401,7 @@ class _UserProfileState extends State<UserProfile> {
       });
       SharedPreferences.getInstance().then((prefs) async {
         await prefs.setString(Prefs.user_photo, pickedFile.path);
+        Provider.of<UserPhotoController>(context, listen: false).update();
       });
       Navigator.pop(dialogContext);
     }
@@ -376,64 +416,73 @@ class _UserProfileState extends State<UserProfile> {
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-          child: Tapable(
-            padding: EdgeInsets.only(top: 10, bottom: 10),
-            onTap: () {
-              getImage();
-            },
-            child: Row(
-              children: [
-                Container(
-                    width: 50,
-                    height: 50,
-                    child: FutureBuilder(
-                        future: SharedPreferences.getInstance()
-                            .then((prefs) => prefs.getString(Prefs.user_photo)),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return ClipRRect(
-                                borderRadius: BorderRadius.circular(25),
-                                child: Image.file(
-                                  File(snapshot.data),
-                                  fit: BoxFit.cover,
-                                ));
-                          }
-                          return Image.asset('assets/icons/png/user_placeholder_grey.png');
-                        })),
-                Container(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FutureBuilder(
-                        future: SharedPreferences.getInstance()
-                            .then((prefs) => prefs.getString(Prefs.user_name)),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                              snapshot.data.toString(),
-                              style: textTheme.subtitle1,
-                            );
-                          }
-                          return SizedBox();
-                        },
-                      ),
-                      Text(
-                        'ФИО',
-                        style: textTheme.subtitle2,
-                      ),
-                    ],
-                  ),
+          child: Row(
+            children: [
+              Tapable(
+                onTap: () {
+                  getImage();
+                },
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  child: FutureBuilder(
+                      future: SharedPreferences.getInstance()
+                          .then((prefs) => prefs.getString(Prefs.user_photo)),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          userPhoto = snapshot.data;
+                          return ClipRRect(
+                              borderRadius: BorderRadius.circular(25),
+                              child: Image.file(
+                                File(snapshot.data),
+                                fit: BoxFit.cover,
+                              ));
+                        }
+                        return Image.asset('assets/icons/png/user_placeholder_grey.png');
+                      }),
                 ),
-                Spacer(),
-                SVGIcon(
-                  icon: IconAsset.next,
-                  height: 12,
-                  color: Colors.grey,
-                )
-              ],
-            ),
+              ),
+              Consumer<UserNameController>(builder: (context, userNameController, child) {
+                return Tapable(
+                  onTap: () {
+                    widget.onUserNamePush();
+                  },
+                  child: Container(
+                    width: 200,
+                    padding: EdgeInsets.only(left: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FutureBuilder(
+                          future: SharedPreferences.getInstance()
+                              .then((prefs) => prefs.getString(Prefs.user_name)),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                snapshot.data.toString(),
+                                style: textTheme.subtitle1,
+                              );
+                            }
+                            return SizedBox();
+                          },
+                        ),
+                        Text(
+                          'Имя',
+                          style: textTheme.subtitle2,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              Spacer(),
+              SVGIcon(
+                icon: IconAsset.next,
+                height: 12,
+                color: Colors.grey,
+              )
+            ],
           ),
         ),
       ),
