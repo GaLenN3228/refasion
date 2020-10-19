@@ -44,11 +44,8 @@ class HomeNavigatorObserver extends NavigatorObserver {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
 
-      case HomeNavigatorRoutes.product:
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-        break;
-
       default:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
     }
 
@@ -62,12 +59,8 @@ class HomeNavigatorObserver extends NavigatorObserver {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
 
-      case HomeNavigatorRoutes.product:
-      case HomeNavigatorRoutes.checkout:
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-        break;
-
       default:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
     }
     super.didPush(route, previousRoute);

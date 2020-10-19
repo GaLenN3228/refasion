@@ -59,7 +59,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
     super.initState();
   }
 
-  tabListener() {
+  tabListener() async {
     switch (widget.currentTab.value) {
       case BottomTab.home:
       case BottomTab.catalog:
@@ -70,7 +70,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
       case BottomTab.profile:
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        final isAuthorized = await BaseRepository.isAuthorized();
+        SystemChrome.setSystemUIOverlayStyle(isAuthorized ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark);
         break;
     }
   }
@@ -78,18 +79,13 @@ class _TabSwitcherState extends State<TabSwitcher> {
   onTabRefresh() {
     final canPop = navigatorKeys[widget.currentTab.value]?.currentState?.canPop() ?? false;
 
-    if (canPop)
-      navigatorKeys[widget.currentTab.value]
-          .currentState
-          .pushNamedAndRemoveUntil('/', (route) => false);
+    if (canPop) navigatorKeys[widget.currentTab.value].currentState.pushNamedAndRemoveUntil('/', (route) => false);
 
-    if (widget.currentTab.value == BottomTab.cart)
-      Provider.of<CartRepository>(context, listen: false).refresh();
+    if (widget.currentTab.value == BottomTab.cart) Provider.of<CartRepository>(context, listen: false).refresh();
 
     if (widget.currentTab.value == BottomTab.catalog || widget.currentTab.value == BottomTab.home) {
-      var topPanelController = Provider.of<TopPanelController>(
-          navigatorKeys[widget.currentTab.value].currentContext,
-          listen: false);
+      var topPanelController =
+          Provider.of<TopPanelController>(navigatorKeys[widget.currentTab.value].currentContext, listen: false);
       topPanelController.needShow = true;
       topPanelController.needShowBack = false;
     }
@@ -132,14 +128,12 @@ class _TabSwitcherState extends State<TabSwitcher> {
         useRootNavigator: true,
         builder: (__, controller) => AuthorizationSheet(
           onAuthorizationCancel: (_) async {
-            if (originalOverlayStyle != null)
-              SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+            if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
 
             await onClose?.call();
           },
           onAuthorizationDone: (_) async {
-            if (originalOverlayStyle != null)
-              SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+            if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
 
             await openDeliveryTypesSelector(
               context,
@@ -196,12 +190,10 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
                         Navigator.of(context).pop();
 
-                        if (originalOverlayStyle != null)
-                          SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+                        if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
                       },
                       onSelect: (id) async {
-                        final result = await onSelect?.call(
-                            deliveryType.deliveryOptions.first.deliveryCompany.id, id);
+                        final result = await onSelect?.call(deliveryType.deliveryOptions.first.deliveryCompany.id, id);
 
                         if (result) {
                           userAddressesRepository?.dispose();
@@ -212,8 +204,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
                           Navigator.of(context).pop();
 
-                          if (originalOverlayStyle != null)
-                            SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+                          if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
                         }
                       },
                     ),
@@ -245,8 +236,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
   Widget build(BuildContext context) {
     return Material(
       child: WillPopScope(
-        onWillPop: () async =>
-            !await navigatorKeys[widget.currentTab.value]?.currentState?.maybePop(),
+        onWillPop: () async => !await navigatorKeys[widget.currentTab.value]?.currentState?.maybePop(),
         child: Stack(
           children: <Widget>[
             TabView(
@@ -297,10 +287,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
                         if (isAuthorized) {
                           Navigator.of(context).push(
                             PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) =>
-                                  SlideTransition(
-                                position:
-                                    Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                              pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                                position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
                                 child: ChangeNotifierProvider<SizeRepository>(
                                   create: (_) => SizeRepository(),
                                   builder: (context, _) => MarketplaceNavigator(
@@ -310,8 +298,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                     onProductCreated: (productData) {
                                       widget.currentTab.value = BottomTab.profile;
                                       var profileProductsRepository =
-                                          Provider.of<ProfileProductsRepository>(this.context,
-                                              listen: false);
+                                          Provider.of<ProfileProductsRepository>(this.context, listen: false);
                                       profileProductsRepository.response = null;
                                       profileProductsRepository.startLoading();
                                       var addProductRepository = AddProductRepository();

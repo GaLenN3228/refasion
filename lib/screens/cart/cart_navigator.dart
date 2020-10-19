@@ -52,11 +52,8 @@ class CartNavigatorObserver extends NavigatorObserver {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
 
-      case CartNavigatorRoutes.product:
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-        break;
-
       default:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
     }
 
@@ -71,12 +68,8 @@ class CartNavigatorObserver extends NavigatorObserver {
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
 
-      case CartNavigatorRoutes.product:
-      case CartNavigatorRoutes.checkout:
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-        break;
-
       default:
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         break;
     }
     super.didPush(route, previousRoute);
