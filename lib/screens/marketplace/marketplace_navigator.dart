@@ -380,6 +380,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       case MarketplaceNavigatorRoutes.sizes:
         return SizesPage(
           onBack: Navigator.of(context).pop,
+          onClose: widget.onClose,
           onPush: (sizes) {
             Navigator.of(context).push(
               CupertinoPageRoute(
@@ -394,7 +395,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       case MarketplaceNavigatorRoutes.sizesValue:
         return SizeValuesPage(
           sizes: size,
-          onBack: Navigator.of(context).pop,
+          onBack: widget.onClose,
           onPush: (sizeValue) {
             productData.updateSizes(sizeValue);
             final hasSellProperties = (sellPropertiesRepository != null &&
