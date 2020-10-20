@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
+import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/screens/components/button/data/data.dart';
 import 'package:refashioned_app/screens/product/components/add_to_cart_button.dart';
@@ -50,10 +51,17 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
     setState(
       () {
-        if (repository.isLoaded)
-          addToCartButtonState = RBState.done;
-        else
-          addToCartButtonState = RBState.disabled;
+        switch (repository.status) {
+          case Status.LOADING:
+            addToCartButtonState = RBState.disabled;
+            break;
+          case Status.ERROR:
+            addToCartButtonState = RBState.error;
+            break;
+          case Status.LOADED:
+            addToCartButtonState = RBState.done;
+            break;
+        }
       },
     );
   }
