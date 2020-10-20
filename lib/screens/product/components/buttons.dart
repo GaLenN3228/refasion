@@ -42,22 +42,20 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
   addToCart() async {
     final repository = cartRepository.addProduct;
 
-    if (repository.lastProductId == widget.product.id) {
-      HapticFeedback.heavyImpact();
+    HapticFeedback.heavyImpact();
 
-      setState(() => addToCartButtonState = RBState.loading);
+    setState(() => addToCartButtonState = RBState.loading);
 
-      await cartRepository?.addToCart(widget.product.id);
+    await cartRepository?.addToCart(widget.product.id);
 
-      setState(
-        () {
-          if (repository.isLoaded)
-            addToCartButtonState = RBState.done;
-          else
-            addToCartButtonState = RBState.disabled;
-        },
-      );
-    }
+    setState(
+      () {
+        if (repository.isLoaded)
+          addToCartButtonState = RBState.done;
+        else
+          addToCartButtonState = RBState.disabled;
+      },
+    );
   }
 
   orderNow() async {
