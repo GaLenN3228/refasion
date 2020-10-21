@@ -5,8 +5,6 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/cities.dart';
-import 'package:refashioned_app/repositories/onboarding.dart';
-import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/city_selector/city_tile.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_image.dart';
@@ -40,8 +38,6 @@ class _CitySelectorState extends State<CitySelector> {
     citiesRepository = Provider.of<CitiesRepository>(context, listen: false);
 
     if (widget.onFirstLaunch) citiesRepository.addListener(repositoryListener);
-
-    Provider.of<OnBoardingRepository>(context, listen: false).getOnBoardingData(context);
   }
 
   repositoryListener() {
@@ -52,7 +48,6 @@ class _CitySelectorState extends State<CitySelector> {
 
       push(TabSwitcher());
     }
-
   }
 
   @override
