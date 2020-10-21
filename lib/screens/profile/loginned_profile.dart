@@ -64,9 +64,13 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
               return Expanded(
                 child: Center(
                   child: SizedBox(
-                    height: 25.0,
-                    width: 25.0,
-                    child: CupertinoActivityIndicator(),
+                    height: 32.0,
+                    width: 32.0,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      backgroundColor: accentColor,
+                      valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                    ),
                   ),
                 ),
               );
@@ -75,11 +79,16 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
             if (profileProductsRepository.loadingFailed)
               return Expanded(
                 child: Center(
-                  child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
+                  child: Text("Ошибка", style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodyText1),
                 ),
               );
 
-            if (profileProductsRepository.response?.content == null) return SizedBox();
+            if (profileProductsRepository.response?.content == null) {
+              return SizedBox();
+            }
 
             return _profileProducts(context, profileProductsRepository.response.content);
           }),
@@ -89,15 +98,23 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
   }
 
   Widget _appBar(context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme
+        .of(context)
+        .textTheme;
     return Material(
       color: Colors.transparent,
       child: Container(
         color: Color(0xFF373A3F),
-        height: MediaQuery.of(context).padding.top + 80,
+        height: MediaQuery
+            .of(context)
+            .padding
+            .top + 80,
         width: double.infinity,
         child: Padding(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 20, right: 20),
+          padding: EdgeInsets.only(top: MediaQuery
+              .of(context)
+              .padding
+              .top, left: 20, right: 20),
           child: Tapable(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             onTap: () {
@@ -138,19 +155,19 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                               SharedPreferences sp = snapshot.data;
                               return sp.containsKey(Prefs.user_name)
                                   ? Text(
-                                      sp.getString(Prefs.user_name),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600),
-                                    )
+                                sp.getString(Prefs.user_name),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600),
+                              )
                                   : Text(
-                                      sp.getString(Prefs.user_phone),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600),
-                                    );
+                                sp.getString(Prefs.user_phone),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600),
+                              );
                             }
                             return SizedBox();
                           },
@@ -178,7 +195,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
   }
 
   Widget _menuButtons(context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme
+        .of(context)
+        .textTheme;
     return Material(
       color: Colors.white,
       child: Column(
@@ -262,7 +281,13 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
 
   Widget _profilePlaceHolder(context) {
     return Container(
-      height: MediaQuery.of(context).size.height - (268 + MediaQuery.of(context).padding.top),
+      height: MediaQuery
+          .of(context)
+          .size
+          .height - (268 + MediaQuery
+          .of(context)
+          .padding
+          .top),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -284,7 +309,10 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     "Ваш гардероб пуст",
                     textAlign: TextAlign.center,
                     maxLines: 1,
-                    style: Theme.of(context).textTheme.headline1,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .headline1,
                   ),
                 ),
               ),
@@ -296,7 +324,10 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                     "Вы еще не разместили ни одной вещи в вашем гардеробе",
                     textAlign: TextAlign.center,
                     maxLines: 2,
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bodyText2,
                   ),
                 ),
               ),
@@ -309,29 +340,32 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
               onTap: () {
                 Navigator.of(context, rootNavigator: true).push(
                   PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
-                      position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
-                      child: ChangeNotifierProvider<SizeRepository>(
-                        create: (_) => SizeRepository(),
-                        builder: (context, _) => MarketplaceNavigator(
-                          onClose: () {
-                            Navigator.of(context).pop();
-                          },
-                          onProductCreated: (productData) {
-                            var addProductRepository = AddProductRepository();
-                            addProductRepository.addListener(() {
-                              if (addProductRepository.isLoaded) {
-                                Provider.of<ProfileProductsRepository>(this.context, listen: false)
-                                  ..response = null
-                                  ..getProducts();
-                              }
-                            });
-                            addProductRepository.addProduct(productData);
-                            Navigator.of(context).pop();
-                          },
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        SlideTransition(
+                          position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                          child: ChangeNotifierProvider<SizeRepository>(
+                            create: (_) => SizeRepository(),
+                            builder: (context, _) =>
+                                MarketplaceNavigator(
+                                  onClose: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  onProductCreated: (productData) {
+                                    var addProductRepository = AddProductRepository();
+                                    addProductRepository.addListener(() {
+                                      if (addProductRepository.isLoaded) {
+                                        Provider.of<ProfileProductsRepository>(
+                                            this.context, listen: false)
+                                          ..response = null
+                                          ..getProducts();
+                                      }
+                                    });
+                                    addProductRepository.addProduct(productData);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                          ),
                         ),
-                      ),
-                    ),
                   ),
                 );
               },
@@ -347,9 +381,13 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
                 alignment: Alignment.center,
                 child: Text(
                   "РАЗМЕСТИТЬ ВЕЩЬ".toUpperCase(),
-                  style: Theme.of(context).textTheme.subtitle1.copyWith(
-                        color: Colors.white,
-                      ),
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .subtitle1
+                      .copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -360,7 +398,9 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
   }
 
   Widget _profileProducts(context, ProductsContent productsContent) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme
+        .of(context)
+        .textTheme;
     var products = List<Widget>();
     productsContent.products.asMap().forEach((key, value) {
       products.add(Column(children: <Widget>[
@@ -379,45 +419,48 @@ class _AuthorizedProfilePageState extends State<AuthorizedProfilePage> {
     });
     return Expanded(
         child: SmartRefresher(
-      enablePullDown: true,
-      enablePullUp: false,
-      header: ClassicHeader(
-        completeDuration: Duration.zero,
-        completeIcon: null,
-        completeText: "",
-        idleIcon: loadIcon,
-        idleText: "Обновление",
-        refreshingText: "Обновление",
-        refreshingIcon: loadIcon,
-        releaseIcon: loadIcon,
-        releaseText: "Обновление",
-      ),
-      controller: _refreshController,
-      onRefresh: () async {
-        HapticFeedback.heavyImpact();
-        await Provider.of<ProfileProductsRepository>(context, listen: false)
-            .getProducts(makeFullReload: false);
-        _refreshController.refreshCompleted();
-      },
-      child: ListView(
-        padding: EdgeInsets.only(bottom: 80),
-        shrinkWrap: true,
-        children: <Widget>[
-          _menuButtons(context),
-          productsContent.products.isNotEmpty
-              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
-                    child: Text(
-                      "Мои вещи",
-                      style: Theme.of(context).textTheme.headline2,
-                    ),
+          enablePullDown: true,
+          enablePullUp: false,
+          header: ClassicHeader(
+            completeDuration: Duration.zero,
+            completeIcon: null,
+            completeText: "",
+            idleIcon: loadIcon,
+            idleText: "Обновление",
+            refreshingText: "Обновление",
+            refreshingIcon: loadIcon,
+            releaseIcon: loadIcon,
+            releaseText: "Обновление",
+          ),
+          controller: _refreshController,
+          onRefresh: () async {
+            HapticFeedback.heavyImpact();
+            await Provider.of<ProfileProductsRepository>(context, listen: false)
+                .getProducts(makeFullReload: false);
+            _refreshController.refreshCompleted();
+          },
+          child: ListView(
+            padding: EdgeInsets.only(bottom: 80),
+            shrinkWrap: true,
+            children: <Widget>[
+              _menuButtons(context),
+              productsContent.products.isNotEmpty
+                  ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 24, bottom: 10),
+                  child: Text(
+                    "Мои вещи",
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .headline2,
                   ),
-                  ...products
-                ])
-              : _profilePlaceHolder(context)
-        ],
-      ),
-    ));
+                ),
+                ...products
+              ])
+                  : _profilePlaceHolder(context)
+            ],
+          ),
+        ));
   }
 }

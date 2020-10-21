@@ -11,11 +11,10 @@ import 'package:refashioned_app/utils/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NamePage extends StatefulWidget {
-  final String phone;
   final Function(BuildContext) onAuthorizationDone;
   final bool needDismiss;
 
-  const NamePage({Key key, this.phone, this.onAuthorizationDone, this.needDismiss})
+  const NamePage({Key key, this.onAuthorizationDone, this.needDismiss})
       : super(key: key);
 
   @override
@@ -76,9 +75,6 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                     onClose: () {
                       SharedPreferences.getInstance().then(
                         (prefs) async {
-                          if (widget.phone != null) {
-                            await prefs.setString(Prefs.user_phone, widget.phone);
-                          }
                           widget.onAuthorizationDone?.call(context);
                           if (widget.needDismiss) if (Navigator.canPop(context)) {
                             Navigator.pop(context);
@@ -135,7 +131,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                 padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
                 alignment: Alignment.bottomCenter,
                 child: Button(
-                  widget.phone == null ? "СОХРАНИТЬ" : "ЗАВЕРШИТЬ",
+                  "ЗАВЕРШИТЬ",
                   buttonStyle: name != null && name.length == 0
                       ? CustomButtonStyle.dark_gray
                       : CustomButtonStyle.dark,
@@ -145,8 +141,6 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                   onClick: name != null && name.length > 0
                       ? () {
                           SharedPreferences.getInstance().then((prefs) async {
-                            if (widget.phone != null)
-                              await prefs.setString(Prefs.user_phone, widget.phone);
                             await prefs.setString(Prefs.user_name, name);
                             widget.onAuthorizationDone?.call(context);
                             Provider.of<UserNameController>(context, listen: false).update();

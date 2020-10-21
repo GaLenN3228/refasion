@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -193,7 +195,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
       case ProfileNavigatorRoutes.root:
         topPanelController.needShowBack = true;
         topPanelController.needShow = false;
-        if (isAuthorized) Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+        if (isAuthorized) Future.delayed(Duration.zero, (){
+          Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+        });
         return isAuthorized
             ? AuthorizedProfilePage(
                 onProductPush: (product, {callback}) => Navigator.of(context).push(

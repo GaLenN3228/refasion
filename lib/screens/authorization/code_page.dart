@@ -164,7 +164,6 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                                   builder: (context) => NamePage(
                                         needDismiss: widget.needDismiss,
                                         onAuthorizationDone: widget.onAuthorizationDone,
-                                        phone: widget.phone,
                                       )));
                             }
                           }
