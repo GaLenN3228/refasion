@@ -103,11 +103,13 @@ class MarketplaceNavigatorObserver extends NavigatorObserver {
 }
 
 class MarketplaceNavigator extends StatefulWidget {
-  MarketplaceNavigator({this.onClose, this.onProductCreated, this.openInfoWebViewBottomSheet});
+  MarketplaceNavigator(
+      {this.onClose, this.onProductCreated, this.openInfoWebViewBottomSheet, this.navigatorKey});
 
   final Function() onClose;
   final Function(ProductData) onProductCreated;
   final Function(String url) openInfoWebViewBottomSheet;
+  final GlobalKey<NavigatorState> navigatorKey;
 
   final List<String> pagesWithFocusNodes = [
     MarketplaceNavigatorRoutes.description,
@@ -234,8 +236,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
     //FIXME kostyl
     var sp = await SharedPreferences.getInstance();
-    userAddress.fio =
-    sp.containsKey(Prefs.user_name)
+    userAddress.fio = sp.containsKey(Prefs.user_name)
         ? sp.getString(Prefs.user_name)
         : sp.getString(Prefs.user_phone);
     userAddress.phone = sp.getString(Prefs.user_phone);
@@ -258,22 +259,18 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
       Sizes size}) {
     switch (route) {
       case MarketplaceNavigatorRoutes.section:
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: SectionPage(
-            sections: categories,
-            onClose: widget.onClose,
-            onPush: (category) {
-              return Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) => _routeBuilder(
-                      context, MarketplaceNavigatorRoutes.topCategory,
-                      category: category),
-                  settings: RouteSettings(name: MarketplaceNavigatorRoutes.topCategory),
-                ),
-              );
-            },
-          ),
+        return SectionPage(
+          sections: categories,
+          onClose: widget.onClose,
+          onPush: (category) {
+            return Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => _routeBuilder(context, MarketplaceNavigatorRoutes.topCategory,
+                    category: category),
+                settings: RouteSettings(name: MarketplaceNavigatorRoutes.topCategory),
+              ),
+            );
+          },
         );
 
       case MarketplaceNavigatorRoutes.topCategory:
@@ -579,22 +576,26 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
         child: Text("Ошибка категорий", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    return Navigator(
-      initialRoute: MarketplaceNavigatorRoutes.section,
-      observers: [sellNavigatorObserver],
-      onGenerateInitialRoutes: (navigatorState, initialRoute) => [
-        CupertinoPageRoute(
-          builder: (context) =>
-              _routeBuilder(context, initialRoute, categories: catalogRepository.response.content),
-          settings: RouteSettings(name: initialRoute),
-        )
-      ],
-      onGenerateRoute: (routeSettings) => CupertinoPageRoute(
-        builder: (context) => _routeBuilder(
-          context,
-          routeSettings.name,
+    return WillPopScope(
+      onWillPop: () async => !await widget.navigatorKey?.currentState?.maybePop(),
+      child: Navigator(
+        key: widget.navigatorKey,
+        initialRoute: MarketplaceNavigatorRoutes.section,
+        observers: [sellNavigatorObserver],
+        onGenerateInitialRoutes: (navigatorState, initialRoute) => [
+          CupertinoPageRoute(
+            builder: (context) => _routeBuilder(context, initialRoute,
+                categories: catalogRepository.response.content),
+            settings: RouteSettings(name: initialRoute),
+          )
+        ],
+        onGenerateRoute: (routeSettings) => CupertinoPageRoute(
+          builder: (context) => _routeBuilder(
+            context,
+            routeSettings.name,
+          ),
+          settings: routeSettings,
         ),
-        settings: routeSettings,
       ),
     );
   }
