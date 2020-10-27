@@ -9,12 +9,14 @@ import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/user_addresses.dart';
 import 'package:refashioned_app/repositories/user_pickpoints.dart';
+import 'package:refashioned_app/screens/components/button/data/data.dart';
 import 'package:refashioned_app/screens/components/button/simple_button.dart';
 import 'package:refashioned_app/screens/components/checkbox/stateful.dart';
 import 'package:refashioned_app/screens/components/textfield/phone_ref_textfield.dart';
 import 'package:refashioned_app/screens/components/textfield/ref_textfield.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/screens/delivery/components/add_address_button.dart';
 
 enum InfoField { appartment, porch, floor, intercom, comment, fio, phone, email }
 
@@ -42,11 +44,13 @@ class _InfoPageState extends State<InfoPage> {
 
   bool privateHouse;
 
-  bool buttonEnabled;
+  RBState buttonState;
+  bool updateButtonState;
 
   @override
   initState() {
-    buttonEnabled = false;
+    buttonState = RBState.disabled;
+    updateButtonState = true;
 
     courierDelivery =
         widget.deliveryType.type == Delivery.COURIER_DELIVERY || widget.deliveryType.type == Delivery.EXPRESS_DEVILERY;
@@ -71,12 +75,11 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   check() {
-    final check =
-        info.entries.fold(true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
-
-    setState(() {
-      buttonEnabled = check;
-    });
+    if (updateButtonState) {
+      final check =
+          info.entries.fold(true, (previousValue, element) => previousValue && fieldCheck(element.key, element.value));
+      setState(() => buttonState = check ? RBState.enabled : RBState.disabled);
+    }
   }
 
   bool fieldCheck(InfoField infoField, String text) {
@@ -95,6 +98,9 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   onPush() async {
+    updateButtonState = false;
+    setState(() => buttonState = RBState.loading);
+
     String id;
 
     switch (widget.deliveryType.type) {
@@ -143,8 +149,12 @@ class _InfoPageState extends State<InfoPage> {
 
     if (id != null) {
       widget.onFinish?.call(id);
-    } else
+    } else {
+      setState(() => buttonState = RBState.disabled);
       HapticFeedback.vibrate();
+    }
+
+    updateButtonState = true;
   }
 
   @override
@@ -342,11 +352,11 @@ class _InfoPageState extends State<InfoPage> {
             right: 0,
             bottom: 0,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 10, 20, max(MediaQuery.of(context).padding.bottom, 20)),
-              child: SimpleButton(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                enabled: buttonEnabled,
-                label: "Продолжить",
+              padding: EdgeInsets.only(
+                bottom: max(MediaQuery.of(context).padding.bottom, 20),
+              ),
+              child: AddAddressButton(
+                state: buttonState,
                 onPush: onPush,
               ),
             ),

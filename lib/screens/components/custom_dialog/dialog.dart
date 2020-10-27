@@ -14,88 +14,148 @@ class Dialog extends StatefulWidget {
 }
 
 class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<Offset> offset;
+  AnimationController animationController;
+
+  Animation<double> animation;
+  Animation<double> slideAnimation;
+  Animation<double> fadeAnimation;
+
+  bool showIndicator;
 
   @override
   void initState() {
+    showIndicator = false;
+
+    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+
+    animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
+
+    slideAnimation = CurvedAnimation(
+      parent: animation,
+      curve: Interval(0.4, 1.0, curve: Curves.easeInOut),
+    );
+    fadeAnimation = ReverseAnimation(
+      CurvedAnimation(
+        parent: animation,
+        curve: Interval(0.0, 0.4, curve: Curves.easeInOut),
+      ),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => postFrameCallback());
+
     super.initState();
+  }
 
-    controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    offset = Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero).animate(controller);
+  @override
+  dispose() {
+    animationController.dispose();
 
-    controller.addListener(() {
-      setState(() {});
-    });
+    super.dispose();
+  }
 
-    controller.forward();
+  postFrameCallback() async => await animationController.forward();
+
+  onPush() async {
+    setState(() => showIndicator = true);
+
+    await animationController.reverse();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        alignment: Alignment.bottomCenter,
-        child: Material(
-          color: Colors.transparent,
-          child: SlideTransition(
-            position: offset,
-            child: Container(
-              margin: EdgeInsets.all(10.0),
-              width: double.infinity,
-              child: Column(
+    return Stack(
+      children: [
+        Center(
+          child: showIndicator
+              ? FadeTransition(
+                  opacity: fadeAnimation,
+                  child: Theme(
+                    data: ThemeData(
+                      cupertinoOverrideTheme: CupertinoThemeData(
+                        brightness: Brightness.dark,
+                      ),
+                    ),
+                    child: CupertinoActivityIndicator(
+                      radius: 14,
+                    ),
+                  ),
+                )
+              : SizedBox(),
+        ),
+        Container(
+          alignment: Alignment.bottomCenter,
+          child: Material(
+            color: Colors.transparent,
+            child: SlideTransition(
+              position: Tween<Offset>(begin: Offset(0.0, 1.2), end: Offset.zero).animate(slideAnimation),
+              child: Container(
+                margin: EdgeInsets.all(10.0),
+                width: double.infinity,
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Container(
-                        decoration: ShapeDecoration(
-                            color: dialogColor,
-                            shape:
-                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0))),
-                        child: ListView.separated(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: widget.dialogContent
-                                .where((element) =>
-                                    element.dialogItemType == DialogItemType.item ||
-                                    element.dialogItemType == DialogItemType.infoHeader)
-                                .length,
-                            itemBuilder: (context, index) => DialogItem(
-                                  dialogItemContent: widget.dialogContent
-                                      .where((element) =>
-                                          element.dialogItemType == DialogItemType.item ||
-                                          element.dialogItemType == DialogItemType.infoHeader)
-                                      .elementAt(index),
-                                ),
-                            separatorBuilder: (context, index) => ItemsDivider(
-                                  padding: 0,
-                                ))),
-                    if (widget.dialogContent
-                        .any((element) => element.dialogItemType == DialogItemType.system))
+                      decoration: ShapeDecoration(
+                        color: dialogColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
+                      ),
+                      child: ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: widget.dialogContent
+                            .where((element) =>
+                                element.dialogItemType == DialogItemType.item ||
+                                element.dialogItemType == DialogItemType.infoHeader)
+                            .length,
+                        itemBuilder: (context, index) => DialogItem(
+                          dialogItemContent: widget.dialogContent
+                              .where((element) =>
+                                  element.dialogItemType == DialogItemType.item ||
+                                  element.dialogItemType == DialogItemType.infoHeader)
+                              .elementAt(index),
+                          onPush: onPush,
+                        ),
+                        separatorBuilder: (context, index) => ItemsDivider(
+                          padding: 0,
+                        ),
+                      ),
+                    ),
+                    if (widget.dialogContent.any((element) => element.dialogItemType == DialogItemType.system))
                       Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          decoration: ShapeDecoration(
-                              color: dialogColor,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14.0))),
-                          child: ListView.separated(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: widget.dialogContent
+                        margin: EdgeInsets.only(top: 10.0),
+                        decoration: ShapeDecoration(
+                          color: dialogColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.0),
+                          ),
+                        ),
+                        child: ListView.separated(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: widget.dialogContent
+                              .where((element) => element.dialogItemType == DialogItemType.system)
+                              .length,
+                          itemBuilder: (context, index) => DialogItem(
+                            dialogItemContent: widget.dialogContent
                                 .where((element) => element.dialogItemType == DialogItemType.system)
-                                .length,
-                            itemBuilder: (context, index) => DialogItem(
-                              dialogItemContent: widget.dialogContent
-                                  .where(
-                                      (element) => element.dialogItemType == DialogItemType.system)
-                                  .elementAt(index),
-                            ),
-                            separatorBuilder: (context, index) => ItemsDivider(
-                              padding: 0,
-                            ),
-                          ))
-                  ]),
+                                .elementAt(index),
+                            onPush: onPush,
+                          ),
+                          separatorBuilder: (context, index) => ItemsDivider(
+                            padding: 0,
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+              ),
             ),
           ),
-        ));
+        ),
+      ],
+    );
   }
 }

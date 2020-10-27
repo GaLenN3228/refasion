@@ -9,16 +9,19 @@ import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_middle_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
+import 'package:refashioned_app/screens/seller/components/seller_rating.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class SellerPage extends StatelessWidget {
   final Seller seller;
+  final Function() onSellerReviewsPush;
   final Function(Product) onProductPush;
 
-  const SellerPage({Key key, this.seller, this.onProductPush}) : super(key: key);
+  const SellerPage({Key key, this.seller, this.onProductPush, this.onSellerReviewsPush}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
+        backgroundColor: white,
         child: Column(
           children: [
             RefashionedTopBar(
@@ -75,6 +78,10 @@ class SellerPage extends StatelessWidget {
                   onTap: Navigator.of(context).pop,
                 ),
               ),
+            ),
+            SellerRating(
+              seller: seller,
+              onSellerReviewsPush: onSellerReviewsPush,
             ),
             Expanded(
               child: ChangeNotifierProvider<AddRemoveFavouriteRepository>(

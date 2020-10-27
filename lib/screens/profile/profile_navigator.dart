@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,7 +31,10 @@ import 'package:refashioned_app/screens/profile/pages/my_addresses.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
 import 'package:refashioned_app/screens/profile/user_profile.dart';
-import 'package:refashioned_app/screens/seller/seller_page.dart';
+import 'package:refashioned_app/screens/seller/pages/select_seller_rating.dart';
+import 'package:refashioned_app/screens/seller/pages/send_seller_review.dart';
+import 'package:refashioned_app/screens/seller/pages/seller_page.dart';
+import 'package:refashioned_app/screens/seller/pages/seller_reviews.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProfileNavigatorRoutes {
@@ -43,6 +45,9 @@ class ProfileNavigatorRoutes {
   static const String products = '/products';
   static const String product = '/product';
   static const String seller = '/seller';
+  static const String sellerReviews = '/seller_reviews';
+  static const String selectSellerRating = '/add_seller_rating';
+  static const String sendSellerReview = '/add_seller_review';
   static const String favourites = '/favourites';
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
@@ -168,6 +173,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
   String docTitle;
 
   Seller seller;
+  int rating;
 
   @override
   initState() {
@@ -195,9 +201,10 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
       case ProfileNavigatorRoutes.root:
         topPanelController.needShowBack = true;
         topPanelController.needShow = false;
-        if (isAuthorized) Future.delayed(Duration.zero, (){
-          Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
-        });
+        if (isAuthorized)
+          Future.delayed(Duration.zero, () {
+            Provider.of<ProfileProductsRepository>(context, listen: false).getProducts();
+          });
         return isAuthorized
             ? AuthorizedProfilePage(
                 onProductPush: (product, {callback}) => Navigator.of(context).push(
@@ -419,8 +426,16 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
         });
 
       case ProfileNavigatorRoutes.seller:
+        topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
         return SellerPage(
           seller: seller,
+          onSellerReviewsPush: () {
+            final newRoute =
+                seller.reviewsCount > 0 ? ProfileNavigatorRoutes.sellerReviews : ProfileNavigatorRoutes.sellerReviews;
+
+            Navigator.of(context).pushNamed(newRoute);
+          },
           onProductPush: (product) => Navigator.of(context)
               .push(
                 CupertinoPageRoute(
@@ -438,8 +453,38 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
               .then((value) => topPanelController.needShow = true),
         );
 
-      case ProfileNavigatorRoutes.favourites:
+      case ProfileNavigatorRoutes.sellerReviews:
         topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
+        return SellerReviewsPage(
+          seller: seller,
+          onAddSellerRatingPush: () => Navigator.of(context).pushNamed(ProfileNavigatorRoutes.selectSellerRating),
+        );
+
+      case ProfileNavigatorRoutes.selectSellerRating:
+        topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
+        return SelectSellerRatingPage(
+          seller: seller,
+          onAddSellerReviewPush: (int newRating) {
+            rating = newRating;
+            Navigator.of(context).pushNamed(ProfileNavigatorRoutes.sendSellerReview);
+          },
+        );
+
+      case ProfileNavigatorRoutes.sendSellerReview:
+        topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
+        return SendSellerReviewPage(
+          seller: seller,
+          rating: rating,
+          onPush: () => Navigator.of(context).pushNamedAndRemoveUntil(
+            ProfileNavigatorRoutes.sellerReviews,
+            (route) => route.settings.name == ProfileNavigatorRoutes.seller,
+          ),
+        );
+
+      case ProfileNavigatorRoutes.favourites:
         return MultiProvider(
           providers: [
             ChangeNotifierProvider<FavouritesProductsRepository>(

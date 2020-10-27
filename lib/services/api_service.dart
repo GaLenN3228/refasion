@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:refashioned_app/screens/marketplace/marketplace_navigator.dart';
 import 'package:refashioned_app/services/api/dio_client.dart';
@@ -139,11 +138,39 @@ class ApiService {
 
   //PROFILE
 
-  static const LOG_PROFILE = true;
+  static const LOG_PROFILE = false;
 
   static Future<Response> getProfileProducts() async {
     Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_PROFILE || LOG_ENABLE);
     return dioClient.get(Url.profileProducts);
+  }
+
+  static Future<Response> getCustomerData() async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_PROFILE || LOG_ENABLE);
+    return dioClient.get(Url.customer);
+  }
+
+  static Future<Response> setCustomerData(String data) async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_PROFILE || LOG_ENABLE);
+    return dioClient.post(Url.customer, data: data);
+  }
+
+  //REVIEWS
+
+  static const LOG_REVIEWS = false;
+
+  static Future<Response> getSellerReviews(String id) async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_REVIEWS || LOG_ENABLE);
+
+    final path = id + "/reviews/";
+
+    return dioClient.get(Url.seller + path);
+  }
+
+  static Future<Response> addUserReview(String data) async {
+    Dio dioClient = await DioClient().getClient(manageCookies: true, logging: LOG_REVIEWS || LOG_ENABLE);
+
+    return dioClient.post(Url.userReviews, data: data);
   }
 
   //USER ADDRESSES

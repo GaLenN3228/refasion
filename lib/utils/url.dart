@@ -22,6 +22,18 @@ class Url {
 
   static const orders = '$refashionedBaseUrl/orders/';
 
+  //PRFILE
+
+  static const customer = '$refashionedBaseUrl/users/profile/customer/';
+
+  //SELLER
+
+  static const seller = '$refashionedBaseUrl/seller/';
+
+  //REVIEWS
+
+  static const userReviews = '$refashionedBaseUrl/seller/reviews/';
+
   //USER ADDRESSES
 
   static const userAddresses = '$refashionedBaseUrl/geo/addresses/';
@@ -91,5 +103,4 @@ class Url {
   //onboarding
 
   static const onboarding = '$refashionedBaseUrl/content/onboarding/';
-
 }

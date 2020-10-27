@@ -43,8 +43,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
-  push(Widget widget, {BuildContext context}) =>
-      Navigator.of(context ?? this.context).pushReplacement(
+  push(Widget widget, {BuildContext context}) => Navigator.of(context ?? this.context).pushReplacement(
         MaterialWithModalsPageRoute(
           builder: (context) => widget,
         ),
@@ -52,8 +51,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<OnBoardingRepository>(
-      builder: (context, onBoardingRepository, _) {
+    return ChangeNotifierProvider<OnBoardingRepository>(
+      create: (_) => OnBoardingRepository()..getOnBoardingData(context),
+      builder: (context, _) {
+        final onBoardingRepository = context.watch<OnBoardingRepository>();
+
         if (onBoardingRepository.isLoading && onBoardingRepository.response == null)
           return Center(
             child: CircularProgressIndicator(
@@ -89,8 +91,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         ...onBoarding,
                       ].map(
                         (item) {
-                          CachedNetworkImageProvider image = onBoardingRepository.cachedImages
-                              .firstWhere((element) => element.url == item.image);
+                          CachedNetworkImageProvider image =
+                              onBoardingRepository.cachedImages.firstWhere((element) => element.url == item.image);
                           return SlideTile(
                             imagePath: image,
                             title: item.title,
@@ -98,10 +100,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               item.description,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 18,
-                                  height: 1.4,
-                                  color: Color(0xFFFFFFFF)),
+                                  fontWeight: FontWeight.w300, fontSize: 18, height: 1.4, color: Color(0xFFFFFFFF)),
                             ),
                           );
                         },
@@ -120,9 +119,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       padding: EdgeInsets.only(top: 25, bottom: 5),
                       child: BottomButton(
                         backgroundColor: Color(0xFFFAD24E),
-                        title: _currentPage == onBoarding.length - 1
-                            ? "готово".toUpperCase()
-                            : "дальше".toUpperCase(),
+                        title: _currentPage == onBoarding.length - 1 ? "готово".toUpperCase() : "дальше".toUpperCase(),
                         enabled: true,
                         titleColor: Colors.black,
                         action: () {
@@ -169,10 +166,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               padding: EdgeInsets.only(right: 5),
                               child: Text(
                                 'ПРОПУСТИТЬ',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .button
-                                    .copyWith(color: Colors.white),
+                                style: Theme.of(context).textTheme.button.copyWith(color: Colors.white),
                               )),
                           SVGIcon(
                             icon: IconAsset.next,
@@ -216,19 +210,16 @@ class SlideTile extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
                 color: Colors.white,
-                gradient: LinearGradient(
-                    begin: FractionalOffset.topCenter,
-                    end: FractionalOffset.bottomCenter,
-                    colors: [
-                      Colors.grey.withOpacity(0.0),
-                      Colors.black,
-                      Colors.black,
-                    ],
-                    stops: [
-                      0.0,
-                      0.7,
-                      1.0
-                    ])),
+                gradient:
+                    LinearGradient(begin: FractionalOffset.topCenter, end: FractionalOffset.bottomCenter, colors: [
+                  Colors.grey.withOpacity(0.0),
+                  Colors.black,
+                  Colors.black,
+                ], stops: [
+                  0.0,
+                  0.7,
+                  1.0
+                ])),
           ),
           Material(
             color: Colors.transparent,
@@ -241,8 +232,7 @@ class SlideTile extends StatelessWidget {
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 24, color: Colors.white),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24, color: Colors.white),
                   ),
                   Container(
                     padding: EdgeInsets.only(top: 20),
