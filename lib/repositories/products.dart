@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/base.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/product_price.dart';

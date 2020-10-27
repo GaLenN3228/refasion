@@ -103,10 +103,11 @@ class MarketplaceNavigatorObserver extends NavigatorObserver {
 }
 
 class MarketplaceNavigator extends StatefulWidget {
-  MarketplaceNavigator({this.onClose, this.onProductCreated});
+  MarketplaceNavigator({this.onClose, this.onProductCreated, this.openInfoWebViewBottomSheet});
 
   final Function() onClose;
   final Function(ProductData) onProductCreated;
+  final Function(String url) openInfoWebViewBottomSheet;
 
   final List<String> pagesWithFocusNodes = [
     MarketplaceNavigatorRoutes.description,
@@ -477,6 +478,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
           return CalcProductPrice();
         }, builder: (context, _) {
           return PricePage(
+            openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
             onClose: widget.onClose,
             focusNode: focusNodes[route],
             initialData: productData.price,

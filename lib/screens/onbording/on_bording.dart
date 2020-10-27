@@ -119,7 +119,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       padding: EdgeInsets.only(top: 25, bottom: 5),
                       child: BottomButton(
                         backgroundColor: Color(0xFFFAD24E),
-                        title: "дальше".toUpperCase(),
+                        title: _currentPage == onBoarding.length - 1 ? "готово".toUpperCase() : "дальше".toUpperCase(),
                         enabled: true,
                         titleColor: Colors.black,
                         action: () {
