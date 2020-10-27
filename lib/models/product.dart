@@ -8,6 +8,15 @@ import 'category.dart';
 
 enum ProductState { published, reserved, onModeration }
 
+enum ReserveState { FREE, RESERVED, RESERVED_BY_ME, PAYED }
+
+final reserveStates = {
+  "free": ReserveState.FREE,
+  "reserved": ReserveState.RESERVED,
+  "reserved_by_me": ReserveState.RESERVED_BY_ME,
+  "payed": ReserveState.PAYED
+};
+
 final _stateLabels = {
   "Опубликован": ProductState.published,
   "В резерве": ProductState.reserved,
@@ -33,10 +42,12 @@ class Product {
   final PickPoint pickUpAddress;
   final List<DeliveryType> deliveryTypes;
 
+  final ReserveState reserveState;
   final bool available;
   final List<ProductSize> sizes;
 
   Product({
+    this.reserveState,
     this.sizes,
     this.available,
     this.pickUpAddress,
@@ -57,20 +68,20 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    if (json == null) return null;
+    if (json == null) {
+      print("Product.fromJson: no json");
+      return null;
+    }
 
     final stateObject = json['state'];
     final stateText = stateObject != null ? stateObject['text'] : null;
     final state = stateText != null ? _stateLabels[stateText] : null;
 
-    final reserveState = json['reserve_state'];
+    final reserveText = json['reserve_state'];
 
-    final reserveStatus = reserveState != null ? reserveState['status'] : null;
-    final reserveText = reserveState != null ? reserveState['text'] : null;
+    final reserveState = reserveText != null ? reserveStates[reserveText] : null;
 
-    final available = reserveStatus != null && reserveText != null
-        ? !reserveStatus || reserveText.toString() == "Этот товар уже зарезервирован Вами"
-        : false;
+    final available = reserveState == ReserveState.FREE || reserveState == ReserveState.RESERVED_BY_ME;
 
     final deliveryTypes = [
       if (json['takeaways'] != null)
@@ -104,6 +115,7 @@ class Product {
       ],
       pickUpAddress: json['pickup'] != null ? PickPoint.fromJson(json['pickup']) : null,
       deliveryTypes: deliveryTypes,
+      reserveState: reserveState,
       state: state,
       available: available,
       sizes: sizes,
