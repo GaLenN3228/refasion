@@ -35,7 +35,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
     if (cartRepository.checkPresence(widget.product.id)) addToCartButtonState = RBState.done;
 
-    if (widget.product.available) orderNowButtonState = RBState.enabled;
+    orderNowButtonState = RBState.enabled;
 
     super.initState();
   }
@@ -71,9 +71,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
     await widget.openDeliveryTypesSelector?.call();
 
-    final newState = widget.product.available ? RBState.enabled : RBState.disabled;
-
-    setState(() => orderNowButtonState = newState);
+    setState(() => orderNowButtonState = RBState.enabled);
   }
 
   @override
@@ -83,7 +81,7 @@ class _ProductBottomButtonsState extends State<ProductBottomButtons> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.product == null) return SizedBox();
+    if (widget.product == null || !widget.product.available) return SizedBox();
 
     return Row(
       children: <Widget>[

@@ -60,6 +60,8 @@ class _UserAddressesListState extends State<UserAddressesList> {
     setState(() => buttonState = RBState.loading);
 
     await widget.onSelectAddress?.call(selectedUserAddressId);
+
+    setState(() => buttonState = selectedUserAddressId != null ? RBState.enabled : RBState.disabled);
   }
 
   @override
@@ -78,25 +80,17 @@ class _UserAddressesListState extends State<UserAddressesList> {
                     ))
                 .toList(),
             ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 25, bottom: 10),
-                    child: SizedBox(
-                      width: 150,
-                      child: BorderButton(
-                        type: BorderButtonType.newAddress,
-                        onTap: widget.onAddAddress,
-                      ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 25, bottom: 10),
+                  child: SizedBox(
+                    width: 150,
+                    child: BorderButton(
+                      type: BorderButtonType.newAddress,
+                      onTap: widget.onAddAddress,
                     ),
                   ),
-                  Expanded(
-                    child: SizedBox(),
-                  ),
-                ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 50),
@@ -114,7 +108,7 @@ class _UserAddressesListState extends State<UserAddressesList> {
           right: 0,
           bottom: 0,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, MediaQuery.of(context).padding.bottom),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
             child: SelectAddressButton(
               state: buttonState,
               onPush: onPush,
