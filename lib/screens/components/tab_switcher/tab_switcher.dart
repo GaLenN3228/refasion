@@ -112,6 +112,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
             isDismissible: true,
             builder: (context, controller) => WebViewPage(
               initialUrl: infoUrl,
+              webViewPageMode: WebViewPageMode.modalSheet,
             ),
           )
         : showMaterialModalBottomSheet(
@@ -121,6 +122,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
             isDismissible: true,
             builder: (context, controller) => WebViewPage(
               initialUrl: infoUrl,
+              webViewPageMode: WebViewPageMode.modalSheet,
             ),
           );
   }
