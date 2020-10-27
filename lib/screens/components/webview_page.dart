@@ -62,8 +62,11 @@ class _WebViewPageState extends State<WebViewPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: white,
-      child: Column(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        color: white,
+        margin: defaultTargetPlatform == TargetPlatform.iOS ? EdgeInsets.only(top: 0) : EdgeInsets.only(top: 80),
+        child:Column(
         children: [
           widget.webViewPageMode == WebViewPageMode.fullScreen
               ? RefashionedTopBar(
@@ -137,6 +140,7 @@ class _WebViewPageState extends State<WebViewPage> {
           ),
         ],
       ),
+    )
     );
   }
 }

@@ -119,6 +119,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
             context: context,
             useRootNavigator: true,
             expand: true,
+            enableDrag: false,
             isDismissible: true,
             builder: (context, controller) => WebViewPage(
               initialUrl: infoUrl,
