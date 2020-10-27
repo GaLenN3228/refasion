@@ -63,9 +63,9 @@ class _WebViewPageState extends State<WebViewPage> {
         children: [
           RefashionedTopBar(
             data: TopBarData.simple(
-              onBack: Navigator.of(context).pop,
+              includeTopScreenPadding: false,
               middleText: widget.title,
-              includeTopScreenPadding: widget.includeTopPadding ?? true,
+              onClose: () => Navigator.of(context).pop(),
             ),
           ),
           Expanded(

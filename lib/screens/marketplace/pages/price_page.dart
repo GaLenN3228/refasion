@@ -17,10 +17,17 @@ class PricePage extends StatefulWidget {
   final Function() onClose;
   final Function(int) onUpdate;
   final Function() onPush;
+  final Function(String url) openInfoWebViewBottomSheet;
 
   final FocusNode focusNode;
 
-  const PricePage({this.onPush, this.onClose, this.focusNode, this.initialData, this.onUpdate});
+  const PricePage(
+      {this.onPush,
+      this.onClose,
+      this.focusNode,
+      this.initialData,
+      this.onUpdate,
+      this.openInfoWebViewBottomSheet});
 
   @override
   _PricePageState createState() => _PricePageState();
@@ -201,24 +208,28 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 20, left: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SVGIcon(
-                          icon: IconAsset.info,
-                          size: 22,
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          "Как рассчитывается стоимость?",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              .copyWith(decoration: TextDecoration.underline, fontSize: 14),
-                        ),
-                      ],
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => widget.openInfoWebViewBottomSheet("https://refashioned.ru/cost"),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SVGIcon(
+                            icon: IconAsset.info,
+                            size: 22,
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            "Как рассчитывается стоимость?",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                .copyWith(decoration: TextDecoration.underline, fontSize: 14),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
