@@ -5,14 +5,13 @@ class Seller {
   final int reviewsCount;
   final String image;
 
-  const Seller(
-      {this.id, this.name, this.rating, this.reviewsCount, this.image});
+  const Seller({this.id, this.name, this.rating, this.reviewsCount, this.image});
 
   factory Seller.fromJson(Map<String, dynamic> json) => Seller(
         id: json['id'],
         name: json['name'],
-        rating: json['rating'],
-        reviewsCount: json['reviews_count'],
+        rating: json['rating'] ?? 0.0,
+        reviewsCount: json['reviews_count'] ?? 0,
         image: json['image'],
       );
 

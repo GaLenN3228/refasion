@@ -20,8 +20,10 @@ import 'package:refashioned_app/screens/components/webview_page.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
-import 'package:refashioned_app/screens/seller/seller_page.dart';
-
+import 'package:refashioned_app/screens/seller/pages/select_seller_rating.dart';
+import 'package:refashioned_app/screens/seller/pages/send_seller_review.dart';
+import 'package:refashioned_app/screens/seller/pages/seller_page.dart';
+import 'package:refashioned_app/screens/seller/pages/seller_reviews.dart';
 import 'home.dart';
 
 class HomeNavigatorRoutes {
@@ -29,6 +31,9 @@ class HomeNavigatorRoutes {
   static const String products = '/products';
   static const String product = '/product';
   static const String seller = '/seller';
+  static const String sellerReviews = '/seller_reviews';
+  static const String selectSellerRating = '/add_seller_rating';
+  static const String sendSellerReview = '/add_seller_review';
   static const String favourites = '/favourites';
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
@@ -139,6 +144,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
   int totalPrice;
 
   Seller seller;
+  int rating;
 
   @override
   initState() {
@@ -317,8 +323,16 @@ class _HomeNavigatorState extends State<HomeNavigator> {
         });
 
       case HomeNavigatorRoutes.seller:
+        topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
         return SellerPage(
           seller: seller,
+          onSellerReviewsPush: () {
+            final newRoute =
+                seller.reviewsCount > 0 ? HomeNavigatorRoutes.sellerReviews : HomeNavigatorRoutes.sellerReviews;
+
+            Navigator.of(context).pushNamed(newRoute);
+          },
           onProductPush: (product) => Navigator.of(context)
               .push(
                 CupertinoPageRoute(
@@ -334,6 +348,37 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 ),
               )
               .then((value) => topPanelController.needShow = true),
+        );
+
+      case HomeNavigatorRoutes.sellerReviews:
+        topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
+        return SellerReviewsPage(
+          seller: seller,
+          onAddSellerRatingPush: () => Navigator.of(context).pushNamed(HomeNavigatorRoutes.selectSellerRating),
+        );
+
+      case HomeNavigatorRoutes.selectSellerRating:
+        topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
+        return SelectSellerRatingPage(
+          seller: seller,
+          onAddSellerReviewPush: (int newRating) {
+            rating = newRating;
+            Navigator.of(context).pushNamed(HomeNavigatorRoutes.sendSellerReview);
+          },
+        );
+
+      case HomeNavigatorRoutes.sendSellerReview:
+        topPanelController.needShow = false;
+        topPanelController.needShowBack = false;
+        return SendSellerReviewPage(
+          seller: seller,
+          rating: rating,
+          onPush: () => Navigator.of(context).pushNamedAndRemoveUntil(
+            HomeNavigatorRoutes.sellerReviews,
+            (route) => route.settings.name == HomeNavigatorRoutes.seller,
+          ),
         );
 
       case HomeNavigatorRoutes.favourites:
@@ -421,7 +466,10 @@ class _HomeNavigatorState extends State<HomeNavigator> {
         ],
         onGenerateInitialRoutes: (navigatorState, initialRoute) => [
           CupertinoPageRoute(
-            builder: (context) => _routeBuilder(context, initialRoute),
+            builder: (context) => _routeBuilder(
+              context,
+              initialRoute,
+            ),
             settings: RouteSettings(
               name: initialRoute,
             ),
@@ -432,6 +480,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             context,
             routeSettings.name,
           ),
+          settings: routeSettings,
         ),
       );
 }
