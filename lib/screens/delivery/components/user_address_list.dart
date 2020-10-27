@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/user_address.dart';
-import 'package:refashioned_app/screens/components/button/simple_button.dart';
+import 'package:refashioned_app/screens/components/button/data/data.dart';
+import 'package:refashioned_app/screens/delivery/components/select_address_button.dart';
 import 'package:refashioned_app/screens/delivery/components/user_address_tile.dart';
 import 'package:refashioned_app/screens/marketplace/components/border_button.dart';
 
@@ -34,10 +35,14 @@ class UserAddressesList extends StatefulWidget {
 
 class _UserAddressesListState extends State<UserAddressesList> {
   UserAddress selectedUserAddressId;
+  RBState buttonState;
 
   @override
   initState() {
-    if (widget.list.isNotEmpty) selectedUserAddressId = widget.list.first;
+    if (widget.list.isNotEmpty) {
+      selectedUserAddressId = widget.list.first;
+      buttonState = RBState.enabled;
+    }
 
     super.initState();
   }
@@ -47,10 +52,15 @@ class _UserAddressesListState extends State<UserAddressesList> {
 
     setState(() {
       selectedUserAddressId = userAddress;
+      buttonState = selectedUserAddressId != null ? RBState.enabled : RBState.disabled;
     });
   }
 
-  onPush() => widget.onSelectAddress?.call(selectedUserAddressId);
+  onPush() async {
+    setState(() => buttonState = RBState.loading);
+
+    await widget.onSelectAddress?.call(selectedUserAddressId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,10 +115,8 @@ class _UserAddressesListState extends State<UserAddressesList> {
           bottom: 0,
           child: Padding(
             padding: EdgeInsets.fromLTRB(20, 10, 20, MediaQuery.of(context).padding.bottom),
-            child: SimpleButton(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              enabled: true,
-              label: "Выбрать",
+            child: SelectAddressButton(
+              state: buttonState,
               onPush: onPush,
             ),
           ),
