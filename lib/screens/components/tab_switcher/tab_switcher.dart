@@ -104,7 +104,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
   }
 
   openInfoWebViewBottomSheet(String infoUrl) {
-    defaultTargetPlatform != TargetPlatform.iOS
+    defaultTargetPlatform == TargetPlatform.iOS
         ? showCupertinoModalBottomSheet(
             context: context,
             useRootNavigator: true,
