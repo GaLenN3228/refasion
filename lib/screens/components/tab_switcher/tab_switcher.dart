@@ -79,6 +79,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
         final isAuthorized = await BaseRepository.isAuthorized();
         SystemChrome.setSystemUIOverlayStyle(isAuthorized ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark);
         break;
+      default:
+        break;
     }
   }
 
