@@ -35,7 +35,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
   @override
   void initState() {
     keyboardVisible = false;
-    updateButtonState = false;
+    updateButtonState = true;
     buttonState = RBState.disabled;
     setCustomerDataRepository = SetCustomerDataRepository();
     textEditingController = TextEditingController();
@@ -47,7 +47,6 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
       if (sharedPreferences.containsKey(Prefs.user_name)) {
         var userName = sharedPreferences.getString(Prefs.user_name);
         textEditingController.text = userName;
-        updateButtonState = true;
       }
     });
 

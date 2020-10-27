@@ -19,32 +19,36 @@ class SellerReviewTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SVGIcon(
                 icon: IconAsset.person,
                 size: 32,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: Text(
-                        review.customerName,
-                        style: Theme.of(context).textTheme.subtitle1,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          review.customerName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
                       ),
-                    ),
-                    RatingTile(
-                      rating: review.rating.toDouble(),
-                      starSize: 10,
-                    ),
-                  ],
+                      RatingTile(
+                        rating: review.rating.toDouble(),
+                        starSize: 10,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Spacer(),
               Text(
                 DateFormat('d.M.y HH:mm').format(review.createdAt),
                 style: Theme.of(context).textTheme.bodyText1.copyWith(
