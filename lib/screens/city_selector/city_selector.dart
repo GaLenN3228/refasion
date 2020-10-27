@@ -102,19 +102,17 @@ class _CitySelectorState extends State<CitySelector> {
                             child: Text(
                               repository.loadingFailed
                                   ? repository.response?.errors != null
-                                      ? "Ошибка: ${repository.response?.errors}"
-                                      : "🤬"
+                                      ? "Ошибка: ${repository.response?.errors}\nПопробуйте позже"
+                                      : "Ошибка\nПопробуйте позже"
                                   : "Маркетплейс брендовой одежды и обуви",
                               textAlign: TextAlign.center,
-                              maxLines: 2,
+                              maxLines: 3,
                               overflow: TextOverflow.ellipsis,
-                              style: repository.loadingFailed && repository.response?.errors == null
-                                  ? TextStyle(fontSize: 32)
-                                  : Theme.of(context).textTheme.headline1.copyWith(
-                                        color: white,
-                                        fontWeight: FontWeight.w300,
-                                        height: 1.5,
-                                      ),
+                              style: Theme.of(context).textTheme.headline1.copyWith(
+                                    color: white,
+                                    fontWeight: FontWeight.w300,
+                                    height: 1.5,
+                                  ),
                             ),
                           ),
                         ),
