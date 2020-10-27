@@ -330,6 +330,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                                   ChangeNotifierProvider<SizeRepository>(
                                   create: (_) => SizeRepository(),
                                   builder: (context, _) => MarketplaceNavigator(
+                                    navigatorKey: navigatorKeys[BottomTab.marketPlace],
                                     onClose: () {
                                       Navigator.of(context).pop();
                                     },

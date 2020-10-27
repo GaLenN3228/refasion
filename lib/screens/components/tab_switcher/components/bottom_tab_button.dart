@@ -5,7 +5,7 @@ import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
-enum BottomTab { home, catalog, cart, profile }
+enum BottomTab { home, catalog, cart, profile, marketPlace }
 
 class BottomTabButton extends StatefulWidget {
   final BottomTab tab;

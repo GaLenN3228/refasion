@@ -22,6 +22,7 @@ final navigatorKeys = {
   BottomTab.catalog: GlobalKey<NavigatorState>(),
   BottomTab.cart: GlobalKey<NavigatorState>(),
   BottomTab.profile: GlobalKey<NavigatorState>(),
+  BottomTab.marketPlace: GlobalKey<NavigatorState>(),
 };
 
 class TabView extends StatelessWidget {
