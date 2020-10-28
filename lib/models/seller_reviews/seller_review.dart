@@ -31,11 +31,16 @@ class SellerReview {
         return null;
       }
 
-      final createdAt = DateTime.parse(json['created_at']);
+      DateTime createdAt;
 
-      if (createdAt == null) {
+      if (json['created_at'] == null) {
         print("SellerReview.fromJson: no created_at");
-        return null;
+      } else {
+        createdAt = DateTime.parse(json['created_at']);
+
+        if (createdAt == null) {
+          print("SellerReview.fromJson: no created_at");
+        }
       }
 
       final customer = json['customer'];
