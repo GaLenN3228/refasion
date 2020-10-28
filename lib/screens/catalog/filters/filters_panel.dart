@@ -14,9 +14,15 @@ class FiltersPanel extends StatefulWidget {
   final Function() updateProducts;
   final ScrollController scrollController;
   final String categoryId;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   const FiltersPanel(
-      {Key key, this.updateProducts, this.root, this.scrollController, this.categoryId})
+      {Key key,
+      this.updateProducts,
+      this.root,
+      this.scrollController,
+      this.categoryId,
+      this.openInfoWebViewBottomSheet})
       : super(key: key);
 
   @override
@@ -88,7 +94,7 @@ class _FiltersPanelState extends State<FiltersPanel> {
         child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
       );
 
-    if (filtersRepository.isLoaded){
+    if (filtersRepository.isLoaded) {
       countParameters = getParameters(filtersRepository.response.content);
     }
 
@@ -125,7 +131,9 @@ class _FiltersPanelState extends State<FiltersPanel> {
                                 children: [
                                   if (entry.key != 0) ItemsDivider(),
                                   FilterTile(
-                                      filter: entry.value, onUpdate: () => updateCount(context)),
+                                      openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
+                                      filter: entry.value,
+                                      onUpdate: () => updateCount(context)),
                                 ],
                               ),
                             )

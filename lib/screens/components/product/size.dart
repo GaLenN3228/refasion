@@ -9,6 +9,7 @@ enum ProductSizeTileStyle { small, large }
 class ProductSizeTile extends StatelessWidget {
   final Product product;
   final ProductSizeTileStyle style;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   final EdgeInsets padding;
 
@@ -16,6 +17,7 @@ class ProductSizeTile extends StatelessWidget {
     this.product,
     this.style: ProductSizeTileStyle.small,
     this.padding,
+    this.openInfoWebViewBottomSheet,
   });
 
   @override
@@ -40,7 +42,9 @@ class ProductSizeTile extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
               ),
-              SizesTableLink(),
+              SizesTableLink(onTap: () {
+                openInfoWebViewBottomSheet("https://refashioned.ru/size", "ТАБЛИЦА РАЗМЕРОВ");
+              },),
             ],
           ),
         );

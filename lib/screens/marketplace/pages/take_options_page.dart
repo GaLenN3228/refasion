@@ -14,7 +14,7 @@ class TakeOptionsPage extends StatefulWidget {
   final Function() showPickUpPoints;
   final Function() onClose;
   final PickPoint address;
-  final Function(String url) openInfoWebViewBottomSheet;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   const TakeOptionsPage({Key key, this.onPush, this.showPickUpPoints, this.onClose, this.address, this.openInfoWebViewBottomSheet})
       : super(key: key);
@@ -109,7 +109,7 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    onTap: () => widget.openInfoWebViewBottomSheet("https://refashioned.ru/delivery-and-return"),
+                    onTap: () => widget.openInfoWebViewBottomSheet("https://refashioned.ru/delivery-and-return", "ДОСТАВКА"),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,

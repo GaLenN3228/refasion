@@ -83,12 +83,19 @@ class CatalogNavigator extends StatefulWidget {
       ? context.findRootAncestorStateOfType<_CatalogNavigatorState>()
       : context.findAncestorStateOfType<_CatalogNavigatorState>();
 
-  CatalogNavigator({this.navigatorKey, this.changeTabTo, this.openDeliveryTypesSelector, this.openPickUpAddressMap});
+  CatalogNavigator(
+      {this.navigatorKey,
+      this.changeTabTo,
+      this.openDeliveryTypesSelector,
+      this.openPickUpAddressMap,
+      this.openInfoWebViewBottomSheet});
 
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
 
   final Function(PickPoint) openPickUpAddressMap;
+
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -183,8 +190,9 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         return CatalogRootPage(
           categories: categories,
           onPush: (category) {
-            final newRoute =
-                category.children.isNotEmpty ? CatalogNavigatorRoutes.categories : CatalogNavigatorRoutes.category;
+            final newRoute = category.children.isNotEmpty
+                ? CatalogNavigatorRoutes.categories
+                : CatalogNavigatorRoutes.category;
 
             return Navigator.of(context)
                 .push(
@@ -228,8 +236,9 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           onPush: (category, {callback}) {
             topPanelController.needShow = true;
             topPanelController.needShowBack = true;
-            final newRoute =
-                category.children.isNotEmpty ? CatalogNavigatorRoutes.category : CatalogNavigatorRoutes.products;
+            final newRoute = category.children.isNotEmpty
+                ? CatalogNavigatorRoutes.category
+                : CatalogNavigatorRoutes.products;
 
             return Navigator.of(context)
                 .push(
@@ -337,6 +346,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductsPage(
+            openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
             parameters: parameters,
             searchResult: searchResult,
             topCategory: category,
@@ -372,6 +382,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductPage(
+            openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             onProductPush: (product) {
@@ -436,8 +447,9 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         return SellerPage(
           seller: seller,
           onSellerReviewsPush: () {
-            final newRoute =
-                seller.reviewsCount > 0 ? CatalogNavigatorRoutes.sellerReviews : CatalogNavigatorRoutes.sellerReviews;
+            final newRoute = seller.reviewsCount > 0
+                ? CatalogNavigatorRoutes.sellerReviews
+                : CatalogNavigatorRoutes.sellerReviews;
 
             Navigator.of(context).pushNamed(newRoute);
           },
@@ -463,7 +475,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         topPanelController.needShowBack = false;
         return SellerReviewsPage(
           seller: seller,
-          onAddSellerRatingPush: () => Navigator.of(context).pushNamed(CatalogNavigatorRoutes.selectSellerRating),
+          onAddSellerRatingPush: () =>
+              Navigator.of(context).pushNamed(CatalogNavigatorRoutes.selectSellerRating),
         );
 
       case CatalogNavigatorRoutes.selectSellerRating:
@@ -495,7 +508,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           providers: [
             ChangeNotifierProvider<FavouritesProductsRepository>(
                 create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(
+                create: (_) => AddRemoveFavouriteRepository())
           ],
           builder: (context, _) {
             return FavouritesPage(
@@ -528,7 +542,9 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             totalPrice = newTotalPrice;
 
             await Navigator.of(context).pushReplacementNamed(
-              success ?? false ? CatalogNavigatorRoutes.orderCreated : CatalogNavigatorRoutes.paymentFailed,
+              success ?? false
+                  ? CatalogNavigatorRoutes.orderCreated
+                  : CatalogNavigatorRoutes.paymentFailed,
             );
           },
         );

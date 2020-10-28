@@ -27,6 +27,8 @@ class ProductsPage extends StatefulWidget {
 
   final String collectionUrl;
 
+  final Function(String url, String title) openInfoWebViewBottomSheet;
+
   const ProductsPage(
       {Key key,
       this.onPush,
@@ -34,7 +36,8 @@ class ProductsPage extends StatefulWidget {
       this.searchResult,
       this.parameters,
       this.title,
-      this.collectionUrl});
+      this.collectionUrl,
+      this.openInfoWebViewBottomSheet});
 
   @override
   _ProductsPageState createState() => _ProductsPageState();
@@ -66,7 +69,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
     if (widget.searchResult != null) {
       initialParameters = "?p=" + widget.searchResult.id;
-    }else if (widget.collectionUrl != null) {
+    } else if (widget.collectionUrl != null) {
       initialParameters = widget.collectionUrl.replaceAll("v1/", "");
     } else if (widget.parameters != null) {
       initialParameters = widget.parameters;
@@ -234,6 +237,7 @@ class _ProductsPageState extends State<ProductsPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           FiltersButton(
+                            openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
                             root: initialParameters,
                             categoryId:
                                 quickFiltersCategories != null && quickFiltersCategories.isNotEmpty

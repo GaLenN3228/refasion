@@ -17,7 +17,7 @@ class PricePage extends StatefulWidget {
   final Function() onClose;
   final Function(int) onUpdate;
   final Function() onPush;
-  final Function(String url) openInfoWebViewBottomSheet;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   final FocusNode focusNode;
 
@@ -210,7 +210,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                     padding: const EdgeInsets.only(top: 20, left: 16),
                     child: GestureDetector(
                       behavior: HitTestBehavior.translucent,
-                      onTap: () => widget.openInfoWebViewBottomSheet("https://refashioned.ru/cost"),
+                      onTap: () => widget.openInfoWebViewBottomSheet("https://refashioned.ru/cost", "СТОИМОСТЬ ВЕЩИ"),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [

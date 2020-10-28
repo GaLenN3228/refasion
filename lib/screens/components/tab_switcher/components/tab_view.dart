@@ -30,6 +30,7 @@ class TabView extends StatelessWidget {
   final ValueNotifier<BottomTab> currentTab;
   final Function(Widget) pushPageOnTop;
   final Function(PickPoint) openPickUpAddressMap;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   final Function() onTabRefresh;
 
@@ -44,7 +45,7 @@ class TabView extends StatelessWidget {
   }) openDeliveryTypesSelector;
 
   TabView(this.tab, this.currentTab,
-      {this.pushPageOnTop, this.onTabRefresh, this.openDeliveryTypesSelector, this.openPickUpAddressMap});
+      {this.pushPageOnTop, this.onTabRefresh, this.openDeliveryTypesSelector, this.openPickUpAddressMap, this.openInfoWebViewBottomSheet});
 
   changeTabTo(BottomTab newBottomTab) {
     if (newBottomTab == tab && onTabRefresh != null)
@@ -65,6 +66,7 @@ class TabView extends StatelessWidget {
           changeTabTo: changeTabTo,
           openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
+          openInfoWebViewBottomSheet: openInfoWebViewBottomSheet,
         );
         content = MultiProvider(
             providers: [

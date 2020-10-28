@@ -108,7 +108,7 @@ class MarketplaceNavigator extends StatefulWidget {
 
   final Function() onClose;
   final Function(ProductData) onProductCreated;
-  final Function(String url) openInfoWebViewBottomSheet;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
   final GlobalKey<NavigatorState> navigatorKey;
 
   final List<String> pagesWithFocusNodes = [
