@@ -24,8 +24,9 @@ class PhotosPage extends StatefulWidget {
   final Function() onClose;
   final Function(List<PhotoItemData>) onPush;
   final Function(File) onUpdate;
+  final Function(String url) openInfoWebViewBottomSheet;
 
-  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate}) : super(key: key);
+  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.openInfoWebViewBottomSheet}) : super(key: key);
 
   @override
   _PhotosPageState createState() => _PhotosPageState();
@@ -41,7 +42,8 @@ class _PhotosPageState extends State<PhotosPage> {
   void initState() {
     images.add(PhotoItemData(0, null, "Вид спереди"));
     images.add(PhotoItemData(1, null, "Вид сзади"));
-    images.add(PhotoItemData(2, null, "Вид сбоку"));
+    images.add(PhotoItemData(2, null, "Фото бирки"));
+    images.add(PhotoItemData(3, null, "Больше фото"));
     super.initState();
   }
 
@@ -110,11 +112,11 @@ class _PhotosPageState extends State<PhotosPage> {
 
   void removePhotoFromCollection(int index) {
     setState(() {
-      if (index == 0 || index == 1 || index == 2) {
+      if (index == 0 || index == 1 || index == 2 || index == 3) if (index == 3 && images.length > 4)
+        images.removeAt(index);
+      else
         images[index].file = null;
-        images.removeWhere((element) =>
-            element.index != 0 && element.index != 1 && element.index != 2 && element.file == null);
-      } else {
+      else {
         images.removeAt(index);
       }
     });
@@ -141,37 +143,42 @@ class _PhotosPageState extends State<PhotosPage> {
                   padding: const EdgeInsets.only(left: 16, right: 16, bottom: 76),
                   shrinkWrap: true,
                   crossAxisCount: 2,
-                  itemCount: images.length,
-                  itemBuilder: (BuildContext context, int index) =>
-                      // index == images.length
-                      //     ? Container(
-                      //   child: Column(
-                      //     children: [
-                      //       Container(
-                      //         alignment: Alignment.centerLeft,
-                      //         child: Text(
-                      //           "Информация для размещения",
-                      //           style: Theme
-                      //               .of(context)
-                      //               .textTheme
-                      //               .headline1,
-                      //         ),
-                      //       ),
-                      //       AddPhotoDescriptionItem(
-                      //           title: "Сфотографируйте все имеющиеся деффекты"),
-                      //       AddPhotoDescriptionItem(
-                      //           title: "Сделайте фото бирки и ото этикетки с размером"),
-                      //       AddPhotoDescriptionItem(title: "Используйте нейтральный фон"),
-                      //     ],
-                      //   ),
-                      // )
-                      //     :
-                      AddPhotoItem(
+                  itemCount: images.length + 1,
+                  itemBuilder: (BuildContext context, int index) => index == images.length
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () =>
+                                widget.openInfoWebViewBottomSheet("https://refashioned.ru/photo"),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SVGIcon(
+                                  icon: IconAsset.info,
+                                  size: 22,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  "Как правильно разместить фотографии?",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      .copyWith(decoration: TextDecoration.underline, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : AddPhotoItem(
                           photoItemData: images[index],
                           onPush: (type) {
                             getImage(index);
                           }),
-                  staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
+                  staggeredTileBuilder: (int index) =>
+                      index == images.length ? new StaggeredTile.fit(2) : new StaggeredTile.fit(1),
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),

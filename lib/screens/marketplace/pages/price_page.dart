@@ -225,7 +225,7 @@ class _PricePageState extends State<PricePage> with WidgetsBindingObserver {
                             "Как рассчитывается стоимость?",
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyText2
+                                .headline5
                                 .copyWith(decoration: TextDecoration.underline, fontSize: 14),
                           ),
                         ],
