@@ -5,7 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
-import 'package:refashioned_app/utils/colors.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum WebViewPageMode { fullScreen, modalSheet }
@@ -62,11 +61,8 @@ class _WebViewPageState extends State<WebViewPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        color: white,
-        margin: defaultTargetPlatform == TargetPlatform.iOS ? EdgeInsets.only(top: 0) : EdgeInsets.only(top: 80),
-        child:Column(
+      backgroundColor: Colors.white,
+      child: Column(
         children: [
           widget.webViewPageMode == WebViewPageMode.fullScreen
               ? RefashionedTopBar(
@@ -78,7 +74,7 @@ class _WebViewPageState extends State<WebViewPage> {
                 )
               : RefashionedTopBar(
                   data: TopBarData.simple(
-                    includeTopScreenPadding: false,
+                    includeTopScreenPadding: widget.includeTopPadding ?? true,
                     middleText: widget.title,
                     onClose: () => Navigator.of(context).pop(),
                   ),
@@ -140,7 +136,6 @@ class _WebViewPageState extends State<WebViewPage> {
           ),
         ],
       ),
-    )
     );
   }
 }
