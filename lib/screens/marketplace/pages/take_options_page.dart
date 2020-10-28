@@ -14,8 +14,10 @@ class TakeOptionsPage extends StatefulWidget {
   final Function() showPickUpPoints;
   final Function() onClose;
   final PickPoint address;
+  final Function(String url) openInfoWebViewBottomSheet;
 
-  const TakeOptionsPage({Key key, this.onPush, this.showPickUpPoints, this.onClose, this.address}) : super(key: key);
+  const TakeOptionsPage({Key key, this.onPush, this.showPickUpPoints, this.onClose, this.address, this.openInfoWebViewBottomSheet})
+      : super(key: key);
 
   @override
   _TakeOptionsPageState createState() => _TakeOptionsPageState();
@@ -105,31 +107,38 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Подключить доставку",
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SVGIcon(
-                            icon: IconAsset.info,
-                            size: 26,
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            "Как это работает?",
-                            style: Theme.of(context).textTheme.bodyText1.copyWith(decoration: TextDecoration.underline),
-                          ),
-                        ],
-                      ),
-                    ],
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () => widget.openInfoWebViewBottomSheet("https://refashioned.ru/delivery-and-return"),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Подключить доставку",
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SVGIcon(
+                              icon: IconAsset.info,
+                              size: 26,
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              "Как это работает?",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(decoration: TextDecoration.underline),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
@@ -154,7 +163,8 @@ class _TakeOptionsPageState extends State<TakeOptionsPage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, defaultTargetPlatform == TargetPlatform.iOS ? 31 : 20),
+            padding: EdgeInsets.fromLTRB(
+                20, 20, 20, defaultTargetPlatform == TargetPlatform.iOS ? 31 : 20),
             child: SimpleButton(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               enabled: buttonEnabled,
