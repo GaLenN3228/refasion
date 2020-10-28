@@ -9,13 +9,8 @@ import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
-import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/screens/cart/pages/cart_page.dart';
-import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
-import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
-import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/product/product.dart';
@@ -33,26 +28,15 @@ class CartNavigatorRoutes {
   static const String sellerReviews = '/seller_reviews';
   static const String selectSellerRating = '/add_seller_rating';
   static const String sendSellerReview = '/add_seller_review';
-  static const String checkout = '/checkout';
-  static const String orderCreated = '/order_created';
-  static const String paymentFailed = '/payment_failed';
   static const String products = '/products';
   static const String favourites = '/favourites';
 }
 
 class CartNavigatorObserver extends NavigatorObserver {
-  final Function() onCartRefresh;
-
-  CartNavigatorObserver({this.onCartRefresh});
-
   @override
   void didPop(Route route, Route previousRoute) {
     switch (previousRoute?.settings?.name) {
       case CartNavigatorRoutes.cart:
-        onCartRefresh?.call();
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-        break;
-
       case CartNavigatorRoutes.seller:
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
         break;
@@ -101,9 +85,16 @@ class CartNavigator extends StatefulWidget {
   final Function(BottomTab) changeTabTo;
   final Function(PickPoint) openPickUpAddressMap;
 
-  CartNavigator(
-      {Key key, this.navigatorKey, this.changeTabTo, this.openDeliveryTypesSelector, this.openPickUpAddressMap})
-      : super(key: key);
+  final Function(Order, Function()) onCheckoutPush;
+
+  const CartNavigator({
+    Key key,
+    this.navigatorKey,
+    this.changeTabTo,
+    this.openDeliveryTypesSelector,
+    this.openPickUpAddressMap,
+    this.onCheckoutPush,
+  }) : super(key: key);
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -147,27 +138,8 @@ class CartNavigator extends StatefulWidget {
 }
 
 class _CartNavigatorState extends State<CartNavigator> {
-  CreateOrderRepository createOrderRepository;
-
-  Order order;
-  int totalPrice;
-
   Seller seller;
   int rating;
-
-  @override
-  initState() {
-    createOrderRepository = CreateOrderRepository();
-
-    super.initState();
-  }
-
-  @override
-  dispose() {
-    createOrderRepository.dispose();
-
-    super.dispose();
-  }
 
   Widget _routeBuilder(
     BuildContext context,
@@ -186,15 +158,7 @@ class _CartNavigatorState extends State<CartNavigator> {
         return CartPage(
           openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
           onCatalogPush: () => widget.changeTabTo(BottomTab.catalog),
-          onCheckoutPush: (Order newOrder) {
-            if (newOrder != null) {
-              order = newOrder;
-
-              return Navigator.of(context).pushNamed(
-                CartNavigatorRoutes.checkout,
-              );
-            }
-          },
+          onCheckoutPush: widget.onCheckoutPush,
           onProductPush: (product) {
             return Navigator.of(context).push(
               CupertinoPageRoute(
@@ -219,13 +183,7 @@ class _CartNavigatorState extends State<CartNavigator> {
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (Order newOrder) {
-              if (newOrder != null) {
-                order = newOrder;
-
-                Navigator.of(context).pushNamed(CartNavigatorRoutes.checkout);
-              }
-            },
+            onCheckoutPush: widget.onCheckoutPush,
             onProductPush: (product) {
               return Navigator.of(context)
                   .push(
@@ -396,31 +354,6 @@ class _CartNavigatorState extends State<CartNavigator> {
               );
             });
 
-      case CartNavigatorRoutes.checkout:
-        return CheckoutPage(
-          order: order,
-          onPush: (newTotalPrice, {bool success}) async {
-            totalPrice = newTotalPrice;
-
-            await Navigator.of(context).pushReplacementNamed(
-              success ?? false ? CartNavigatorRoutes.orderCreated : CartNavigatorRoutes.paymentFailed,
-            );
-          },
-        );
-
-      case CartNavigatorRoutes.orderCreated:
-        return OrderCreatedPage(
-          totalPrice: totalPrice,
-          onUserOrderPush: () => widget.changeTabTo(
-            BottomTab.profile,
-          ),
-        );
-
-      case CartNavigatorRoutes.paymentFailed:
-        return PaymentFailedPage(
-          totalPrice: totalPrice,
-        );
-
       default:
         return CupertinoPageScaffold(
           backgroundColor: Colors.white,
@@ -437,11 +370,7 @@ class _CartNavigatorState extends State<CartNavigator> {
   @override
   Widget build(BuildContext context) => Navigator(
         initialRoute: CartNavigatorRoutes.cart,
-        observers: [
-          CartNavigatorObserver(
-            onCartRefresh: () => Provider.of<CartRepository>(context, listen: false).refresh(),
-          )
-        ],
+        observers: [CartNavigatorObserver()],
         key: widget.navigatorKey,
         onGenerateInitialRoutes: (navigatorState, initialRoute) => [
           CupertinoPageRoute(

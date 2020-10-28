@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/order/order_item.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/order_item_delivery_object_tile.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/order_item_seller_data_tile.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/order_product_tile.dart';
+import 'package:refashioned_app/screens/checkout/components/order_item_delivery_object_tile.dart';
+import 'package:refashioned_app/screens/checkout/components/order_item_seller_data_tile.dart';
+import 'package:refashioned_app/screens/checkout/components/order_product_tile.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 
 class OrderItemTile extends StatelessWidget {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
+import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/pick_point.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/home.dart';
@@ -12,26 +13,19 @@ import 'package:refashioned_app/screens/catalog/catalog_navigator.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/home/home_navigator.dart';
-import 'package:refashioned_app/screens/profile/components/user_name_controller.dart';
 import 'package:refashioned_app/screens/profile/components/user_photo_controller.dart';
 import 'package:refashioned_app/screens/profile/profile_navigator.dart';
 import 'package:refashioned_app/screens/search_wrapper.dart';
 
-final navigatorKeys = {
-  BottomTab.home: GlobalKey<NavigatorState>(),
-  BottomTab.catalog: GlobalKey<NavigatorState>(),
-  BottomTab.cart: GlobalKey<NavigatorState>(),
-  BottomTab.profile: GlobalKey<NavigatorState>(),
-  BottomTab.marketPlace: GlobalKey<NavigatorState>(),
-};
-
 class TabView extends StatelessWidget {
+  final GlobalKey<NavigatorState> navigatorKey;
   final BottomTab tab;
   final ValueNotifier<BottomTab> currentTab;
   final Function(Widget) pushPageOnTop;
   final Function(PickPoint) openPickUpAddressMap;
 
   final Function() onTabRefresh;
+  final Function(Order, Function()) onCheckoutPush;
 
   final Function(
     BuildContext,
@@ -43,8 +37,16 @@ class TabView extends StatelessWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  TabView(this.tab, this.currentTab,
-      {this.pushPageOnTop, this.onTabRefresh, this.openDeliveryTypesSelector, this.openPickUpAddressMap});
+  const TabView(
+    this.tab,
+    this.currentTab, {
+    this.pushPageOnTop,
+    this.onTabRefresh,
+    this.openDeliveryTypesSelector,
+    this.openPickUpAddressMap,
+    this.onCheckoutPush,
+    this.navigatorKey,
+  });
 
   changeTabTo(BottomTab newBottomTab) {
     if (newBottomTab == tab && onTabRefresh != null)
@@ -61,10 +63,11 @@ class TabView extends StatelessWidget {
     switch (tab) {
       case BottomTab.catalog:
         var catalogNavigator = CatalogNavigator(
-          navigatorKey: navigatorKeys[tab],
+          navigatorKey: navigatorKey,
           changeTabTo: changeTabTo,
           openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
+          onCheckoutPush: onCheckoutPush,
         );
         content = MultiProvider(
             providers: [
@@ -75,13 +78,13 @@ class TabView extends StatelessWidget {
             child: SearchWrapper(
               content: catalogNavigator,
               onBackPressed: () {
-                navigatorKeys[tab].currentState.pop();
+                navigatorKey.currentState.pop();
               },
               onFavouritesClick: () {
-                catalogNavigator.pushFavourites(navigatorKeys[tab].currentContext);
+                catalogNavigator.pushFavourites(navigatorKey.currentContext);
               },
               onSearchResultClick: (searchResult) {
-                catalogNavigator.pushProducts(navigatorKeys[tab].currentContext, searchResult);
+                catalogNavigator.pushProducts(navigatorKey.currentContext, searchResult);
               },
             ));
 
@@ -89,10 +92,11 @@ class TabView extends StatelessWidget {
 
       case BottomTab.cart:
         var cartNavigator = CartNavigator(
-          navigatorKey: navigatorKeys[tab],
+          navigatorKey: navigatorKey,
           changeTabTo: changeTabTo,
           openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
+          onCheckoutPush: onCheckoutPush,
         );
         content = MultiProvider(
             providers: [
@@ -103,23 +107,24 @@ class TabView extends StatelessWidget {
             child: SearchWrapper(
               content: cartNavigator,
               onBackPressed: () {
-                navigatorKeys[tab].currentState.pop();
+                navigatorKey.currentState.pop();
               },
               onFavouritesClick: () {
-                cartNavigator.pushFavourites(navigatorKeys[tab].currentContext);
+                cartNavigator.pushFavourites(navigatorKey.currentContext);
               },
               onSearchResultClick: (searchResult) {
-                cartNavigator.pushProducts(navigatorKeys[tab].currentContext, searchResult);
+                cartNavigator.pushProducts(navigatorKey.currentContext, searchResult);
               },
             ));
         break;
 
       case BottomTab.home:
         var homeNavigator = HomeNavigator(
-          navigatorKey: navigatorKeys[tab],
+          navigatorKey: navigatorKey,
           openPickUpAddressMap: openPickUpAddressMap,
           changeTabTo: changeTabTo,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
+          onCheckoutPush: onCheckoutPush,
         );
         content = MultiProvider(
             providers: [
@@ -131,24 +136,25 @@ class TabView extends StatelessWidget {
             child: SearchWrapper(
               content: homeNavigator,
               onBackPressed: () {
-                navigatorKeys[tab].currentState.pop();
+                navigatorKey.currentState.pop();
               },
               onFavouritesClick: () {
-                homeNavigator.pushFavourites(navigatorKeys[tab].currentContext);
+                homeNavigator.pushFavourites(navigatorKey.currentContext);
               },
               onSearchResultClick: (searchResult) {
-                homeNavigator.pushProducts(navigatorKeys[tab].currentContext, searchResult);
+                homeNavigator.pushProducts(navigatorKey.currentContext, searchResult);
               },
             ));
         break;
 
       case BottomTab.profile:
         var profileNavigator = ProfileNavigator(
-          navigatorKey: navigatorKeys[tab],
+          navigatorKey: navigatorKey,
           changeTabTo: changeTabTo,
           pushPageOnTop: pushPageOnTop,
           openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
+          onCheckoutPush: onCheckoutPush,
         );
         content = MultiProvider(
             providers: [
@@ -160,13 +166,13 @@ class TabView extends StatelessWidget {
             child: SearchWrapper(
               content: profileNavigator,
               onBackPressed: () {
-                navigatorKeys[tab].currentState.pop();
+                navigatorKey.currentState.pop();
               },
               onFavouritesClick: () {
-                profileNavigator.pushFavourites(navigatorKeys[tab].currentContext, true);
+                profileNavigator.pushFavourites(navigatorKey.currentContext, true);
               },
               onSearchResultClick: (searchResult) {
-                profileNavigator.pushProducts(navigatorKeys[tab].currentContext, searchResult);
+                profileNavigator.pushProducts(navigatorKey.currentContext, searchResult);
               },
             ));
         break;

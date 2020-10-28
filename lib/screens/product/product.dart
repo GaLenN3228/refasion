@@ -39,7 +39,7 @@ class ProductPage extends StatefulWidget {
   final Function(String parameters, String title) onSubCategoryClick;
   final Function() onCartPush;
   final Function(PickPoint) onPickupAddressPush;
-  final Function(Order) onCheckoutPush;
+  final Function(Order, Function()) onCheckoutPush;
 
   final Function(
     BuildContext,
@@ -266,7 +266,8 @@ class _ProductPageState extends State<ProductPage> {
                       context,
                       product.id,
                       deliveryTypes: product.deliveryTypes,
-                      onFinish: () => widget.onCheckoutPush?.call(order),
+                      onFinish: () => widget.onCheckoutPush
+                          ?.call(order, () => SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark)),
                       onSelect: (companyId, objectId) async {
                         await createOrderRepository.update(
                           jsonEncode(

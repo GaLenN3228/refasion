@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/repositories/orders.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/confirm_order_button.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/order_item_tile.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/order_payment_tile.dart';
-import 'package:refashioned_app/screens/cart/components/tiles/order_summary_tile.dart';
-import 'package:refashioned_app/screens/cart/pages/payment_page.dart';
+import 'package:refashioned_app/screens/checkout/components/confirm_order_button.dart';
+import 'package:refashioned_app/screens/checkout/components/order_item_tile.dart';
+import 'package:refashioned_app/screens/checkout/components/order_payment_tile.dart';
+import 'package:refashioned_app/screens/checkout/components/order_summary_tile.dart';
+import 'package:refashioned_app/screens/checkout/pages/payment_page.dart';
 import 'package:refashioned_app/screens/components/button/data/data.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
@@ -97,8 +97,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           RefashionedTopBar(
             data: TopBarData.simple(
               middleText: "Оформление заказа",
-              onBack: Navigator.of(context).pop,
-              onClose: widget.onClose,
+              onClose: widget.onClose ?? Navigator.of(context).pop,
             ),
           ),
           Expanded(
@@ -109,8 +108,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         child: CupertinoActivityIndicator(),
                       )
                     : ListView(
-                        padding:
-                            EdgeInsets.fromLTRB(15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
+                        padding: EdgeInsets.fromLTRB(15, 0, 15, MediaQuery.of(context).padding.bottom + 45.0 + 20.0),
                         children: [
                             for (final item in order.items)
                               OrderItemTile(
@@ -127,7 +125,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: MediaQuery.of(context).padding.bottom + 65.0,
+                  bottom: MediaQuery.of(context).padding.bottom,
                   child: ConfirmOrderButton(
                     onPush: confirmOrder,
                     state: buttonState,

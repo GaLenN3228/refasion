@@ -12,9 +12,9 @@ import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
-import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
-import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
+import 'package:refashioned_app/screens/checkout/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/order_created_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_brands_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
@@ -83,12 +83,19 @@ class CatalogNavigator extends StatefulWidget {
       ? context.findRootAncestorStateOfType<_CatalogNavigatorState>()
       : context.findAncestorStateOfType<_CatalogNavigatorState>();
 
-  CatalogNavigator({this.navigatorKey, this.changeTabTo, this.openDeliveryTypesSelector, this.openPickUpAddressMap});
+  const CatalogNavigator({
+    this.navigatorKey,
+    this.changeTabTo,
+    this.openDeliveryTypesSelector,
+    this.openPickUpAddressMap,
+    this.onCheckoutPush,
+  });
 
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
 
   final Function(PickPoint) openPickUpAddressMap;
+  final Function(Order, Function()) onCheckoutPush;
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -419,13 +426,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                   .then((value) => topPanelController.needShow = false);
             },
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (Order newOrder) {
-              if (newOrder != null) {
-                order = newOrder;
-
-                Navigator.of(context).pushNamed(CatalogNavigatorRoutes.checkout);
-              }
-            },
+            onCheckoutPush: widget.onCheckoutPush,
             onPickupAddressPush: widget.openPickUpAddressMap?.call,
           );
         });

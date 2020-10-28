@@ -11,9 +11,9 @@ import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
-import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
-import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
-import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
+import 'package:refashioned_app/screens/checkout/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/order_created_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/components/webview_page.dart';
@@ -81,6 +81,8 @@ class HomeNavigator extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   final Function(PickPoint) openPickUpAddressMap;
 
+  final Function(Order, Function()) onCheckoutPush;
+
   final Function(
     BuildContext,
     String, {
@@ -91,7 +93,13 @@ class HomeNavigator extends StatefulWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  HomeNavigator({this.navigatorKey, this.changeTabTo, this.openPickUpAddressMap, this.openDeliveryTypesSelector});
+  const HomeNavigator({
+    this.navigatorKey,
+    this.changeTabTo,
+    this.openPickUpAddressMap,
+    this.openDeliveryTypesSelector,
+    this.onCheckoutPush,
+  });
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -312,13 +320,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 )
                 .then((value) => topPanelController.needShow = false),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (Order newOrder) {
-              if (newOrder != null) {
-                order = newOrder;
-
-                Navigator.of(context).pushNamed(HomeNavigatorRoutes.checkout);
-              }
-            },
+            onCheckoutPush: widget.onCheckoutPush,
           );
         });
 

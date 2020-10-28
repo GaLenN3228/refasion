@@ -51,7 +51,6 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
     });
 
     super.initState();
-
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -68,9 +67,8 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
     textEditingController.dispose();
     setCustomerDataRepository.dispose();
 
-    super.dispose();
-
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   textControllerListener() {
@@ -204,7 +202,9 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
             Expanded(
               flex: 1,
               child: Container(
-                padding: EdgeInsets.only(bottom: keyboardVisible ? 20 : MediaQuery.of(context).padding.bottom + 65.0),
+                padding: EdgeInsets.only(
+                  bottom: keyboardVisible ? 20 : MediaQuery.of(context).padding.bottom,
+                ),
                 alignment: Alignment.bottomCenter,
                 child: SendCustomerNameButton(
                   state: buttonState,

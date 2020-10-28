@@ -16,9 +16,10 @@ class CodePage extends StatefulWidget {
   final Function(BuildContext) onAuthorizationCancel;
   final Function(BuildContext) onAuthorizationDone;
   final bool needDismiss;
+  final Function() onPush;
 
   const CodePage(
-      {Key key, this.phone, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss})
+      {Key key, this.phone, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss, this.onPush})
       : super(key: key);
 
   @override
@@ -32,6 +33,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
   bool hasError = false;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   CodeAuthorizationRepository codeAuthorizationRepository;
+  bool keyboardVisible;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -51,25 +53,34 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    super.initState();
+    keyboardVisible = false;
     startTimer();
     errorController = StreamController<ErrorAnimationType>();
     codeAuthorizationRepository = Provider.of<CodeAuthorizationRepository>(context, listen: false);
+
+    super.initState();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeMetrics() {
+    final newKeyboardVisible = WidgetsBinding.instance.window.viewInsets.bottom > 0;
+
+    if (keyboardVisible != newKeyboardVisible) setState(() => keyboardVisible = newKeyboardVisible);
   }
 
   @override
   void dispose() {
     _timer.cancel();
-    WidgetsBinding.instance.removeObserver(this);
     errorController.close();
+
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final AuthorizationRepository authorizationRepository =
-        context.watch<AuthorizationRepository>();
+    final AuthorizationRepository authorizationRepository = context.watch<AuthorizationRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       key: scaffoldKey,
@@ -135,9 +146,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                     animationType: AnimationType.fade,
                     textInputType: TextInputType.number,
                     textStyle: TextStyle(
-                        color: hasError ? Colors.redAccent : Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                        color: hasError ? Colors.redAccent : Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                     pinTheme: PinTheme(
                         shape: PinCodeFieldShape.underline,
                         fieldHeight: 50,
@@ -151,8 +160,7 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                     onCompleted: (v) {
                       if (authorizationRepository.isLoaded) {
                         codeAuthorizationRepository.addListener(() {
-                          if (codeAuthorizationRepository.isLoaded ||
-                              codeAuthorizationRepository.loadingFailed) {
+                          if (codeAuthorizationRepository.isLoaded || codeAuthorizationRepository.loadingFailed) {
                             if (codeAuthorizationRepository.getStatusCode == 400) {
                               errorController.add(ErrorAnimationType.shake);
                               setState(() {
@@ -160,16 +168,22 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                               });
                             } else if (codeAuthorizationRepository.getStatusCode == 200 ||
                                 codeAuthorizationRepository.getStatusCode == 201) {
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                  builder: (context) => NamePage(
-                                        needDismiss: widget.needDismiss,
-                                        onAuthorizationDone: widget.onAuthorizationDone,
-                                      )));
+                              if (widget.onPush != null)
+                                widget.onPush();
+                              else
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => NamePage(
+                                      needDismiss: widget.needDismiss,
+                                      onAuthorizationDone: widget.onAuthorizationDone,
+                                    ),
+                                  ),
+                                );
                             }
                           }
                         });
-                        codeAuthorizationRepository.sendCode(authorizationRepository.getPhone,
-                            authorizationRepository.response.content.hash, v);
+                        codeAuthorizationRepository.sendCode(
+                            authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
                       }
                     },
                     onChanged: (value) {
@@ -214,7 +228,12 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
             Expanded(
               flex: 1,
               child: Container(
-                margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                margin: EdgeInsets.fromLTRB(
+                  20,
+                  20,
+                  20,
+                  keyboardVisible ? 20 : MediaQuery.of(context).padding.bottom,
+                ),
                 alignment: Alignment.bottomCenter,
                 child: Button(
                   _start == 0 ? "ПОЛУЧИТЬ НОВЫЙ КОД" : "ПОЛУЧИТЬ НОВЫЙ КОД ЧЕРЕЗ 0:$_start",

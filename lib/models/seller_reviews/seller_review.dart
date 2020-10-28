@@ -10,9 +10,9 @@ class SellerReview {
   const SellerReview(
       {this.createdAt, this.sellerId, @required this.customerName, @required this.rating, @required this.text});
 
-  factory SellerReview.fromJson(Map<String, dynamic> json) {
+  factory SellerReview.fromJson(Map<String, dynamic> json, {bool log: false}) {
     if (json == null) {
-      print("SellerReview.fromJson: no json");
+      if (log) print("SellerReview.fromJson: no json");
       return null;
     }
 
@@ -20,40 +20,38 @@ class SellerReview {
       final int rating = json['rating'];
 
       if (rating == null) {
-        print("SellerReview.fromJson: no rating");
+        if (log) print("SellerReview.fromJson: no rating");
         return null;
       }
 
       final String text = json['text'];
 
       if (text == null || text.isEmpty) {
-        print("SellerReview.fromJson: no text");
+        if (log) print("SellerReview.fromJson: no text");
         return null;
       }
 
       DateTime createdAt;
 
       if (json['created_at'] == null) {
-        print("SellerReview.fromJson: no created_at");
+        if (log) print("SellerReview.fromJson: no created_at");
       } else {
         createdAt = DateTime.parse(json['created_at']);
 
-        if (createdAt == null) {
-          print("SellerReview.fromJson: no created_at");
-        }
+        if (createdAt == null && log) print("SellerReview.fromJson: no created_at");
       }
 
       final customer = json['customer'];
 
       if (customer == null) {
-        print("SellerReview.fromJson: no customer");
+        if (log) print("SellerReview.fromJson: no customer");
         return null;
       }
 
       final String customerName = customer['name'];
 
       if (customerName == null || customerName.isEmpty) {
-        print("SellerReview.fromJson: no customer name");
+        if (log) print("SellerReview.fromJson: no customer name");
 
         return null;
       }

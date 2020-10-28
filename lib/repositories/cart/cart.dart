@@ -247,7 +247,7 @@ class CartRepository extends BaseRepository<Cart> {
     await getDeliveryTypes.update(itemId);
   }
 
-  refresh({fullReload: false}) async => await _update(makeFullReload: fullReload);
+  void refresh({fullReload: false}) async => await _update(makeFullReload: fullReload);
 
   Future<void> _update({bool makeFullReload: true}) => apiCall(
         () async {

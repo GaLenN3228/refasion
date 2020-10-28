@@ -8,8 +8,9 @@ import 'package:refashioned_app/utils/colors.dart';
 
 class PaymentFailedPage extends StatelessWidget {
   final int totalPrice;
+  final Function() onClose;
 
-  const PaymentFailedPage({Key key, this.totalPrice}) : super(key: key);
+  const PaymentFailedPage({Key key, this.totalPrice, this.onClose}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,7 @@ class PaymentFailedPage extends StatelessWidget {
             data: TopBarData.simple(
               middleText: "Оформление заказа",
               onBack: Navigator.of(context).pop,
+              onClose: onClose,
             ),
           ),
           Expanded(

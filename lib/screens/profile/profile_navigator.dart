@@ -16,9 +16,9 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/authorization/name_page.dart';
-import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
-import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
-import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
+import 'package:refashioned_app/screens/checkout/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/order_created_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/components/webview_page.dart';
@@ -98,9 +98,7 @@ class ProfileNavigator extends StatefulWidget {
   final Function(Widget) pushPageOnTop;
   final Function(PickPoint) openPickUpAddressMap;
 
-  CreateOrderRepository createOrderRepository;
-
-  GetOrderRepository getOrderRepository;
+  final Function(Order, Function()) onCheckoutPush;
 
   final Function(
     BuildContext,
@@ -112,12 +110,14 @@ class ProfileNavigator extends StatefulWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  ProfileNavigator(
-      {this.navigatorKey,
-      this.changeTabTo,
-      this.pushPageOnTop,
-      this.openPickUpAddressMap,
-      this.openDeliveryTypesSelector});
+  const ProfileNavigator({
+    this.navigatorKey,
+    this.changeTabTo,
+    this.pushPageOnTop,
+    this.openPickUpAddressMap,
+    this.openDeliveryTypesSelector,
+    this.onCheckoutPush,
+  });
 
   void pushFavourites(BuildContext context, bool needShowTopBar) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -415,13 +415,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 )
                 .then((value) => topPanelController.needShow = false),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (Order newOrder) {
-              if (newOrder != null) {
-                order = newOrder;
-
-                Navigator.of(context).pushNamed(ProfileNavigatorRoutes.checkout);
-              }
-            },
+            onCheckoutPush: widget.onCheckoutPush,
           );
         });
 

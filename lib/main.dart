@@ -10,7 +10,7 @@ import 'package:refashioned_app/repositories/config.dart';
 import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/repositories/sizes.dart';
-import 'package:refashioned_app/screens/city_selector/city_selector.dart';
+import 'package:refashioned_app/screens/components/tab_switcher/root_navigator.dart';
 import 'package:refashioned_app/screens/profile/components/user_name_controller.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -66,9 +66,7 @@ class RefashionApp extends StatelessWidget {
         child: MaterialApp(
           theme: _materialTheme(),
           debugShowCheckedModeBanner: false,
-          home: CitySelector(
-            onFirstLaunch: true,
-          ),
+          home: RootNavigator(),
         ));
   }
 }
