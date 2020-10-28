@@ -350,6 +350,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.photos:
         return PhotosPage(
+          openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
           onClose: widget.onClose,
           onPush: (photos) {
             productData.updatePhotos(photos.map((e) => e.file).toList());
@@ -536,6 +537,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.takeOptions:
         return TakeOptionsPage(
+          openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
           address: pickPoint,
           onClose: widget.onClose,
           onPush: (options) async {
