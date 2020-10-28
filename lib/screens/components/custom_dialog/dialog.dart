@@ -53,13 +53,9 @@ class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  postFrameCallback() async => await animationController.forward();
+  postFrameCallback() => animationController.forward();
 
-  onPush() async {
-    setState(() => showIndicator = true);
-
-    await animationController.reverse();
-  }
+  onPush() => animationController.reverse();
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +112,10 @@ class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
                                   element.dialogItemType == DialogItemType.item ||
                                   element.dialogItemType == DialogItemType.infoHeader)
                               .elementAt(index),
-                          onPush: onPush,
+                          onPush: () {
+                            setState(() => showIndicator = true);
+                            onPush();
+                          },
                         ),
                         separatorBuilder: (context, index) => ItemsDivider(
                           padding: 0,
@@ -142,7 +141,7 @@ class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
                             dialogItemContent: widget.dialogContent
                                 .where((element) => element.dialogItemType == DialogItemType.system)
                                 .elementAt(index),
-                            onPush: onPush,
+                            onPush: () => onPush(),
                           ),
                           separatorBuilder: (context, index) => ItemsDivider(
                             padding: 0,
