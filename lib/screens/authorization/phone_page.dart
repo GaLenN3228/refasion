@@ -13,8 +13,9 @@ class PhonePage extends StatefulWidget {
   final Function(BuildContext) onAuthorizationCancel;
   final Function(BuildContext) onAuthorizationDone;
   final bool needDismiss;
+  final Function(String) onPush;
 
-  const PhonePage({Key key, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss = true})
+  const PhonePage({Key key, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss = true, this.onPush})
       : super(key: key);
 
   @override
@@ -26,9 +27,11 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
   bool phoneIsEmpty;
   String phone;
   MaskTextInputFormatter maskFormatter;
+  bool keyboardVisible;
 
   @override
   void initState() {
+    keyboardVisible = false;
     phoneIsEmpty = false;
     textEditingController = TextEditingController();
     maskFormatter = new MaskTextInputFormatter(mask: '### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
@@ -46,6 +49,13 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
 
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final newKeyboardVisible = WidgetsBinding.instance.window.viewInsets.bottom > 0;
+
+    if (keyboardVisible != newKeyboardVisible) setState(() => keyboardVisible = newKeyboardVisible);
   }
 
   textControllerListener() {
@@ -162,7 +172,12 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                  margin: EdgeInsets.fromLTRB(
+                    20,
+                    20,
+                    20,
+                    keyboardVisible ? 20 : MediaQuery.of(context).padding.bottom,
+                  ),
                   alignment: Alignment.bottomCenter,
                   child: Button(
                     "ПОЛУЧИТЬ КОД",
@@ -172,21 +187,26 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                     height: 45,
                     width: double.infinity,
                     borderRadius: 5,
-                    onClick: !phoneIsEmpty && phone != null && phone.length == 16
-                        ? () {
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
-                                      create: (_) => AuthorizationRepository()
-                                        ..sendPhoneAndGetCode(phone),
-                                      child: CodePage(
-                                        needDismiss: widget.needDismiss,
-                                        phone: phone,
-                                        onAuthorizationCancel: widget.onAuthorizationCancel,
-                                        onAuthorizationDone: widget.onAuthorizationDone,
-                                      ),
-                                    )));
-                          }
-                        : () {},
+                    onClick: () {
+                      if (!phoneIsEmpty && phone != null && phone.length == 16) {
+                        if (widget.onPush != null)
+                          widget.onPush(phone);
+                        else
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
+                                create: (_) => AuthorizationRepository()..sendPhoneAndGetCode(phone),
+                                child: CodePage(
+                                  needDismiss: widget.needDismiss,
+                                  phone: phone,
+                                  onAuthorizationCancel: widget.onAuthorizationCancel,
+                                  onAuthorizationDone: widget.onAuthorizationDone,
+                                ),
+                              ),
+                            ),
+                          );
+                      }
+                    },
                   ),
                 ),
               ),

@@ -12,16 +12,8 @@ class TBSearchTextField extends StatefulWidget {
   final ValueNotifier<bool> hasText;
   final TBTheme theme;
 
-  static final _formKey = GlobalKey<FormState>();
-
   const TBSearchTextField(
-      {Key key,
-      this.focusNode,
-      this.textController,
-      this.hasText,
-      this.autofocus,
-      this.hintText,
-      this.theme})
+      {Key key, this.focusNode, this.textController, this.hasText, this.autofocus, this.hintText, this.theme})
       : super(key: key);
 
   @override
@@ -32,25 +24,20 @@ class _TBSearchTextFieldState extends State<TBSearchTextField> {
   @override
   Widget build(BuildContext context) => Material(
         color: Colors.transparent,
-        child: Form(
-          key: TBSearchTextField._formKey,
-          child: TextField(
-            controller: widget.textController,
-            autofocus: widget.autofocus,
-            enableSuggestions: false,
-            autocorrect: false,
-            focusNode: widget.focusNode,
-            decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: widget.hintText ?? "Поиск",
-                hintStyle: Theme.of(context).textTheme.headline1.copyWith(
-                    fontWeight: FontWeight.normal,
-                    color: Color.fromRGBO(0, 0, 0, 0.25))),
-            style: Theme.of(context)
-                .textTheme
-                .headline1
-                .copyWith(fontWeight: FontWeight.normal),
-          ),
+        child: TextField(
+          controller: widget.textController,
+          autofocus: widget.autofocus,
+          enableSuggestions: false,
+          autocorrect: false,
+          focusNode: widget.focusNode,
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: widget.hintText ?? "Поиск",
+              hintStyle: Theme.of(context)
+                  .textTheme
+                  .headline1
+                  .copyWith(fontWeight: FontWeight.normal, color: Color.fromRGBO(0, 0, 0, 0.25))),
+          style: Theme.of(context).textTheme.headline1.copyWith(fontWeight: FontWeight.normal),
         ),
       );
 }

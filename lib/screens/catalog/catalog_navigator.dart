@@ -12,9 +12,9 @@ import 'package:refashioned_app/models/search_result.dart';
 import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
-import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
-import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
-import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
+import 'package:refashioned_app/screens/checkout/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/order_created_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/catalog/pages/catalog_root_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_brands_page.dart';
 import 'package:refashioned_app/screens/catalog/pages/category_page.dart';
@@ -24,10 +24,7 @@ import 'package:refashioned_app/screens/components/top_panel/top_panel_controlle
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
-import 'package:refashioned_app/screens/seller/pages/select_seller_rating.dart';
 import 'package:refashioned_app/screens/seller/pages/seller_page.dart';
-import 'package:refashioned_app/screens/seller/pages/seller_reviews.dart';
-import 'package:refashioned_app/screens/seller/pages/send_seller_review.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class CatalogNavigatorRoutes {
@@ -38,9 +35,6 @@ class CatalogNavigatorRoutes {
   static const String products = '/products';
   static const String product = '/product';
   static const String seller = '/seller';
-  static const String sellerReviews = '/seller_reviews';
-  static const String selectSellerRating = '/add_seller_rating';
-  static const String sendSellerReview = '/add_seller_review';
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
   static const String paymentFailed = '/payment_failed';
@@ -83,17 +77,22 @@ class CatalogNavigator extends StatefulWidget {
       ? context.findRootAncestorStateOfType<_CatalogNavigatorState>()
       : context.findAncestorStateOfType<_CatalogNavigatorState>();
 
-  CatalogNavigator(
-      {this.navigatorKey,
-      this.changeTabTo,
-      this.openDeliveryTypesSelector,
-      this.openPickUpAddressMap,
-      this.openInfoWebViewBottomSheet});
+  const CatalogNavigator({
+    this.navigatorKey,
+    this.changeTabTo,
+    this.openDeliveryTypesSelector,
+    this.openPickUpAddressMap,
+    this.openInfoWebViewBottomSheet,
+    @required this.onCheckoutPush,
+    @required this.onSellerReviewsPush,
+  });
 
   final Function(BottomTab) changeTabTo;
   final GlobalKey<NavigatorState> navigatorKey;
 
   final Function(PickPoint) openPickUpAddressMap;
+  final Function(Order, Function()) onCheckoutPush;
+  final Function(Seller, Function()) onSellerReviewsPush;
 
   final Function(String url, String title) openInfoWebViewBottomSheet;
 
@@ -190,9 +189,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         return CatalogRootPage(
           categories: categories,
           onPush: (category) {
-            final newRoute = category.children.isNotEmpty
-                ? CatalogNavigatorRoutes.categories
-                : CatalogNavigatorRoutes.category;
+            final newRoute =
+                category.children.isNotEmpty ? CatalogNavigatorRoutes.categories : CatalogNavigatorRoutes.category;
 
             return Navigator.of(context)
                 .push(
@@ -236,9 +234,8 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           onPush: (category, {callback}) {
             topPanelController.needShow = true;
             topPanelController.needShowBack = true;
-            final newRoute = category.children.isNotEmpty
-                ? CatalogNavigatorRoutes.category
-                : CatalogNavigatorRoutes.products;
+            final newRoute =
+                category.children.isNotEmpty ? CatalogNavigatorRoutes.category : CatalogNavigatorRoutes.products;
 
             return Navigator.of(context)
                 .push(
@@ -430,13 +427,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                   .then((value) => topPanelController.needShow = false);
             },
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (Order newOrder) {
-              if (newOrder != null) {
-                order = newOrder;
-
-                Navigator.of(context).pushNamed(CatalogNavigatorRoutes.checkout);
-              }
-            },
+            onCheckoutPush: widget.onCheckoutPush,
             onPickupAddressPush: widget.openPickUpAddressMap?.call,
           );
         });
@@ -446,13 +437,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
         topPanelController.needShowBack = false;
         return SellerPage(
           seller: seller,
-          onSellerReviewsPush: () {
-            final newRoute = seller.reviewsCount > 0
-                ? CatalogNavigatorRoutes.sellerReviews
-                : CatalogNavigatorRoutes.sellerReviews;
-
-            Navigator.of(context).pushNamed(newRoute);
-          },
+          onSellerReviewsPush: (Function() callback) => widget.onSellerReviewsPush?.call(seller, callback),
           onProductPush: (product) => Navigator.of(context)
               .push(
                 CupertinoPageRoute(
@@ -470,46 +455,13 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
               .then((value) => topPanelController.needShow = false),
         );
 
-      case CatalogNavigatorRoutes.sellerReviews:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SellerReviewsPage(
-          seller: seller,
-          onAddSellerRatingPush: () =>
-              Navigator.of(context).pushNamed(CatalogNavigatorRoutes.selectSellerRating),
-        );
-
-      case CatalogNavigatorRoutes.selectSellerRating:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SelectSellerRatingPage(
-          seller: seller,
-          onAddSellerReviewPush: (int newRating) {
-            rating = newRating;
-            Navigator.of(context).pushNamed(CatalogNavigatorRoutes.sendSellerReview);
-          },
-        );
-
-      case CatalogNavigatorRoutes.sendSellerReview:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SendSellerReviewPage(
-          seller: seller,
-          rating: rating,
-          onPush: () => Navigator.of(context).pushNamedAndRemoveUntil(
-            CatalogNavigatorRoutes.sellerReviews,
-            (route) => route.settings.name == CatalogNavigatorRoutes.seller,
-          ),
-        );
-
       case CatalogNavigatorRoutes.favourites:
         topPanelController.needShow = false;
         return MultiProvider(
           providers: [
             ChangeNotifierProvider<FavouritesProductsRepository>(
                 create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-            ChangeNotifierProvider<AddRemoveFavouriteRepository>(
-                create: (_) => AddRemoveFavouriteRepository())
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
           ],
           builder: (context, _) {
             return FavouritesPage(
@@ -542,9 +494,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
             totalPrice = newTotalPrice;
 
             await Navigator.of(context).pushReplacementNamed(
-              success ?? false
-                  ? CatalogNavigatorRoutes.orderCreated
-                  : CatalogNavigatorRoutes.paymentFailed,
+              success ?? false ? CatalogNavigatorRoutes.orderCreated : CatalogNavigatorRoutes.paymentFailed,
             );
           },
         );

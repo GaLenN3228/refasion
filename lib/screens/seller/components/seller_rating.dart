@@ -7,7 +7,7 @@ import 'package:refashioned_app/screens/components/seller/rating.dart';
 
 class SellerRating extends StatefulWidget {
   final Seller seller;
-  final Function() onSellerReviewsPush;
+  final Function(Function()) onSellerReviewsPush;
 
   const SellerRating({Key key, this.seller, this.onSellerReviewsPush}) : super(key: key);
 
@@ -34,7 +34,7 @@ class _SellerRatingState extends State<SellerRating> {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: widget.onSellerReviewsPush?.call,
+      onTap: () => widget.onSellerReviewsPush?.call(null),
       child: Column(
         children: [
           Padding(

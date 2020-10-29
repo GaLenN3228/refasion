@@ -17,7 +17,11 @@ class SellerReviewsPage extends StatefulWidget {
   final Seller seller;
   final Function() onAddSellerRatingPush;
 
-  const SellerReviewsPage({Key key, this.seller, this.onAddSellerRatingPush}) : super(key: key);
+  const SellerReviewsPage({
+    Key key,
+    this.seller,
+    this.onAddSellerRatingPush,
+  }) : super(key: key);
 
   @override
   _SellerReviewsPageState createState() => _SellerReviewsPageState();
@@ -72,7 +76,7 @@ class _SellerReviewsPageState extends State<SellerReviewsPage> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0,
+                  height: MediaQuery.of(context).padding.bottom + 45.0 + 20.0,
                 ),
               ],
             ),
@@ -102,54 +106,61 @@ class _SellerReviewsPageState extends State<SellerReviewsPage> {
               Expanded(
                 child: Stack(
                   children: [
-                    SmartRefresher(
-                      controller: refreshController,
-                      enablePullDown: true,
-                      enablePullUp: false,
-                      header: ClassicHeader(
-                        completeDuration: Duration.zero,
-                        completeIcon: null,
-                        completeText: "",
-                        idleIcon: loadingIcon,
-                        idleText: "Обновление",
-                        refreshingText: "Обновление",
-                        refreshingIcon: loadingIcon,
-                        releaseIcon: loadingIcon,
-                        releaseText: "Обновление",
-                      ),
-                      onRefresh: () async {
-                        HapticFeedback.lightImpact();
+                    Material(
+                      color: white,
+                      child: SmartRefresher(
+                        controller: refreshController,
+                        enablePullDown: true,
+                        enablePullUp: false,
+                        header: ClassicHeader(
+                          completeDuration: Duration.zero,
+                          completeIcon: null,
+                          completeText: "",
+                          idleIcon: loadingIcon,
+                          idleText: "Обновление",
+                          refreshingText: "Обновление",
+                          refreshingIcon: loadingIcon,
+                          releaseIcon: loadingIcon,
+                          releaseText: "Обновление",
+                        ),
+                        onRefresh: () async {
+                          HapticFeedback.lightImpact();
 
-                        await repository.refresh();
+                          await repository.refresh();
 
-                        refreshController.refreshCompleted();
-                      },
-                      child: reviews.isNotEmpty
-                          ? ListView.separated(
-                              itemCount: reviews.length,
-                              padding: EdgeInsets.fromLTRB(
-                                  15, 0, 15, MediaQuery.of(context).padding.bottom + 65.0 + 45.0 + 20.0),
-                              itemBuilder: (context, index) => SellerReviewTile(
-                                review: reviews.elementAt(index),
-                              ),
-                              separatorBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 15),
-                                child: ItemsDivider(
-                                  padding: 5,
+                          refreshController.refreshCompleted();
+                        },
+                        child: reviews.isNotEmpty
+                            ? ListView.separated(
+                                itemCount: reviews.length,
+                                padding: EdgeInsets.fromLTRB(
+                                  15,
+                                  0,
+                                  15,
+                                  MediaQuery.of(context).padding.bottom + 45.0 + 20.0,
+                                ),
+                                itemBuilder: (context, index) => SellerReviewTile(
+                                  review: reviews.elementAt(index),
+                                ),
+                                separatorBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  child: ItemsDivider(
+                                    padding: 5,
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: Text(
+                                  "Оставьте первый отзыв",
+                                  style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
-                            )
-                          : Center(
-                              child: Text(
-                                "Оставьте первый отзыв",
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                            ),
+                      ),
                     ),
                     Positioned(
                       left: 0,
                       right: 0,
-                      bottom: MediaQuery.of(context).padding.bottom + 65.0,
+                      bottom: MediaQuery.of(context).padding.bottom,
                       child: AddSellerReviewButton(
                         state: buttonState,
                         onPush: widget.onAddSellerRatingPush?.call,

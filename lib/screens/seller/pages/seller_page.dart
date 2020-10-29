@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/models/seller.dart';
@@ -14,7 +15,7 @@ import 'package:refashioned_app/utils/colors.dart';
 
 class SellerPage extends StatelessWidget {
   final Seller seller;
-  final Function() onSellerReviewsPush;
+  final Function(Function()) onSellerReviewsPush;
   final Function(Product) onProductPush;
 
   const SellerPage({Key key, this.seller, this.onProductPush, this.onSellerReviewsPush}) : super(key: key);
@@ -83,7 +84,12 @@ class SellerPage extends StatelessWidget {
             ),
             SellerRating(
               seller: seller,
-              onSellerReviewsPush: onSellerReviewsPush,
+              onSellerReviewsPush: (Function() callback) => onSellerReviewsPush?.call(
+                () {
+                  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+                  callback?.call();
+                },
+              ),
             ),
             Expanded(
               child: ChangeNotifierProvider<AddRemoveFavouriteRepository>(

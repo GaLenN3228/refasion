@@ -37,7 +37,7 @@ class CartPage extends StatefulWidget {
 
   final Function() onCatalogPush;
 
-  final Function(Order) onCheckoutPush;
+  final Function(Order, Function()) onCheckoutPush;
 
   const CartPage(
       {Key key,
@@ -85,8 +85,17 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
 
     final order = createOrderRepository.response?.content;
 
+    updateButtonStateByRepository = true;
+
     if (order != null) {
-      widget.onCheckoutPush?.call(order);
+      widget.onCheckoutPush?.call(
+        order,
+        () {
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
+          Provider.of<CartRepository>(context, listen: false).refresh();
+        },
+      );
     } else {
       await showCupertinoDialog(
         context: context,
@@ -114,8 +123,6 @@ class _CartPageState extends State<CartPage> with SingleTickerProviderStateMixin
 
       setState(() => buttonState = RBState.disabled);
     }
-
-    updateButtonStateByRepository = true;
   }
 
   @override

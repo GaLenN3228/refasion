@@ -16,9 +16,9 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/orders.dart';
 import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/authorization/name_page.dart';
-import 'package:refashioned_app/screens/cart/pages/checkout_page.dart';
-import 'package:refashioned_app/screens/cart/pages/order_created_page.dart';
-import 'package:refashioned_app/screens/cart/pages/payment_failed.dart';
+import 'package:refashioned_app/screens/checkout/pages/checkout_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/order_created_page.dart';
+import 'package:refashioned_app/screens/checkout/pages/payment_failed.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/top_panel/top_panel_controller.dart';
 import 'package:refashioned_app/screens/components/webview_page.dart';
@@ -31,10 +31,7 @@ import 'package:refashioned_app/screens/profile/pages/my_addresses.dart';
 import 'package:refashioned_app/screens/profile/profile.dart';
 import 'package:refashioned_app/screens/profile/settings.dart';
 import 'package:refashioned_app/screens/profile/user_profile.dart';
-import 'package:refashioned_app/screens/seller/pages/select_seller_rating.dart';
-import 'package:refashioned_app/screens/seller/pages/send_seller_review.dart';
 import 'package:refashioned_app/screens/seller/pages/seller_page.dart';
-import 'package:refashioned_app/screens/seller/pages/seller_reviews.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class ProfileNavigatorRoutes {
@@ -45,9 +42,6 @@ class ProfileNavigatorRoutes {
   static const String products = '/products';
   static const String product = '/product';
   static const String seller = '/seller';
-  static const String sellerReviews = '/seller_reviews';
-  static const String selectSellerRating = '/add_seller_rating';
-  static const String sendSellerReview = '/add_seller_review';
   static const String favourites = '/favourites';
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
@@ -98,9 +92,8 @@ class ProfileNavigator extends StatefulWidget {
   final Function(Widget) pushPageOnTop;
   final Function(PickPoint) openPickUpAddressMap;
 
-  CreateOrderRepository createOrderRepository;
-
-  GetOrderRepository getOrderRepository;
+  final Function(Order, Function()) onCheckoutPush;
+  final Function(Seller, Function()) onSellerReviewsPush;
 
   final Function(
     BuildContext,
@@ -112,12 +105,15 @@ class ProfileNavigator extends StatefulWidget {
     SystemUiOverlayStyle originalOverlayStyle,
   }) openDeliveryTypesSelector;
 
-  ProfileNavigator(
-      {this.navigatorKey,
-      this.changeTabTo,
-      this.pushPageOnTop,
-      this.openPickUpAddressMap,
-      this.openDeliveryTypesSelector});
+  const ProfileNavigator({
+    this.navigatorKey,
+    this.changeTabTo,
+    this.pushPageOnTop,
+    this.openPickUpAddressMap,
+    this.openDeliveryTypesSelector,
+    @required this.onCheckoutPush,
+    @required this.onSellerReviewsPush,
+  });
 
   void pushFavourites(BuildContext context, bool needShowTopBar) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -415,13 +411,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 )
                 .then((value) => topPanelController.needShow = false),
             openDeliveryTypesSelector: widget.openDeliveryTypesSelector,
-            onCheckoutPush: (Order newOrder) {
-              if (newOrder != null) {
-                order = newOrder;
-
-                Navigator.of(context).pushNamed(ProfileNavigatorRoutes.checkout);
-              }
-            },
+            onCheckoutPush: widget.onCheckoutPush,
           );
         });
 
@@ -430,12 +420,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
         topPanelController.needShowBack = false;
         return SellerPage(
           seller: seller,
-          onSellerReviewsPush: () {
-            final newRoute =
-                seller.reviewsCount > 0 ? ProfileNavigatorRoutes.sellerReviews : ProfileNavigatorRoutes.sellerReviews;
-
-            Navigator.of(context).pushNamed(newRoute);
-          },
+          onSellerReviewsPush: (Function() callback) => widget.onSellerReviewsPush?.call(seller, callback),
           onProductPush: (product) => Navigator.of(context)
               .push(
                 CupertinoPageRoute(
@@ -451,37 +436,6 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                 ),
               )
               .then((value) => topPanelController.needShow = false),
-        );
-
-      case ProfileNavigatorRoutes.sellerReviews:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SellerReviewsPage(
-          seller: seller,
-          onAddSellerRatingPush: () => Navigator.of(context).pushNamed(ProfileNavigatorRoutes.selectSellerRating),
-        );
-
-      case ProfileNavigatorRoutes.selectSellerRating:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SelectSellerRatingPage(
-          seller: seller,
-          onAddSellerReviewPush: (int newRating) {
-            rating = newRating;
-            Navigator.of(context).pushNamed(ProfileNavigatorRoutes.sendSellerReview);
-          },
-        );
-
-      case ProfileNavigatorRoutes.sendSellerReview:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SendSellerReviewPage(
-          seller: seller,
-          rating: rating,
-          onPush: () => Navigator.of(context).pushNamedAndRemoveUntil(
-            ProfileNavigatorRoutes.sellerReviews,
-            (route) => route.settings.name == ProfileNavigatorRoutes.seller,
-          ),
         );
 
       case ProfileNavigatorRoutes.favourites:

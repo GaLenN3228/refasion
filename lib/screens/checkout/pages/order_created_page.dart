@@ -9,8 +9,9 @@ import 'package:refashioned_app/utils/colors.dart';
 class OrderCreatedPage extends StatelessWidget {
   final int totalPrice;
   final Function() onUserOrderPush;
+  final Function() onClose;
 
-  const OrderCreatedPage({Key key, this.totalPrice, this.onUserOrderPush}) : super(key: key);
+  const OrderCreatedPage({Key key, this.totalPrice, this.onUserOrderPush, this.onClose}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class OrderCreatedPage extends StatelessWidget {
             data: TopBarData.simple(
               middleText: "Заказ оформлен",
               onBack: Navigator.of(context).pop,
+              onClose: onClose,
             ),
           ),
           Expanded(
