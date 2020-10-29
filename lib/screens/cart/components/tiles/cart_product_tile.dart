@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/cart_product.dart';
-import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/favourites.dart';
 import 'package:refashioned_app/screens/components/product/brand.dart';
@@ -66,10 +65,7 @@ class _CartProductTileState extends State<CartProductTile> {
             DialogItemContent(
               DialogItemType.item,
               title: "Подробнее",
-              onClick: () {
-                Navigator.of(dialogContext).pop();
-                widget.onProductPush?.call();
-              },
+              onClick: widget.onProductPush?.call,
               icon: IconAsset.info,
             ),
           if (!widget.cartProduct.product.isFavourite)
@@ -79,26 +75,21 @@ class _CartProductTileState extends State<CartProductTile> {
               onClick: () async {
                 await addToFavorites();
                 await removeFromCart();
-
-                Navigator.of(dialogContext).pop();
               },
+              asyncOnClck: true,
               icon: IconAsset.favoriteBorder,
             ),
           DialogItemContent(
             DialogItemType.item,
             title: "Удалить из корзины",
-            onClick: () async {
-              await removeFromCart();
-
-              Navigator.of(dialogContext).pop();
-            },
+            onClick: () async => await removeFromCart(),
+            asyncOnClck: true,
             icon: IconAsset.delete,
             color: Colors.red,
           ),
           DialogItemContent(
             DialogItemType.system,
             title: "Отменить",
-            onClick: () => Navigator.of(dialogContext).pop(),
           )
         ],
       ),

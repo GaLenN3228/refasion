@@ -13,77 +13,65 @@ class Dialog extends StatefulWidget {
   State<StatefulWidget> createState() => DialogState();
 }
 
-class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
-  AnimationController animationController;
+class DialogState extends State<Dialog> with TickerProviderStateMixin {
+  AnimationController dialogAnimationController;
+  Animation<double> dialogAnimation;
 
-  Animation<double> animation;
-  Animation<double> slideAnimation;
+  AnimationController indicatorAnimationController;
   Animation<double> fadeAnimation;
-
-  bool showIndicator;
 
   @override
   void initState() {
-    showIndicator = false;
+    dialogAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+    dialogAnimation = Tween(begin: 0.0, end: 1.0).animate(dialogAnimationController);
 
-    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    indicatorAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    fadeAnimation = Tween(begin: 0.0, end: 1.0).animate(indicatorAnimationController);
 
-    animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
-
-    slideAnimation = CurvedAnimation(
-      parent: animation,
-      curve: Interval(0.4, 1.0, curve: Curves.easeInOut),
-    );
-    fadeAnimation = ReverseAnimation(
-      CurvedAnimation(
-        parent: animation,
-        curve: Interval(0.0, 0.4, curve: Curves.easeInOut),
-      ),
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) => postFrameCallback());
+    WidgetsBinding.instance.addPostFrameCallback(postFrameCallback);
 
     super.initState();
   }
 
   @override
   dispose() {
-    animationController.dispose();
+    dialogAnimationController.dispose();
 
     super.dispose();
   }
 
-  postFrameCallback() => animationController.forward();
+  postFrameCallback(Duration _) async => await dialogAnimationController.forward();
 
-  onPush() => animationController.reverse();
+  Future<void> hideDialog() async => await dialogAnimationController.reverse();
+
+  Future<void> showIndicator() async => await indicatorAnimationController.forward();
+  Future<void> hideIndicator() async => await indicatorAnimationController.reverse();
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Center(
-          child: showIndicator
-              ? FadeTransition(
-                  opacity: fadeAnimation,
-                  child: Theme(
-                    data: ThemeData(
-                      cupertinoOverrideTheme: CupertinoThemeData(
-                        brightness: Brightness.dark,
-                      ),
-                    ),
-                    child: CupertinoActivityIndicator(
-                      radius: 14,
-                    ),
-                  ),
-                )
-              : SizedBox(),
+          child: FadeTransition(
+            opacity: fadeAnimation,
+            child: Theme(
+              data: ThemeData(
+                cupertinoOverrideTheme: CupertinoThemeData(
+                  brightness: Brightness.dark,
+                ),
+              ),
+              child: CupertinoActivityIndicator(
+                radius: 14,
+              ),
+            ),
+          ),
         ),
         Container(
           alignment: Alignment.bottomCenter,
           child: Material(
             color: Colors.transparent,
             child: SlideTransition(
-              position: Tween<Offset>(begin: Offset(0.0, 1.2), end: Offset.zero).animate(slideAnimation),
+              position: Tween<Offset>(begin: Offset(0.0, 1.2), end: Offset.zero).animate(dialogAnimation),
               child: Container(
                 margin: EdgeInsets.all(10.0),
                 width: double.infinity,
@@ -112,10 +100,9 @@ class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
                                   element.dialogItemType == DialogItemType.item ||
                                   element.dialogItemType == DialogItemType.infoHeader)
                               .elementAt(index),
-                          onPush: () {
-                            setState(() => showIndicator = true);
-                            onPush();
-                          },
+                          hideDialog: hideDialog,
+                          showIndicator: showIndicator,
+                          hideIndicator: hideIndicator,
                         ),
                         separatorBuilder: (context, index) => ItemsDivider(
                           padding: 0,
@@ -141,7 +128,9 @@ class DialogState extends State<Dialog> with SingleTickerProviderStateMixin {
                             dialogItemContent: widget.dialogContent
                                 .where((element) => element.dialogItemType == DialogItemType.system)
                                 .elementAt(index),
-                            onPush: () => onPush(),
+                            hideDialog: hideDialog,
+                            showIndicator: showIndicator,
+                            hideIndicator: hideIndicator,
                           ),
                           separatorBuilder: (context, index) => ItemsDivider(
                             padding: 0,

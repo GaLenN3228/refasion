@@ -54,32 +54,22 @@ class _UserAddressTileState extends State<UserAddressTile> {
             DialogItemContent(
               DialogItemType.item,
               title: "Редактировать адрес",
-              onClick: () {
-                Navigator.of(dialogContext).pop();
-              },
               icon: IconAsset.edit,
             ),
             DialogItemContent(
               DialogItemType.item,
               title: "Дублировать адрес",
-              onClick: () {
-                Navigator.of(dialogContext).pop();
-              },
               icon: IconAsset.duplicate,
             ),
             DialogItemContent(
               DialogItemType.item,
               title: "Удалить адрес",
-              onClick: () {
-                Navigator.of(dialogContext).pop();
-              },
               icon: IconAsset.delete,
               color: Colors.red,
             ),
             DialogItemContent(
               DialogItemType.system,
               title: "Отменить",
-              onClick: () => Navigator.of(dialogContext).pop(),
             )
           ],
         ),
