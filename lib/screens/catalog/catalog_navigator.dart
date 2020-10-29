@@ -467,7 +467,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
                   ),
                 ),
               )
-              .then((value) => topPanelController.needShow = true),
+              .then((value) => topPanelController.needShow = false),
         );
 
       case CatalogNavigatorRoutes.sellerReviews:
