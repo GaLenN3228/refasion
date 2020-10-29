@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
@@ -88,49 +89,62 @@ class AuthorizationSheet extends StatelessWidget {
                     },
                   ),
                 ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => Navigator.of(context, rootNavigator: true).push(PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
-                          position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
-                          child: WebViewPage(
-                            initialUrl: "https://refashioned.ru/user-agreement",
-                            title: "ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ",
-                            webViewPageMode: WebViewPageMode.modalSheet,
-                          )))),
-                  child: Container(
-                    alignment: Alignment.topLeft,
-                    margin: const EdgeInsets.only(top: 16, left: 60, right: 60),
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        text: "При входе вы подтверждаете согласие с ",
-                        style: textTheme.caption,
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: "условиями использования REFASHIONED",
+                Container(
+                  alignment: Alignment.topLeft,
+                  margin: const EdgeInsets.only(top: 16, left: 60, right: 60),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: "При входе вы даете согласие на ",
+                      style: textTheme.caption,
+                      children: [
+                        TextSpan(
+                            text: "обработку персональных данных",
                             style: TextStyle(
                               color: Colors.black,
                               decoration: TextDecoration.underline,
                               decorationStyle: TextDecorationStyle.wavy,
                             ),
-                          ),
-                          TextSpan(
-                            text: " и ",
-                          ),
-                          TextSpan(
-                            text: "политикой о данных пользователей",
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.of(context, rootNavigator: true).push(PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) =>
+                                        SlideTransition(
+                                            position: Tween(begin: Offset(0, 1), end: Offset.zero)
+                                                .animate(animation),
+                                            child: WebViewPage(
+                                              initialUrl: "https://refashioned.ru/user-agreement",
+                                              title: "ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ",
+                                              webViewPageMode: WebViewPageMode.modalSheet,
+                                            ))));
+                              }),
+                        TextSpan(
+                          text: " и соглашаетесь с ",
+                        ),
+                        TextSpan(
+                            text: "политикой сервиса REFASHIONED",
                             style: TextStyle(
                               color: Colors.black,
                               decoration: TextDecoration.underline,
                               decorationStyle: TextDecorationStyle.wavy,
                             ),
-                          ),
-                        ],
-                      ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.of(context, rootNavigator: true).push(PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) =>
+                                        SlideTransition(
+                                            position: Tween(begin: Offset(0, 1), end: Offset.zero)
+                                                .animate(animation),
+                                            child: WebViewPage(
+                                              initialUrl: "https://refashioned.ru/oferta",
+                                              title: "ОФЕРТА",
+                                              webViewPageMode: WebViewPageMode.modalSheet,
+                                            ))));
+                              }),
+                      ],
                     ),
                   ),
-                )
+                ),
               ]),
             ),
           ),
