@@ -22,10 +22,10 @@ class DialogState extends State<Dialog> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    dialogAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+    dialogAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     dialogAnimation = Tween(begin: 0.0, end: 1.0).animate(dialogAnimationController);
 
-    indicatorAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    indicatorAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 150));
     fadeAnimation = Tween(begin: 0.0, end: 1.0).animate(indicatorAnimationController);
 
     WidgetsBinding.instance.addPostFrameCallback(postFrameCallback);
