@@ -8,6 +8,7 @@ import 'package:refashioned_app/screens/authorization/code_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
+import 'package:refashioned_app/screens/components/webview_page.dart';
 
 class PhonePage extends StatefulWidget {
   final Function(BuildContext) onAuthorizationCancel;
@@ -15,7 +16,12 @@ class PhonePage extends StatefulWidget {
   final bool needDismiss;
   final Function(String) onPush;
 
-  const PhonePage({Key key, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss = true, this.onPush})
+  const PhonePage(
+      {Key key,
+      this.onAuthorizationCancel,
+      this.onAuthorizationDone,
+      this.needDismiss = true,
+      this.onPush})
       : super(key: key);
 
   @override
@@ -34,7 +40,8 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
     keyboardVisible = false;
     phoneIsEmpty = false;
     textEditingController = TextEditingController();
-    maskFormatter = new MaskTextInputFormatter(mask: '### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
+    maskFormatter =
+        new MaskTextInputFormatter(mask: '### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
     textEditingController.addListener(textControllerListener);
 
     super.initState();
@@ -116,7 +123,8 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("+7 ", style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20)),
+                    Text("+7 ",
+                        style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20)),
                     IntrinsicWidth(
                       child: TextField(
                         inputFormatters: [maskFormatter],
@@ -133,7 +141,8 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                             focusedBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             hintText: "Введите номер",
-                            hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
+                            hintStyle:
+                                Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
                       ),
                     ),
                   ],
@@ -145,26 +154,37 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                   alignment: Alignment.center,
                   margin: const EdgeInsets.only(left: 20, right: 20),
                 ),
-                Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.only(top: 28.0),
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        text: "Нажмите кнопку «Получить код», вы соглашаететсь\nс условиями ",
-                        style: textTheme.caption,
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: "Пользовательского соглашения",
-                            style: TextStyle(
-                              color: Colors.black,
-                              decoration: TextDecoration.underline,
-                              decorationStyle: TextDecorationStyle.wavy,
-                            ),
+                GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () => Navigator.of(context, rootNavigator: true).push(PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                            position:
+                                Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                            child: WebViewPage(
+                              initialUrl: "https://refashioned.ru/user-agreement",
+                              title: "ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ",
+                              webViewPageMode: WebViewPageMode.modalSheet,
+                            )))),
+                    child: Container(
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.only(top: 28.0),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: "Нажмите кнопку «Получить код», вы соглашаететсь\nс условиями ",
+                            style: textTheme.caption,
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: "Пользовательского соглашения",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  decoration: TextDecoration.underline,
+                                  decorationStyle: TextDecorationStyle.wavy,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    )),
+                        ))),
               ],
             ),
             Expanded(
@@ -195,7 +215,8 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (context) => ChangeNotifierProvider<AuthorizationRepository>(
-                                create: (_) => AuthorizationRepository()..sendPhoneAndGetCode(phone),
+                                create: (_) =>
+                                    AuthorizationRepository()..sendPhoneAndGetCode(phone),
                                 child: CodePage(
                                   needDismiss: widget.needDismiss,
                                   phone: phone,

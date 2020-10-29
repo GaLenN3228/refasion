@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
+import 'package:refashioned_app/screens/components/webview_page.dart';
 
 class AuthorizationSheet extends StatelessWidget {
   final Function(List<String>) onPush;
@@ -10,7 +11,11 @@ class AuthorizationSheet extends StatelessWidget {
   final bool needDismiss;
 
   const AuthorizationSheet(
-      {Key key, this.onPush, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss = true})
+      {Key key,
+      this.onPush,
+      this.onAuthorizationCancel,
+      this.onAuthorizationDone,
+      this.needDismiss = true})
       : super(key: key);
 
   @override
@@ -27,7 +32,8 @@ class AuthorizationSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+            borderRadius:
+                BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
             child: Container(
               color: Colors.white,
               height: 410,
@@ -82,38 +88,49 @@ class AuthorizationSheet extends StatelessWidget {
                     },
                   ),
                 ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 16, left: 60, right: 60),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: "При входе вы подтверждаете согласие с ",
-                      style: textTheme.caption,
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: "условиями использования REFASHIONED",
-                          style: TextStyle(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline,
-                            decorationStyle: TextDecorationStyle.wavy,
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => Navigator.of(context, rootNavigator: true).push(PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                          position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                          child: WebViewPage(
+                            initialUrl: "https://refashioned.ru/user-agreement",
+                            title: "ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ",
+                            webViewPageMode: WebViewPageMode.modalSheet,
+                          )))),
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    margin: const EdgeInsets.only(top: 16, left: 60, right: 60),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text: "При входе вы подтверждаете согласие с ",
+                        style: textTheme.caption,
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: "условиями использования REFASHIONED",
+                            style: TextStyle(
+                              color: Colors.black,
+                              decoration: TextDecoration.underline,
+                              decorationStyle: TextDecorationStyle.wavy,
+                            ),
                           ),
-                        ),
-                        TextSpan(
-                          text: " и ",
-                        ),
-                        TextSpan(
-                          text: "политикой о данных пользователей",
-                          style: TextStyle(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline,
-                            decorationStyle: TextDecorationStyle.wavy,
+                          TextSpan(
+                            text: " и ",
                           ),
-                        ),
-                      ],
+                          TextSpan(
+                            text: "политикой о данных пользователей",
+                            style: TextStyle(
+                              color: Colors.black,
+                              decoration: TextDecoration.underline,
+                              decorationStyle: TextDecorationStyle.wavy,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                )
               ]),
             ),
           ),
