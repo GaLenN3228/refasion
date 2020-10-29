@@ -12,6 +12,7 @@ import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
 import 'package:refashioned_app/repositories/products.dart';
+import 'package:refashioned_app/repositories/size.dart';
 import 'package:refashioned_app/repositories/user_addresses.dart';
 import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_navigation.dart';
@@ -76,7 +77,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
         break;
       case BottomTab.profile:
         final isAuthorized = await BaseRepository.isAuthorized();
-        SystemChrome.setSystemUIOverlayStyle(isAuthorized ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark);
+        SystemChrome.setSystemUIOverlayStyle(
+            isAuthorized ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark);
         break;
       default:
         break;
@@ -86,13 +88,18 @@ class _TabSwitcherState extends State<TabSwitcher> {
   onTabRefresh() {
     final canPop = navigatorKeys[widget.currentTab.value]?.currentState?.canPop() ?? false;
 
-    if (canPop) navigatorKeys[widget.currentTab.value].currentState.pushNamedAndRemoveUntil('/', (route) => false);
+    if (canPop)
+      navigatorKeys[widget.currentTab.value]
+          .currentState
+          .pushNamedAndRemoveUntil('/', (route) => false);
 
-    if (widget.currentTab.value == BottomTab.cart) Provider.of<CartRepository>(context, listen: false).refresh();
+    if (widget.currentTab.value == BottomTab.cart)
+      Provider.of<CartRepository>(context, listen: false).refresh();
 
     if (widget.currentTab.value == BottomTab.catalog || widget.currentTab.value == BottomTab.home) {
-      var topPanelController =
-          Provider.of<TopPanelController>(navigatorKeys[widget.currentTab.value].currentContext, listen: false);
+      var topPanelController = Provider.of<TopPanelController>(
+          navigatorKeys[widget.currentTab.value].currentContext,
+          listen: false);
       topPanelController.needShow = true;
       topPanelController.needShowBack = false;
     }
@@ -150,12 +157,14 @@ class _TabSwitcherState extends State<TabSwitcher> {
           useRootNavigator: true,
           builder: (__, controller) => AuthorizationSheet(
             onAuthorizationCancel: (_) async {
-              if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+              if (originalOverlayStyle != null)
+                SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
 
               await onClose?.call();
             },
             onAuthorizationDone: (_) async {
-              if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+              if (originalOverlayStyle != null)
+                SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
 
               await openDeliveryTypesSelector(
                 context,
@@ -211,10 +220,12 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
                       Navigator.of(context).pop();
 
-                      if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+                      if (originalOverlayStyle != null)
+                        SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
                     },
                     onSelect: (id) async {
-                      final result = await onSelect?.call(deliveryType.deliveryOptions.first.deliveryCompany.id, id);
+                      final result = await onSelect?.call(
+                          deliveryType.deliveryOptions.first.deliveryCompany.id, id);
 
                       if (result) {
                         userAddressesRepository?.dispose();
@@ -225,7 +236,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
 
                         Navigator.of(context).pop();
 
-                        if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+                        if (originalOverlayStyle != null)
+                          SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
                       }
                     },
                   ),
@@ -258,7 +270,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
   Widget build(BuildContext context) {
     return Material(
       child: WillPopScope(
-        onWillPop: () async => !await navigatorKeys[widget.currentTab.value]?.currentState?.maybePop(),
+        onWillPop: () async =>
+            !await navigatorKeys[widget.currentTab.value]?.currentState?.maybePop(),
         child: Stack(
           children: <Widget>[
             TabView(
@@ -316,32 +329,35 @@ class _TabSwitcherState extends State<TabSwitcher> {
                   BaseRepository.isAuthorized().then((isAuthorized) {
                     if (isAuthorized) {
                       _pushPageOnTop(
-                        slideUpFromBottom: true,
-                        page: MarketplaceNavigator(
-                          onClose: Navigator.of(context).pop,
-                          onProductCreated: (productData) {
-                            widget.currentTab.value = BottomTab.profile;
-                            var profileProductsRepository =
-                                Provider.of<ProfileProductsRepository>(this.context, listen: false);
-                            profileProductsRepository.response = null;
-                            profileProductsRepository.startLoading();
-                            var addProductRepository = AddProductRepository();
-                            addProductRepository.addListener(() {
-                              if (addProductRepository.isLoaded) {
-                                profileProductsRepository
-                                  ..response = null
-                                  ..getProducts();
-                                if (productData.photos.length > 1) {
-                                  addProductRepository.addOtherPhotos(productData);
-                                }
-                              }
-                            });
-                            addProductRepository.addProduct(productData);
-                            Navigator.of(context).pop();
-                          },
-                          openInfoWebViewBottomSheet: pushInfoSheet,
-                        ),
-                      );
+                          slideUpFromBottom: true,
+                          page: ChangeNotifierProvider<SizeRepository>(
+                            create: (_) => SizeRepository(),
+                            builder: (context, _) => MarketplaceNavigator(
+                              onClose: Navigator.of(context).pop,
+                              onProductCreated: (productData) {
+                                widget.currentTab.value = BottomTab.profile;
+                                var profileProductsRepository =
+                                    Provider.of<ProfileProductsRepository>(this.context,
+                                        listen: false);
+                                profileProductsRepository.response = null;
+                                profileProductsRepository.startLoading();
+                                var addProductRepository = AddProductRepository();
+                                addProductRepository.addListener(() {
+                                  if (addProductRepository.isLoaded) {
+                                    profileProductsRepository
+                                      ..response = null
+                                      ..getProducts();
+                                    if (productData.photos.length > 1) {
+                                      addProductRepository.addOtherPhotos(productData);
+                                    }
+                                  }
+                                });
+                                addProductRepository.addProduct(productData);
+                                Navigator.of(context).pop();
+                              },
+                              openInfoWebViewBottomSheet: pushInfoSheet,
+                            ),
+                          ));
                     } else
                       showMaterialModalBottomSheet(
                         expand: false,
