@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/repositories/config.dart';
-import 'package:refashioned_app/repositories/products.dart';
 import 'package:refashioned_app/screens/city_selector/city_selector.dart';
 import 'package:refashioned_app/screens/components/custom_dialog/dialog_item.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
@@ -29,8 +27,7 @@ class UserProfile extends StatefulWidget {
 
   final Function() onMapPageClick;
 
-  const UserProfile({Key key, this.onMapPageClick, this.onDocPush, this.onUserNamePush})
-      : super(key: key);
+  const UserProfile({Key key, this.onMapPageClick, this.onDocPush, this.onUserNamePush}) : super(key: key);
 
   @override
   _UserProfileState createState() => _UserProfileState();
@@ -142,8 +139,8 @@ class _UserProfileState extends State<UserProfile> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               FutureBuilder(
-                                future: SharedPreferences.getInstance()
-                                    .then((prefs) => prefs.getString(Prefs.user_phone)),
+                                future:
+                                    SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_phone)),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     return Text(
@@ -315,35 +312,40 @@ class _UserProfileState extends State<UserProfile> {
           this.dialogContext = dialogContext;
           return CustomDialog.Dialog(
             dialogContent: [
-              DialogItemContent(DialogItemType.item, title: "Сделать фото", onClick: () {
-                return openCamera();
-              }, icon: IconAsset.camera),
-              DialogItemContent(DialogItemType.item, title: "Выбрать из галереи", onClick: () {
-                return openGallery();
-              }, icon: IconAsset.image),
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Сделать фото",
+                onClick: openCamera,
+                icon: IconAsset.camera,
+              ),
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Выбрать из галереи",
+                onClick: openGallery,
+                icon: IconAsset.image,
+              ),
               if (userPhoto != null)
                 DialogItemContent(
                   DialogItemType.item,
                   title: "Удалить",
-                  onClick: () async {
-                    setState(() {
-                      SharedPreferences.getInstance().then((prefs) async {
-                        await prefs.remove(Prefs.user_photo);
-                        userPhoto = null;
-                        Provider.of<UserPhotoController>(context, listen: false).update();
-                      });
-                    });
-                    Navigator.pop(dialogContext);
-                  },
+                  onClick: () async => setState(
+                    () {
+                      SharedPreferences.getInstance().then(
+                        (prefs) async {
+                          await prefs.remove(Prefs.user_photo);
+                          userPhoto = null;
+                          Provider.of<UserPhotoController>(context, listen: false).update();
+                        },
+                      );
+                    },
+                  ),
+                  asyncOnClck: true,
                   icon: IconAsset.delete,
                   color: Colors.red,
                 ),
               DialogItemContent(
                 DialogItemType.system,
                 title: "Закрыть",
-                onClick: () {
-                  Navigator.pop(dialogContext);
-                },
               )
             ],
           );
@@ -429,8 +431,7 @@ class _UserProfileState extends State<UserProfile> {
                   width: 50,
                   height: 50,
                   child: FutureBuilder(
-                      future: SharedPreferences.getInstance()
-                          .then((prefs) => prefs.getString(Prefs.user_photo)),
+                      future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_photo)),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           userPhoto = snapshot.data;
@@ -464,13 +465,13 @@ class _UserProfileState extends State<UserProfile> {
                               SharedPreferences sp = snapshot.data;
                               return sp.containsKey(Prefs.user_name)
                                   ? Text(
-                                sp.getString(Prefs.user_name),
-                                style: textTheme.subtitle1,
-                              )
+                                      sp.getString(Prefs.user_name),
+                                      style: textTheme.subtitle1,
+                                    )
                                   : Text(
-                                sp.getString(Prefs.user_phone),
-                                style:textTheme.subtitle1,
-                              );
+                                      sp.getString(Prefs.user_phone),
+                                      style: textTheme.subtitle1,
+                                    );
                             }
                             return SizedBox();
                           },
