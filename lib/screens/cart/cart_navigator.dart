@@ -295,7 +295,7 @@ class _CartNavigatorState extends State<CartNavigator> {
                   ),
                 ),
               )
-              .then((value) => topPanelController.needShow = true),
+              .then((value) => topPanelController.needShow = false),
         );
 
       case CartNavigatorRoutes.sellerReviews:

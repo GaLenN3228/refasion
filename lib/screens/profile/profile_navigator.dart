@@ -450,7 +450,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
                   ),
                 ),
               )
-              .then((value) => topPanelController.needShow = true),
+              .then((value) => topPanelController.needShow = false),
         );
 
       case ProfileNavigatorRoutes.sellerReviews:

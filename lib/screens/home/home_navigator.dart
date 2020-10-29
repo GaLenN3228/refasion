@@ -347,7 +347,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                   ),
                 ),
               )
-              .then((value) => topPanelController.needShow = true),
+              .then((value) => topPanelController.needShow = false),
         );
 
       case HomeNavigatorRoutes.sellerReviews:
