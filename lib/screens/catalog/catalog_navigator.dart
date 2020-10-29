@@ -88,6 +88,7 @@ class CatalogNavigator extends StatefulWidget {
     this.changeTabTo,
     this.openDeliveryTypesSelector,
     this.openPickUpAddressMap,
+    this.openInfoWebViewBottomSheet,
     this.onCheckoutPush,
   });
 
@@ -96,6 +97,8 @@ class CatalogNavigator extends StatefulWidget {
 
   final Function(PickPoint) openPickUpAddressMap;
   final Function(Order, Function()) onCheckoutPush;
+
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   void pushFavourites(BuildContext context) {
     var topPanelController = Provider.of<TopPanelController>(context, listen: false);
@@ -344,6 +347,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductsPage(
+            openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
             parameters: parameters,
             searchResult: searchResult,
             topCategory: category,
@@ -379,6 +383,7 @@ class _CatalogNavigatorState extends State<CatalogNavigator> {
           return AddRemoveFavouriteRepository();
         }, builder: (context, _) {
           return ProductPage(
+            openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
             product: product,
             onCartPush: () => widget.changeTabTo(BottomTab.cart),
             onProductPush: (product) {

@@ -24,7 +24,7 @@ class PhotosPage extends StatefulWidget {
   final Function() onClose;
   final Function(List<PhotoItemData>) onPush;
   final Function(File) onUpdate;
-  final Function(String url) openInfoWebViewBottomSheet;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.openInfoWebViewBottomSheet}) : super(key: key);
 
@@ -150,7 +150,7 @@ class _PhotosPageState extends State<PhotosPage> {
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () =>
-                                widget.openInfoWebViewBottomSheet("https://refashioned.ru/photo"),
+                                widget.openInfoWebViewBottomSheet("https://refashioned.ru/photo", "ДОБАВЛЕНИЕ ФОТО"),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [

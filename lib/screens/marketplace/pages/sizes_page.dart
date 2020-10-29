@@ -37,7 +37,7 @@ class _SizesPageState extends State<SizesPage> {
                   onBack: Navigator.of(context).pop,
                   middleText: "Добавить вещь",
                   onClose: widget.onClose,
-                  bottomText: "Выберите размер",
+                  bottomText: "Выберите размерную сетку",
                 ),
               ),
               Expanded(child: Consumer<SizeRepository>(builder: (context, sizeRepository, _) {

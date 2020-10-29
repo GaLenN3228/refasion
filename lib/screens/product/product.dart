@@ -40,6 +40,7 @@ class ProductPage extends StatefulWidget {
   final Function() onCartPush;
   final Function(PickPoint) onPickupAddressPush;
   final Function(Order, Function()) onCheckoutPush;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
   final Function(
     BuildContext,
@@ -60,6 +61,7 @@ class ProductPage extends StatefulWidget {
     this.openDeliveryTypesSelector,
     this.onPickupAddressPush,
     this.onCheckoutPush,
+    this.openInfoWebViewBottomSheet,
   }) : assert(product != null);
 
   @override
@@ -226,6 +228,7 @@ class _ProductPageState extends State<ProductPage> {
                           product: product,
                         ),
                         ProductSizeTile(
+                          openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
                           product: product,
                           style: ProductSizeTileStyle.large,
                           padding: EdgeInsets.only(bottom: 8),

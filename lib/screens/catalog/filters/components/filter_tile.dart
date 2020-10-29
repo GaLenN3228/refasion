@@ -9,8 +9,9 @@ enum FilterType { list, range, slider }
 class FilterTile extends StatelessWidget {
   final Filter filter;
   final Function() onUpdate;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
-  const FilterTile({Key key, this.filter, this.onUpdate}) : super(key: key);
+  const FilterTile({Key key, this.filter, this.onUpdate, this.openInfoWebViewBottomSheet}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,7 @@ class FilterTile extends StatelessWidget {
 
       case "range":
         return FilterTileRange(
+          openInfoWebViewBottomSheet: openInfoWebViewBottomSheet,
           filter: filter,
           onUpdate: onUpdate,
         );

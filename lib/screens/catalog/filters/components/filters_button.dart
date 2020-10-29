@@ -1,8 +1,5 @@
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:refashioned_app/models/filter.dart';
-import 'package:refashioned_app/repositories/filters.dart';
 import 'package:refashioned_app/screens/catalog/filters/filters_panel.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
 
@@ -10,8 +7,9 @@ class FiltersButton extends StatelessWidget {
   final Function() onApply;
   final String root;
   final String categoryId;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
-  const FiltersButton({Key key, this.onApply, this.root, this.categoryId}) : super(key: key);
+  const FiltersButton({Key key, this.onApply, this.root, this.categoryId, this.openInfoWebViewBottomSheet}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +21,7 @@ class FiltersButton extends StatelessWidget {
                 expand: true,
                 context: context,
                 builder: (context, controller) => FiltersPanel(
+                  openInfoWebViewBottomSheet: openInfoWebViewBottomSheet,
                   root: root,
                   scrollController: controller,
                   updateProducts: onApply,

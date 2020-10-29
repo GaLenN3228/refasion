@@ -105,13 +105,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
       Navigator.of(context ?? this.context).push(CupertinoPageRoute(builder: (context) => page));
   }
 
-  pushInfoSheet(String infoUrl) {
-    return Navigator.of(context).push(MaterialWithModalsPageRoute(
-        builder: (context) => WebViewPage(
+  pushInfoSheet(String infoUrl, String title) {
+    return Navigator.of(context).push(PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+            position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+            child: WebViewPage(
               initialUrl: infoUrl,
-              title: "СТОИМОСТЬ ВЕЩИ",
+              title: title,
               webViewPageMode: WebViewPageMode.modalSheet,
-            )));
+            ))));
   }
 
   openPickUpAddressMap(PickPoint pickPoint) => _pushPageOnTop(
@@ -271,6 +273,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
               onCheckoutPush: widget.onCheckoutPush,
+              openInfoWebViewBottomSheet: pushInfoSheet,
             ),
             TabView(
               BottomTab.cart,

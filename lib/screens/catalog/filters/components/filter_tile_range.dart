@@ -7,8 +7,9 @@ import 'package:refashioned_app/screens/components/sizes_table_link.dart';
 class FilterTileRange extends StatefulWidget {
   final Filter filter;
   final Function() onUpdate;
+  final Function(String url, String title) openInfoWebViewBottomSheet;
 
-  const FilterTileRange({Key key, this.filter, this.onUpdate}) : super(key: key);
+  const FilterTileRange({Key key, this.filter, this.onUpdate, this.openInfoWebViewBottomSheet}) : super(key: key);
 
   @override
   _FilterTileRangeState createState() => _FilterTileRangeState();
@@ -33,7 +34,9 @@ class _FilterTileRangeState extends State<FilterTileRange> {
                         widget.filter.name,
                         style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
                       ),
-                      SizesTableLink(),
+                      SizesTableLink(onTap: (){
+                        widget.openInfoWebViewBottomSheet("https://refashioned.ru/size", "ТАБЛИЦА РАЗМЕРОВ");
+                      },),
                     ],
                   )
                 : Text(
