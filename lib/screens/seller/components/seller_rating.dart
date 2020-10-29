@@ -42,15 +42,16 @@ class _SellerRatingState extends State<SellerRating> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Text(
-                    widget.seller.rating.toString(),
-                    style: Theme.of(context).textTheme.headline1.copyWith(
-                          fontSize: 48,
-                        ),
+                if (widget.seller.rating > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Text(
+                      widget.seller.rating.toString(),
+                      style: Theme.of(context).textTheme.headline1.copyWith(
+                            fontSize: 48,
+                          ),
+                    ),
                   ),
-                ),
                 Expanded(
                   child: SizedBox(
                     height: 36,

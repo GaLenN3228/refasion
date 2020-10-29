@@ -77,32 +77,34 @@ class _ProductSellerState extends State<ProductSeller> {
               widget.seller.name ?? "Камила",
               style: textTheme.subtitle1,
             ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    RatingTile(
-                      rating: widget.seller.rating,
-                      starSize: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        (widget.seller.rating ?? 4.2).toString(),
-                        style: textTheme.caption.copyWith(fontWeight: FontWeight.w600, color: primaryColor),
+            trailing: widget.seller.rating > 0
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          RatingTile(
+                            rating: widget.seller.rating,
+                            starSize: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4.0),
+                            child: Text(
+                              (widget.seller.rating ?? 4.2).toString(),
+                              style: textTheme.caption.copyWith(fontWeight: FontWeight.w600, color: primaryColor),
+                            ),
+                          )
+                        ],
                       ),
-                    )
-                  ],
-                ),
-                Text(
-                  morphology.countText(widget.seller.reviewsCount).toString(),
-                  style: textTheme.caption,
-                ),
-              ],
-            ),
+                      Text(
+                        morphology.countText(widget.seller.reviewsCount).toString(),
+                        style: textTheme.caption,
+                      ),
+                    ],
+                  )
+                : SizedBox(),
           ),
         ),
       ),
