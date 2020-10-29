@@ -216,7 +216,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                     onClose: () async {
                       await onClose?.call();
 
-                      userAddressesRepository?.dispose();
+                      // userAddressesRepository?.dispose();
 
                       Navigator.of(context).pop();
 
@@ -228,9 +228,9 @@ class _TabSwitcherState extends State<TabSwitcher> {
                           deliveryType.deliveryOptions.first.deliveryCompany.id, id);
 
                       if (result) {
-                        userAddressesRepository?.dispose();
+                        // userAddressesRepository?.dispose();
 
-                        onFinish?.call();
+                        // onFinish?.call();
 
                         await Future.delayed(const Duration(milliseconds: 400));
 

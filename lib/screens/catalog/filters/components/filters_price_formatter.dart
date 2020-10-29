@@ -27,7 +27,7 @@ class PriceFormatter extends TextInputFormatter {
     final plain = plainText(newValue.text, currency: currency);
 
     return TextEditingValue(
-      text: plain + currency,
+      text: plain.isNotEmpty && !plain.startsWith("0") ? plain + currency: "",
       selection: TextSelection.collapsed(offset: plain.length),
     );
   }

@@ -381,6 +381,7 @@ class _MarketplaceNavigatorState extends State<MarketplaceNavigator> {
 
       case MarketplaceNavigatorRoutes.sizes:
         return SizesPage(
+          openInfoWebViewBottomSheet: widget.openInfoWebViewBottomSheet,
           onBack: Navigator.of(context).pop,
           onClose: widget.onClose,
           onPush: (sizes) {
