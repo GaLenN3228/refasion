@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/screens/components/message.dart';
 import 'package:refashioned_app/screens/components/svg_viewers/svg_icon.dart';
+import 'package:refashioned_app/screens/components/webview_page.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 class OrderPaymentTile extends StatelessWidget {
@@ -59,10 +60,20 @@ class OrderPaymentTile extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
-          child: RefashionedMessage(
-            title: "Деньги можно вернуть",
-            message: "Если передумаете покупать или не получите заказ, вернём всю сумму.",
-          ),
+          child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => Navigator.of(context, rootNavigator: true).push(PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                      position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                      child: WebViewPage(
+                        initialUrl: "https://refashioned.ru/delivery-and-return",
+                        title: "УСЛОВИЯ ДОСТАВКИ",
+                        webViewPageMode: WebViewPageMode.modalSheet,
+                      )))),
+              child: RefashionedMessage(
+                title: "Деньги можно вернуть",
+                message: "Если передумаете покупать или не получите заказ, вернём всю сумму.",
+              )),
         ),
       ],
     );
