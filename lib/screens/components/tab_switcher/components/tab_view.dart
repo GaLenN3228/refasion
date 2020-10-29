@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/pick_point.dart';
+import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/home.dart';
 import 'package:refashioned_app/repositories/search.dart';
@@ -27,6 +28,7 @@ class TabView extends StatelessWidget {
 
   final Function() onTabRefresh;
   final Function(Order, Function()) onCheckoutPush;
+  final Function(Seller, Function()) onSellerReviewsPush;
 
   final Function(
     BuildContext,
@@ -48,6 +50,7 @@ class TabView extends StatelessWidget {
     this.onCheckoutPush,
     this.navigatorKey,
     this.openInfoWebViewBottomSheet,
+    this.onSellerReviewsPush,
   });
 
   changeTabTo(BottomTab newBottomTab) {
@@ -70,6 +73,7 @@ class TabView extends StatelessWidget {
           openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
           onCheckoutPush: onCheckoutPush,
+          onSellerReviewsPush: onSellerReviewsPush,
           openInfoWebViewBottomSheet: openInfoWebViewBottomSheet,
         );
         content = MultiProvider(
@@ -100,6 +104,7 @@ class TabView extends StatelessWidget {
           openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
           onCheckoutPush: onCheckoutPush,
+          onSellerReviewsPush: onSellerReviewsPush,
         );
         content = MultiProvider(
             providers: [
@@ -128,6 +133,7 @@ class TabView extends StatelessWidget {
           changeTabTo: changeTabTo,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
           onCheckoutPush: onCheckoutPush,
+          onSellerReviewsPush: onSellerReviewsPush,
         );
         content = MultiProvider(
             providers: [
@@ -158,6 +164,7 @@ class TabView extends StatelessWidget {
           openPickUpAddressMap: openPickUpAddressMap,
           openDeliveryTypesSelector: openDeliveryTypesSelector,
           onCheckoutPush: onCheckoutPush,
+          onSellerReviewsPush: onSellerReviewsPush,
         );
         content = MultiProvider(
             providers: [

@@ -143,33 +143,36 @@ class _SendSellerReviewPageState extends State<SendSellerReviewPage> with Widget
           Expanded(
             child: Stack(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  child: TextField(
-                    onChanged: onUpdate,
-                    autofocus: true,
-                    autocorrect: false,
-                    expands: true,
-                    maxLines: null,
-                    cursorWidth: 2.0,
-                    cursorRadius: Radius.circular(2.0),
-                    cursorColor: Color(0xFFE6E6E6),
-                    style: Theme.of(context).textTheme.headline1.copyWith(fontWeight: FontWeight.normal),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Поделитесь впечатлениями. Пожалуйста, воздержитесь от оскорблений и мата.",
-                      hintMaxLines: 5,
-                      hintStyle: Theme.of(context).textTheme.headline1.copyWith(
-                            fontWeight: FontWeight.normal,
-                            color: Color.fromRGBO(0, 0, 0, 0.25),
-                          ),
+                Material(
+                  color: white,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                    child: TextField(
+                      onChanged: onUpdate,
+                      autofocus: true,
+                      autocorrect: false,
+                      expands: true,
+                      maxLines: null,
+                      cursorWidth: 2.0,
+                      cursorRadius: Radius.circular(2.0),
+                      cursorColor: Color(0xFFE6E6E6),
+                      style: Theme.of(context).textTheme.headline1.copyWith(fontWeight: FontWeight.normal),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Поделитесь впечатлениями. Пожалуйста, воздержитесь от оскорблений и мата.",
+                        hintMaxLines: 5,
+                        hintStyle: Theme.of(context).textTheme.headline1.copyWith(
+                              fontWeight: FontWeight.normal,
+                              color: Color.fromRGBO(0, 0, 0, 0.25),
+                            ),
+                      ),
                     ),
                   ),
                 ),
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: keyboardVisible ? 20 : MediaQuery.of(context).padding.bottom + 65.0,
+                  bottom: keyboardVisible ? 20 : MediaQuery.of(context).padding.bottom,
                   child: SendSellerReviewButton(
                     state: buttonState,
                     onPush: onPush,

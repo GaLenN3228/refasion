@@ -20,10 +20,7 @@ import 'package:refashioned_app/screens/components/webview_page.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
-import 'package:refashioned_app/screens/seller/pages/select_seller_rating.dart';
-import 'package:refashioned_app/screens/seller/pages/send_seller_review.dart';
 import 'package:refashioned_app/screens/seller/pages/seller_page.dart';
-import 'package:refashioned_app/screens/seller/pages/seller_reviews.dart';
 import 'home.dart';
 
 class HomeNavigatorRoutes {
@@ -31,9 +28,6 @@ class HomeNavigatorRoutes {
   static const String products = '/products';
   static const String product = '/product';
   static const String seller = '/seller';
-  static const String sellerReviews = '/seller_reviews';
-  static const String selectSellerRating = '/add_seller_rating';
-  static const String sendSellerReview = '/add_seller_review';
   static const String favourites = '/favourites';
   static const String checkout = '/checkout';
   static const String orderCreated = '/order_created';
@@ -82,6 +76,7 @@ class HomeNavigator extends StatefulWidget {
   final Function(PickPoint) openPickUpAddressMap;
 
   final Function(Order, Function()) onCheckoutPush;
+  final Function(Seller, Function()) onSellerReviewsPush;
 
   final Function(
     BuildContext,
@@ -98,7 +93,8 @@ class HomeNavigator extends StatefulWidget {
     this.changeTabTo,
     this.openPickUpAddressMap,
     this.openDeliveryTypesSelector,
-    this.onCheckoutPush,
+    @required this.onCheckoutPush,
+    @required this.onSellerReviewsPush,
   });
 
   void pushFavourites(BuildContext context) {
@@ -329,12 +325,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
         topPanelController.needShowBack = false;
         return SellerPage(
           seller: seller,
-          onSellerReviewsPush: () {
-            final newRoute =
-                seller.reviewsCount > 0 ? HomeNavigatorRoutes.sellerReviews : HomeNavigatorRoutes.sellerReviews;
-
-            Navigator.of(context).pushNamed(newRoute);
-          },
+          onSellerReviewsPush: (Function() callback) => widget.onSellerReviewsPush?.call(seller, callback),
           onProductPush: (product) => Navigator.of(context)
               .push(
                 CupertinoPageRoute(
@@ -350,37 +341,6 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 ),
               )
               .then((value) => topPanelController.needShow = true),
-        );
-
-      case HomeNavigatorRoutes.sellerReviews:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SellerReviewsPage(
-          seller: seller,
-          onAddSellerRatingPush: () => Navigator.of(context).pushNamed(HomeNavigatorRoutes.selectSellerRating),
-        );
-
-      case HomeNavigatorRoutes.selectSellerRating:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SelectSellerRatingPage(
-          seller: seller,
-          onAddSellerReviewPush: (int newRating) {
-            rating = newRating;
-            Navigator.of(context).pushNamed(HomeNavigatorRoutes.sendSellerReview);
-          },
-        );
-
-      case HomeNavigatorRoutes.sendSellerReview:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SendSellerReviewPage(
-          seller: seller,
-          rating: rating,
-          onPush: () => Navigator.of(context).pushNamedAndRemoveUntil(
-            HomeNavigatorRoutes.sellerReviews,
-            (route) => route.settings.name == HomeNavigatorRoutes.seller,
-          ),
         );
 
       case HomeNavigatorRoutes.favourites:

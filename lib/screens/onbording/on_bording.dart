@@ -45,127 +45,133 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<OnBoardingRepository>(
-      create: (_) => OnBoardingRepository()..getOnBoardingData(context),
-      builder: (context, _) {
-        final onBoardingRepository = context.watch<OnBoardingRepository>();
+    final onBoardingRepository = context.watch<OnBoardingRepository>();
 
-        if (onBoardingRepository.isLoading && onBoardingRepository.response == null)
-          return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: accentColor,
-              valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-            ),
-          );
+    if (onBoardingRepository.isLoading && onBoardingRepository.response == null)
+      return Center(
+        child: CircularProgressIndicator(
+          backgroundColor: accentColor,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
+      );
 
-        if (onBoardingRepository.loadingFailed)
-          return Center(
-            child: Text("Ошибка", style: Theme.of(context).textTheme.bodyText1),
-          );
+    if (onBoardingRepository.loadingFailed)
+      return Center(
+        child: Text(
+          "Ошибка",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      );
 
-        var onBoarding = onBoardingRepository.response.content;
+    var onBoarding = onBoardingRepository?.response?.content;
 
-        return Scaffold(
-            backgroundColor: Colors.black,
-            body: AnnotatedRegion<SystemUiOverlayStyle>(
-              value: SystemUiOverlayStyle.light,
-              child: Container(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    Container(
-                      child: PageView(
-                          physics: ClampingScrollPhysics(),
-                          controller: _pageController,
-                          onPageChanged: (int page) {
-                            setState(() {
-                              _currentPage = page;
-                            });
-                          },
-                          children: [
-                            ...onBoarding,
-                          ].map(
-                            (item) {
-                              CachedNetworkImageProvider image =
-                                  onBoardingRepository.cachedImages.firstWhere((element) => element.url == item.image);
-                              return SlideTile(
-                                imagePath: image,
-                                title: item.title,
-                                subtitle: Text(
-                                  item.description,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w300, fontSize: 18, height: 1.4, color: Color(0xFFFFFFFF)),
-                                ),
-                              );
-                            },
-                          ).toList()),
+    if (onBoarding == null)
+      return Center(
+        child: Text(
+          "Данные не загружены",
+          style: Theme.of(context).textTheme.bodyText1.copyWith(color: white),
+        ),
+      );
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: Container(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              Container(
+                child: PageView(
+                    physics: ClampingScrollPhysics(),
+                    controller: _pageController,
+                    onPageChanged: (int page) {
+                      setState(() {
+                        _currentPage = page;
+                      });
+                    },
+                    children: [
+                      ...onBoarding,
+                    ].map(
+                      (item) {
+                        CachedNetworkImageProvider image =
+                            onBoardingRepository.cachedImages.firstWhere((element) => element.url == item.image);
+                        return SlideTile(
+                          imagePath: image,
+                          title: item.title,
+                          subtitle: Text(
+                            item.description,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300, fontSize: 18, height: 1.4, color: Color(0xFFFFFFFF)),
+                          ),
+                        );
+                      },
+                    ).toList()),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _buildPageIndicator(onBoarding.length),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: 25, bottom: 5),
+                    child: BottomButton(
+                      backgroundColor: Color(0xFFFAD24E),
+                      title: _currentPage == onBoarding.length - 1 ? "готово".toUpperCase() : "дальше".toUpperCase(),
+                      enabled: true,
+                      titleColor: Colors.black,
+                      action: () {
+                        if (_currentPage == onBoarding.length - 1) {
+                          Future.delayed(
+                            Duration(milliseconds: 200),
+                            widget.onPush?.call,
+                          );
+                        } else {
+                          _pageController.nextPage(
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.ease,
+                          );
+                        }
+                      },
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                  ),
+                  Tapable(
+                    padding: EdgeInsets.only(bottom: 40),
+                    onTap: () {
+                      Future.delayed(
+                        Duration(milliseconds: 200),
+                        widget.onPush?.call,
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: _buildPageIndicator(onBoarding.length),
-                        ),
                         Container(
-                          padding: EdgeInsets.only(top: 25, bottom: 5),
-                          child: BottomButton(
-                            backgroundColor: Color(0xFFFAD24E),
-                            title:
-                                _currentPage == onBoarding.length - 1 ? "готово".toUpperCase() : "дальше".toUpperCase(),
-                            enabled: true,
-                            titleColor: Colors.black,
-                            action: () {
-                              if (_currentPage == onBoarding.length - 1) {
-                                Future.delayed(
-                                  Duration(milliseconds: 200),
-                                  widget.onPush?.call,
-                                );
-                              } else {
-                                _pageController.nextPage(
-                                  duration: Duration(milliseconds: 500),
-                                  curve: Curves.ease,
-                                );
-                              }
-                            },
-                          ),
+                            padding: EdgeInsets.only(right: 5),
+                            child: Text(
+                              'ПРОПУСТИТЬ',
+                              style: Theme.of(context).textTheme.button.copyWith(color: Colors.white),
+                            )),
+                        SVGIcon(
+                          icon: IconAsset.next,
+                          width: 12,
+                          height: 12,
+                          color: Colors.white,
                         ),
-                        Tapable(
-                          padding: EdgeInsets.only(bottom: 40),
-                          onTap: () {
-                            Future.delayed(
-                              Duration(milliseconds: 200),
-                              widget.onPush?.call,
-                            );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                  padding: EdgeInsets.only(right: 5),
-                                  child: Text(
-                                    'ПРОПУСТИТЬ',
-                                    style: Theme.of(context).textTheme.button.copyWith(color: Colors.white),
-                                  )),
-                              SVGIcon(
-                                icon: IconAsset.next,
-                                width: 12,
-                                height: 12,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
-                        )
                       ],
                     ),
-                  ],
-                ),
+                  )
+                ],
               ),
-            ));
-      },
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

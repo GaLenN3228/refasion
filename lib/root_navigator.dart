@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/screens/authorization/code_page.dart';
 import 'package:refashioned_app/screens/authorization/name_page.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
@@ -14,6 +15,10 @@ import 'package:refashioned_app/screens/city_selector/splash_screen.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/components/bottom_tab_button.dart';
 import 'package:refashioned_app/screens/components/tab_switcher/tab_switcher.dart';
 import 'package:refashioned_app/screens/onbording/on_bording.dart';
+import 'package:refashioned_app/screens/seller/pages/select_seller_rating.dart';
+import 'package:refashioned_app/screens/seller/pages/seller_reviews.dart';
+import 'package:refashioned_app/screens/seller/pages/send_seller_review.dart';
+import 'models/seller.dart';
 
 class RootNavigatorRoutes {
   static const String splashScreen = '/splash_screen';
@@ -26,6 +31,8 @@ class RootNavigatorRoutes {
   static const String deliverySelector = '/delivery_selector';
   static const String checkout = '/checkout';
   static const String sellerReviews = '/seller_reviews';
+  static const String selectSellerRating = '/select_seller_rating';
+  static const String sendSellerReview = '/send_seller_review';
 }
 
 class RootNavigatorObserver extends NavigatorObserver {
@@ -72,14 +79,14 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
   Function() onReturnToTabs;
   Function(String) onPush;
 
+  Seller seller;
+  int rating;
   String phone;
 
   @override
   initState() {
     citiesRepository = Provider.of<CitiesRepository>(context, listen: false);
-
     citiesRepository.addListener(citiesRepositoryListener);
-
     currentTab = ValueNotifier(BottomTab.catalog);
 
     super.initState();
@@ -97,13 +104,16 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
   citiesRepositoryListener() async {
     String nextRoute = RootNavigatorRoutes.tabs;
 
-    if (citiesRepository.isLoaded && citiesRepository.response.content != null) {
-      if (!citiesRepository.response.content.skipable) nextRoute = RootNavigatorRoutes.citySelector;
+    if (citiesRepository.isLoaded &&
+        citiesRepository.response.content != null &&
+        !citiesRepository.response.content.skipable) {
+      nextRoute = RootNavigatorRoutes.citySelector;
+      await Provider.of<OnBoardingRepository>(context, listen: false).getOnBoardingData(context);
     }
 
     citiesRepository.removeListener(citiesRepositoryListener);
 
-    await Future.delayed(Duration(milliseconds: 600));
+    await Future.delayed(Duration(milliseconds: 400));
 
     onPush(nextRoute);
   }
@@ -128,6 +138,11 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
             onReturnToTabs = callback;
             Navigator.of(context).pushNamed(RootNavigatorRoutes.checkout);
           },
+          onSellerReviewsPush: (Seller newSeller, Function() callback) {
+            seller = newSeller;
+            onReturnToTabs = callback;
+            Navigator.of(context).pushNamed(RootNavigatorRoutes.sellerReviews);
+          },
         );
 
       case RootNavigatorRoutes.onboarding:
@@ -144,7 +159,7 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
           },
           onAuthorizationCancel: (_) => Navigator.of(context).pushNamedAndRemoveUntil(
             RootNavigatorRoutes.tabs,
-            (route) => true,
+            (route) => false,
           ),
         );
 
@@ -157,7 +172,7 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
             onPush: () => Navigator.of(context).pushNamed(RootNavigatorRoutes.authName),
             onAuthorizationCancel: (_) => Navigator.of(context).pushNamedAndRemoveUntil(
               RootNavigatorRoutes.tabs,
-              (route) => true,
+              (route) => false,
             ),
           ),
         );
@@ -167,7 +182,7 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
           needDismiss: false,
           onAuthorizationDone: (_) => Navigator.of(context).pushNamedAndRemoveUntil(
             RootNavigatorRoutes.tabs,
-            (route) => true,
+            (route) => false,
           ),
         );
 
@@ -178,11 +193,30 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
           onClose: Navigator.of(context).pop,
         );
 
-      // case RootNavigatorRoutes.sellerReviews:
-      //   return SellerReviewsNavigator(
-      //     seller: seller,
-      //     onClose: Navigator.of(context).pop,
-      //   );
+      case RootNavigatorRoutes.sellerReviews:
+        return SellerReviewsPage(
+          seller: seller,
+          onAddSellerRatingPush: () => Navigator.of(context).pushNamed(RootNavigatorRoutes.selectSellerRating),
+        );
+
+      case RootNavigatorRoutes.selectSellerRating:
+        return SelectSellerRatingPage(
+          seller: seller,
+          onAddSellerReviewPush: (int newRating) {
+            rating = newRating;
+            Navigator.of(context).pushNamed(RootNavigatorRoutes.sendSellerReview);
+          },
+        );
+
+      case RootNavigatorRoutes.sendSellerReview:
+        return SendSellerReviewPage(
+          seller: seller,
+          rating: rating,
+          onPush: () => Navigator.of(context).pushNamedAndRemoveUntil(
+            RootNavigatorRoutes.sellerReviews,
+            (route) => route.settings.name == RootNavigatorRoutes.tabs,
+          ),
+        );
 
       default:
         return CupertinoPageScaffold(

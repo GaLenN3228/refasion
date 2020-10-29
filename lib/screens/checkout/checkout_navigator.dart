@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/screens/checkout/pages/checkout_page.dart';
 import 'package:refashioned_app/screens/checkout/pages/order_created_page.dart';
@@ -18,7 +17,12 @@ class CheckoutNavigator extends StatefulWidget {
   final Function(BottomTab) changeTabTo;
   final Function() onClose;
 
-  const CheckoutNavigator({Key key, @required this.changeTabTo, @required this.order, this.onClose}) : super(key: key);
+  const CheckoutNavigator({
+    Key key,
+    @required this.changeTabTo,
+    @required this.order,
+    this.onClose,
+  }) : super(key: key);
 
   @override
   _CheckoutNavigatorState createState() => _CheckoutNavigatorState();

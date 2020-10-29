@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/models/pick_point.dart';
+import 'package:refashioned_app/models/seller.dart';
 import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cart/cart.dart';
@@ -37,8 +38,14 @@ final navigatorKeys = {
 class TabSwitcher extends StatefulWidget {
   final ValueNotifier<BottomTab> currentTab;
   final Function(Order, Function()) onCheckoutPush;
+  final Function(Seller, Function()) onSellerReviewsPush;
 
-  const TabSwitcher({Key key, @required this.currentTab, @required this.onCheckoutPush}) : super(key: key);
+  const TabSwitcher({
+    Key key,
+    @required this.currentTab,
+    @required this.onCheckoutPush,
+    @required this.onSellerReviewsPush,
+  }) : super(key: key);
 
   @override
   _TabSwitcherState createState() => _TabSwitcherState();
@@ -263,6 +270,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
               onCheckoutPush: widget.onCheckoutPush,
+              onSellerReviewsPush: widget.onSellerReviewsPush,
             ),
             TabView(
               BottomTab.catalog,
@@ -273,6 +281,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
               onCheckoutPush: widget.onCheckoutPush,
+              onSellerReviewsPush: widget.onSellerReviewsPush,
               openInfoWebViewBottomSheet: pushInfoSheet,
             ),
             TabView(
@@ -284,6 +293,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
               onCheckoutPush: widget.onCheckoutPush,
+              onSellerReviewsPush: widget.onSellerReviewsPush,
             ),
             TabView(
               BottomTab.profile,
@@ -294,6 +304,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               openPickUpAddressMap: openPickUpAddressMap,
               openDeliveryTypesSelector: openDeliveryTypesSelector,
               onCheckoutPush: widget.onCheckoutPush,
+              onSellerReviewsPush: widget.onSellerReviewsPush,
             ),
             Positioned(
               left: 0,

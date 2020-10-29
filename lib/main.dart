@@ -8,9 +8,9 @@ import 'package:refashioned_app/repositories/catalog.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/repositories/config.dart';
 import 'package:refashioned_app/repositories/filters.dart';
+import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/repositories/products.dart';
-import 'package:refashioned_app/repositories/sizes.dart';
-import 'package:refashioned_app/screens/components/tab_switcher/root_navigator.dart';
+import 'package:refashioned_app/root_navigator.dart';
 import 'package:refashioned_app/screens/profile/components/user_name_controller.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
@@ -56,8 +56,8 @@ class RefashionApp extends StatelessWidget {
           ChangeNotifierProvider<ProfileProductsRepository>(
             create: (_) => ProfileProductsRepository(),
           ),
-          Provider<SizesProvider>(
-            create: (_) => SizesProvider(),
+          ChangeNotifierProvider<OnBoardingRepository>(
+            create: (_) => OnBoardingRepository(),
           ),
           ChangeNotifierProvider<UserNameController>(
             create: (_) => UserNameController(),

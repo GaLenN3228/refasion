@@ -16,18 +16,12 @@ import 'package:refashioned_app/screens/components/top_panel/top_panel_controlle
 import 'package:refashioned_app/screens/product/product.dart';
 import 'package:refashioned_app/screens/products/pages/favourites.dart';
 import 'package:refashioned_app/screens/products/pages/products.dart';
-import 'package:refashioned_app/screens/seller/pages/select_seller_rating.dart';
-import 'package:refashioned_app/screens/seller/pages/send_seller_review.dart';
 import 'package:refashioned_app/screens/seller/pages/seller_page.dart';
-import 'package:refashioned_app/screens/seller/pages/seller_reviews.dart';
 
 class CartNavigatorRoutes {
   static const String cart = '/';
   static const String product = '/product';
   static const String seller = '/seller';
-  static const String sellerReviews = '/seller_reviews';
-  static const String selectSellerRating = '/add_seller_rating';
-  static const String sendSellerReview = '/add_seller_review';
   static const String products = '/products';
   static const String favourites = '/favourites';
 }
@@ -84,6 +78,7 @@ class CartNavigator extends StatefulWidget {
 
   final Function(BottomTab) changeTabTo;
   final Function(PickPoint) openPickUpAddressMap;
+  final Function(Seller, Function()) onSellerReviewsPush;
 
   final Function(Order, Function()) onCheckoutPush;
 
@@ -93,7 +88,8 @@ class CartNavigator extends StatefulWidget {
     this.changeTabTo,
     this.openDeliveryTypesSelector,
     this.openPickUpAddressMap,
-    this.onCheckoutPush,
+    @required this.onCheckoutPush,
+    @required this.onSellerReviewsPush,
   }) : super(key: key);
 
   void pushFavourites(BuildContext context) {
@@ -233,12 +229,7 @@ class _CartNavigatorState extends State<CartNavigator> {
         topPanelController.needShowBack = false;
         return SellerPage(
           seller: seller,
-          onSellerReviewsPush: () {
-            final newRoute =
-                seller.reviewsCount > 0 ? CartNavigatorRoutes.sellerReviews : CartNavigatorRoutes.sellerReviews;
-
-            Navigator.of(context).pushNamed(newRoute);
-          },
+          onSellerReviewsPush: (Function() callback) => widget.onSellerReviewsPush?.call(seller, callback),
           onProductPush: (product) => Navigator.of(context)
               .push(
                 CupertinoPageRoute(
@@ -254,37 +245,6 @@ class _CartNavigatorState extends State<CartNavigator> {
                 ),
               )
               .then((value) => topPanelController.needShow = true),
-        );
-
-      case CartNavigatorRoutes.sellerReviews:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SellerReviewsPage(
-          seller: seller,
-          onAddSellerRatingPush: () => Navigator.of(context).pushNamed(CartNavigatorRoutes.selectSellerRating),
-        );
-
-      case CartNavigatorRoutes.selectSellerRating:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SelectSellerRatingPage(
-          seller: seller,
-          onAddSellerReviewPush: (int newRating) {
-            rating = newRating;
-            Navigator.of(context).pushNamed(CartNavigatorRoutes.sendSellerReview);
-          },
-        );
-
-      case CartNavigatorRoutes.sendSellerReview:
-        topPanelController.needShow = false;
-        topPanelController.needShowBack = false;
-        return SendSellerReviewPage(
-          seller: seller,
-          rating: rating,
-          onPush: () => Navigator.of(context).pushNamedAndRemoveUntil(
-            CartNavigatorRoutes.sellerReviews,
-            (route) => route.settings.name == CartNavigatorRoutes.seller,
-          ),
         );
 
       case CartNavigatorRoutes.products:

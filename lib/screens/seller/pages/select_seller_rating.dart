@@ -74,7 +74,7 @@ class _SelectSellerRatingPageState extends State<SelectSellerRatingPage> {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: MediaQuery.of(context).padding.bottom + 65.0,
+                  bottom: MediaQuery.of(context).padding.bottom,
                   child: SimpleButton(
                     enabled: buttonEnabled,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
