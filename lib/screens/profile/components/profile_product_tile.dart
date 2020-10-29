@@ -30,22 +30,17 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
               DialogItemContent(
                 DialogItemType.item,
                 title: "Подробнее",
-                onClick: () {
-                  Navigator.of(dialogContext).pop();
-                  widget.onProductPush?.call(widget.product);
-                },
+                onClick: () => widget.onProductPush?.call(widget.product),
                 icon: IconAsset.info,
               ),
               DialogItemContent(
                 DialogItemType.item,
                 title: "Снять с публикации",
-                onClick: () {},
                 icon: IconAsset.remove_from_publication,
               ),
               DialogItemContent(
                 DialogItemType.system,
                 title: "Отменить",
-                onClick: () => Navigator.of(dialogContext).pop(),
               )
             ];
           else if (widget.product.state == ProductState.onModeration)
@@ -58,14 +53,12 @@ class _ProfileProductTileState extends State<ProfileProductTile> {
               DialogItemContent(
                 DialogItemType.item,
                 title: "Удалить",
-                onClick: () => Navigator.of(dialogContext).pop(),
                 icon: IconAsset.delete,
                 color: Colors.red,
               ),
               DialogItemContent(
                 DialogItemType.system,
                 title: "Отменить",
-                onClick: () => Navigator.of(dialogContext).pop(),
               ),
             ];
 

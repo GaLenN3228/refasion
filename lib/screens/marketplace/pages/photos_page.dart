@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +25,8 @@ class PhotosPage extends StatefulWidget {
   final Function(File) onUpdate;
   final Function(String url, String title) openInfoWebViewBottomSheet;
 
-  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.openInfoWebViewBottomSheet}) : super(key: key);
+  const PhotosPage({Key key, this.onPush, this.onClose, this.onUpdate, this.openInfoWebViewBottomSheet})
+      : super(key: key);
 
   @override
   _PhotosPageState createState() => _PhotosPageState();
@@ -54,29 +54,29 @@ class _PhotosPageState extends State<PhotosPage> {
           this.dialogContext = dialogContext;
           return CustomDialog.Dialog(
             dialogContent: [
-              DialogItemContent(DialogItemType.item, title: "Сделать фото", onClick: () {
-                return openCamera(index);
-              }, icon: IconAsset.camera),
-              DialogItemContent(DialogItemType.item, title: "Выбрать из галереи", onClick: () {
-                return openGallery(index);
-              }, icon: IconAsset.image),
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Сделать фото",
+                onClick: () => openCamera(index),
+                icon: IconAsset.camera,
+              ),
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Выбрать из галереи",
+                onClick: () => openGallery(index),
+                icon: IconAsset.image,
+              ),
               if (images[index] != null && images[index].file != null)
                 DialogItemContent(
                   DialogItemType.item,
                   title: "Удалить",
-                  onClick: () async {
-                    removePhotoFromCollection(index);
-                    Navigator.pop(dialogContext);
-                  },
+                  onClick: () => removePhotoFromCollection(index),
                   icon: IconAsset.delete,
                   color: Colors.red,
                 ),
               DialogItemContent(
                 DialogItemType.system,
                 title: "Закрыть",
-                onClick: () {
-                  Navigator.pop(dialogContext);
-                },
               )
             ],
           );

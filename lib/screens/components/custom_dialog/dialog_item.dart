@@ -4,9 +4,17 @@ import 'package:refashioned_app/utils/colors.dart';
 
 class DialogItem extends StatelessWidget {
   final DialogItemContent dialogItemContent;
-  final Function() onPush;
+  final Future Function() hideDialog;
+  final Future Function() showIndicator;
+  final Future Function() hideIndicator;
 
-  const DialogItem({Key key, this.dialogItemContent, this.onPush}) : super(key: key);
+  const DialogItem({
+    Key key,
+    this.dialogItemContent,
+    this.hideDialog,
+    this.showIndicator,
+    this.hideIndicator,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +22,22 @@ class DialogItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
-        await onPush?.call();
+        if (dialogItemContent.asyncOnClck) {
+          await hideDialog?.call();
+          await showIndicator?.call();
 
-        dialogItemContent?.onClick?.call();
+          await dialogItemContent?.onClick?.call();
+
+          await hideIndicator?.call();
+
+          Navigator.of(context).pop();
+        } else {
+          await hideDialog?.call();
+
+          Navigator.of(context).pop();
+
+          dialogItemContent?.onClick?.call();
+        }
       },
       child: dialogItemContent.dialogItemType == DialogItemType.infoHeader
           ? Column(
@@ -81,9 +102,11 @@ class DialogItemContent {
   final String title;
   final String subTitle;
   final Function() onClick;
+  final bool asyncOnClck;
   final DialogItemType dialogItemType;
 
-  const DialogItemContent(this.dialogItemType, {this.title, this.onClick, this.color, this.icon, this.subTitle});
+  const DialogItemContent(this.dialogItemType,
+      {this.asyncOnClck: false, this.title, this.onClick, this.color, this.icon, this.subTitle});
 
   IconAsset get getIcon => icon;
 

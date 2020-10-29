@@ -51,7 +51,7 @@ class _TBContentState extends State<TBContent> {
             children: [
               widget.data.type == TBType.CUPERTINO
                   ? Expanded(
-                      flex: 2,
+                      flex: 5,
                       child: TBButtons(
                         align: TBButtonsAlign.left,
                         leftButton: widget.data.leftButtonData,
@@ -64,7 +64,7 @@ class _TBContentState extends State<TBContent> {
                       rightButton: widget.data.secondLeftButtonData,
                     ),
               Expanded(
-                flex: 5,
+                flex: 11,
                 child: TBMiddle(
                   theme: widget.data.theme,
                   type: widget.data.type,
@@ -75,14 +75,20 @@ class _TBContentState extends State<TBContent> {
                       widget.data.secondRightButtonData == null && widget.data.rightButtonData == null,
                 ),
               ),
-              Expanded(
-                flex: 2,
-                child: TBButtons(
-                  align: TBButtonsAlign.right,
-                  leftButton: widget.data.secondRightButtonData,
-                  rightButton: widget.data.rightButtonData,
-                ),
-              ),
+              widget.data.type == TBType.CUPERTINO
+                  ? Expanded(
+                      flex: 5,
+                      child: TBButtons(
+                        align: TBButtonsAlign.right,
+                        leftButton: widget.data.secondRightButtonData,
+                        rightButton: widget.data.rightButtonData,
+                      ),
+                    )
+                  : TBButtons(
+                      align: TBButtonsAlign.right,
+                      leftButton: widget.data.secondRightButtonData,
+                      rightButton: widget.data.rightButtonData,
+                    ),
             ],
           ),
         ),

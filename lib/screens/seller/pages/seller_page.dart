@@ -45,27 +45,29 @@ class SellerPage extends StatelessWidget {
                                     "assets/images/png/seller.png",
                                   ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  seller.name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.subtitle1.copyWith(
-                                        color: white,
-                                      ),
-                                ),
-                                Text(
-                                  "Частное лицо",
-                                  style: Theme.of(context).textTheme.caption.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                ),
-                              ],
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15, right: 5),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    seller.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context).textTheme.subtitle1.copyWith(
+                                          color: white,
+                                        ),
+                                  ),
+                                  Text(
+                                    "Частное лицо",
+                                    style: Theme.of(context).textTheme.caption.copyWith(
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
