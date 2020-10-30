@@ -56,11 +56,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
   bool selected;
   bool deliveryTypesSelectorOpened;
 
+  GetUserAddressesRepository getUserAddressesRepository;
+
   @override
   initState() {
     widget.currentTab.addListener(tabListener);
     selected = false;
     deliveryTypesSelectorOpened = false;
+
+    getUserAddressesRepository = GetUserAddressesRepository();
 
     super.initState();
   }
@@ -77,8 +81,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
         break;
       case BottomTab.profile:
         final isAuthorized = await BaseRepository.isAuthorized();
-        SystemChrome.setSystemUIOverlayStyle(
-            isAuthorized ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark);
+        SystemChrome.setSystemUIOverlayStyle(isAuthorized ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark);
         break;
       default:
         break;
@@ -88,35 +91,35 @@ class _TabSwitcherState extends State<TabSwitcher> {
   onTabRefresh() {
     final canPop = navigatorKeys[widget.currentTab.value]?.currentState?.canPop() ?? false;
 
-    if (canPop)
-      navigatorKeys[widget.currentTab.value]
-          .currentState
-          .pushNamedAndRemoveUntil('/', (route) => false);
+    if (canPop) navigatorKeys[widget.currentTab.value].currentState.pushNamedAndRemoveUntil('/', (route) => false);
 
-    if (widget.currentTab.value == BottomTab.cart)
-      Provider.of<CartRepository>(context, listen: false).refresh();
+    if (widget.currentTab.value == BottomTab.cart) Provider.of<CartRepository>(context, listen: false).refresh();
 
     if (widget.currentTab.value == BottomTab.catalog || widget.currentTab.value == BottomTab.home) {
-      var topPanelController = Provider.of<TopPanelController>(
-          navigatorKeys[widget.currentTab.value].currentContext,
-          listen: false);
+      var topPanelController =
+          Provider.of<TopPanelController>(navigatorKeys[widget.currentTab.value].currentContext, listen: false);
       topPanelController.needShow = true;
       topPanelController.needShowBack = false;
     }
   }
 
-  _pushPageOnTop({@required Widget page, BuildContext context, bool slideUpFromBottom: false}) {
+  _pushPageOnTop(
+      {Widget page, Widget Function(BuildContext) builder, BuildContext context, bool slideUpFromBottom: false}) {
     if (slideUpFromBottom)
       Navigator.of(context ?? this.context).push(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
             position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
-            child: page,
+            child: builder != null ? Builder(builder: builder) : page ?? SizedBox(),
           ),
         ),
       );
     else
-      Navigator.of(context ?? this.context).push(CupertinoPageRoute(builder: (context) => page));
+      Navigator.of(context ?? this.context).push(
+        CupertinoPageRoute(
+          builder: builder ?? (context) => page ?? SizedBox(),
+        ),
+      );
   }
 
   pushInfoSheet(String infoUrl, String title) {
@@ -157,14 +160,12 @@ class _TabSwitcherState extends State<TabSwitcher> {
           useRootNavigator: true,
           builder: (__, controller) => AuthorizationSheet(
             onAuthorizationCancel: (_) async {
-              if (originalOverlayStyle != null)
-                SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+              if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
 
               await onClose?.call();
             },
             onAuthorizationDone: (_) async {
-              if (originalOverlayStyle != null)
-                SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+              if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
 
               await openDeliveryTypesSelector(
                 context,
@@ -190,11 +191,9 @@ class _TabSwitcherState extends State<TabSwitcher> {
           types = deliveryTypes;
         }
 
-        final userAddressesRepository = GetUserAddressesRepository();
+        await getUserAddressesRepository.update();
 
-        await userAddressesRepository.update();
-
-        userAddresses = userAddressesRepository.response?.content ?? [];
+        userAddresses = getUserAddressesRepository.response?.content ?? [];
 
         if (types != null && types.isNotEmpty) {
           await showMaterialModalBottomSheet(
@@ -210,34 +209,27 @@ class _TabSwitcherState extends State<TabSwitcher> {
                 _pushPageOnTop(
                   context: context,
                   slideUpFromBottom: true,
-                  page: DeliveryNavigator(
+                  builder: (context) => DeliveryNavigator(
                     deliveryType: deliveryType,
                     userAddresses: userAddresses,
                     onClose: () async {
                       await onClose?.call();
 
-                      userAddressesRepository?.dispose();
-
                       Navigator.of(context).pop();
 
-                      if (originalOverlayStyle != null)
-                        SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+                      if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
                     },
                     onSelect: (id) async {
-                      final result = await onSelect?.call(
-                          deliveryType.deliveryOptions.first.deliveryCompany.id, id);
+                      final result = await onSelect?.call(deliveryType.deliveryOptions.first.deliveryCompany.id, id);
 
                       if (result) {
-                        userAddressesRepository?.dispose();
-
                         onFinish?.call();
 
                         await Future.delayed(const Duration(milliseconds: 400));
 
                         Navigator.of(context).pop();
 
-                        if (originalOverlayStyle != null)
-                          SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
+                        if (originalOverlayStyle != null) SystemChrome.setSystemUIOverlayStyle(originalOverlayStyle);
                       }
                     },
                   ),
@@ -260,8 +252,9 @@ class _TabSwitcherState extends State<TabSwitcher> {
   @override
   void dispose() {
     widget.currentTab.removeListener(tabListener);
-
     widget.currentTab.dispose();
+
+    getUserAddressesRepository.dispose();
 
     super.dispose();
   }
@@ -270,8 +263,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
   Widget build(BuildContext context) {
     return Material(
       child: WillPopScope(
-        onWillPop: () async =>
-            !await navigatorKeys[widget.currentTab.value]?.currentState?.maybePop(),
+        onWillPop: () async => !await navigatorKeys[widget.currentTab.value]?.currentState?.maybePop(),
         child: Stack(
           children: <Widget>[
             TabView(
@@ -337,8 +329,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                               onProductCreated: (productData) {
                                 widget.currentTab.value = BottomTab.profile;
                                 var profileProductsRepository =
-                                    Provider.of<ProfileProductsRepository>(this.context,
-                                        listen: false);
+                                    Provider.of<ProfileProductsRepository>(this.context, listen: false);
                                 profileProductsRepository.response = null;
                                 profileProductsRepository.startLoading();
                                 var addProductRepository = AddProductRepository();
