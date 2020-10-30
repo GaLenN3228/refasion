@@ -198,6 +198,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                 id,
                 deliveryTypes: deliveryTypes,
                 onClose: onClose,
+                onSelect: onSelect,
                 onFinish: onFinish,
               );
             },
