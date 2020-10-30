@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:refashioned_app/models/product.dart';
 import 'package:refashioned_app/screens/components/sizes_table_link.dart';
+import 'package:refashioned_app/screens/components/webview_page.dart';
 import 'package:refashioned_app/utils/colors.dart';
 
 enum ProductSizeTileStyle { small, large }
@@ -22,7 +23,8 @@ class ProductSizeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = product.sizes.firstWhere((element) => element.shortCode == 'RU', orElse: () => null);
+    final size =
+        product.sizes.firstWhere((element) => element.shortCode == 'RU', orElse: () => null);
 
     if (size == null) return SizedBox();
 
@@ -42,9 +44,18 @@ class ProductSizeTile extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
               ),
-              SizesTableLink(onTap: () {
-                openInfoWebViewBottomSheet("https://refashioned.ru/size", "ТАБЛИЦА РАЗМЕРОВ");
-              },),
+              SizesTableLink(
+                onTap: () {
+                  Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                          position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                          child: WebViewPage(
+                            initialUrl: "https://refashioned.ru/size",
+                            title: "ТАБЛИЦА РАЗМЕРОВ",
+                            webViewPageMode: WebViewPageMode.modalSheet,
+                          ))));
+                },
+              ),
             ],
           ),
         );

@@ -114,7 +114,7 @@ class AuthorizationSheet extends StatelessWidget {
                                                 .animate(animation),
                                             child: WebViewPage(
                                               initialUrl: "https://refashioned.ru/user-agreement",
-                                              title: "ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ",
+                                              title: "СОГЛАШЕНИЕ",
                                               webViewPageMode: WebViewPageMode.modalSheet,
                                             ))));
                               }),

@@ -79,7 +79,7 @@ class OrderSummaryTile extends StatelessWidget {
                   ),
                   TextSpan(
                     text:
-                        " маркетплейса REFASHIONED.\nС подробными условиями доставки можно ознакомиться на странице о доставке.",
+                        " маркетплейса REFASHIONED.",
                   ),
                 ]),
           ),

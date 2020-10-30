@@ -72,7 +72,8 @@ class OrderPaymentTile extends StatelessWidget {
                       )))),
               child: RefashionedMessage(
                 title: "Деньги можно вернуть",
-                message: "Если передумаете покупать или не получите заказ, вернём всю сумму.",
+                message: "Если передумаете покупать или не получите заказ, вернём всю сумму. ",
+                moreInfoText: "Подробнее",
               )),
         ),
       ],

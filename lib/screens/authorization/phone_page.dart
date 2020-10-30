@@ -162,7 +162,7 @@ class _PhonePageState extends State<PhonePage> with WidgetsBindingObserver {
                                 Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
                             child: WebViewPage(
                               initialUrl: "https://refashioned.ru/user-agreement",
-                              title: "ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ",
+                              title: "СОГЛАШЕНИЕ",
                               webViewPageMode: WebViewPageMode.modalSheet,
                             )))),
                     child: Container(
