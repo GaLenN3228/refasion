@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/cities.dart';
 import 'package:refashioned_app/repositories/cities.dart';
+import 'package:refashioned_app/repositories/onboarding.dart';
 import 'package:refashioned_app/screens/components/items_divider.dart';
 import 'package:refashioned_app/screens/city_selector/city_tile.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_button_data.dart';
@@ -24,6 +25,13 @@ class CitySelector extends StatefulWidget {
 }
 
 class _CitySelectorState extends State<CitySelector> {
+  @override
+  void initState() {
+    if (widget.onFirstLaunch)
+      Provider.of<OnBoardingRepository>(context, listen: false).getOnBoardingData(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CitiesRepository>(

@@ -108,7 +108,6 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
         citiesRepository.response.content != null &&
         !citiesRepository.response.content.skipable) {
       nextRoute = RootNavigatorRoutes.citySelector;
-      await Provider.of<OnBoardingRepository>(context, listen: false).getOnBoardingData(context);
     }
 
     citiesRepository.removeListener(citiesRepositoryListener);
