@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.only(
           bottom: 20,
         ),
-        height: MediaQuery.of(context).copyWith().size.width * 0.35,
+        height: 150,
         child: CustomScrollView(
           scrollDirection: Axis.horizontal,
           slivers: [
