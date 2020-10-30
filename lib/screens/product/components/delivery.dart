@@ -17,9 +17,8 @@ class ProductDelivery extends StatelessWidget {
   Widget build(BuildContext context) {
     if (product.deliveryTypes == null || product.deliveryTypes.isEmpty) return SizedBox();
 
-    final pickUpAddressDeliveryIndex = product.deliveryTypes
-            ?.indexWhere((deliveryType) => deliveryType.type == Delivery.PICKUP_ADDRESS) ??
-        -1;
+    final pickUpAddressDeliveryIndex =
+        product.deliveryTypes?.indexWhere((deliveryType) => deliveryType.type == Delivery.PICKUP_ADDRESS) ?? -1;
 
     DeliveryType pickUpAddressDeliveryType;
 
@@ -58,8 +57,7 @@ class ProductDelivery extends StatelessWidget {
               ),
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () => onPickupAddressPush
-                    ?.call(pickUpAddressDeliveryType.deliveryOptions.first.deliveryObject),
+                onTap: () => onPickupAddressPush?.call(pickUpAddressDeliveryType.deliveryOptions.first.deliveryObject),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -104,12 +102,13 @@ class ProductDelivery extends StatelessWidget {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: ItemsDivider(
-                  padding: 0,
+              if (otherDeliveryTypes.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: ItemsDivider(
+                    padding: 0,
+                  ),
                 ),
-              ),
             ],
           ),
         Padding(

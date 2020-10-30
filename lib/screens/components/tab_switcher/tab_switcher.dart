@@ -55,6 +55,7 @@ class TabSwitcher extends StatefulWidget {
 class _TabSwitcherState extends State<TabSwitcher> {
   bool selected;
   bool deliveryTypesSelectorOpened;
+  bool sellerReviewsOpened;
 
   GetUserAddressesRepository getUserAddressesRepository;
 
@@ -63,6 +64,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
     widget.currentTab.addListener(tabListener);
     selected = false;
     deliveryTypesSelectorOpened = false;
+    sellerReviewsOpened = false;
 
     getUserAddressesRepository = GetUserAddressesRepository();
 
@@ -141,6 +143,30 @@ class _TabSwitcherState extends State<TabSwitcher> {
         ),
       );
 
+  // onSellerReviewsPush(Seller seller, Function() callback) async {
+  //   if (!sellerReviewsOpened) {
+  //     sellerReviewsOpened = true;
+
+  //     if (!await BaseRepository.isAuthorized()) {
+  //       await showMaterialModalBottomSheet(
+  //         expand: false,
+  //         context: context,
+  //         useRootNavigator: true,
+  //         builder: (__, controller) => AuthorizationSheet(
+  //           onAuthorizationCancel: (_) => callback?.call(),
+  //           onAuthorizationDone: (_) => onSellerReviewsPush(seller, callback),
+  //         ),
+  //       );
+
+  //       sellerReviewsOpened = false;
+  //     } else {
+  //       sellerReviewsOpened = false;
+
+  //       await widget.onSellerReviewsPush(seller, callback);
+  //     }
+  //   }
+  // }
+
   openDeliveryTypesSelector(
     BuildContext context,
     String id, {
@@ -154,7 +180,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
       deliveryTypesSelectorOpened = true;
 
       if (!await BaseRepository.isAuthorized()) {
-        showMaterialModalBottomSheet(
+        await showMaterialModalBottomSheet(
           expand: false,
           context: context,
           useRootNavigator: true,
@@ -177,6 +203,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
             },
           ),
         );
+
+        deliveryTypesSelectorOpened = false;
       } else {
         List<DeliveryType> types;
         List<UserAddress> userAddresses;

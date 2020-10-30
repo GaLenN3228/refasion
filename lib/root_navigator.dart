@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/order/order.dart';
 import 'package:refashioned_app/repositories/authorization.dart';
+import 'package:refashioned_app/repositories/base.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/repositories/onboarding.dart';
+import 'package:refashioned_app/screens/authorization/authorization_sheet.dart';
 import 'package:refashioned_app/screens/authorization/code_page.dart';
 import 'package:refashioned_app/screens/authorization/name_page.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
@@ -195,7 +198,20 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
       case RootNavigatorRoutes.sellerReviews:
         return SellerReviewsPage(
           seller: seller,
-          onAddSellerRatingPush: () => Navigator.of(context).pushNamed(RootNavigatorRoutes.selectSellerRating),
+          onAddSellerRatingPush: () async {
+            if (!await BaseRepository.isAuthorized()) {
+              await showMaterialModalBottomSheet(
+                expand: false,
+                context: context,
+                useRootNavigator: true,
+                builder: (__, controller) => AuthorizationSheet(
+                  onAuthorizationCancel: (_) => {},
+                  onAuthorizationDone: (_) => Navigator.of(context).pushNamed(RootNavigatorRoutes.selectSellerRating),
+                ),
+              );
+            } else
+              return Navigator.of(context).pushNamed(RootNavigatorRoutes.selectSellerRating);
+          },
         );
 
       case RootNavigatorRoutes.selectSellerRating:
