@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:refashioned_app/models/filter.dart';
 import 'package:refashioned_app/screens/catalog/filters/components/selectable_list.dart';
 import 'package:refashioned_app/screens/components/sizes_table_link.dart';
+import 'package:refashioned_app/screens/components/webview_page.dart';
 
 class FilterTileRange extends StatefulWidget {
   final Filter filter;
@@ -35,7 +36,15 @@ class _FilterTileRangeState extends State<FilterTileRange> {
                         style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
                       ),
                       SizesTableLink(onTap: (){
-                        widget.openInfoWebViewBottomSheet("https://refashioned.ru/size", "ТАБЛИЦА РАЗМЕРОВ");
+                        Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                                position:
+                                Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                                child: WebViewPage(
+                                  initialUrl: "https://refashioned.ru/size",
+                                  title: "ТАБЛИЦА РАЗМЕРОВ",
+                                  webViewPageMode: WebViewPageMode.modalSheet,
+                                ))));
                       },),
                     ],
                   )
