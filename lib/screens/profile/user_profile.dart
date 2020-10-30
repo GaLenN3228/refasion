@@ -307,79 +307,71 @@ class _UserProfileState extends State<UserProfile> {
 
   Future getImage() async {
     showDialog(
-        context: context,
-        builder: (dialogContext) {
-          this.dialogContext = dialogContext;
-          return CustomDialog.Dialog(
-            dialogContent: [
-              DialogItemContent(
-                DialogItemType.item,
-                title: "Сделать фото",
-                onClick: openCamera,
-                icon: IconAsset.camera,
-              ),
-              DialogItemContent(
-                DialogItemType.item,
-                title: "Выбрать из галереи",
-                onClick: openGallery,
-                icon: IconAsset.image,
-              ),
-              if (userPhoto != null)
-                DialogItemContent(
-                  DialogItemType.item,
-                  title: "Удалить",
-                  onClick: () async => setState(
-                    () {
-                      SharedPreferences.getInstance().then(
-                        (prefs) async {
-                          await prefs.remove(Prefs.user_photo);
-                          userPhoto = null;
-                          Provider.of<UserPhotoController>(context, listen: false).update();
-                        },
-                      );
+      context: context,
+      builder: (dialogContext) => CustomDialog.Dialog(
+        dialogContent: [
+          DialogItemContent(
+            DialogItemType.item,
+            title: "Сделать фото",
+            onClick: openCamera,
+            icon: IconAsset.camera,
+          ),
+          DialogItemContent(
+            DialogItemType.item,
+            title: "Выбрать из галереи",
+            onClick: openGallery,
+            icon: IconAsset.image,
+          ),
+          if (userPhoto != null)
+            DialogItemContent(
+              DialogItemType.item,
+              title: "Удалить",
+              onClick: () async => setState(
+                () {
+                  SharedPreferences.getInstance().then(
+                    (prefs) async {
+                      await prefs.remove(Prefs.user_photo);
+                      userPhoto = null;
+                      Provider.of<UserPhotoController>(context, listen: false).update();
                     },
-                  ),
-                  asyncOnClck: true,
-                  icon: IconAsset.delete,
-                  color: Colors.red,
-                ),
-              DialogItemContent(
-                DialogItemType.system,
-                title: "Закрыть",
-              )
-            ],
-          );
-        });
+                  );
+                },
+              ),
+              asyncOnClck: true,
+              icon: IconAsset.delete,
+              color: Colors.red,
+            ),
+          DialogItemContent(
+            DialogItemType.system,
+            title: "Закрыть",
+          )
+        ],
+      ),
+    );
   }
 
   void getGender() {
     showDialog(
-        context: context,
-        builder: (dialogContext) {
-          return CustomDialog.Dialog(
-            dialogContent: [
-              DialogItemContent(DialogItemType.item, title: "Мужской", onClick: () {
-                setState(() {
-                  userGender = "Мужской";
-                });
-                Navigator.pop(dialogContext);
-              }),
-              DialogItemContent(DialogItemType.item, title: "Женский", onClick: () {
-                setState(() {
-                  userGender = "Женский";
-                });
-                Navigator.pop(dialogContext);
-              }),
-              DialogItemContent(
-                DialogItemType.system,
-                title: "Отменить",
-                onClick: () {
-                  Navigator.pop(dialogContext);
-                },
-              )
-            ],
-          );
-        });
+      context: context,
+      builder: (dialogContext) => CustomDialog.Dialog(
+        dialogContent: [
+          DialogItemContent(
+            DialogItemType.item,
+            title: "Мужской",
+            onClick: () => setState(() => userGender = "Мужской"),
+          ),
+          DialogItemContent(
+            DialogItemType.item,
+            title: "Женский",
+            onClick: () => setState(() => userGender = "Женский"),
+          ),
+          DialogItemContent(
+            DialogItemType.system,
+            title: "Отменить",
+          ),
+        ],
+      ),
+    );
   }
 
   Future openGallery() async {
@@ -393,7 +385,6 @@ class _UserProfileState extends State<UserProfile> {
         await prefs.setString(Prefs.user_photo, pickedFile.path);
         Provider.of<UserPhotoController>(context, listen: false).update();
       });
-      Navigator.pop(dialogContext);
     }
   }
 
@@ -408,7 +399,6 @@ class _UserProfileState extends State<UserProfile> {
         await prefs.setString(Prefs.user_photo, pickedFile.path);
         Provider.of<UserPhotoController>(context, listen: false).update();
       });
-      Navigator.pop(dialogContext);
     }
   }
 
