@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/category.dart';
 import 'package:refashioned_app/models/order/order.dart';
@@ -321,10 +322,11 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
         );
 
       case ProfileNavigatorRoutes.userName:
-        return NamePage(
+        return KeyboardVisibilityProvider(
+            child: NamePage(
           needDismiss: true,
           fullScreenMode: false,
-        );
+        ));
 
       case ProfileNavigatorRoutes.doc:
         return WebViewPage(
@@ -421,7 +423,8 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
         topPanelController.needShowBack = false;
         return SellerPage(
           seller: seller,
-          onSellerReviewsPush: (Function() callback) => widget.onSellerReviewsPush?.call(seller, callback),
+          onSellerReviewsPush: (Function() callback) =>
+              widget.onSellerReviewsPush?.call(seller, callback),
           onProductPush: (product) => Navigator.of(context)
               .push(
                 CupertinoPageRoute(
@@ -444,7 +447,8 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
           providers: [
             ChangeNotifierProvider<FavouritesProductsRepository>(
                 create: (_) => FavouritesProductsRepository()..getFavouritesProducts()),
-            ChangeNotifierProvider<AddRemoveFavouriteRepository>(create: (_) => AddRemoveFavouriteRepository())
+            ChangeNotifierProvider<AddRemoveFavouriteRepository>(
+                create: (_) => AddRemoveFavouriteRepository())
           ],
           builder: (context, _) {
             return FavouritesPage(
@@ -477,7 +481,9 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
             totalPrice = newTotalPrice;
 
             await Navigator.of(context).pushReplacementNamed(
-              success ?? false ? ProfileNavigatorRoutes.orderCreated : ProfileNavigatorRoutes.paymentFailed,
+              success ?? false
+                  ? ProfileNavigatorRoutes.orderCreated
+                  : ProfileNavigatorRoutes.paymentFailed,
             );
           },
         );

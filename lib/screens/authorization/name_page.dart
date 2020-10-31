@@ -33,7 +33,6 @@ class _PhonePageState extends State<NamePage> {
   RBState buttonState;
   SetCustomerDataRepository setCustomerDataRepository;
   SharedPreferences sharedPreferences;
-  bool isKeyboardShown = true;
 
   @override
   void initState() {
@@ -50,12 +49,6 @@ class _PhonePageState extends State<NamePage> {
         var userName = sharedPreferences.getString(Prefs.user_name);
         textEditingController.text = userName;
       }
-    });
-
-    KeyboardVisibility.onChange.listen((bool visible) {
-      setState(() {
-        isKeyboardShown = visible;
-      });
     });
 
     super.initState();
@@ -206,7 +199,7 @@ class _PhonePageState extends State<NamePage> {
               flex: 1,
               child: Container(
                 padding: EdgeInsets.only(
-                  bottom: widget.fullScreenMode || isKeyboardShown ? 20 : 70,
+                  bottom: widget.fullScreenMode || KeyboardVisibilityProvider.isKeyboardVisible(context) ? 20 : 70,
                 ),
                 alignment: Alignment.bottomCenter,
                 child: SendCustomerNameButton(
