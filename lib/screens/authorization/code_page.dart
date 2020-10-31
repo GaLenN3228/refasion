@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:refashioned_app/repositories/authorization.dart';
 import 'package:refashioned_app/screens/authorization/name_page.dart';
@@ -19,7 +20,12 @@ class CodePage extends StatefulWidget {
   final Function() onPush;
 
   const CodePage(
-      {Key key, this.phone, this.onAuthorizationCancel, this.onAuthorizationDone, this.needDismiss, this.onPush})
+      {Key key,
+      this.phone,
+      this.onAuthorizationCancel,
+      this.onAuthorizationDone,
+      this.needDismiss,
+      this.onPush})
       : super(key: key);
 
   @override
@@ -80,7 +86,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final AuthorizationRepository authorizationRepository = context.watch<AuthorizationRepository>();
+    final AuthorizationRepository authorizationRepository =
+        context.watch<AuthorizationRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       key: scaffoldKey,
@@ -146,7 +153,9 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                     animationType: AnimationType.fade,
                     textInputType: TextInputType.number,
                     textStyle: TextStyle(
-                        color: hasError ? Colors.redAccent : Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                        color: hasError ? Colors.redAccent : Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                     pinTheme: PinTheme(
                         shape: PinCodeFieldShape.underline,
                         fieldHeight: 50,
@@ -160,7 +169,8 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                     onCompleted: (v) {
                       if (authorizationRepository.isLoaded) {
                         codeAuthorizationRepository.addListener(() {
-                          if (codeAuthorizationRepository.isLoaded || codeAuthorizationRepository.loadingFailed) {
+                          if (codeAuthorizationRepository.isLoaded ||
+                              codeAuthorizationRepository.loadingFailed) {
                             if (codeAuthorizationRepository.getStatusCode == 400) {
                               errorController.add(ErrorAnimationType.shake);
                               setState(() {
@@ -173,17 +183,18 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
                               else
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => NamePage(
+                                    builder: (context) => KeyboardVisibilityProvider(
+                                        child: NamePage(
                                       needDismiss: widget.needDismiss,
                                       onAuthorizationDone: widget.onAuthorizationDone,
-                                    ),
+                                    )),
                                   ),
                                 );
                             }
                           }
                         });
-                        codeAuthorizationRepository.sendCode(
-                            authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
+                        codeAuthorizationRepository.sendCode(authorizationRepository.getPhone,
+                            authorizationRepository.response.content.hash, v);
                       }
                     },
                     onChanged: (value) {
