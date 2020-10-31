@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/models/customer.dart';
 import 'package:refashioned_app/repositories/customer.dart';
@@ -17,24 +18,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 class NamePage extends StatefulWidget {
   final Function(BuildContext) onAuthorizationDone;
   final bool needDismiss;
+  final bool fullScreenMode;
 
-  const NamePage({Key key, this.onAuthorizationDone, this.needDismiss}) : super(key: key);
+  const NamePage({Key key, this.onAuthorizationDone, this.needDismiss, this.fullScreenMode = true})
+      : super(key: key);
 
   @override
   _PhonePageState createState() => _PhonePageState();
 }
 
-class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
+class _PhonePageState extends State<NamePage> {
   TextEditingController textEditingController;
-  bool keyboardVisible;
   bool updateButtonState;
   RBState buttonState;
   SetCustomerDataRepository setCustomerDataRepository;
   SharedPreferences sharedPreferences;
+  bool isKeyboardShown = true;
 
   @override
   void initState() {
-    keyboardVisible = false;
     updateButtonState = true;
     buttonState = RBState.disabled;
     setCustomerDataRepository = SetCustomerDataRepository();
@@ -50,15 +52,13 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
       }
     });
 
+    KeyboardVisibility.onChange.listen((bool visible) {
+      setState(() {
+        isKeyboardShown = visible;
+      });
+    });
+
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeMetrics() {
-    final newKeyboardVisible = WidgetsBinding.instance.window.viewInsets.bottom > 0;
-
-    if (keyboardVisible != newKeyboardVisible) setState(() => keyboardVisible = newKeyboardVisible);
   }
 
   @override
@@ -67,13 +67,13 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
     textEditingController.dispose();
     setCustomerDataRepository.dispose();
 
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   textControllerListener() {
     if (updateButtonState)
-      setState(() => buttonState = textEditingController.text.isNotEmpty ? RBState.enabled : RBState.disabled);
+      setState(() =>
+          buttonState = textEditingController.text.isNotEmpty ? RBState.enabled : RBState.disabled);
   }
 
   onPush() async {
@@ -190,9 +190,12 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
                     cursorRadius: Radius.circular(2.0),
                     cursorColor: Color(0xFFE6E6E6),
                     decoration: InputDecoration(
-                        border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                        border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
                         hintText: "Введите имя",
                         hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
                   ),
@@ -203,7 +206,7 @@ class _PhonePageState extends State<NamePage> with WidgetsBindingObserver {
               flex: 1,
               child: Container(
                 padding: EdgeInsets.only(
-                  bottom: keyboardVisible ? 20 : MediaQuery.of(context).padding.bottom,
+                  bottom: widget.fullScreenMode || isKeyboardShown ? 20 : 70,
                 ),
                 alignment: Alignment.bottomCenter,
                 child: SendCustomerNameButton(

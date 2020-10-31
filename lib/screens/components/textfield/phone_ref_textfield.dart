@@ -14,5 +14,6 @@ class RefashionedPhoneTextField extends RefashionedTextField {
             },
             keyboardType: TextInputType.phone,
             maskFormatter:
-                MaskTextInputFormatter(mask: '+7 ### ### ## ##', filter: {"#": RegExp(r'[0-9]')}));
+                MaskTextInputFormatter(mask: '+7 ### ### ## ##', filter: {"#": RegExp(r'[0-9]')})
+  );
 }

@@ -323,6 +323,7 @@ class _ProfileNavigatorState extends State<ProfileNavigator> {
       case ProfileNavigatorRoutes.userName:
         return NamePage(
           needDismiss: true,
+          fullScreenMode: false,
         );
 
       case ProfileNavigatorRoutes.doc:

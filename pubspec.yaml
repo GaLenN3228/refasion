@@ -63,6 +63,7 @@ dependencies:
   webview_flutter: ^0.3.24
   flutter_dialogs: ^1.0.4
   cached_network_image: ^2.3.2+1
+  flutter_keyboard_visibility: ^3.2.2
 
 dev_dependencies:
   flutter_test:
