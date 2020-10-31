@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:refashioned_app/models/cart/delivery_company.dart';
 import 'package:refashioned_app/models/cart/delivery_type.dart';
 import 'package:refashioned_app/models/pick_point.dart';
@@ -10,9 +11,7 @@ import 'package:refashioned_app/models/user_address.dart';
 import 'package:refashioned_app/repositories/user_addresses.dart';
 import 'package:refashioned_app/repositories/user_pickpoints.dart';
 import 'package:refashioned_app/screens/components/button/data/data.dart';
-import 'package:refashioned_app/screens/components/button/simple_button.dart';
 import 'package:refashioned_app/screens/components/checkbox/stateful.dart';
-import 'package:refashioned_app/screens/components/textfield/phone_ref_textfield.dart';
 import 'package:refashioned_app/screens/components/textfield/ref_textfield.dart';
 import 'package:refashioned_app/screens/components/topbar/data/tb_data.dart';
 import 'package:refashioned_app/screens/components/topbar/top_bar.dart';
@@ -47,6 +46,8 @@ class _InfoPageState extends State<InfoPage> {
   RBState buttonState;
   bool updateButtonState;
 
+  MaskTextInputFormatter phoneMaskFormatter;
+
   @override
   initState() {
     buttonState = RBState.disabled;
@@ -65,6 +66,8 @@ class _InfoPageState extends State<InfoPage> {
     }
 
     privateHouse = false;
+
+    phoneMaskFormatter = MaskTextInputFormatter(mask: '+7 ### ### ## ##', filter: {"#": RegExp(r'[0-9]')});
 
     super.initState();
   }
@@ -319,8 +322,12 @@ class _InfoPageState extends State<InfoPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: RefashionedPhoneTextField(
-                          onUpdate: (text) => onUpdate(InfoField.phone, text),
+                        child: RefashionedTextField(
+                          text: "+7 ",
+                          maskFormatter: phoneMaskFormatter,
+                          hintText: "Телефон",
+                          keyboardType: TextInputType.phone,
+                          onSearchUpdate: (text) => onUpdate(InfoField.phone, text.replaceAll("+", "").replaceAll(" ", "")),
                         ),
                       ),
                       SizedBox(
