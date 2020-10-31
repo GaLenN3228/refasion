@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
 import 'package:refashioned_app/screens/components/button.dart';
 import 'package:refashioned_app/screens/components/webview_page.dart';
@@ -11,13 +12,13 @@ class AuthorizationSheet extends StatelessWidget {
   final Function(BuildContext) onAuthorizationDone;
   final bool needDismiss;
 
-  const AuthorizationSheet(
-      {Key key,
-      this.onPush,
-      this.onAuthorizationCancel,
-      this.onAuthorizationDone,
-      this.needDismiss = true})
-      : super(key: key);
+  const AuthorizationSheet({
+    Key key,
+    this.onPush,
+    this.onAuthorizationCancel,
+    this.onAuthorizationDone,
+    this.needDismiss = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +34,7 @@ class AuthorizationSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
-            borderRadius:
-                BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
             child: Container(
               color: Colors.white,
               height: 410,
@@ -80,12 +80,17 @@ class AuthorizationSheet extends StatelessWidget {
                     width: double.infinity,
                     borderRadius: 5,
                     onClick: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => PhonePage(
-                                needDismiss: needDismiss,
-                                onAuthorizationDone: onAuthorizationDone,
-                                onAuthorizationCancel: onAuthorizationCancel,
-                              )));
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => KeyboardVisibilityProvider(
+                            child: PhonePage(
+                              needDismiss: needDismiss,
+                              onAuthorizationDone: onAuthorizationDone,
+                              onAuthorizationCancel: onAuthorizationCancel,
+                            ),
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -108,15 +113,13 @@ class AuthorizationSheet extends StatelessWidget {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 Navigator.of(context, rootNavigator: true).push(PageRouteBuilder(
-                                    pageBuilder: (context, animation, secondaryAnimation) =>
-                                        SlideTransition(
-                                            position: Tween(begin: Offset(0, 1), end: Offset.zero)
-                                                .animate(animation),
-                                            child: WebViewPage(
-                                              initialUrl: "https://refashioned.ru/user-agreement",
-                                              title: "СОГЛАШЕНИЕ",
-                                              webViewPageMode: WebViewPageMode.modalSheet,
-                                            ))));
+                                    pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                                        position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                                        child: WebViewPage(
+                                          initialUrl: "https://refashioned.ru/user-agreement",
+                                          title: "СОГЛАШЕНИЕ",
+                                          webViewPageMode: WebViewPageMode.modalSheet,
+                                        ))));
                               }),
                         TextSpan(
                           text: " и соглашаетесь с ",
@@ -131,15 +134,13 @@ class AuthorizationSheet extends StatelessWidget {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 Navigator.of(context, rootNavigator: true).push(PageRouteBuilder(
-                                    pageBuilder: (context, animation, secondaryAnimation) =>
-                                        SlideTransition(
-                                            position: Tween(begin: Offset(0, 1), end: Offset.zero)
-                                                .animate(animation),
-                                            child: WebViewPage(
-                                              initialUrl: "https://refashioned.ru/oferta",
-                                              title: "ОФЕРТА",
-                                              webViewPageMode: WebViewPageMode.modalSheet,
-                                            ))));
+                                    pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
+                                        position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
+                                        child: WebViewPage(
+                                          initialUrl: "https://refashioned.ru/oferta",
+                                          title: "ОФЕРТА",
+                                          webViewPageMode: WebViewPageMode.modalSheet,
+                                        ))));
                               }),
                       ],
                     ),

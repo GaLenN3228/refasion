@@ -20,8 +20,12 @@ class NamePage extends StatefulWidget {
   final bool needDismiss;
   final bool fullScreenMode;
 
-  const NamePage({Key key, this.onAuthorizationDone, this.needDismiss, this.fullScreenMode = true})
-      : super(key: key);
+  const NamePage({
+    Key key,
+    this.onAuthorizationDone,
+    this.needDismiss,
+    this.fullScreenMode = true,
+  }) : super(key: key);
 
   @override
   _PhonePageState createState() => _PhonePageState();
@@ -65,8 +69,7 @@ class _PhonePageState extends State<NamePage> {
 
   textControllerListener() {
     if (updateButtonState)
-      setState(() =>
-          buttonState = textEditingController.text.isNotEmpty ? RBState.enabled : RBState.disabled);
+      setState(() => buttonState = textEditingController.text.isNotEmpty ? RBState.enabled : RBState.disabled);
   }
 
   onPush() async {
@@ -133,83 +136,80 @@ class _PhonePageState extends State<NamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: RefashionedTopBar(
-                  data: TopBarData.simple(
-                    onClose: () {
-                      SharedPreferences.getInstance().then(
-                        (prefs) async {
-                          widget.onAuthorizationDone?.call(context);
-                          if (widget.needDismiss) if (Navigator.canPop(context)) {
-                            Navigator.pop(context);
-                          } else {
-                            SystemNavigator.pop();
-                          }
-                        },
-                      );
-                    },
-                  ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: RefashionedTopBar(
+                data: TopBarData.simple(
+                  onClose: () {
+                    SharedPreferences.getInstance().then(
+                      (prefs) async {
+                        widget.onAuthorizationDone?.call(context);
+                        if (widget.needDismiss) if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          SystemNavigator.pop();
+                        }
+                      },
+                    );
+                  },
                 ),
               ),
             ),
-            Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Как вас зовут?",
-                    style: Theme.of(context).textTheme.headline1,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(top: 28.0, left: 20, right: 20),
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    controller: textEditingController,
-                    keyboardType: TextInputType.text,
-                    autofocus: true,
-                    style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
-                    cursorWidth: 2.0,
-                    textCapitalization: TextCapitalization.sentences,
-                    cursorRadius: Radius.circular(2.0),
-                    cursorColor: Color(0xFFE6E6E6),
-                    decoration: InputDecoration(
-                        border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                        focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                        enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
-                        hintText: "Введите имя",
-                        hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
-                  ),
-                )
-              ],
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                padding: EdgeInsets.only(
-                  bottom: widget.fullScreenMode || KeyboardVisibilityProvider.isKeyboardVisible(context) ? 20 : 70,
-                ),
-                alignment: Alignment.bottomCenter,
-                child: SendCustomerNameButton(
-                  state: buttonState,
-                  onPush: onPush,
+          ),
+          Column(
+            children: [
+              Container(
+                alignment: Alignment.center,
+                child: Text(
+                  "Как вас зовут?",
+                  style: Theme.of(context).textTheme.headline1,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(top: 28.0, left: 20, right: 20),
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  controller: textEditingController,
+                  keyboardType: TextInputType.text,
+                  autofocus: true,
+                  style: Theme.of(context).textTheme.headline1.copyWith(fontSize: 20),
+                  cursorWidth: 2.0,
+                  textCapitalization: TextCapitalization.sentences,
+                  cursorRadius: Radius.circular(2.0),
+                  cursorColor: Color(0xFFE6E6E6),
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFFAD24E), width: 2)),
+                      hintText: "Введите имя",
+                      hintStyle: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 20)),
+                ),
+              )
+            ],
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              padding: EdgeInsets.only(
+                bottom: KeyboardVisibilityProvider.isKeyboardVisible(context)
+                    ? 20
+                    : MediaQuery.of(context).padding.bottom + (widget.fullScreenMode ? 0 : 65.0),
+              ),
+              alignment: Alignment.bottomCenter,
+              child: SendCustomerNameButton(
+                state: buttonState,
+                onPush: onPush,
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

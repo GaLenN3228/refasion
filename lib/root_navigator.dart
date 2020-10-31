@@ -154,25 +154,13 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
         );
 
       case RootNavigatorRoutes.authPhone:
-        return PhonePage(
-          needDismiss: false,
-          onPush: (String newPhone) {
-            phone = newPhone;
-            Navigator.of(context).pushNamed(RootNavigatorRoutes.authCode);
-          },
-          onAuthorizationCancel: (_) => Navigator.of(context).pushNamedAndRemoveUntil(
-            RootNavigatorRoutes.tabs,
-            (route) => false,
-          ),
-        );
-
-      case RootNavigatorRoutes.authCode:
-        return ChangeNotifierProvider<AuthorizationRepository>(
-          create: (_) => AuthorizationRepository()..sendPhoneAndGetCode(phone),
-          child: CodePage(
-            phone: phone,
+        return KeyboardVisibilityProvider(
+          child: PhonePage(
             needDismiss: false,
-            onPush: () => Navigator.of(context).pushNamed(RootNavigatorRoutes.authName),
+            onPush: (String newPhone) {
+              phone = newPhone;
+              Navigator.of(context).pushNamed(RootNavigatorRoutes.authCode);
+            },
             onAuthorizationCancel: (_) => Navigator.of(context).pushNamedAndRemoveUntil(
               RootNavigatorRoutes.tabs,
               (route) => false,
@@ -180,15 +168,32 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
           ),
         );
 
+      case RootNavigatorRoutes.authCode:
+        return ChangeNotifierProvider<AuthorizationRepository>(
+          create: (_) => AuthorizationRepository()..sendPhoneAndGetCode(phone),
+          child: KeyboardVisibilityProvider(
+            child: CodePage(
+              phone: phone,
+              needDismiss: false,
+              onPush: () => Navigator.of(context).pushNamed(RootNavigatorRoutes.authName),
+              onAuthorizationCancel: (_) => Navigator.of(context).pushNamedAndRemoveUntil(
+                RootNavigatorRoutes.tabs,
+                (route) => false,
+              ),
+            ),
+          ),
+        );
+
       case RootNavigatorRoutes.authName:
         return KeyboardVisibilityProvider(
-            child: NamePage(
-          needDismiss: false,
-          onAuthorizationDone: (_) => Navigator.of(context).pushNamedAndRemoveUntil(
-            RootNavigatorRoutes.tabs,
-            (route) => false,
+          child: NamePage(
+            needDismiss: false,
+            onAuthorizationDone: (_) => Navigator.of(context).pushNamedAndRemoveUntil(
+              RootNavigatorRoutes.tabs,
+              (route) => false,
+            ),
           ),
-        ));
+        );
 
       case RootNavigatorRoutes.checkout:
         return CheckoutNavigator(
@@ -208,8 +213,7 @@ class _CheckoutNavigatorState extends State<RootNavigator> {
                 useRootNavigator: true,
                 builder: (__, controller) => AuthorizationSheet(
                   onAuthorizationCancel: (_) => {},
-                  onAuthorizationDone: (_) =>
-                      Navigator.of(context).pushNamed(RootNavigatorRoutes.selectSellerRating),
+                  onAuthorizationDone: (_) => Navigator.of(context).pushNamed(RootNavigatorRoutes.selectSellerRating),
                 ),
               );
             } else

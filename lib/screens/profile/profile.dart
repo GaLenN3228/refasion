@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:refashioned_app/repositories/cities.dart';
 import 'package:refashioned_app/screens/authorization/phone_page.dart';
@@ -15,7 +16,11 @@ class ProfilePage extends StatefulWidget {
   final Function() onSettingsClick;
   final Function() onMapPageClick;
 
-  ProfilePage({Key key, this.onSettingsClick, this.onMapPageClick}) : super(key: key);
+  const ProfilePage({
+    Key key,
+    this.onSettingsClick,
+    this.onMapPageClick,
+  }) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -79,8 +84,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: double.infinity,
                       borderRadius: 5,
                       onClick: () {
-                        Navigator.of(context, rootNavigator: true)
-                            .push(MaterialPageRoute(builder: (context) => PhonePage()));
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (context) => KeyboardVisibilityProvider(
+                              child: PhonePage(),
+                            ),
+                          ),
+                        );
                       },
                     ),
                   ),

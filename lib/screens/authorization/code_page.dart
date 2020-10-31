@@ -19,27 +19,26 @@ class CodePage extends StatefulWidget {
   final bool needDismiss;
   final Function() onPush;
 
-  const CodePage(
-      {Key key,
-      this.phone,
-      this.onAuthorizationCancel,
-      this.onAuthorizationDone,
-      this.needDismiss,
-      this.onPush})
-      : super(key: key);
+  const CodePage({
+    Key key,
+    this.phone,
+    this.onAuthorizationCancel,
+    this.onAuthorizationDone,
+    this.needDismiss,
+    this.onPush,
+  }) : super(key: key);
 
   @override
   _CodePageState createState() => _CodePageState();
 }
 
-class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
+class _CodePageState extends State<CodePage> {
   Timer _timer;
   int _start = 59;
   StreamController<ErrorAnimationType> errorController;
   bool hasError = false;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   CodeAuthorizationRepository codeAuthorizationRepository;
-  bool keyboardVisible;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -59,20 +58,11 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    keyboardVisible = false;
     startTimer();
     errorController = StreamController<ErrorAnimationType>();
     codeAuthorizationRepository = Provider.of<CodeAuthorizationRepository>(context, listen: false);
 
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeMetrics() {
-    final newKeyboardVisible = WidgetsBinding.instance.window.viewInsets.bottom > 0;
-
-    if (keyboardVisible != newKeyboardVisible) setState(() => keyboardVisible = newKeyboardVisible);
   }
 
   @override
@@ -80,191 +70,184 @@ class _CodePageState extends State<CodePage> with WidgetsBindingObserver {
     _timer.cancel();
     errorController.close();
 
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final AuthorizationRepository authorizationRepository =
-        context.watch<AuthorizationRepository>();
+    final AuthorizationRepository authorizationRepository = context.watch<AuthorizationRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: RefashionedTopBar(
-                  data: TopBarData.simple(
-                    onClose: () {
-                      widget.onAuthorizationCancel?.call(context);
-                      if (widget.needDismiss) if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      } else {
-                        SystemNavigator.pop();
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-            Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Введите код из SMS",
-                    style: textTheme.headline1,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(top: 16.0),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: "Код отправлен на ",
-                      style: textTheme.caption,
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: widget.phone,
-                          style: textTheme.caption,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 230,
-                  margin: const EdgeInsets.only(top: 28.0, left: 20, right: 20),
-                  alignment: Alignment.center,
-                  color: Colors.white,
-                  child: PinCodeTextField(
-                    autoFocus: true,
-                    length: 4,
-                    obsecureText: false,
-                    animationType: AnimationType.fade,
-                    textInputType: TextInputType.number,
-                    textStyle: TextStyle(
-                        color: hasError ? Colors.redAccent : Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                    pinTheme: PinTheme(
-                        shape: PinCodeFieldShape.underline,
-                        fieldHeight: 50,
-                        fieldWidth: 40,
-                        selectedColor: hasError ? Colors.redAccent : Colors.black,
-                        activeColor: hasError ? Colors.redAccent : Color(0xFFFAD24E),
-                        inactiveColor: hasError ? Colors.redAccent : Color(0xFFFAD24E)),
-                    animationDuration: Duration(milliseconds: 300),
-                    enableActiveFill: false,
-                    errorAnimationController: errorController,
-                    onCompleted: (v) {
-                      if (authorizationRepository.isLoaded) {
-                        codeAuthorizationRepository.addListener(() {
-                          if (codeAuthorizationRepository.isLoaded ||
-                              codeAuthorizationRepository.loadingFailed) {
-                            if (codeAuthorizationRepository.getStatusCode == 400) {
-                              errorController.add(ErrorAnimationType.shake);
-                              setState(() {
-                                hasError = true;
-                              });
-                            } else if (codeAuthorizationRepository.getStatusCode == 200 ||
-                                codeAuthorizationRepository.getStatusCode == 201) {
-                              if (widget.onPush != null)
-                                widget.onPush();
-                              else
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) => KeyboardVisibilityProvider(
-                                        child: NamePage(
-                                      needDismiss: widget.needDismiss,
-                                      onAuthorizationDone: widget.onAuthorizationDone,
-                                    )),
-                                  ),
-                                );
-                            }
-                          }
-                        });
-                        codeAuthorizationRepository.sendCode(authorizationRepository.getPhone,
-                            authorizationRepository.response.content.hash, v);
-                      }
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        hasError = false;
-                      });
-                    },
-                    beforeTextPaste: (text) {
-                      print("Allowing to paste $text");
-                      //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                      //but you can show anything you want here, like your pop up saying wrong paste format or etc
-                      return true;
-                    },
-                  ),
-                ),
-                hasError
-                    ? Container(
-                        height: 16,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Некорректный код",
-                          textAlign: TextAlign.center,
-                          style: textTheme.caption.copyWith(color: Colors.redAccent),
-                        ))
-                    : Container(
-                        height: 16,
-                        alignment: Alignment.center,
-                      ),
-              ],
-            ),
-            if (codeAuthorizationRepository.isLoading)
-              Container(
-                margin: EdgeInsets.only(top: 40),
-                height: 32.0,
-                width: 32.0,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  backgroundColor: accentColor,
-                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-                ),
-              ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                margin: EdgeInsets.fromLTRB(
-                  20,
-                  20,
-                  20,
-                  keyboardVisible ? 20 : MediaQuery.of(context).padding.bottom,
-                ),
-                alignment: Alignment.bottomCenter,
-                child: Button(
-                  _start == 0 ? "ПОЛУЧИТЬ НОВЫЙ КОД" : "ПОЛУЧИТЬ НОВЫЙ КОД ЧЕРЕЗ 0:$_start",
-//          buttonStyle: phoneIsEmpty ? CustomButtonStyle.dark_gray : CustomButtonStyle.dark,
-                  buttonStyle: _start == 0 ? CustomButtonStyle.dark : CustomButtonStyle.dark_gray,
-                  height: 45,
-                  width: double.infinity,
-                  borderRadius: 5,
-                  onClick: () {
-                    if (_start == 0 && authorizationRepository.isLoaded) {
-                      authorizationRepository.sendPhoneAndGetCode(authorizationRepository.getPhone);
-                      _start = 59;
-                      startTimer();
+      body: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: RefashionedTopBar(
+                data: TopBarData.simple(
+                  onClose: () {
+                    widget.onAuthorizationCancel?.call(context);
+                    if (widget.needDismiss) if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      SystemNavigator.pop();
                     }
                   },
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          Column(
+            children: [
+              Container(
+                alignment: Alignment.center,
+                child: Text(
+                  "Введите код из SMS",
+                  style: textTheme.headline1,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(top: 16.0),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "Код отправлен на ",
+                    style: textTheme.caption,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: widget.phone,
+                        style: textTheme.caption,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: 230,
+                margin: const EdgeInsets.only(top: 28.0, left: 20, right: 20),
+                alignment: Alignment.center,
+                color: Colors.white,
+                child: PinCodeTextField(
+                  autoFocus: true,
+                  length: 4,
+                  obsecureText: false,
+                  animationType: AnimationType.fade,
+                  textInputType: TextInputType.number,
+                  textStyle: TextStyle(
+                      color: hasError ? Colors.redAccent : Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                  pinTheme: PinTheme(
+                      shape: PinCodeFieldShape.underline,
+                      fieldHeight: 50,
+                      fieldWidth: 40,
+                      selectedColor: hasError ? Colors.redAccent : Colors.black,
+                      activeColor: hasError ? Colors.redAccent : Color(0xFFFAD24E),
+                      inactiveColor: hasError ? Colors.redAccent : Color(0xFFFAD24E)),
+                  animationDuration: Duration(milliseconds: 300),
+                  enableActiveFill: false,
+                  errorAnimationController: errorController,
+                  onCompleted: (v) {
+                    if (authorizationRepository.isLoaded) {
+                      codeAuthorizationRepository.addListener(() {
+                        if (codeAuthorizationRepository.isLoaded || codeAuthorizationRepository.loadingFailed) {
+                          if (codeAuthorizationRepository.getStatusCode == 400) {
+                            errorController.add(ErrorAnimationType.shake);
+                            setState(() {
+                              hasError = true;
+                            });
+                          } else if (codeAuthorizationRepository.getStatusCode == 200 ||
+                              codeAuthorizationRepository.getStatusCode == 201) {
+                            if (widget.onPush != null)
+                              widget.onPush();
+                            else
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => KeyboardVisibilityProvider(
+                                      child: NamePage(
+                                    needDismiss: widget.needDismiss,
+                                    onAuthorizationDone: widget.onAuthorizationDone,
+                                  )),
+                                ),
+                              );
+                          }
+                        }
+                      });
+                      codeAuthorizationRepository.sendCode(
+                          authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
+                    }
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      hasError = false;
+                    });
+                  },
+                  beforeTextPaste: (text) {
+                    print("Allowing to paste $text");
+                    //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+                    //but you can show anything you want here, like your pop up saying wrong paste format or etc
+                    return true;
+                  },
+                ),
+              ),
+              hasError
+                  ? Container(
+                      height: 16,
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Некорректный код",
+                        textAlign: TextAlign.center,
+                        style: textTheme.caption.copyWith(color: Colors.redAccent),
+                      ))
+                  : Container(
+                      height: 16,
+                      alignment: Alignment.center,
+                    ),
+            ],
+          ),
+          if (codeAuthorizationRepository.isLoading)
+            Container(
+              margin: EdgeInsets.only(top: 40),
+              height: 32.0,
+              width: 32.0,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                backgroundColor: accentColor,
+                valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+              ),
+            ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              margin: EdgeInsets.fromLTRB(
+                20,
+                20,
+                20,
+                KeyboardVisibilityProvider.isKeyboardVisible(context) ? 20 : MediaQuery.of(context).padding.bottom,
+              ),
+              alignment: Alignment.bottomCenter,
+              child: Button(
+                _start == 0 ? "ПОЛУЧИТЬ НОВЫЙ КОД" : "ПОЛУЧИТЬ НОВЫЙ КОД ЧЕРЕЗ 0:$_start",
+//          buttonStyle: phoneIsEmpty ? CustomButtonStyle.dark_gray : CustomButtonStyle.dark,
+                buttonStyle: _start == 0 ? CustomButtonStyle.dark : CustomButtonStyle.dark_gray,
+                height: 45,
+                width: double.infinity,
+                borderRadius: 5,
+                onClick: () {
+                  if (_start == 0 && authorizationRepository.isLoaded) {
+                    authorizationRepository.sendPhoneAndGetCode(authorizationRepository.getPhone);
+                    _start = 59;
+                    startTimer();
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
