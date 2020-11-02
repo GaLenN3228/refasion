@@ -7,4 +7,5 @@ class Prefs {
   static const user_name = "user_name";
   static const user_phone = "user_phone";
   static const user_photo = "user_photo";
+  static const user_gender = "user_photo";
 }

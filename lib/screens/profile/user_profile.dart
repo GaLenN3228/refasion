@@ -27,7 +27,8 @@ class UserProfile extends StatefulWidget {
 
   final Function() onMapPageClick;
 
-  const UserProfile({Key key, this.onMapPageClick, this.onDocPush, this.onUserNamePush}) : super(key: key);
+  const UserProfile({Key key, this.onMapPageClick, this.onDocPush, this.onUserNamePush})
+      : super(key: key);
 
   @override
   _UserProfileState createState() => _UserProfileState();
@@ -39,7 +40,6 @@ class _UserProfileState extends State<UserProfile> {
   final picker = ImagePicker();
 
   String userPhoto;
-  String userGender = "Мужской";
 
   @override
   void initState() {
@@ -48,7 +48,9 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme
+        .of(context)
+        .textTheme;
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       child: Material(
@@ -82,14 +84,14 @@ class _UserProfileState extends State<UserProfile> {
                 if (repository.isLoading) {
                   return Center(
                       child: SizedBox(
-                    height: 32.0,
-                    width: 32.0,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      backgroundColor: accentColor,
-                      valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
-                    ),
-                  ));
+                        height: 32.0,
+                        width: 32.0,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          backgroundColor: accentColor,
+                          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                        ),
+                      ));
                 }
 
                 if (repository.isLoaded) {
@@ -119,10 +121,11 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                               Spacer(),
                               Consumer<CitiesRepository>(
-                                builder: (context, value, _) => Text(
-                                  value.city?.name ?? "Город не выбран",
-                                  style: textTheme.subtitle2,
-                                ),
+                                builder: (context, value, _) =>
+                                    Text(
+                                      value.city?.name ?? "Город не выбран",
+                                      style: textTheme.subtitle2,
+                                    ),
                               )
                             ],
                           ),
@@ -139,8 +142,8 @@ class _UserProfileState extends State<UserProfile> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               FutureBuilder(
-                                future:
-                                    SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_phone)),
+                                future: SharedPreferences.getInstance()
+                                    .then((prefs) => prefs.getString(Prefs.user_phone)),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     return Text(
@@ -206,10 +209,21 @@ class _UserProfileState extends State<UserProfile> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                userGender,
-                                style: textTheme.subtitle1,
-                              ),
+                              FutureBuilder(
+                                  future: SharedPreferences.getInstance()
+                                      .then((prefs) => prefs.getString(Prefs.user_gender)),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Text(
+                                        snapshot.data.toString(),
+                                        style: textTheme.subtitle1,
+                                      );
+                                    } else
+                                      return Text(
+                                        "Мужской",
+                                        style: textTheme.subtitle1,
+                                      );
+                                  }),
                               Text(
                                 'Пол',
                                 style: textTheme.subtitle2,
@@ -308,69 +322,80 @@ class _UserProfileState extends State<UserProfile> {
   Future getImage() async {
     showDialog(
       context: context,
-      builder: (dialogContext) => CustomDialog.Dialog(
-        dialogContent: [
-          DialogItemContent(
-            DialogItemType.item,
-            title: "Сделать фото",
-            onClick: openCamera,
-            icon: IconAsset.camera,
-          ),
-          DialogItemContent(
-            DialogItemType.item,
-            title: "Выбрать из галереи",
-            onClick: openGallery,
-            icon: IconAsset.image,
-          ),
-          if (userPhoto != null)
-            DialogItemContent(
-              DialogItemType.item,
-              title: "Удалить",
-              onClick: () async => setState(
-                () {
-                  SharedPreferences.getInstance().then(
-                    (prefs) async {
-                      await prefs.remove(Prefs.user_photo);
-                      userPhoto = null;
-                      Provider.of<UserPhotoController>(context, listen: false).update();
-                    },
-                  );
-                },
+      builder: (dialogContext) =>
+          CustomDialog.Dialog(
+            dialogContent: [
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Сделать фото",
+                onClick: openCamera,
+                icon: IconAsset.camera,
               ),
-              asyncOnClck: true,
-              icon: IconAsset.delete,
-              color: Colors.red,
-            ),
-          DialogItemContent(
-            DialogItemType.system,
-            title: "Закрыть",
-          )
-        ],
-      ),
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Выбрать из галереи",
+                onClick: openGallery,
+                icon: IconAsset.image,
+              ),
+              if (userPhoto != null)
+                DialogItemContent(
+                  DialogItemType.item,
+                  title: "Удалить",
+                  onClick: () async =>
+                      setState(
+                            () {
+                          SharedPreferences.getInstance().then(
+                                (prefs) async {
+                              await prefs.remove(Prefs.user_photo);
+                              userPhoto = null;
+                              Provider.of<UserPhotoController>(context, listen: false).update();
+                            },
+                          );
+                        },
+                      ),
+                  asyncOnClck: true,
+                  icon: IconAsset.delete,
+                  color: Colors.red,
+                ),
+              DialogItemContent(
+                DialogItemType.system,
+                title: "Закрыть",
+              )
+            ],
+          ),
     );
   }
 
   void getGender() {
     showDialog(
       context: context,
-      builder: (dialogContext) => CustomDialog.Dialog(
-        dialogContent: [
-          DialogItemContent(
-            DialogItemType.item,
-            title: "Мужской",
-            onClick: () => setState(() => userGender = "Мужской"),
+      builder: (dialogContext) =>
+          CustomDialog.Dialog(
+            dialogContent: [
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Мужской",
+                onClick: () async {
+                  var sharedPreferences = await SharedPreferences.getInstance();
+                  await sharedPreferences.setString(Prefs.user_gender, "Мужской");
+                  setState(() {});
+                },
+              ),
+              DialogItemContent(
+                DialogItemType.item,
+                title: "Женский",
+                onClick: () async {
+                  var sharedPreferences = await SharedPreferences.getInstance();
+                  await sharedPreferences.setString(Prefs.user_gender, "Женский");
+                  setState(() {});
+                },
+              ),
+              DialogItemContent(
+                DialogItemType.system,
+                title: "Отменить",
+              ),
+            ],
           ),
-          DialogItemContent(
-            DialogItemType.item,
-            title: "Женский",
-            onClick: () => setState(() => userGender = "Женский"),
-          ),
-          DialogItemContent(
-            DialogItemType.system,
-            title: "Отменить",
-          ),
-        ],
-      ),
     );
   }
 
@@ -403,7 +428,9 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Widget _appBar(context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme
+        .of(context)
+        .textTheme;
     return Material(
       color: Colors.transparent,
       child: Container(
@@ -421,7 +448,8 @@ class _UserProfileState extends State<UserProfile> {
                   width: 50,
                   height: 50,
                   child: FutureBuilder(
-                      future: SharedPreferences.getInstance().then((prefs) => prefs.getString(Prefs.user_photo)),
+                      future: SharedPreferences.getInstance()
+                          .then((prefs) => prefs.getString(Prefs.user_photo)),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           userPhoto = snapshot.data;
@@ -455,13 +483,13 @@ class _UserProfileState extends State<UserProfile> {
                               SharedPreferences sp = snapshot.data;
                               return sp.containsKey(Prefs.user_name)
                                   ? Text(
-                                      sp.getString(Prefs.user_name),
-                                      style: textTheme.subtitle1,
-                                    )
+                                sp.getString(Prefs.user_name),
+                                style: textTheme.subtitle1,
+                              )
                                   : Text(
-                                      sp.getString(Prefs.user_phone),
-                                      style: textTheme.subtitle1,
-                                    );
+                                sp.getString(Prefs.user_phone),
+                                style: textTheme.subtitle1,
+                              );
                             }
                             return SizedBox();
                           },
