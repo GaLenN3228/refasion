@@ -60,7 +60,7 @@ dependencies:
 
   # https://pub.dev/packages/solid_bottom_sheet
   solid_bottom_sheet: ^0.1.9
-  webview_flutter: ^0.3.24
+  webview_flutter: ^1.0.5
   flutter_dialogs: ^1.0.4
   cached_network_image: ^2.3.2+1
   flutter_keyboard_visibility: ^3.2.2
