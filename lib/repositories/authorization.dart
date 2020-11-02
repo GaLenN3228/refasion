@@ -30,7 +30,6 @@ class CodeAuthorizationRepository extends BaseRepository<Authorization> {
           var sp = await SharedPreferences.getInstance();
           await sp.setString(Prefs.user_phone, phone);
           await BaseRepository.setAuthorized(true);
-          notifyListeners();
         }
       });
 }

@@ -69,13 +69,40 @@ class _CodePageState extends State<CodePage> {
   void dispose() {
     _timer.cancel();
     errorController.close();
+    codeAuthorizationRepository?.removeListener(codeAuthorizationHandler);
 
     super.dispose();
   }
 
+  void codeAuthorizationHandler() {
+    if (codeAuthorizationRepository.isLoaded || codeAuthorizationRepository.loadingFailed) {
+      if (codeAuthorizationRepository.getStatusCode == 400) {
+        errorController.add(ErrorAnimationType.shake);
+        setState(() {
+          hasError = true;
+        });
+      } else if (codeAuthorizationRepository.getStatusCode == 200 ||
+          codeAuthorizationRepository.getStatusCode == 201) {
+        if (widget.onPush != null)
+          widget.onPush();
+        else
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => KeyboardVisibilityProvider(
+                  child: NamePage(
+                needDismiss: widget.needDismiss,
+                onAuthorizationDone: widget.onAuthorizationDone,
+              )),
+            ),
+          );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final AuthorizationRepository authorizationRepository = context.watch<AuthorizationRepository>();
+    final AuthorizationRepository authorizationRepository =
+        context.watch<AuthorizationRepository>();
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       key: scaffoldKey,
@@ -134,13 +161,16 @@ class _CodePageState extends State<CodePage> {
                 alignment: Alignment.center,
                 color: Colors.white,
                 child: PinCodeTextField(
+                  autoDisposeControllers: false,
                   autoFocus: true,
                   length: 4,
                   obsecureText: false,
                   animationType: AnimationType.fade,
                   textInputType: TextInputType.number,
                   textStyle: TextStyle(
-                      color: hasError ? Colors.redAccent : Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                      color: hasError ? Colors.redAccent : Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                   pinTheme: PinTheme(
                       shape: PinCodeFieldShape.underline,
                       fieldHeight: 50,
@@ -153,32 +183,9 @@ class _CodePageState extends State<CodePage> {
                   errorAnimationController: errorController,
                   onCompleted: (v) {
                     if (authorizationRepository.isLoaded) {
-                      codeAuthorizationRepository.addListener(() {
-                        if (codeAuthorizationRepository.isLoaded || codeAuthorizationRepository.loadingFailed) {
-                          if (codeAuthorizationRepository.getStatusCode == 400) {
-                            errorController.add(ErrorAnimationType.shake);
-                            setState(() {
-                              hasError = true;
-                            });
-                          } else if (codeAuthorizationRepository.getStatusCode == 200 ||
-                              codeAuthorizationRepository.getStatusCode == 201) {
-                            if (widget.onPush != null)
-                              widget.onPush();
-                            else
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => KeyboardVisibilityProvider(
-                                      child: NamePage(
-                                    needDismiss: widget.needDismiss,
-                                    onAuthorizationDone: widget.onAuthorizationDone,
-                                  )),
-                                ),
-                              );
-                          }
-                        }
-                      });
-                      codeAuthorizationRepository.sendCode(
-                          authorizationRepository.getPhone, authorizationRepository.response.content.hash, v);
+                      codeAuthorizationRepository.addListener(codeAuthorizationHandler);
+                      codeAuthorizationRepository.sendCode(authorizationRepository.getPhone,
+                          authorizationRepository.response.content.hash, v);
                     }
                   },
                   onChanged: (value) {
@@ -227,7 +234,9 @@ class _CodePageState extends State<CodePage> {
                 20,
                 20,
                 20,
-                KeyboardVisibilityProvider.isKeyboardVisible(context) ? 20 : MediaQuery.of(context).padding.bottom,
+                KeyboardVisibilityProvider.isKeyboardVisible(context)
+                    ? 20
+                    : MediaQuery.of(context).padding.bottom,
               ),
               alignment: Alignment.bottomCenter,
               child: Button(

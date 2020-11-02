@@ -169,7 +169,6 @@ class _MapPageState extends State<MapPage> {
       iconName: MapPage.MARKER_ICON_BLACK_SELECTED,
       onTap: (Placemark placeMark, double latitude, double longitude) {
         selectedPlaceMark = placeMark;
-        _changeSelectedPlaceMarkIcon();
         _moveToPoint(
             MapPage.ZOOM_TO_POINT_VALUE,
             Point(
