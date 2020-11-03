@@ -94,41 +94,41 @@ class _WebViewPageState extends State<WebViewPage> {
                   child: WebView(
                     initialUrl: widget.initialUrl,
                     javascriptMode: JavascriptMode.unrestricted,
-                    // onWebViewCreated: (WebViewController webViewController) {
-                    //   controller.complete(webViewController);
-                    // },
-                    // javascriptChannels: <JavascriptChannel>[
-                    //   _toasterJavascriptChannel(context),
-                    // ].toSet(),
-                    // navigationDelegate: (NavigationRequest request) async {
-                    //   if (widget.onNewUrl != null) {
-                    //     final entry = widget.onNewUrl.entries.firstWhere(
-                    //         (element) => request.url.contains(element.key),
-                    //         orElse: () => null);
-                    //
-                    //     if (entry != null) {
-                    //       print('blocking navigation to ${request.url} because of ${entry.key}');
-                    //
-                    //       Navigator.of(context).pop();
-                    //
-                    //       await entry.value?.call();
-                    //
-                    //       return NavigationDecision.prevent;
-                    //     }
-                    //   }
-                    //
-                    //   print('allowing navigation to ${request.url}');
-                    //
-                    //   return NavigationDecision.navigate;
-                    // },
+                    onWebViewCreated: (WebViewController webViewController) {
+                      controller.complete(webViewController);
+                    },
+                    javascriptChannels: <JavascriptChannel>[
+                      _toasterJavascriptChannel(context),
+                    ].toSet(),
+                    navigationDelegate: (NavigationRequest request) async {
+                      if (widget.onNewUrl != null) {
+                        final entry = widget.onNewUrl.entries.firstWhere(
+                            (element) => request.url.contains(element.key),
+                            orElse: () => null);
+
+                        if (entry != null) {
+                          print('blocking navigation to ${request.url} because of ${entry.key}');
+
+                          Navigator.of(context).pop();
+
+                          await entry.value?.call();
+
+                          return NavigationDecision.prevent;
+                        }
+                      }
+
+                      print('allowing navigation to ${request.url}');
+
+                      return NavigationDecision.navigate;
+                    },
                     onPageStarted: (url) => handleLoadStart(),
                     onPageFinished: (url) => handleLoadFinish(),
-                    // gestureNavigationEnabled: true,
-                    // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                    //   Factory<VerticalDragGestureRecognizer>(
-                    //     () => VerticalDragGestureRecognizer(),
-                    //   ),
-                    // },
+                    gestureNavigationEnabled: true,
+                    gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                      Factory<VerticalDragGestureRecognizer>(
+                        () => VerticalDragGestureRecognizer(),
+                      ),
+                    },
                   ),
                 ),
               ],
