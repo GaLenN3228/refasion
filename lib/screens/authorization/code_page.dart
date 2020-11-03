@@ -86,15 +86,17 @@ class _CodePageState extends State<CodePage> {
         if (widget.onPush != null)
           widget.onPush();
         else
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => KeyboardVisibilityProvider(
-                  child: NamePage(
-                needDismiss: widget.needDismiss,
-                onAuthorizationDone: widget.onAuthorizationDone,
-              )),
-            ),
-          );
+          Future.delayed(Duration(milliseconds: 100), () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => KeyboardVisibilityProvider(
+                    child: NamePage(
+                      needDismiss: widget.needDismiss,
+                      onAuthorizationDone: widget.onAuthorizationDone,
+                    )),
+              ),
+            );
+          });
       }
     }
   }
