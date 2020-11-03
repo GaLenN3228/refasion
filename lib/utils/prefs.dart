@@ -8,4 +8,5 @@ class Prefs {
   static const user_phone = "user_phone";
   static const user_photo = "user_photo";
   static const user_gender = "user_gender";
+  static const authorization_hash = "authorization_hash";
 }
