@@ -50,7 +50,7 @@ class ProductSizeTile extends StatelessWidget {
                       pageBuilder: (context, animation, secondaryAnimation) => SlideTransition(
                           position: Tween(begin: Offset(0, 1), end: Offset.zero).animate(animation),
                           child: WebViewPage(
-                            initialUrl: "https://sokolov.ru/terms/privacy-policy/",
+                            initialUrl: "https://refashioned.ru/size",
                             title: "ТАБЛИЦА РАЗМЕРОВ",
                             webViewPageMode: WebViewPageMode.modalSheet,
                           ))));
